@@ -1,0 +1,133 @@
+/*================================================================================
+	Item Name: Vuexy - Vuejs, HTML & Laravel Admin Dashboard Template
+	Version: 2.0
+	Author: PIXINVENT
+	Author URL: http://www.themeforest.net/user/pixinvent
+================================================================================
+
+NOTE:
+------
+PLACE HERE YOUR OWN SCSS CODES AND IF NEEDED, OVERRIDE THE STYLES FROM THE OTHER STYLESHEETS.
+WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BETTER LIKE THIS.  */
+
+$white-color: (
+  'base': #ffffff
+);
+$black-color: (
+  'base': #000000
+);
+$dark-color: (
+  'base': #646464,
+  'darken-1': darken(#646464, 5%),
+  'darken-2': darken(#646464, 10%),
+  'darken-3': darken(#646464, 15%),
+);
+$light-color: (
+  'base': #FFF8CD
+);
+
+$primary-color: (
+  'lighten-5': lighten(#FF9642, 25%),
+  'lighten-4': lighten(#FF9642, 20%),
+  'lighten-3': lighten(#FF9642, 15%),
+  'lighten-2': lighten(#FF9642, 10%),
+  'lighten-1': lighten(#FF9642, 5%),
+  'base': #FF9642,
+  'darken-1': darken(#FF9642, 5%),
+  'darken-2': darken(#FF9642, 10%),
+  'darken-3': darken(#FF9642, 15%),
+  'darken-4': darken(#FF9642, 20%),
+  'accent-1': #bdfdff,
+  'accent-2': #8afbff,
+  'accent-3': #57faff,
+  'accent-4': #3df9ff
+);
+$secondary-color: (
+  'lighten-5': lighten(#FFE05D, 25%),
+  'lighten-4': lighten(#FFE05D, 20%),
+  'lighten-3': lighten(#FFE05D, 15%),
+  'lighten-2': lighten(#FFE05D, 10%),
+  'lighten-1': lighten(#FFE05D, 5%),
+  'base': #FFE05D,
+  'darken-1': darken(#FFE05D, 5%),
+  'darken-2': darken(#FFE05D, 10%),
+  'darken-3': darken(#FFE05D, 15%),
+  'darken-4': darken(#FFE05D, 20%)
+);
+$success-color: (
+  'lighten-5': lighten(#198754, 25%),
+  'lighten-4': lighten(#198754, 20%),
+  'lighten-3': lighten(#198754, 15%),
+  'lighten-2': lighten(#198754, 10%),
+  'lighten-1': lighten(#198754, 5%),
+  'base': #198754,
+  'darken-1': darken(#198754, 5%),
+  'darken-2': darken(#198754, 10%),
+  'darken-3': darken(#198754, 15%),
+  'darken-4': darken(#198754, 20%),
+  'accent-1': #e1fff1,
+  'accent-2': #aeffd9,
+  'accent-3': #7bffc1,
+  'accent-4': #62ffb5
+);
+$info-color: (
+  'lighten-5': lighten(#0DCAF0, 25%),
+  'lighten-4': lighten(#0DCAF0, 20%),
+  'lighten-3': lighten(#0DCAF0, 15%),
+  'lighten-2': lighten(#0DCAF0, 10%),
+  'lighten-1': lighten(#0DCAF0, 5%),
+  'base': #0DCAF0,
+  'darken-1': darken(#0DCAF0, 5%),
+  'darken-2': darken(#0DCAF0, 10%),
+  'darken-3': darken(#0DCAF0, 15%),
+  'darken-4': darken(#0DCAF0, 20%),
+  'accent-1': #feffff,
+  'accent-2': #cbf5ff,
+  'accent-3': #98ecff,
+  'accent-4': #7fe7ff
+);
+$warning-color: (
+  'lighten-5': lighten(#FFC107, 25%),
+  'lighten-4': lighten(#FFC107, 20%),
+  'lighten-3': lighten(#FFC107, 15%),
+  'lighten-2': lighten(#FFC107, 10%),
+  'lighten-1': lighten(#FFC107, 5%),
+  'base': #FFC107,
+  'darken-1': darken(#FFC107, 5%),
+  'darken-2': darken(#FFC107, 10%),
+  'darken-3': darken(#FFC107, 15%),
+  'darken-4': darken(#FFC107, 20%),
+  'accent-1': #fff5ef,
+  'accent-2': #ffe5d8,
+  'accent-3': #fff6f3,
+  'accent-4': #ffe3da
+);
+$danger-color: (
+  'lighten-5': lighten(#DC3545, 25%),
+  'lighten-4': lighten(#DC3545, 20%),
+  'lighten-3': lighten(#DC3545, 15%),
+  'lighten-2': lighten(#DC3545, 10%),
+  'lighten-1': lighten(#DC3545, 5%),
+  'base': #DC3545,
+  'darken-1': darken(#DC3545, 5%),
+  'darken-2': darken(#DC3545, 10%),
+  'darken-3': darken(#DC3545, 15%),
+  'darken-4': darken(#DC3545, 20%),
+  'accent-1': #ffeef1,
+  'accent-2': #ffd6db,
+  'accent-3': #ffecee,
+  'accent-4': #ffd3d7
+);
+
+$colors: (
+  'white': $white-color,
+  'black': $black-color,
+  'dark': $dark-color,
+  'light': $light-color,
+  'primary': $primary-color,
+  'secondary': $secondary-color,
+  'success': $success-color,
+  'info': $info-color,
+  'warning': $warning-color,
+  'danger': $danger-color
+);

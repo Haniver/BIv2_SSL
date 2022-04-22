@@ -1,0 +1,32 @@
+from pydantic import BaseModel
+from typing import Optional
+from datetime import datetime, timedelta, date
+
+class Filtro(BaseModel):
+    fechas: Optional[dict]
+    region: Optional[str]
+    zona: Optional[str]
+    tienda: Optional[str]
+    proveedor: Optional[int]
+    categoria: Optional[str]
+    tipoEntrega: Optional[str]
+    canal: Optional[str]
+    depto: Optional[str]
+    subDepto: Optional[str]
+    mes: Optional[int]
+    agrupador: Optional[str]
+    periodo: Optional[dict]
+    tipoEntrega2: Optional[str]
+    tipoEntrega3: Optional[str]
+    detalle: Optional[str]
+    estatus: Optional[str]
+    formato: Optional[str]
+    sku: Optional[str]
+    canal2: Optional[str]
+    e3: Optional[str]
+    nps: Optional[str]
+    mesRFM: Optional[int]
+    anioRFM: Optional[int]
+    grupoDeptos: Optional[str]
+    deptoAgrupado: Optional[str]
+    subDeptoAgrupado: Optional[str]

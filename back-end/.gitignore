@@ -1,0 +1,6 @@
+# Librerías
+/venv/Lib
+
+# Información sensible y configuración específica de este servidor
+/venv/app/servicios/urls.py
+/venv/app/servicios/credenciales.py

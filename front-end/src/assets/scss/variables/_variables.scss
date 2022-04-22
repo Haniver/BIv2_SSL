@@ -1,0 +1,56 @@
+//  ================================================================================================
+//  ? TIP:  It is recommended to use this file for overriding bootstrap variables.
+//  ================================================================================================
+
+$primary:       #FF9642;
+$secondary:     #FFE05D;
+$success:       #26b873;
+$info:          #0DCAF0;
+$warning:       #FFC107;
+$danger:        #ff3d51;
+$light:         #FFF8CD;
+$dark:          #646464;
+
+.brand-logo {
+  img {
+    height: 25px;
+    width: 36px;
+  }
+}
+
+.highcharts-drilldown-data-label text{
+  text-decoration:none !important;
+  color: #272F44
+}
+
+.highcharts-drilldown-axis-label {
+  text-decoration:none !important;
+  color: #272F44
+}
+
+.texto-rojo {
+  color: $danger;
+  font-weight: bold;
+}
+
+.texto-amarillo {
+  color: $warning;
+  font-weight: bold;
+}
+
+.texto-verde {
+  color: $success;
+  font-weight: bold;
+}
+
+.centrado {
+  text-align: center;
+}
+
+pre {
+  background-color: $light;
+}
+
+code[class^='language-'], code[class*=' language-']{
+  color: #272F44 !important;
+}
