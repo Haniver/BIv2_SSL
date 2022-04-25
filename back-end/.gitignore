@@ -1,6 +1,18 @@
-# Librerías
-/venv/Lib
-
 # Información sensible y configuración específica de este servidor
 /venv/app/servicios/urls.py
 /venv/app/servicios/credenciales.py
+
+# Entorno virtual
+venv/Scripts
+venv/Lib
+venv/pyvenv.cfg
+venv/Include
+venv/pyodbc.pyi
+
+# Archivos temporales
+/venv/app/servicios/__pycache__/
+/venv/app/__pycache__/
+/venv/app/dashboards/__pycache__/
+/venv/app/__pycache__/
+/venv/app/documentos/__pycache__/
+/venv/app/routers/__pycache__/
