@@ -19,7 +19,7 @@ const navigation = [
   }
 ]
   const userData = JSON.parse(localStorage.getItem('userData'))
-  if (userData.hasOwnProperty('vistas') && userData.hasOwnProperty('documentos')) {
+  if (userData !== null && userData.hasOwnProperty('vistas') && userData.hasOwnProperty('documentos')) {
     const vistas = JSON.parse(userData["vistas"])
     const documentos_api = JSON.parse(userData["documentos"])
     // console.log('vistas:')
