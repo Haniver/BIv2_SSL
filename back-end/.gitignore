@@ -10,9 +10,9 @@ venv/Include
 venv/pyodbc.pyi
 
 # Archivos temporales
-# /venv/app/servicios/__pycache__/
-# /venv/app/__pycache__/
-# /venv/app/dashboards/__pycache__/
-# /venv/app/__pycache__/
-# /venv/app/documentos/__pycache__/
-# /venv/app/routers/__pycache__/
+/venv/app/servicios/__pycache__/
+/venv/app/__pycache__/
+/venv/app/dashboards/__pycache__/
+/venv/app/__pycache__/
+/venv/app/documentos/__pycache__/
+/venv/app/routers/__pycache__/
