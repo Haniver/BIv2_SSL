@@ -96,7 +96,7 @@ def buscar_usuario_en_bd(usuario):
     where u.usuario = '{usuario}'
     and vd.activado = 1
     order by vd.lugar"""
-    print(f"Query para el diccionario de documentos desde auth.py: {str(query)}")
+    # print(f"Query para el diccionario de documentos desde auth.py: {str(query)}")
     cursor.execute(query)
     resultados = conectar_sql.crear_diccionario(cursor)
     # print(f"Diccionario de documentos desde auth.py: {str(resultados)}")
@@ -110,7 +110,7 @@ def buscar_usuario_en_bd(usuario):
             "icon": row['icon']
         })
     respuesta = {usuario: {'usuario': usuario, 'id_rol': id_rol, 'password': password, 'nombre': nombre, 'rol': rol, 'id': id, 'vistas': json.dumps(vistas), 'documentos': json.dumps(documentos), 'tienda': tienda}}
-    print(f"Respuesta desde auth.py: {str(respuesta)}")
+    # print(f"Respuesta desde auth.py: {str(respuesta)}")
     return respuesta
 
 def get_user(db, usuario: str):
