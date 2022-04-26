@@ -2,6 +2,8 @@ from app.servicios.conectar_sql import conexion_sql, crear_diccionario
 
 def tienePermiso(id_rol, seccion):
     # El ID de los componentes de React (idReact en la BD) es igual a la sección, pero con la primera letra en minúscula
+    if seccion == "Home":
+        return True
     idReact = seccion[0].lower() + seccion[1:]
     query = f"""select *
     from DJANGO.php.usuario_vista uv
