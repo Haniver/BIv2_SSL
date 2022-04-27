@@ -559,7 +559,7 @@ class Tablas():
                 if self.filtros.canal == '1':
                     objetivo = arreglo[i]['objetivo']
                     objetivoDia = arreglo[i]['objetivoDia']
-                    print(f'objetivoDia = {str(objetivoDia)}')
+                    # print(f'objetivoDia = {str(objetivoDia)}')
                     alcance = (arreglo[i]['AActual']/objetivo) - 1 if objetivo else '--'
                     alcanceDia = (arreglo[i]['AActual']/objetivoDia) - 1 if objetivoDia else '--'
                 else:
@@ -963,7 +963,7 @@ class Tablas():
             if self.filtros.periodo != {}:
                 collection = conexion_mongo('report').report_pedidoPerfecto
                 if self.filtros.region != '' and self.filtros.region != "False":
-                    print('Sí hay región, y es: '+self.filtros.region)
+                    # print('Sí hay región, y es: '+self.filtros.region)
                     filtro_lugar = True
                     if self.filtros.zona != '' and self.filtros.zona != "False":
                         if self.filtros.tienda != '' and self.filtros.tienda != "False":
@@ -978,7 +978,7 @@ class Tablas():
                 else:
                     filtro_lugar = False
                     lugar = ''
-                    print('No hay filtro_lugar')
+                    # print('No hay filtro_lugar')
                 pipeline = [{'$unwind': '$sucursal'}]
                 if filtro_lugar:
                     pipeline.extend([
@@ -2298,7 +2298,7 @@ class Tablas():
         arreglo = await cursor.to_list(length=1000)
         # print(str(arreglo))
         if len(arreglo) >0:
-            print('Sí hay resultados: '+str(arreglo))
+            # print('Sí hay resultados: '+str(arreglo))
             hayResultados = "si"
             # Creamos los arreglos que alimentarán la tabla:
             columns = [
@@ -2347,7 +2347,7 @@ class Tablas():
             # print("Columns desde tablas: "+str(columns))
             # print("Data desde tablas: "+str(data))
         else:
-            print('No hay resultados, arreglo = '+str(arreglo))
+            # print('No hay resultados, arreglo = '+str(arreglo))
             hayResultados = 'no'
         return {'hayResultados':hayResultados, 'pipeline': pipeline, 'columns':columns, 'data':data}
         # Return para debugging:
@@ -2448,7 +2448,7 @@ class Tablas():
                 # print("Columns desde tablas: "+str(columns))
                 # print("Data desde tablas: "+str(data))
             else:
-                print('No hay resultados, arreglo = '+str(arreglo))
+                # print('No hay resultados, arreglo = '+str(arreglo))
                 hayResultados = 'no'
         
         if self.titulo == 'Top 10 Tiendas con mejor Found Rate Chedraui' or  self.titulo=='Top 10 Tiendas con mejor Found Rate Cornershop':
@@ -2524,7 +2524,7 @@ class Tablas():
                     ordenamiento: -1,
                 }}
             ])
-            print("Pipeline desde Tablas: "+str(pipeline))
+            # print("Pipeline desde Tablas: "+str(pipeline))
             # Ejecutamos el query:
             collection = conexion_mongo('report').report_skuConershopChedrauiDetalle
             cursor = collection.aggregate(pipeline)
@@ -2551,7 +2551,7 @@ class Tablas():
                 # print("Columns desde tablas: "+str(columns))
                 # print("Data desde tablas: "+str(data))
             else:
-                print('No hay resultados, arreglo = '+str(arreglo))
+                # print('No hay resultados, arreglo = '+str(arreglo))
                 hayResultados = 'no'
         return {'hayResultados':hayResultados, 'pipeline': pipeline, 'columns':columns, 'data':data}
         # Return para debugging:
@@ -2592,7 +2592,7 @@ class Tablas():
 
             # print("query desde tabla nps: "+pipeline)
             cnxn = conexion_sql('DWH')
-            print('Evaluación NPS por Día desde Tabla: '+str(pipeline))
+            # print('Evaluación NPS por Día desde Tabla: '+str(pipeline))
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)
 
@@ -3219,7 +3219,7 @@ class Tablas():
             {'name': lblCornershopMesActualVsAnioAnterior, 'selector': selectorCornershopMesActualVsAnioAnterior, 'formato': 'porcentaje', 'ancho': '130px', 'colores': True},
         ]
         # Ejecutamos el query principal:
-        print('Pipeline desde tabla ComparativoVentaXCanal: '+str(pipeline))
+        # print('Pipeline desde tabla ComparativoVentaXCanal: '+str(pipeline))
         cursor = collection.aggregate(pipeline)
         arreglo = await cursor.to_list(length=1000)
         # print(str(arreglo))
@@ -3277,7 +3277,7 @@ class Tablas():
             # print("Columns desde tablas: "+str(columns))
             # print("Data desde tablas: "+str(data))
         else:
-            print('No hay resultados, arreglo = '+str(arreglo))
+            # print('No hay resultados, arreglo = '+str(arreglo))
             hayResultados = 'no'
         colores = ['normal', 0, 50]
         return {'hayResultados':hayResultados, 'pipeline': pipeline, 'columns':columns, 'data':data, 'colores': colores}
@@ -3285,7 +3285,7 @@ class Tablas():
         # return {'hayResultados':'no', 'pipeline': [], 'columns':[], 'data':[]}
         
     async def ResultadoRFM(self):
-        print('Entró a ResultadoRFM')
+        # print('Entró a ResultadoRFM')
         pipeline = []
         arreglo = []
         hayResultados = 'no'
@@ -3297,7 +3297,7 @@ class Tablas():
             {'$match': {'mes': self.filtros.mesRFM}},
         ]
         if self.titulo == 'Clientes por Segmento':
-            print('Entró a Ctes por segmento en Tablas')
+            # print('Entró a Ctes por segmento en Tablas')
             pipeline.extend([
                 {'$facet': {
                     'totales': [
@@ -3363,7 +3363,7 @@ class Tablas():
         cnxn = conexion_sql('DJANGO')
         cursor = cnxn.cursor().execute(pipeline)
         arreglo = crear_diccionario(cursor)
-        print(f'arreglo desde AltaUsuarios: {str(arreglo)}')
+        # print(f'arreglo desde AltaUsuarios: {str(arreglo)}')
         if len(arreglo) > 0:
             hayResultados = "si"
             for row in arreglo:
@@ -3389,6 +3389,64 @@ class Tablas():
         # Return para debugging:
         # return {'hayResultados':'no', 'pipeline': [], 'columns':[], 'data':[]}
 
+    async def PedidosPicker(self):
+        pipeline = []
+        data = []
+        columns = []
+        self.fecha_ini = datetime.strptime(self.filtros.fechas['fecha_ini'], '%Y-%m-%dT%H:%M:%S.%fZ').strftime('%Y-%m-%d')
+        self.fecha_fin = datetime.strptime(self.filtros.fechas['fecha_fin'], '%Y-%m-%dT%H:%M:%S.%fZ').strftime('%Y-%m-%d')
+        pipeline = f"""SELECT dy.region,dy.Pedidos,isnull(dy.Pedidos_picker,0) Pedidos_picker,isnull(dx.picker_oficial,0) picker_oficial, isnull(dx.picker_general,0) picker_general,
+        isnull(ROUND(CAST(dy.Pedidos_picker AS FLOAT)/CAST(dx.picker_general AS FLOAT),0),0) Pedidos_por_picker,dy.Pedidos_picker/cast(dy.n_dias as float) Pedidos_dia,
+        dy.sku
+        FROM (
+            select region,sum(n_pedido) Pedidos,sum(pedidos_picker) Pedidos_picker,count(DISTINCT fecha_ultimo_cambio) n_dias,
+            sum(case when nombre is not null then skus_enviados else 0 end) sku
+            from DWH.report.pedido_picker_productividad
+            where fecha_ultimo_cambio BETWEEN '{self.fecha_ini}' AND '{self.fecha_fin}'
+            group by region
+            ) dy
+        LEFT JOIN
+            (
+            select dx.region, sum(case WHEN dx.rol like 'SURTIDOR%' THEN 1 ELSE 0 END) picker_oficial, count(1) picker_general
+            from (select DISTINCT region,nombre,rol
+            from DWH.report.pedido_picker_productividad
+            where fecha_ultimo_cambio BETWEEN '{self.fecha_ini}' AND '{self.fecha_fin}'
+            and nombre is not null) dx
+            group by dx.region
+            ) dx on dy.region = dx.region"""
+        print("query desde tablas->Faltantes->PedidosPicker: ")
+        cnxn = conexion_sql('DJANGO')
+        cursor = cnxn.cursor().execute(pipeline)
+        arreglo = crear_diccionario(cursor)
+        if len(arreglo) > 0:
+            hayResultados = "si"
+            for row in arreglo:
+                data.append({
+                    'Lugar': row['region'],
+                    'PedidosEntregados': row['Pedidos'],
+                    'PedidosPicker': row['Pedidos_picker'],
+                    'PickerOficial': row['picker_oficial'],
+                    'PickerGeneral': row['picker_general'],
+                    'ItemPicker': row['sku'],
+                    'PedidosPorPicker': row['Pedidos_por_picker'],
+                    'PedidosPorDia': row['Pedidos_dia']
+                })
+                columns = [
+                    {'name': 'Lugar', 'selector':'Lugar', 'formato':'texto'},
+                    {'name': 'Pedidos Entregados', 'selector':'PedidosEntregados', 'formato':'texto'},
+                    {'name': 'Pedidos Picker', 'selector':'PedidosPicker', 'formato':'texto'},
+                    {'name': 'Picker Oficial', 'selector':'PickerOficial', 'formato':'texto'},
+                    {'name': 'Picker General', 'selector':'PickerGeneral', 'formato':'botonUsuario'},
+                    {'name': 'Item Picker', 'selector':'ItemPicker', 'formato':'botonUsuario'},
+                    {'name': 'Pedidos Por Picker', 'selector':'PedidosPorPicker', 'formato':'botonUsuario'},
+                    {'name': 'Pedidos Por Día', 'selector':'PedidosPorDia', 'formato':'botonUsuario'}
+                ]
+        else:
+            hayResultados = 'no'
+        return {'hayResultados':hayResultados, 'pipeline': pipeline, 'columns':columns, 'data':data}
+        # Return para debugging:
+        # return {'hayResultados':'no', 'pipeline': [], 'columns':[], 'data':[]}
+
 @router.post("/{seccion}")
 async def tablas (filtros: Filtro, titulo: str, seccion: str, user: dict = Depends(get_current_active_user)):
     if tienePermiso(user.id_rol, seccion):
@@ -3397,5 +3455,5 @@ async def tablas (filtros: Filtro, titulo: str, seccion: str, user: dict = Depen
         diccionario = await funcion()
         return diccionario
     else:
-        return {"message": "No tienes permiso para acceder a este recurso."}
+        return {"message": "No tienes permiso para acceder a este recurso"}
 

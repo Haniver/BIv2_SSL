@@ -233,6 +233,14 @@ const Routes = [
     }
   },
   {
+    path: '/pedidosPicker',
+    component: lazy(() => import('../../views/PedidosPicker')),
+    meta: {
+      publicRoute: false
+      // menuCollapsed: false
+    }
+  },
+  {
     path: '/documentos/:id',
     component: lazy(() => import('../../views/Documentos')),
     meta: {
