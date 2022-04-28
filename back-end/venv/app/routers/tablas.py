@@ -3395,54 +3395,152 @@ class Tablas():
         columns = []
         self.fecha_ini = datetime.strptime(self.filtros.fechas['fecha_ini'], '%Y-%m-%dT%H:%M:%S.%fZ').strftime('%Y-%m-%d')
         self.fecha_fin = datetime.strptime(self.filtros.fechas['fecha_fin'], '%Y-%m-%dT%H:%M:%S.%fZ').strftime('%Y-%m-%d')
-        pipeline = f"""SELECT dy.region,dy.Pedidos,isnull(dy.Pedidos_picker,0) Pedidos_picker,isnull(dx.picker_oficial,0) picker_oficial, isnull(dx.picker_general,0) picker_general,
-        isnull(ROUND(CAST(dy.Pedidos_picker AS FLOAT)/CAST(dx.picker_general AS FLOAT),0),0) Pedidos_por_picker,dy.Pedidos_picker/cast(dy.n_dias as float) Pedidos_dia,
-        dy.sku
-        FROM (
-            select region,sum(n_pedido) Pedidos,sum(pedidos_picker) Pedidos_picker,count(DISTINCT fecha_ultimo_cambio) n_dias,
-            sum(case when nombre is not null then skus_enviados else 0 end) sku
-            from DWH.report.pedido_picker_productividad
-            where fecha_ultimo_cambio BETWEEN '{self.fecha_ini}' AND '{self.fecha_fin}'
-            group by region
-            ) dy
-        LEFT JOIN
-            (
-            select dx.region, sum(case WHEN dx.rol like 'SURTIDOR%' THEN 1 ELSE 0 END) picker_oficial, count(1) picker_general
-            from (select DISTINCT region,nombre,rol
-            from DWH.report.pedido_picker_productividad
-            where fecha_ultimo_cambio BETWEEN '{self.fecha_ini}' AND '{self.fecha_fin}'
-            and nombre is not null) dx
-            group by dx.region
-            ) dx on dy.region = dx.region"""
-        print("query desde tablas->Faltantes->PedidosPicker: ")
-        cnxn = conexion_sql('DJANGO')
-        cursor = cnxn.cursor().execute(pipeline)
-        arreglo = crear_diccionario(cursor)
-        if len(arreglo) > 0:
-            hayResultados = "si"
-            for row in arreglo:
-                data.append({
-                    'Lugar': row['region'],
-                    'PedidosEntregados': row['Pedidos'],
-                    'PedidosPicker': row['Pedidos_picker'],
-                    'PickerOficial': row['picker_oficial'],
-                    'PickerGeneral': row['picker_general'],
-                    'ItemPicker': row['sku'],
-                    'PedidosPorPicker': row['Pedidos_por_picker'],
-                    'PedidosPorDia': row['Pedidos_dia']
-                })
-                columns = [
-                    {'name': 'Lugar', 'selector':'Lugar', 'formato':'texto'},
-                    {'name': 'Pedidos Entregados', 'selector':'PedidosEntregados', 'formato':'texto'},
-                    {'name': 'Pedidos Picker', 'selector':'PedidosPicker', 'formato':'texto'},
-                    {'name': 'Picker Oficial', 'selector':'PickerOficial', 'formato':'texto'},
-                    {'name': 'Picker General', 'selector':'PickerGeneral', 'formato':'botonUsuario'},
-                    {'name': 'Item Picker', 'selector':'ItemPicker', 'formato':'botonUsuario'},
-                    {'name': 'Pedidos Por Picker', 'selector':'PedidosPorPicker', 'formato':'botonUsuario'},
-                    {'name': 'Pedidos Por Día', 'selector':'PedidosPorDia', 'formato':'botonUsuario'}
-                ]
+        if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
+            self.filtro_lugar = True
+            if self.filtros.zona != '' and self.filtros.zona != "False" and self.filtros.zona != None:
+                self.nivel_lugar = 'tienda'
+                self.filtro_lugar = f" and ct.zona = '{self.filtros.zona}' "
+            else:
+                self.nivel_lugar = 'zona'
+                self.filtro_lugar = f" and ct.region = '{self.filtros.region}' "
         else:
-            hayResultados = 'no'
+            self.nivel_lugar = 'region'
+            self.filtro_lugar = ''
+
+        if self.titulo == 'Pedido Diario':
+            pipeline = f"""SELECT dy.{self.nivel_lugar} lugar,dy.Pedidos,isnull(dy.Pedidos_picker,0) Pedidos_picker, isnull(dx.picker_oficial,0) picker_oficial, isnull(dx.picker_general,0) picker_general,
+            isnull(ROUND(CAST(dy.Pedidos_picker AS FLOAT)/CAST(dx.picker_general AS FLOAT),0),0) Pedidos_por_picker,dy.Pedidos_picker/cast(dy.n_dias as float) Pedidos_dia,
+            dy.sku
+            FROM (
+                    select pp.{self.nivel_lugar},sum(n_pedido) Pedidos,sum(pedidos_picker) Pedidos_picker,count(DISTINCT fecha_ultimo_cambio) n_dias,
+                    sum(case when nombre is not null then skus_enviados else 0 end) sku
+                    from DWH.report.pedido_picker_productividad pp
+                    left join DWH.artus.catTienda ct on ct.tienda = pp.idtienda 
+                    where fecha_ultimo_cambio BETWEEN '{self.fecha_ini}' AND '{self.fecha_fin}'
+                    {self.filtro_lugar}
+                    group by pp.{self.nivel_lugar}
+                ) dy
+            LEFT JOIN
+                (
+                    select dx.{self.nivel_lugar}, sum(case WHEN dx.rol like 'SURTIDOR%' THEN 1 ELSE 0 END) picker_oficial, count(1) picker_general
+                    from (select DISTINCT pp.{self.nivel_lugar},nombre,rol
+                    from DWH.report.pedido_picker_productividad pp
+                    left join DWH.artus.catTienda ct on ct.tienda = pp.idtienda 
+                    where fecha_ultimo_cambio BETWEEN '{self.fecha_ini}' AND '{self.fecha_fin}'
+                    {self.filtro_lugar}
+                    and nombre is not null) dx
+                    group by dx.{self.nivel_lugar}
+                ) dx on dy.{self.nivel_lugar} = dx.{self.nivel_lugar}"""
+            # print(f"query desde tablas->Faltantes->PedidosPicker: {str(pipeline)}")
+            lugarMayus = self.nivel_lugar[:1].upper() + self.nivel_lugar[1:]
+            cnxn = conexion_sql('DJANGO')
+            cursor = cnxn.cursor().execute(pipeline)
+            arreglo = crear_diccionario(cursor)
+            if len(arreglo) > 0:
+                hayResultados = "si"
+                for row in arreglo:
+                    data.append({
+                        lugarMayus: row['lugar'],
+                        'PedidosEntregados': row['Pedidos'],
+                        'PedidosPicker': row['Pedidos_picker'],
+                        'PickerOficial': row['picker_oficial'],
+                        'PickerGeneral': row['picker_general'],
+                        'ItemPicker': row['sku'],
+                        'PedidosPorPicker': row['Pedidos_por_picker'],
+                        'PedidosPorDia': row['Pedidos_dia']
+                    })
+                    columns = [
+                        {'name': lugarMayus, 'selector':lugarMayus, 'formato':'texto', 'ancho': '350px'},
+                        {'name': 'Pedidos Entregados', 'selector':'PedidosEntregados', 'formato':'entero'},
+                        {'name': 'Pedidos Picker', 'selector':'PedidosPicker', 'formato':'entero'},
+                        {'name': 'Picker Oficial', 'selector':'PickerOficial', 'formato':'entero'},
+                        {'name': 'Picker General', 'selector':'PickerGeneral', 'formato':'entero'},
+                        {'name': 'Item Picker', 'selector':'ItemPicker', 'formato':'entero'},
+                        {'name': 'Pedidos Por Picker', 'selector':'PedidosPorPicker', 'formato':'entero'},
+                        {'name': 'Pedidos Por Día', 'selector':'PedidosPorDia', 'formato':'decimales'}
+                    ]
+            else:
+                hayResultados = 'no'
+                
+        elif self.titulo == 'Pedidos Picker por Agente':
+            pipeline = f"""select nombre, rol, nomina, sum(comision) comision, sum(pedidos_picker) pedidos_picker,count(DISTINCT fecha_ultimo_cambio) dias_trab,sum(pedidos_picker)*100/cast((count(DISTINCT fecha_ultimo_cambio)*10) as float) productividad,
+            sum(skus_enviados) sku
+            from DWH.report.pedido_picker_productividad pp
+            left join DWH.artus.catTienda ct on ct.tienda = pp.idtienda 
+            where nombre is not null
+            and fecha_ultimo_cambio BETWEEN '{self.fecha_ini}' AND '{self.fecha_fin}'
+            and ct.tienda = '{self.filtros.tienda}'
+            group by  nombre, rol, nomina"""
+            print(f"query desde tablas->Faltantes->PedidosPicker: {str(pipeline)}")
+            lugarMayus = self.nivel_lugar[:1].upper() + self.nivel_lugar[1:]
+            cnxn = conexion_sql('DJANGO')
+            cursor = cnxn.cursor().execute(pipeline)
+            arreglo = crear_diccionario(cursor)
+            if len(arreglo) > 0:
+                hayResultados = "si"
+                for row in arreglo:
+                    data.append({
+                        # Aquí métele el id del agente, o lo que sea basado en lo que tienes en el BI Actual
+                        'detalleAgente': row['nombre'],
+                        'IDNomina': row['nomina'],
+                        'Agente': row['nombre'],
+                        'Rol': row['rol'],
+                        'PedidosPicker': row['pedidos_picker'],
+                        'ItemPicker': row['sku'],
+                        'DiasTrabajados': row['dias_trab'],
+                        'Porc_Productividad': float(row['productividad']) / 100,
+                        'Comision': row['comision']
+                    })
+                    columns = [
+                        {'name': 'Ver Detalle', 'selector':'detalleAgente', 'formato':'detalleAgente'},
+                        {'name': 'ID Nómina', 'selector':'IDNomina', 'formato':'texto'},
+                        {'name': 'Agente', 'selector':'Agente', 'formato':'texto', 'ancho': '300px'},
+                        {'name': 'Rol', 'selector':'Rol', 'formato':'texto', 'ancho': '300px'},
+                        {'name': 'Pedidos Picker', 'selector':'PedidosPicker', 'formato':'entero'},
+                        {'name': 'Item Picker', 'selector':'ItemPicker', 'formato':'entero'},
+                        {'name': 'Días Trabajados', 'selector':'DiasTrabajados', 'formato':'entero'},
+                        {'name': '% Productividad', 'selector':'Porc_Productividad', 'formato':'porcentaje'},
+                        {'name': 'Comisión', 'selector':'Comision', 'formato':'moneda'}
+                    ]
+            else:
+                hayResultados = 'no'
+                
+        elif self.titulo == 'Pedidos por Día para $agente':
+            pipeline = f"""select fecha_ultimo_cambio, sum(comision) comision,sum(pedidos_picker) pedidos_picker,sum(pedidos_picker)*100/cast(10 as float) productividad,
+            sum(skus_enviados) sku
+            from DWH.report.pedido_picker_productividad
+            where nombre is not null
+            and fecha_ultimo_cambio BETWEEN '{self.fecha_ini}' AND '{self.fecha_fin}'
+            and nombre = '{self.filtros.agente}'
+            group by  fecha_ultimo_cambio, rol
+            order by fecha_ultimo_cambio"""
+            print(f"query desde tablas->Faltantes->PedidosPicker: {str(pipeline)}")
+            lugarMayus = self.nivel_lugar[:1].upper() + self.nivel_lugar[1:]
+            cnxn = conexion_sql('DJANGO')
+            cursor = cnxn.cursor().execute(pipeline)
+            arreglo = crear_diccionario(cursor)
+            if len(arreglo) > 0:
+                hayResultados = "si"
+                for row in arreglo:
+
+                    data.append({
+                        # Aquí métele el id del agente, o lo que sea basado en lo que tienes en el BI Actual
+                        'Fecha': row['fecha_ultimo_cambio'].strftime("%d/%m/%Y"),
+                        'PedidosPicker': row['pedidos_picker'],
+                        'ItemPicker': row['sku'],
+                        'Porc_Productividad': float(row['productividad']) / 100,
+                        'Comision': row['comision']
+                    })
+                    columns = [
+                        {'name': 'Fecha', 'selector':'Fecha', 'formato':'texto'},
+                        {'name': 'Pedidos Picker', 'selector':'PedidosPicker', 'formato':'entero'},
+                        {'name': 'Item Picker', 'selector':'ItemPicker', 'formato':'entero'},
+                        {'name': '% Productividad', 'selector':'Porc_Productividad', 'formato':'porcentaje'},
+                        {'name': 'Comisión', 'selector':'Comision', 'formato':'moneda'}
+                    ]
+            else:
+                hayResultados = 'no'
+                
         return {'hayResultados':hayResultados, 'pipeline': pipeline, 'columns':columns, 'data':data}
         # Return para debugging:
         # return {'hayResultados':'no', 'pipeline': [], 'columns':[], 'data':[]}

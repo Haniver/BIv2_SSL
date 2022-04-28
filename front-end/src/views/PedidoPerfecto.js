@@ -21,11 +21,11 @@ const PedidoPerfecto = () => {
 
     const seccion = 'PedidoPerfecto'
 
-    useEffect(() => {
-      console.log(`Región = ${region}`)
-      console.log(`Zona = ${zona}`)
-      console.log(`Tienda = ${tienda}`)
-    }, [region, zona, tienda])
+    // useEffect(() => {
+    //   console.log(`Región = ${region}`)
+    //   console.log(`Zona = ${zona}`)
+    //   console.log(`Tienda = ${tienda}`)
+    // }, [region, zona, tienda])
     
 
   return (

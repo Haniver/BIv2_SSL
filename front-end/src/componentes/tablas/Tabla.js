@@ -28,7 +28,7 @@ const FilterComponent = ({ filterText, onFilter, onClear }) => (
     </>
 )
 
-const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quitarPaginacion, fechas, region, zona, tienda, proveedor, tipoEntrega, depto, subDepto, mes, canal, agrupador, periodo, reload, setProducto, setUsuario, tipoEntrega2, tipoEntrega3, detalle, estatus, formato, sku, e3, canal2, opcionesPaginacion = [5, 10, 15], setCambiarLugar, botonEnviar, mesRFM, anioRFM}) => {
+const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quitarPaginacion, fechas, region, zona, tienda, proveedor, tipoEntrega, depto, subDepto, mes, canal, agrupador, periodo, reload, setProducto, setUsuario, tipoEntrega2, tipoEntrega3, detalle, estatus, formato, sku, e3, canal2, opcionesPaginacion = [5, 10, 15], setCambiarLugar, botonEnviar, mesRFM, anioRFM, agente}) => {
     const tituloEnviar = (tituloAPI !== undefined) ? tituloAPI : titulo
     // Skins
     const [skin, setSkin] = useSkin()
@@ -115,7 +115,8 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
             e3,
             canal2, 
             mesRFM, 
-            anioRFM
+            anioRFM,
+            agente
           }
         })
         dispatchLoader({tipo: 'recibirDeAPI'})
@@ -225,6 +226,18 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
                             🔗
                         </Button>
                     )
+                } else if (columna.formato === 'detalleAgente') {
+                    console.log("Entró a detalleAgente en Tabla.js")
+                    objeto_columna.cell = (d) => (
+                        <Button
+                            color='white'
+                            onClick={e => {
+                                setCambiarLugar(d.Agente)
+                            }}
+                        >
+                            🔗
+                        </Button>
+                    )
                 }
                 // Esto es para poner un código de colores a las celdas
                 if (columna.colores === true) {
@@ -239,8 +252,8 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
                 formatos[columna.selector] = columna.formato
             })
             const data_tmp = res.data.data
-            console.log("Data de tabla:")
-            console.log(data_tmp)
+            // console.log("Data de tabla:")
+            // console.log(data_tmp)
             const data = []
             data_tmp.forEach(fila => {
                 const objeto_a_insertar = {}
@@ -303,9 +316,9 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
             // console.log(`Query de ${titulo}:`)
             // console.log(JSON.stringify(res.data.pipeline)) // Esto lo estás comentando para ponerlo más abajo, independiente de que haya resultados o no
         }
-        console.log(`Query de ${tituloEnviar}:`)
-        console.log(JSON.stringify(res.data.pipeline))
-    }, [fechas, region, zona, tienda, tipoEntrega, depto, subDepto, mes, canal, agrupador, periodo, reload, tipoEntrega2, tipoEntrega3, detalle, estatus, formato, sku, e3, canal2, botonEnviar, mesRFM, anioRFM])
+        // console.log(`Query de ${tituloEnviar}:`)
+        // console.log(JSON.stringify(res.data.pipeline))
+    }, [fechas, region, zona, tienda, tipoEntrega, depto, subDepto, mes, canal, agrupador, periodo, reload, tipoEntrega2, tipoEntrega3, detalle, estatus, formato, sku, e3, canal2, botonEnviar, mesRFM, anioRFM, agente])
 
     //Búsqueda
     const [filterText, setFilterText] = useState('')
