@@ -81,7 +81,6 @@ class EjesMultiples():
         return  {'hayResultados':hayResultados,'categories':categories, 'series':series, 'pipeline': pipeline, 'lenArreglo':len(arreglo)}
 
     async def VentaSinImpuesto(self):
-        canal = self.filtros.canal if self.filtros.canal != '' and self.filtros.canal != "False" and self.filtros.canal != None else '1, 2, 3, 35, 36'
         anioElegido = self.fecha_fin_a12.year
         mesElegido = self.fecha_fin_a12.month
         categories = []
@@ -90,6 +89,16 @@ class EjesMultiples():
         arreglo = []
         hayResultados = 'no'
 
+        if self.filtros.canal != '' and self.filtros.canal != "False" and self.filtros.canal != None:
+            canal = self.filtros.canal
+        else:
+            cnxn = conexion_sql('DWH')
+            cursor = cnxn.cursor().execute("select distinct tipo from DWH.artus.catCanal where descripTipo not in ('Tienda Fisica')")
+            arreglo = crear_diccionario(cursor)
+            canal = ",".join([str(elemento['tipo']) for elemento in arreglo])
+            # print(f"Arreglo desde EjesMultiples: {arreglo}")
+            # canal = ''
+        # print(f"canal desde ejesMultiples -> VentaSinImpuesto: {canal}")
         if self.titulo == 'Venta anual por mes: $anioActual vs. $anioAnterior y Objetivo':
             mod_titulo_serie = ''
             serie1 = []

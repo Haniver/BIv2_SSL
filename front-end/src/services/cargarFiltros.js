@@ -144,6 +144,17 @@ class CargarFiltros {
         })
     }
 
+    cargarCanal = async () => {
+        return axios({
+            method: 'get',
+            url: `${CustomUrls.ApiUrl()}filtros/cargarCanal`,
+            headers: authHeader()
+        })
+        .then(resp => {
+            return resp.data
+        })
+    }
+
 }
 
 export default new CargarFiltros()

@@ -511,7 +511,13 @@ class Tablas():
         pipeline = []
         data = []
         columns = []
-        canal = self.filtros.canal if self.filtros.canal != '' and self.filtros.canal != "False" and self.filtros.canal != None else '1, 2, 3, 35, 36'
+        if self.filtros.canal != '' and self.filtros.canal != "False" and self.filtros.canal != None:
+            canal = self.filtros.canal
+        else:
+            cnxn = conexion_sql('DWH')
+            cursor = cnxn.cursor().execute("select distinct tipo from DWH.artus.catCanal where descripTipo not in ('Tienda Fisica')")
+            arreglo = crear_diccionario(cursor)
+            canal = ",".join([str(elemento['tipo']) for elemento in arreglo])
         anioElegido = datetime.strptime(self.filtros.fechas['fecha_fin'], '%Y-%m-%dT%H:%M:%S.%fZ').year
         mesElegido = datetime.strptime(self.filtros.fechas['fecha_fin'], '%Y-%m-%dT%H:%M:%S.%fZ').month
         diaElegido = datetime.strptime(self.filtros.fechas['fecha_fin'], '%Y-%m-%dT%H:%M:%S.%fZ').day

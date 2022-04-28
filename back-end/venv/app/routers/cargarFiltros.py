@@ -233,3 +233,20 @@ async def cargar_subdepto_agrupado(deptoAgrupado: str, user: dict = Depends(get_
             'value': row['Subdepartamento']
         })
     return res
+
+@router.get("/cargarCanal")
+async def cargar_subdepto_agrupado(user: dict = Depends(get_current_active_user)):
+    query = f"""select distinct descripTipo, tipo 
+    from DWH.artus.catCanal
+    where descripTipo not in ('Tienda Fisica')
+    order by descripTipo"""
+    cnxn = conexion_sql('DWH')
+    cursor = cnxn.cursor().execute(query)
+    resultados = crear_diccionario(cursor)
+    res = []
+    for row in resultados:
+        res.append({
+            'label': row['descripTipo'],
+            'value': row['tipo']
+        })
+    return res

@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.auth import get_current_active_user
-from app.servicios.conectar_sql import conexion_sql
+from app.servicios.conectar_sql import conexion_sql, crear_diccionario
+from app.servicios.conectar_mongo import conexion_mongo
 from app.servicios.Filtro import Filtro
 from fastapi import APIRouter, Depends, HTTPException
 from datetime import date, datetime
@@ -19,7 +20,13 @@ async def venta_sin_impuestos (filtros: Filtro, seccion: str):
 
     anio_actual = datetime.strptime(filtros.fechas['fecha_fin'], '%Y-%m-%dT%H:%M:%S.%fZ').year
     anio_anterior = anio_actual - 1
-    canal = filtros.canal if filtros.canal != '' and filtros.canal != "False" and filtros.canal != None else '1, 2, 35, 36, 3'
+    if filtros.canal != '' and filtros.canal != "False" and filtros.canal != None:
+        canal = filtros.canal
+    else:
+        cnxn = conexion_sql('DWH')
+        cursor = cnxn.cursor().execute("select distinct tipo from DWH.artus.catCanal where descripTipo not in ('Tienda Fisica')")
+        arreglo = crear_diccionario(cursor)
+        canal = ",".join([str(elemento['tipo']) for elemento in arreglo])
     meses_txt = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic']
     mes_actual = datetime.strptime(filtros.fechas['fecha_fin'], '%Y-%m-%dT%H:%M:%S.%fZ').month
 

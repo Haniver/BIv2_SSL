@@ -18,7 +18,13 @@ class TarjetasCombinadas():
     def __init__(self, filtros: Filtro, titulo: str):
         self.filtros = filtros
         self.titulo = titulo
-        self.canal = filtros.canal if filtros.canal != '' and filtros.canal != "False" and filtros.canal != None else '1, 2, 3, 35, 36'
+        if filtros.canal != '' and filtros.canal != "False" and filtros.canal != None:
+            self.canal = filtros.canal
+        else:
+            cnxn = conexion_sql('DWH')
+            cursor = cnxn.cursor().execute("select distinct tipo from DWH.artus.catCanal where descripTipo not in ('Tienda Fisica')")
+            arreglo = crear_diccionario(cursor)
+            self.canal = ",".join([str(elemento['tipo']) for elemento in arreglo])
         self.anioElegido = datetime.strptime(filtros.fechas['fecha_fin'], '%Y-%m-%dT%H:%M:%S.%fZ').year
         self.mesElegido = datetime.strptime(filtros.fechas['fecha_fin'], '%Y-%m-%dT%H:%M:%S.%fZ').month
         self.diaElegido = datetime.strptime(filtros.fechas['fecha_fin'], '%Y-%m-%dT%H:%M:%S.%fZ').day
@@ -77,12 +83,12 @@ class TarjetasCombinadas():
                 query += f""" and cd.idDepto = {self.filtros.depto} """
         query += " group by dt.anio order by dt.anio "
 
-        print(f"Query para {self.titulo}:\n{query}")
+        # print(f"Query para {self.titulo}:\n{query}")
         cnxn = conexion_sql('DWH')
         cursor = cnxn.cursor().execute(query)
         arreglo = crear_diccionario(cursor)
-        if self.titulo == 'MesAlDia':
-            print(f'Query MesAlDia en TarjetasCombinadas: {str(query)}')
+        # if self.titulo == 'MesAlDia':
+            # print(f'Query MesAlDia en TarjetasCombinadas: {str(query)}')
         # print(str(arreglo))
 
         if len(arreglo) >= 2:
@@ -122,7 +128,7 @@ class TarjetasCombinadas():
             hayResultados = "no"
             res = '--'
 
-        print(f'Respuesta desde TarjetasCombinadas: {res}')
+        # print(f'Respuesta desde TarjetasCombinadas: {res}')
         return {'hayResultados':hayResultados, 'pipeline':query, 'res':res}
 
 @router.post("/{seccion}")

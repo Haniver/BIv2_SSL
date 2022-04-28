@@ -143,14 +143,6 @@ const Filtro = (props) => {
     {label: 'Pickup', value: 'pickup'}
   ]
 
-  const comboCanal = [
-    {label: 'Tienda Online', value: 1},
-    {label: 'Call Center', value: 2},
-    {label: 'Cornershop', value: 35},
-    {label: 'Rappi', value: 36},
-    {label: 'Restaurantes', value: 3}
-  ]
-
   const comboCanal2 = [
     {label: 'Cornershop', value: 'Cornershop'},
     {label: 'Chedraui', value: 'Chedraui'}
@@ -224,6 +216,7 @@ const Filtro = (props) => {
   const [comboProveedor, setComboProveedor] = useState([{value:'', label:''}])
   const [comboFormato, setComboFormato] = useState([{value:'', label:''}])
   const [comboNps, setComboNps] = useState([{value:'', label:''}])
+  const [comboCanal, setComboCanal] = useState([{value:'', label:''}])
   // Hooks para deshabilitar comboboxes
   const [isZonaDisabled, setIsZonaDisabled] = useState(true)
   const [isTiendaDisabled, setIsTiendaDisabled] = useState(true)
@@ -236,7 +229,7 @@ const Filtro = (props) => {
   const [deptoAgrupadoValue, setDeptoAgrupadoValue] = useState({value:'', label:''})
   const [subDeptoValue, setSubDeptoValue] = useState({value:'', label:''})
   const [subDeptoAgrupadoValue, setSubDeptoAgrupadoValue] = useState({value:'', label:''})
-  const [canalValue, setCanalValue] = useState(comboCanal[0])
+  const [canalValue, setCanalValue] = useState({value:'', label:''})
   const [canal2Value, setCanal2Value] = useState({value:'', label:''})
   const [e3Value, setE3Value] = useState({value:'', label:''})
   const [anioValue, setAnioValue] = useState(comboAnio[0])
@@ -670,6 +663,10 @@ const Filtro = (props) => {
     if (props.nps !== undefined) {
       const comboNps_temp = await CargarFiltros.cargarNps()
       setComboNps(comboNps_temp)
+    }
+    if (props.canal !== undefined) {
+      const comboCanal_temp = await CargarFiltros.cargarCanal()
+      setComboCanal(comboCanal_temp)
     }
   }, [])
 
