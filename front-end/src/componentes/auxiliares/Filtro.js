@@ -610,9 +610,7 @@ const Filtro = (props) => {
           // fechas_tmp = {fecha_ini: new Date('2000-01-01'), fecha_fin: new Date(currentDate.setDate(currentDate.getDate() - 7))} // Le quitamos la semana vencida porque ahora en el dashboard catalogoArticulos queremos que se muestre semana y mes corrientes
           fechas_tmp = {fecha_ini: new Date('2000-01-01'), fecha_fin: new Date(currentDate.setDate(currentDate.getDate()))}
         } else if (props.agrupador === 'mes') {
-          // fechas_tmp = {fecha_ini: new Date('2000-01-01'), fecha_fin: new Date(currentDate.setMonth(currentDate.getMonth() - 1))} // Le quitamos el mes vencido porque ahora en el dashboard catalogoArticulos queremos que se muestre semana y mes corrientes
-          fechas_tmp = {fecha_ini: new Date('2000-01-01'), fecha_fin: new Date(currentDate.setMonth(currentDate.getMonth()))}
-        } else {
+          fechas_tmp = {fecha_ini: new Date('2000-01-01'), fecha_fin: new Date(currentDate.setMonth(currentDate.getMonth() - 1))} 
           fechas_tmp = {fecha_ini: new Date('2000-01-01'), fecha_fin: new Date()}
         }
         const comboPeriodo_temp = await CargarFiltros.cargarPeriodo(props.agrupador, fechas_tmp)
