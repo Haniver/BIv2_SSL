@@ -611,7 +611,6 @@ const Filtro = (props) => {
           fechas_tmp = {fecha_ini: new Date('2000-01-01'), fecha_fin: new Date(currentDate.setDate(currentDate.getDate()))}
         } else if (props.agrupador === 'mes') {
           fechas_tmp = {fecha_ini: new Date('2000-01-01'), fecha_fin: new Date(currentDate.setMonth(currentDate.getMonth() - 1))} 
-          fechas_tmp = {fecha_ini: new Date('2000-01-01'), fecha_fin: new Date()}
         }
         const comboPeriodo_temp = await CargarFiltros.cargarPeriodo(props.agrupador, fechas_tmp)
         setComboPeriodo(comboPeriodo_temp)
