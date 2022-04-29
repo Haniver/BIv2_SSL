@@ -607,9 +607,11 @@ const Filtro = (props) => {
         let fechas_tmp = {}
         const currentDate = new Date()
         if (props.agrupador === 'semana') {
-          fechas_tmp = {fecha_ini: new Date('2000-01-01'), fecha_fin: new Date(currentDate.setDate(currentDate.getDate() - 7))}
+          // fechas_tmp = {fecha_ini: new Date('2000-01-01'), fecha_fin: new Date(currentDate.setDate(currentDate.getDate() - 7))} // Le quitamos la semana vencida porque ahora en el dashboard catalogoArticulos queremos que se muestre semana y mes corrientes
+          fechas_tmp = {fecha_ini: new Date('2000-01-01'), fecha_fin: new Date(currentDate.setDate(currentDate.getDate()))}
         } else if (props.agrupador === 'mes') {
-          fechas_tmp = {fecha_ini: new Date('2000-01-01'), fecha_fin: new Date(currentDate.setMonth(currentDate.getMonth() - 1))}
+          // fechas_tmp = {fecha_ini: new Date('2000-01-01'), fecha_fin: new Date(currentDate.setMonth(currentDate.getMonth() - 1))} // Le quitamos el mes vencido porque ahora en el dashboard catalogoArticulos queremos que se muestre semana y mes corrientes
+          fechas_tmp = {fecha_ini: new Date('2000-01-01'), fecha_fin: new Date(currentDate.setMonth(currentDate.getMonth()))}
         } else {
           fechas_tmp = {fecha_ini: new Date('2000-01-01'), fecha_fin: new Date()}
         }
@@ -621,9 +623,21 @@ const Filtro = (props) => {
 
   useEffect(() => {
     if (props.periodo !== undefined) {
-      setPeriodoValue(comboPeriodo.at(-1))
+      if (comboPeriodo.length > 1 && props.fechas === undefined && (props.agrupador === 'semana' || props.agrupador === 'mes')) { // Esto es el caso específico del dashboard CatalogoArticulos donde se muestra la semana o mes corriente, pero por default se elige la vencida
+        setPeriodoValue(comboPeriodo.at(-2))
+      } else {
+        setPeriodoValue(comboPeriodo.at(-1))
+      }
       if (props.botonEnviar === undefined) {
-        props.setPeriodo(comboPeriodo.at(-1).value)
+        if (comboPeriodo.length > 1 && props.fechas === undefined && (props.agrupador === 'semana' || props.agrupador === 'mes')) {
+          console.log(`estás trantando de poner el periodo en el penúltimo de:`)
+          console.log(comboPeriodo)
+          props.setPeriodo(comboPeriodo.at(-2).value)
+        } else {
+          console.log(`estás trantando de poner el periodo en el último de:`)
+          console.log(comboPeriodo)
+          props.setPeriodo(comboPeriodo.at(-1).value)
+        }
         if (props.setPeriodoLabel !== undefined) {
           const label_tmp = comboPeriodo.at(-1).label
           props.setPeriodoLabel(label_tmp.substring(0, label_tmp.length - 5))
