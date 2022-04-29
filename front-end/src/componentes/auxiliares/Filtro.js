@@ -623,13 +623,13 @@ const Filtro = (props) => {
 
   useEffect(() => {
     if (props.periodo !== undefined) {
-      if (comboPeriodo.length > 1 && props.fechas === undefined && (props.agrupador === 'semana' || props.agrupador === 'mes')) { // Esto es el caso específico del dashboard CatalogoArticulos donde se muestra la semana o mes corriente, pero por default se elige la vencida
+      if (comboPeriodo.length > 1 && props.fechas === undefined && (props.agrupador === 'semana')) { // Esto es el caso específico del dashboard CatalogoArticulos donde se muestra la semana o mes corriente, pero por default se elige la vencida
         setPeriodoValue(comboPeriodo.at(-2))
       } else {
         setPeriodoValue(comboPeriodo.at(-1))
       }
       if (props.botonEnviar === undefined) {
-        if (comboPeriodo.length > 1 && props.fechas === undefined && (props.agrupador === 'semana' || props.agrupador === 'mes')) {
+        if (comboPeriodo.length > 1 && props.fechas === undefined && (props.agrupador === 'semana')) {
           console.log(`estás trantando de poner el periodo en el penúltimo de:`)
           console.log(comboPeriodo)
           props.setPeriodo(comboPeriodo.at(-2).value)
