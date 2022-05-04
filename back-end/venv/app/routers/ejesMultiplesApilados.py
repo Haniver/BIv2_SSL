@@ -46,10 +46,9 @@ class EjesMultiplesApilados():
                 {'formato': 'moneda', 'titulo': 'Pesos', 'color': 'dark', 'opposite': True}
             ]
             series = [
-                {'name': 'Entegados a Tiempo', 'data':[387,430,430,385,177,139,466,380,66,627], 'type': 'column', 'yAxis': 0, 'formato_tooltip':'entero', 'color':'success'},
-                {'name': 'Entregados Fuera de Tiempo', 'data':[356,375,356,410,231,101,228,340,90,366], 'type': 'column', 'yAxis': 0, 'formato_tooltip':'entero', 'color':'warning'},
-                {'name': 'No Entregados a Tiempo', 'data':[322,453,515,300,123,196,185,368,42,446], 'type': 'column', 'yAxis': 0, 'formato_tooltip':'entero', 'color':'info'},
-                {'name': 'No Entregados Fuera de Tiempo', 'data':[332,353,550,302,246,189,359,396,74,525], 'type': 'column', 'yAxis': 0, 'formato_tooltip':'entero', 'color':'danger'},
+                {'name': 'Entegado', 'data':[387,430,430,385,177,139,466,380,66,627], 'type': 'column', 'yAxis': 0, 'formato_tooltip':'entero', 'color':'success'},
+                {'name': 'Hoy a Tiempo', 'data':[322,453,515,300,123,196,185,368,42,446], 'type': 'column', 'yAxis': 0, 'formato_tooltip':'entero', 'color':'info'},
+                {'name': 'Hoy Atrasado', 'data':[332,353,550,302,246,189,359,396,74,525], 'type': 'column', 'yAxis': 0, 'formato_tooltip':'entero', 'color':'danger'},
                 {'name': 'Venta', 'data':[374832, 207465, 703913, 910591, 751787, 172506, 288074, 661736, 235141, 952214], 'type': 'spline', 'yAxis': 1, 'formato_tooltip':'moneda', 'color':'primary'},
                 {'name': 'Ticket Promedio', 'data':[348.18, 365.62, 515.61, 563.31, 456.64, 535.17, 545.61, 594.79, 637.79, 716.98], 'type': 'spline', 'yAxis': 2, 'formato_tooltip':'moneda', 'color':'dark'},
             ]
