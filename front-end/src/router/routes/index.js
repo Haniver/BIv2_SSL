@@ -247,6 +247,14 @@ const Routes = [
       publicRoute: false
       // menuCollapsed: false
     }
+  },
+  {
+    path: '/temporada',
+    component: lazy(() => import('../../views/Temporada')),
+    meta: {
+      publicRoute: false
+      // menuCollapsed: false
+    }
   }
 ]
 

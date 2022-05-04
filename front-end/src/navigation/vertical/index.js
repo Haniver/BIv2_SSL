@@ -1,6 +1,6 @@
 import AuthService from "@src/services/auth.service"
 
-import { Truck, Home, BarChart2, Search, Clock, DollarSign, FileMinus, Award, Monitor, Grid, MapPin, Watch, Sunrise, Volume2, CornerLeftDown, Box, ShoppingBag, Rewind, RotateCw, Tool, UserPlus, Map, HelpCircle, Database, Code, FileText, MousePointer } from 'react-feather'
+import { Truck, Home, BarChart2, Search, Clock, DollarSign, FileMinus, Award, Monitor, Grid, MapPin, Watch, Sunrise, Volume2, CornerLeftDown, Box, ShoppingBag, Rewind, RotateCw, Tool, UserPlus, Map, HelpCircle, Database, Code, FileText, MousePointer, CloudSnow } from 'react-feather'
 
 const dashboards = []
 const reportes = []
@@ -54,7 +54,8 @@ const navigation = [
         Database,
         Code,
         FileText,
-        MousePointer
+        MousePointer,
+        CloudSnow
       }
 
       vistas.forEach(elemento => {
