@@ -33,6 +33,7 @@ const EjesMultiplesApilados = ({ titulo, seccion, fechas, tituloAPI }) => {
       }, {contador: 0})
     const [series, setSeries] = useState([])
     const [yAxis, setYAxis] = useState([])
+    const [timer, setTimer] = useState(0)
     const [options, setOptions] = useState({
         chart: {
             zoomType: 'xy'
@@ -175,7 +176,11 @@ const EjesMultiplesApilados = ({ titulo, seccion, fechas, tituloAPI }) => {
             setFormato_columnas(formato_columnas_tmp)
         }
         // console.log(`Pipeline de ${titulo}: ${JSON.stringify(res.data.pipeline)}`)
-      }, [fechas])
+        // Timer
+        const timeout = setTimeout(() => {
+            setTimer(timer + 1)
+        }, 300000)
+      }, [fechas, timer])
 
     useEffect(() => {
         const options = {

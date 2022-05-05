@@ -24,7 +24,12 @@ const Temporada = () => {
       </Row>
       <Row className='match-height'>
         <Col sm='12'>
-            <EjesMultiplesApilados seccion={seccion} titulo='Pedidos Levantados Hoy' fechas={fechas} />
+            <EjesMultiplesApilados seccion={seccion} titulo='Pedidos Levantados Hoy (con impuesto)' />
+        </Col>
+      </Row>
+      <Row className='match-height'>
+        <Col sm='12'>
+            <EjesMultiplesApilados seccion={seccion} titulo='Pedidos Pagados Hoy (sin impuesto)' />
         </Col>
       </Row>
     </>
