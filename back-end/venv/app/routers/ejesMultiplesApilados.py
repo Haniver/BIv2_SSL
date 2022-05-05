@@ -95,6 +95,7 @@ class EjesMultiplesApilados():
             query = f"""select hora, sum(nTicket) pedidos, sum(ventaSinImpuestos) venta
             from DWH.artus.ventaDiariaHora vdh
             where fecha = {hoy}
+            and idCanal = 1
             group by hora
             order by hora
             """
