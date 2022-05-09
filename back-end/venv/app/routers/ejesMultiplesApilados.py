@@ -209,7 +209,7 @@ class EjesMultiplesApilados():
                     contador += 1
                 # Los ejes Y son fijos y los creamos aquí:
                 yAxis = [
-                    {'formato': 'entero', 'titulo': 'Pedidos', 'color': 'success', 'opposite': False},
+                    {'formato': 'entero', 'titulo': 'Pedidos', 'color': 'secondary', 'opposite': False},
                     {'formato': 'porcentaje', 'titulo': '% Participación Vs. Objetivo', 'color': 'danger', 'opposite': False},
                     {'formato': 'moneda', 'titulo': '', 'color': 'primary', 'opposite': True},
                     {'formato': 'moneda', 'titulo': 'Pesos', 'color': 'dark', 'opposite': True}
