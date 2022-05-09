@@ -19,7 +19,7 @@ require('highcharts/modules/data')(Highcharts)
 require('highcharts/modules/exporting')(Highcharts)
 require('highcharts/modules/export-data')(Highcharts)
 
-const EjesMultiplesApilados = ({ titulo, seccion, fechas, tituloAPI }) => {
+const EjesMultiplesApilados = ({ titulo, seccion, fechas, tituloAPI, canal }) => {
     const titulo_enviar = (tituloAPI) ? tituloAPI : titulo // Como la API usa el título de la gráfica para regresar su valor, había un problema cuando ese título es variable, como cuando incluye la fecha actual. Entonces, si desde la vista le mandas el prop tituloAPI, es ese el que se usa para la API. Si lo omites, se usa la variable titulo como estaba pensado originalmente
     const [estadoLoader, dispatchLoader] = useReducer((estadoLoader, accion) => {
         switch (accion.tipo) {
@@ -90,7 +90,8 @@ const EjesMultiplesApilados = ({ titulo, seccion, fechas, tituloAPI }) => {
           url: `${CustomUrls.ApiUrl()}ejesMultiplesApilados/${seccion}?titulo=${titulo_enviar}`,
           headers: authHeader(),
           data: {
-            fechas
+            fechas,
+            canal
           }
         })
         dispatchLoader({tipo: 'recibirDeAPI'})
@@ -101,18 +102,33 @@ const EjesMultiplesApilados = ({ titulo, seccion, fechas, tituloAPI }) => {
                 if (elemento.type === 'column') {
                     formato_columnas_tmp = elemento.formato_tooltip
                 }
+                let datos = []
+                if (elemento.formato_tooltip === 'multiple') {
+                    datos = res.data.auxiliar[2].data
+                } else {
+                    datos = elemento.data
+                }
                 series_tmp.push({
                     name: elemento.name,
-                    data: elemento.data,
+                    data: datos,
                     type: elemento.type,
                     yAxis: elemento.yAxis,
                     color: colors[elemento.color].main,
                     tooltip: {
                         pointFormatter () {
-                                let valueDecimals = 2
-                                let valuePrefix = ''
-                                let valueSuffix = ''
-                                let multiplicador = 1
+                            let valueDecimals = 2
+                            let valuePrefix = ''
+                            let valueSuffix = ''
+                            let multiplicador = 1
+                            if (elemento.formato_tooltip === 'multiple') {
+                                // La forma correcta de hacer esto es ver, por cada elemento de "auxiliar", cuál es el formato y de ahí ir construyendo la cadena que se va a regresar para el tooltip. Pero como me agarran las prisas y lo más probable es que esto nada más lo vaya a usar para Pedidos por Día en Temporada, lo voy a hacer para ese específico
+                                console.log(`El punto es el #${this.options.y}`)
+                                const valor1 = res.data.auxiliar[0].data[datos.indexOf(this.options.y)]
+                                console.log(res.data.auxiliar[0].data)
+                                const valor2 = res.data.auxiliar[1].data[datos.indexOf(this.options.y)]
+                                const valor3 = this.options.y
+                                return `% Participación: ${Highcharts.numberFormat(valor1, 2, '.', ',')}%<br> Objetivo: ${Highcharts.numberFormat(valor2, 2, '.', ',')}%<br> <b>Diferencia: ${Highcharts.numberFormat(valor3, 2, '.', ',')}%</b>`
+                            } else {
                                 if (elemento.formato_tooltip === 'moneda') {
                                     valuePrefix = '$'
                                 } else if (elemento.formato_tooltip === 'entero') {
@@ -122,7 +138,8 @@ const EjesMultiplesApilados = ({ titulo, seccion, fechas, tituloAPI }) => {
                                     multiplicador = 100
                                 }
                                 const punto = multiplicador * this.options.y
-                            return `${this.series.name}: <b>${valuePrefix}${Highcharts.numberFormat(punto, valueDecimals, '.', ',')}${valueSuffix}</b>`
+                                return `${this.series.name}: <b>${valuePrefix}${Highcharts.numberFormat(punto, valueDecimals, '.', ',')}${valueSuffix}</b>`
+                            }
                         }
                     }
                 })
@@ -180,7 +197,7 @@ const EjesMultiplesApilados = ({ titulo, seccion, fechas, tituloAPI }) => {
         const timeout = setTimeout(() => {
             setTimer(timer + 1)
         }, 300000)
-      }, [fechas, timer])
+      }, [fechas, canal, timer])
 
     useEffect(() => {
         const options = {

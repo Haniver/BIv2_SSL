@@ -11,15 +11,16 @@ import Pie from '../componentes/graficos/Pie'
 
 const Temporada = () => {
     
-    const [fechas, setFechas] = useState({fecha_ini: fechas_srv.primeroDelMesVencido(), fecha_fin: fechas_srv.actualVencida()})
-    
+    const [fechas, setFechas] = useState({fecha_ini: fechas_srv.primeroDelMesVencido(), fecha_fin: new Date()})
+    const [canal, setCanal] = useState(false)
+
     const seccion = 'Temporada'
 
   return (
     <>
       <Row className='match-height'>
         <Col sm='12'>
-          <Filtro fechas={fechas} setFechas={setFechas} />
+          <Filtro fechas={fechas} canal={canal} setFechas={setFechas} setCanal={setCanal} />
         </Col>
       </Row>
       <Row className='match-height'>
@@ -30,6 +31,11 @@ const Temporada = () => {
       <Row className='match-height'>
         <Col sm='12'>
             <EjesMultiplesApilados seccion={seccion} titulo='Pedidos Pagados Hoy (sin impuesto)' />
+        </Col>
+      </Row>
+      <Row className='match-height'>
+        <Col sm='12'>
+            <EjesMultiplesApilados seccion={seccion} titulo='Pedidos por Día' fechas={fechas} canal={canal} />
         </Col>
       </Row>
     </>
