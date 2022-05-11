@@ -22,7 +22,7 @@ const Login = () => {
     e.preventDefault()
 
     setErrorVisible(false)
-    console.log(username, password)
+    // console.log(username, password)
     AuthService.login(username, password).then(
       () => {
         window.location.assign('/')
