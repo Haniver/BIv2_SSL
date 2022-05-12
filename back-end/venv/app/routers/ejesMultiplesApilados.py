@@ -105,7 +105,7 @@ class EjesMultiplesApilados():
             if self.filtros.canal == False or self.filtros.canal == 'False' or self.filtros.canal == '':
                 filtroCanal = f'and idCanal = {self.filtros.canal}'
             else:
-                filtroCanal = ''
+                filtroCanal = 'and idCanal not in (0)'
             query = f"""select hora, sum(nTicket) pedidos, sum(ventaSinImpuestos) venta
             from DWH.artus.ventaDiariaHora vdh
             where fecha = {hoy}
