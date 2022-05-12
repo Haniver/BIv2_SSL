@@ -60,7 +60,10 @@ class EjesMultiplesApilados():
                     # Si es una hora nueva,
                     if int(elemento['hora']) > categories[-1]:
                         # Agregamos al arreglo ticketPromedio la venta de la hora pasada entre la suma de todos los pedidos para esa hora
-                        ticketPromedio.append(venta[-1] / float(pedidosEntregados[-1] + pedidosHoyATiempo[-1] + pedidosHoyAtrasados[-1]))
+                        if (pedidosEntregados[-1] + pedidosHoyATiempo[-1] + pedidosHoyAtrasados[-1]) > 0:
+                            ticketPromedio.append(venta[-1] / float(pedidosEntregados[-1] + pedidosHoyATiempo[-1] + pedidosHoyAtrasados[-1]))
+                        else:
+                            ticketPromedio.append(0)
                         # Agregamos la nueva hora a las categorías
                         categories.append(int(elemento['hora']))
                         # Inicializamos a 0 los pedidos y la venta para esa hora
@@ -76,7 +79,10 @@ class EjesMultiplesApilados():
                         pedidosHoyAtrasados[int(elemento['hora'])] += int(elemento['pedidos'])
                     venta[int(elemento['hora'])] += float(elemento['venta'])
                 # Volvemos a sacar el ticket promedio para la última hora
-                ticketPromedio.append(venta[-1] / float(pedidosEntregados[-1] + pedidosHoyATiempo[-1] + pedidosHoyAtrasados[-1]))
+                if (pedidosEntregados[-1] + pedidosHoyATiempo[-1] + pedidosHoyAtrasados[-1]) > 0:
+                    ticketPromedio.append(venta[-1] / float(pedidosEntregados[-1] + pedidosHoyATiempo[-1] + pedidosHoyAtrasados[-1]))
+                else:
+                    ticketPromedio.append(0)
                 # Los ejes Y son fijos y los creamos aquí:
                 yAxis = [
                     {'formato': 'entero', 'titulo': 'Pedidos', 'color': 'success', 'opposite': False},
@@ -120,7 +126,10 @@ class EjesMultiplesApilados():
                     pedidosNum = elemento['pedidos']
                     pedidos.append(int(pedidosNum))
                     venta.append(ventaNum)
-                    ticketPromedio.append(ventaNum / float(pedidosNum))
+                    if int(pedidosNum) > 0:
+                        ticketPromedio.append(ventaNum / float(pedidosNum))
+                    else:
+                        ticketPromedio.append(0)
                     categories.append(int(elemento['hora']))
                 # Los ejes Y son fijos y los creamos aquí:
                 yAxis = [
