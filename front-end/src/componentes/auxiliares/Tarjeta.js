@@ -22,10 +22,12 @@ const Tarjeta = ({ icono, titulo, tituloAPI, seccion, className, formato, fechas
 
   const titulo_enviar = (tituloAPI) ? tituloAPI : titulo // Como la API usa el título de la tarjeta para regresar su valor, había un problema cuando ese título es variable, como cuando incluye la fecha actual. Entonces, si desde la vista le mandas el prop tituloAPI, es ese el que se usa para la API. Si lo omites, se usa la variable titulo como estaba pensado originalmente
 
+  const [tituloMostrar, setTituloMostrar] = useState(titulo)
   const queCambiar = (resAPI === undefined) ? [fechas, region, zona, tienda, canal, depto, subDepto, mesRFM, anioRFM] : [resAPI]
   useEffect(async () => {
     let numero_tmp = 3.1416
     let hayResultados = 'no'
+    let tituloMod_tmp = ''
     if (resAPI !== undefined) {
       if (resAPI !== 'cargando') {
         numero_tmp = resAPI.res[titulo_enviar]
@@ -52,6 +54,7 @@ const Tarjeta = ({ icono, titulo, tituloAPI, seccion, className, formato, fechas
       })
       numero_tmp = res.data.res
       hayResultados = res.data.hayResultados
+      tituloMod_tmp = res.data.tituloMod
       dispatchLoader({tipo: 'recibirDeAPI'})
     }
     if (hayResultados === 'si') {
@@ -76,6 +79,12 @@ const Tarjeta = ({ icono, titulo, tituloAPI, seccion, className, formato, fechas
           numero_tmp = formatoEntero.format(numero_tmp)
         }
       }
+      if (tituloMod_tmp !== undefined && tituloMod_tmp !== '') {
+        console.log(`tituloMod no está definido`)
+        setTituloMostrar(tituloMod_tmp)
+      } else {
+        console.log(`tituloMod sí está definido: ${tituloMod_tmp}`)
+      }
       setNumero(numero_tmp)
     } else {
       setNumero("Sin Resultados")
@@ -92,7 +101,7 @@ const Tarjeta = ({ icono, titulo, tituloAPI, seccion, className, formato, fechas
             <div className='avatar-content'>{icono}</div>
           </div>
           <h3 className={`font-weight-bolder${(colorPositivo) ? ((parseFloat(numero) < 0) ? ' texto-rojo' : ' texto-verde') : ''}`}>{ numero }</h3>
-          <p className='card-text line-ellipsis'>{titulo}</p>
+          <p className='card-text line-ellipsis'>{tituloMostrar}</p>
         </>}
         {(estadoLoader.contador !== 0 || resAPI === 'cargando') && <LoadingGif />}
       </CardBody>

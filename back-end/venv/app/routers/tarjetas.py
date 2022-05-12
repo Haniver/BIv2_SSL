@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from app.auth import get_current_active_user
 from app.servicios.conectar_mongo import conexion_mongo
+from app.servicios.conectar_sql import conexion_sql, crear_diccionario
 from app.servicios.Filtro import Filtro
 from datetime import date, datetime, timedelta
 from calendar import monthrange
@@ -430,6 +431,91 @@ class Tarjetas():
                 # print(str(res))
 
         return {'hayResultados':hayResultados, 'res': res, 'pipeline': pipeline}
+
+    async def Temporada(self):
+        hoyStr = datetime.today().strftime('%Y-%m-%d')
+        hoyInt = int(hoyStr[0:4]) * 10000 + int(hoyStr[5:7]) * 100 + int(hoyStr[8:10])
+        tituloMod = ''
+        res = ''
+        hayResultados = 'no'
+        query = ''
+        hayCanal = False if self.filtros.canal == False or self.filtros.canal == 'False' or self.filtros.canal == '' else True
+        if self.titulo == 'Venta Última Hora':
+            query = f"""select hora, sum(ventaConImp) venta
+                from DWH.report.pedido_hora ph
+                where fechaCreacion = '{hoyStr}'
+                and hora in (
+                    select max(hora)
+                    from DWH.report.pedido_hora 
+                    where fechaCreacion = '{hoyStr}'
+                )
+                group by hora
+            """
+            cnxn = conexion_sql('DWH')
+            cursor = cnxn.cursor().execute(query)
+            arreglo = crear_diccionario(cursor)
+            # print(f"arreglo desde ejesMultiplesApilados: {str(arreglo)}")
+            if len(arreglo) > 0:
+                hayResultados = "si"
+                tituloMod += f"{self.titulo} (0{arreglo[0]['hora']}:00)" if int(arreglo[0]['hora']) < 10 else f"{self.titulo} ({arreglo[0]['hora']}:00)"
+                res = arreglo[0]['venta']
+
+        if self.titulo == 'Pedidos Última Hora':
+            query = f"""select hora, sum(pedidos) pedidos
+                from DWH.report.pedido_hora ph
+                where fechaCreacion = '{hoyStr}'
+                and hora in (
+                    select max(hora)
+                    from DWH.report.pedido_hora 
+                    where fechaCreacion = '{hoyStr}'
+                )
+                group by hora
+                """
+            cnxn = conexion_sql('DWH')
+            cursor = cnxn.cursor().execute(query)
+            arreglo = crear_diccionario(cursor)
+            # print(f"arreglo desde ejesMultiplesApilados: {str(arreglo)}")
+            if len(arreglo) > 0:
+                hayResultados = "si"
+                tituloMod += f"{self.titulo} (0{arreglo[0]['hora']}:00)" if int(arreglo[0]['hora']) < 10 else f"{self.titulo} ({arreglo[0]['hora']}:00)"
+                res = arreglo[0]['pedidos']
+
+        if self.titulo == 'Venta Hoy':
+            query = f"""select sum(ventaSinImpuestos) venta
+                from DWH.artus.ventaDiariaHora vdh 
+                where fecha = {hoyInt}
+                and idCanal {'not in (0' if not hayCanal else 'in ('+str(self.filtros.canal)})
+                """
+            # print(f"query desde tarjetas.py -> Temporada -> Venta Hoy: {str(query)}")
+            cnxn = conexion_sql('DWH')
+            cursor = cnxn.cursor().execute(query)
+            arreglo = crear_diccionario(cursor)
+            # print(f"arreglo desde ejesMultiplesApilados: {str(arreglo)}")
+            if len(arreglo) > 0:
+                hayResultados = "si"
+                res = arreglo[0]['venta']
+
+        if self.titulo == '% Participación Venta Hoy':
+            query = f"""select sum(ventaSinImpuestos)/(
+                    select sum(ventaSinImpuestos)
+                    from DWH.artus.ventaDiariaHora vdh 
+                    where fecha = {hoyInt}
+                    and idCanal in (0)
+                ) porc_part
+                from DWH.artus.ventaDiariaHora vdh 
+                where fecha = {hoyInt}
+                and idCanal {'not in (0' if not hayCanal else 'in ('+str(self.filtros.canal)})
+                """
+            # print(f"query desde tarjetas.py -> Temporada -> Venta Hoy: {str(query)}")
+            cnxn = conexion_sql('DWH')
+            cursor = cnxn.cursor().execute(query)
+            arreglo = crear_diccionario(cursor)
+            # print(f"arreglo desde ejesMultiplesApilados: {str(arreglo)}")
+            if len(arreglo) > 0:
+                hayResultados = "si"
+                res = arreglo[0]['porc_part']
+
+        return {'hayResultados':hayResultados, 'res': res, 'pipeline': query, 'tituloMod': tituloMod}
 
 @router.post("/{seccion}")
 async def tarjetas (filtros: Filtro, titulo: str, seccion: str, user: dict = Depends(get_current_active_user)):

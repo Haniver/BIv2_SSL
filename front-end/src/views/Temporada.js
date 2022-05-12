@@ -5,9 +5,13 @@ import Tarjeta from '../componentes/auxiliares/Tarjeta'
 import fechas_srv from '../services/fechas_srv'
 import EjesMultiples from '../componentes/graficos/EjesMultiples'
 import EjesMultiplesApilados from '../componentes/graficos/EjesMultiplesApilados'
-import Tabla from '../componentes/tablas/Tabla'
-import Pie from '../componentes/graficos/Pie'
-
+import {
+    DollarSign,
+    Box,
+    Calendar,
+    Percent
+  } from 'react-feather'
+  
 
 const Temporada = () => {
     
@@ -21,6 +25,20 @@ const Temporada = () => {
       <Row className='match-height'>
         <Col sm='12'>
           <Filtro fechas={fechas} canal={canal} setFechas={setFechas} setCanal={setCanal} />
+        </Col>
+      </Row>
+      <Row className='match-height'>
+        <Col>
+            <Tarjeta icono={<DollarSign size={21} />} seccion={seccion} formato='moneda' titulo='Venta Última Hora' />
+        </Col>
+        <Col>
+            <Tarjeta icono={<Box size={21} />} seccion={seccion} formato='entero' titulo='Pedidos Última Hora' />
+        </Col>
+         <Col>
+            <Tarjeta icono={<DollarSign size={21} />} seccion={seccion} formato='moneda' titulo='Venta Hoy' canal={canal} />
+        </Col>
+        <Col>
+            <Tarjeta icono={<Percent size={21} />} seccion={seccion} formato='porcentaje' titulo='% Participación Venta Hoy' canal={canal} />
         </Col>
       </Row>
       <Row className='match-height'>
