@@ -114,7 +114,7 @@ async def cargar_periodo(filtros: Filtro, user: dict = Depends(get_current_activ
     collection = conexion_mongo('report').catTiempo
     cursor = collection.aggregate(pipeline)
     arreglo = await cursor.to_list(length=1000)
-    # print(f'arreglo desde CargarPeriodo en CargarFiltros.py: {arreglo}')
+    print(f'arreglo desde CargarPeriodo en CargarFiltros.py: {arreglo}')
     res = []
     for registro in arreglo:
         if registro['_id'] != {}:
