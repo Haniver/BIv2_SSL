@@ -113,7 +113,7 @@ class EjesMultiplesApilados():
             group by hora
             order by hora
             """
-            print (f"query desde ejesMultiplesApilados->Temporada->2a. gráfica: {str(query)}")
+            # print (f"query desde ejesMultiplesApilados->Temporada->2a. gráfica: {str(query)}")
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(query)
             arreglo = crear_diccionario(cursor)
@@ -147,7 +147,7 @@ class EjesMultiplesApilados():
                 categories = [f"0{str(horaInt)}:00" if horaInt < 10 else f"{str(horaInt)}:00" for horaInt in categories]
         if self.titulo == 'Pedidos por Día':
             hoy = int(datetime.today().strftime('%Y%m%d'))
-            print(f"Fecha_fin: {self.filtros.fechas['fecha_fin']}")
+            # print(f"Fecha_fin: {self.filtros.fechas['fecha_fin']}")
             fecha_ini = datetime.strptime(self.filtros.fechas['fecha_ini'], '%Y-%m-%dT%H:%M:%S.%fZ').strftime('%Y-%m-%d')
             fecha_fin = datetime.strptime(self.filtros.fechas['fecha_fin'], '%Y-%m-%dT%H:%M:%S.%fZ')
             fecha_fin_menos_1 = fecha_fin - timedelta(days=1)
@@ -192,7 +192,7 @@ class EjesMultiplesApilados():
                 where dtt.fecha BETWEEN '{fecha_ini}' and '{fecha_fin_menos_1}' and idCanal = 0
                 group by dtt.fecha) b on a.fecha =b.fecha
                 {"left join DWH.artus.catObjetivo co on co.idTipo = a.tipo and format(a.fecha,'yyyyMM')=co.nMes" if hayCanal else "left join DWH.artus.catObjetivo co on co.idTipo = a.esOmnicanal and format(a.fecha,'yyyyMM')=co.nMes"}"""
-            print (f"query desde ejesMultiplesApilados->Temporada->3a. gráfica: {str(query)}")
+            # print (f"query desde ejesMultiplesApilados->Temporada->3a. gráfica: {str(query)}")
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(query)
             arreglo = crear_diccionario(cursor)
@@ -236,7 +236,7 @@ class EjesMultiplesApilados():
                     {'name': 'Venta', 'data':venta, 'type': 'spline', 'yAxis': 2, 'formato_tooltip':'moneda', 'color':'primary'},
                     {'name': 'Ticket Promedio', 'data':ticketPromedio, 'type': 'spline', 'yAxis': 3, 'formato_tooltip':'moneda', 'color':'dark'},
                 ]
-                print(f"Auxiliar desde ejesMultipolesApilados: {str(auxiliar)}")
+                # print(f"Auxiliar desde ejesMultipolesApilados: {str(auxiliar)}")
         # print(f"Lo que vamos a regresar desde ejesMultiplesApilados: {str({'hayResultados':hayResultados,'categories':categories, 'series':series, 'yAxis': yAxis})}")
         return  {'hayResultados':hayResultados,'categories':categories, 'series':series, 'pipeline': query, 'yAxis': yAxis, 'auxiliar': auxiliar}
 
