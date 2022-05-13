@@ -9,7 +9,7 @@ export default function authHeader() {
     jwt = jwt.slice(1, -1)
     return { Authorization: `Bearer ${jwt}` } // for Spring Boot back-end
 } else {
-    authService.logout
+    authService.logout()
     return {}
 }
   // if (user && user.accessToken) { // Lo mismo que arriba
