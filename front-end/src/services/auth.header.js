@@ -7,13 +7,15 @@ export default function authHeader() {
   let jwt = Cookies.get('tokenHeaderPayload') + Cookies.get('tokenSignature')
   if (jwt.length > 0) {
     jwt = jwt.slice(1, -1)
-  } else {
-    authService.logout
-  }
-  // if (user && user.accessToken) { // Lo mismo que arriba
-  if (jwt) {
     return { Authorization: `Bearer ${jwt}` } // for Spring Boot back-end
-  } else {
+} else {
+    authService.logout
     return {}
-  }
+}
+  // if (user && user.accessToken) { // Lo mismo que arriba
+  // if (jwt) {
+  //   return { Authorization: `Bearer ${jwt}` } // for Spring Boot back-end
+  // } else {
+  //   return {}
+  // }
 }
