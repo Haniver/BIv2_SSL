@@ -2506,6 +2506,90 @@ class EjesMultiples():
             else:
                 hayResultados = 'no'
 
+        return  {'hayResultados':hayResultados,'categories':categories, 'series':series, 'pipeline': pipeline, 'lenArreglo':len(arreglo)}
+
+    async def Temporada(self):
+        # '2002-05-11'
+        categories = []
+        series = []
+        serie1 = []
+        arreglo = []
+        collection = conexion_mongo('report').report_detalleRFM
+        pipeline = []
+        hayResultados = 'no'
+        fecha_ini_str = self.filtros.fechas['fecha_ini'][:10]
+        fecha_ini_int = int(fecha_ini_str[0:4]) * 10000 + int(fecha_ini_str[5:7]) * 100 + int(fecha_ini_str[8:10])
+        fecha_fin_str = self.filtros.fechas['fecha_fin'][:10]
+        fecha_fin_int = int(fecha_fin_str[0:4]) * 10000 + int(fecha_fin_str[5:7]) * 100 + int(fecha_fin_str[8:10])
+        hayCanal = False if self.filtros.canal == False or self.filtros.canal == 'False' or self.filtros.canal == '' else True
+
+        if self.titulo == 'Venta por Región':
+            pipeline = f"""select ct.regionNombre,
+                sum(case when year(GETDATE())=year(dt2.fecha) then a.ventaSinImpuestos else 0 end) ventaActual,
+                round(((sum(case when year(GETDATE())=year(dt2.fecha) then a.ventaSinImpuestos else 0 end) /
+                sum(case when year(DATEADD(yy,-1,GETDATE()))=year(dt2.fecha) then a.ventaSinImpuestos else 0 end))-1)*100,2) PartvsAA,
+                round((sum(case when year(GETDATE())=year(dt2.fecha) then a.ventaSinImpuestos else 0 end) / (select sum(ventaSinImpuestos) vTF
+                from DWH.artus.ventaxdia vxd
+                left join DWH.dbo.dim_tiempo dtt on dtt.id_fecha = vxd.fecha
+                where vxd.fecha BETWEEN '{fecha_ini_int}' and '{fecha_fin_int}' and idCanal = 0))*100,2) PartvsTF,max(co.Objetivo) Objetivo
+                from DWH.artus.ventaDiaria a
+                left join DWH.artus.catTienda ct on a.idTienda = ct.tienda
+                left join DWH.dbo.dim_tiempo dt on a.fecha =dt.fechaComparacion
+                left join DWH.dbo.dim_tiempo dt2 on a.fecha =dt2.id_fecha
+                left join DWH.artus.catCanal cc on a.idCanal =cc.idCanal
+                left join DWH.artus.catObjetivo co on co.idTipo = cc.tipo and format(dt2.fecha,'yyyyMM')=co.nMes
+                where (dt2.fecha BETWEEN '{fecha_ini_str}' and '{fecha_fin_str}'
+                or dt.fecha BETWEEN '{fecha_ini_str}' and '{fecha_fin_str}')
+                and cc.tipo {'= '+self.filtros.canal if hayCanal else 'not in (0)'}
+                group by ct.regionNombre
+                """
+            # print (f"query desde ejesMultiples->Temporada: {str(pipeline)}")
+            cnxn = conexion_sql('DWH')
+            cursor = cnxn.cursor().execute(pipeline)
+            arreglo = crear_diccionario(cursor)
+            if len(arreglo) > 0:
+                hayResultados = "si"
+                ventaActual = []
+                PartvsAA = []
+                PartvsTF = []
+                Objetivo = []
+                for elemento in arreglo:
+                    categories.append(elemento['regionNombre'])
+                    ventaActual.append(elemento['ventaActual'])
+                    PartvsAA.append(float(elemento['PartvsAA'])/100)
+                    PartvsTF.append(float(elemento['PartvsTF'])/100)
+                    Objetivo.append(float(elemento['Objetivo'])/100)
+                # Creamos las series con los arreglos que hicimos
+                series = [
+                    {
+                        'name': 'Venta Actual',
+                        'data': ventaActual, 
+                        'type': 'column',
+                        'formato_tooltip':'moneda', 
+                        'color':'secondary'
+                    },
+                    {
+                        'name': 'Participación vs. Año Anterior',
+                        'data': PartvsAA, 
+                        'type': 'spline',
+                        'formato_tooltip':'porcentaje', 
+                        'color':'danger'
+                    },
+                    {
+                        'name': 'Participación vs. Tienda Física',
+                        'data': PartvsTF, 
+                        'type': 'spline',
+                        'formato_tooltip':'porcentaje', 
+                        'color':'primary'
+                    },
+                    {
+                        'name': 'Objetivo',
+                        'data': Objetivo, 
+                        'type': 'spline',
+                        'formato_tooltip':'porcentaje', 
+                        'color':'dark'
+                    }
+                ]
 
         return  {'hayResultados':hayResultados,'categories':categories, 'series':series, 'pipeline': pipeline, 'lenArreglo':len(arreglo)}
 

@@ -139,7 +139,7 @@ async def cargar_periodo(filtros: Filtro, user: dict = Depends(get_current_activ
             }
             res.append(objeto)
     # print(f'periodos desde cargarPeriodo.py: {str(res)}')
-    print(f"Lo que se regresa desde CargarFiltros -> CargarPeriodo es: {str(res)}")
+    # print(f"Lo que se regresa desde CargarFiltros -> CargarPeriodo es: {str(res)}")
     return res
 
 @router.get("/cargarFormato")
