@@ -154,7 +154,6 @@ class EjesMultiplesApilados():
             fecha_fin_menos_1 = fecha_fin_menos_1.strftime('%Y-%m-%d')
             fecha_fin = fecha_fin.strftime('%Y-%m-%d')
             hayCanal = False if self.filtros.canal == False or self.filtros.canal == 'False' or self.filtros.canal == '' else True
-            # WAWA te quedaste en grafica porque en teoría ya tienes la información que necesitas
             query = f"""select a.*,case when b.vTF=0 then 0 else a.ventaSinImp / b.vTF end * 100 partvsTF,co.Objetivo
                 from
                 (
@@ -162,36 +161,39 @@ class EjesMultiplesApilados():
                 dt.fecha, SUM(nTicket) pedidos, sum(ventaSinImpuestos) ventaSinImp,sum(ventaSinImpuestos)/SUM(nTicket) ticketPromedio
                 from DWH.artus.ventaDiariaHora vdh
                 left join DWH.dbo.dim_tiempo dt on dt.id_fecha =vdh.fecha
-                left join DWH.artus.catCanal cc on vdh.idCanal =cc.Tipo
+                left join (select distinct tipo,esOmnicanal from DWH.artus.catCanal) cc on vdh.idCanal =cc.Tipo
                 where dt.fecha = '{fecha_fin}'
-                {'and vdh.idCanal = 1' if hayCanal else 'and cc.esOmnicanal = -1'}
-                {"group by vdh.idCanal,dt.fecha" if hayCanal else "group by cc.esOmnicanal,dt.fecha"}
+                and {'vdh.idCanal = 1' if hayCanal else 'cc.esOmnicanal = -1'}
+                group by {"vdh.idCanal" if hayCanal else "cc.esOmnicanal"}, dt.fecha
                 ) a
                 left join (select dtt.fecha,sum(ventaSinImpuestos) vTF
                 from DWH.artus.ventaDiariaHora vd
                 left join DWH.dbo.dim_tiempo dtt on dtt.id_fecha =vd.fecha
                 where dtt.fecha = '{fecha_fin}' and idCanal = 0
                 group by dtt.fecha) b on a.fecha =b.fecha
-                {"left join DWH.artus.catObjetivo co on co.idTipo =a.idCanal and format(a.fecha,'yyyyMM')=co.nMes" if hayCanal else "left join DWH.artus.catObjetivo co on co.idTipo =a.esOmnicanal and format(a.fecha,'yyyyMM')=co.nMes"}
+                left join DWH.artus.catObjetivo co on co.idTipo =a.{"idCanal" if hayCanal else "esOmnicanal"} and format(a.fecha,'yyyyMM')=co.nMes
                 union
                 select a.*, case when b.vTF=0 then 0 else a.ventaSinImp / b.vTF end * 100 partvsTF,co.Objetivo
                 from
                 (
-                {"select cc.tipo" if hayCanal else "select cc.esOmnicanal"},
+                select {"cc.tipo" if hayCanal else "cc.esOmnicanal"},
                 dt.fecha, sum(nTicket) Pedidos, sum(ventaSinImpuestos) VentaSinImp,sum(ventaSinImpuestos)/SUM(nTicket) ticketPromedio
                 from DWH.artus.ventaDiaria vd
                 inner join DWH.dbo.dim_tiempo dt on dt.id_fecha = vd.fecha
                 left join DWH.artus.catCanal cc on cc.idCanal = vd.idCanal
                 where dt.fecha BETWEEN '{fecha_ini}' and '{fecha_fin_menos_1}'
-                {"and cc.tipo=1" if hayCanal else "and cc.esOmnicanal = -1"}
-                {"GROUP BY cc.tipo,dt.fecha" if hayCanal else "group by cc.esOmnicanal,dt.fecha"}
+                and {"cc.tipo=1" if hayCanal else "cc.esOmnicanal = -1"}
+                group by {"cc.tipo" if hayCanal else "cc.esOmnicanal"}, dt.fecha
                 ) a
                 left join (select dtt.fecha,sum(ventaSinImpuestos) vTF
                 from DWH.artus.ventaxdia vd
                 left join DWH.dbo.dim_tiempo dtt on dtt.id_fecha =vd.fecha
-                where dtt.fecha BETWEEN '{fecha_ini}' and '{fecha_fin_menos_1}' and idCanal = 0
+                where dtt.fecha BETWEEN '{fecha_ini}' and '{fecha_fin_menos_1}' 
+                and idCanal = 0
                 group by dtt.fecha) b on a.fecha =b.fecha
-                {"left join DWH.artus.catObjetivo co on co.idTipo = a.tipo and format(a.fecha,'yyyyMM')=co.nMes" if hayCanal else "left join DWH.artus.catObjetivo co on co.idTipo = a.esOmnicanal and format(a.fecha,'yyyyMM')=co.nMes"}"""
+                left join DWH.artus.catObjetivo co on co.idTipo = a.{"tipo" if hayCanal else "esOmnicanal"}
+                and format(a.fecha,'yyyyMM')=co.nMes
+            """
             # print (f"query desde ejesMultiplesApilados->Temporada->3a. gráfica: {str(query)}")
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(query)
