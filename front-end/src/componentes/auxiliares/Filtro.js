@@ -984,7 +984,7 @@ const Filtro = (props) => {
             />
           </Col>}
           {props.grupoDeptos !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
-            <Label>🏢 Grupo de Departamentos</Label>
+            <Label>🏢 Grupo de Deptos</Label>
             <Select
               theme={selectThemeColors}
               value={grupoDeptosValue}
