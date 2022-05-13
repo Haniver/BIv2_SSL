@@ -2556,10 +2556,22 @@ class EjesMultiples():
                 Objetivo = []
                 for elemento in arreglo:
                     categories.append(elemento['regionNombre'])
-                    ventaActual.append(elemento['ventaActual'])
-                    PartvsAA.append(float(elemento['PartvsAA'])/100)
-                    PartvsTF.append(float(elemento['PartvsTF'])/100)
-                    Objetivo.append(float(elemento['Objetivo'])/100)
+                    if elemento['ventaActual'] is not None:
+                        ventaActual.append(elemento['ventaActual'])
+                    else:
+                        ventaActual.append(float(0))
+                    if elemento['PartvsAA'] is not None:
+                        PartvsAA.append(float(elemento['PartvsAA'])/100)
+                    else:
+                        PartvsAA.append(float(0))
+                    if elemento['PartvsTF'] is not None:
+                        PartvsTF.append(float(elemento['PartvsTF'])/100)
+                    else:
+                        PartvsTF.append(float(0))
+                    if elemento['Objetivo'] is not None:
+                        Objetivo.append(float(elemento['Objetivo'])/100)
+                    else:
+                        Objetivo.append(float(0))
                 # Creamos las series con los arreglos que hicimos
                 series = [
                     {
@@ -2570,7 +2582,7 @@ class EjesMultiples():
                         'color':'secondary'
                     },
                     {
-                        'name': 'Participación vs. Año Anterior',
+                        'name': 'Variación vs. Año Anterior',
                         'data': PartvsAA, 
                         'type': 'spline',
                         'formato_tooltip':'porcentaje', 
@@ -2626,10 +2638,22 @@ class EjesMultiples():
                 Objetivo = []
                 for elemento in arreglo:
                     categories.append(elemento['deptoDescrip'])
-                    ventaActual.append(elemento['ventaActual'])
-                    PartvsAA.append(float(elemento['PartvsAA'])/100)
-                    PartvsTF.append(float(elemento['PartvsTF'])/100)
-                    Objetivo.append(float(elemento['Objetivo'])/100)
+                    if elemento['ventaActual'] is not None:
+                        ventaActual.append(elemento['ventaActual'])
+                    else:
+                        ventaActual.append(float(0))
+                    if elemento['PartvsAA'] is not None:
+                        PartvsAA.append(float(elemento['PartvsAA'])/100)
+                    else:
+                        PartvsAA.append(float(0))
+                    if elemento['PartvsTF'] is not None:
+                        PartvsTF.append(float(elemento['PartvsTF'])/100)
+                    else:
+                        PartvsTF.append(float(0))
+                    if elemento['Objetivo'] is not None:
+                        Objetivo.append(float(elemento['Objetivo'])/100)
+                    else:
+                        Objetivo.append(float(0))
                 # Creamos las series con los arreglos que hicimos
                 series = [
                     {
@@ -2640,7 +2664,88 @@ class EjesMultiples():
                         'color':'secondary'
                     },
                     {
-                        'name': 'Participación vs. Año Anterior',
+                        'name': 'Variación vs. Año Anterior',
+                        'data': PartvsAA, 
+                        'type': 'spline',
+                        'formato_tooltip':'porcentaje', 
+                        'color':'danger'
+                    },
+                    {
+                        'name': 'Participación vs. Tienda Física',
+                        'data': PartvsTF, 
+                        'type': 'spline',
+                        'formato_tooltip':'porcentaje', 
+                        'color':'primary'
+                    },
+                    {
+                        'name': 'Objetivo',
+                        'data': Objetivo, 
+                        'type': 'spline',
+                        'formato_tooltip':'porcentaje', 
+                        'color':'dark'
+                    }
+                ]
+
+        if self.titulo == 'Venta por Formato':
+            pipeline = f"""Select ct.formatoNombre,
+                sum(case when year(GETDATE())=year(dt2.fecha) then a.ventaSinImpuestos else 0 end) ventaActual,
+                round(((sum(case when year(GETDATE())=year(dt2.fecha) then a.ventaSinImpuestos else 0 end) /
+                sum(case when year(DATEADD(yy,-1,GETDATE()))=year(dt2.fecha) then a.ventaSinImpuestos else 0 end))-1)*100,2) PartvsAA,
+                round((sum(case when year(GETDATE())=year(dt2.fecha) then a.ventaSinImpuestos else 0 end) / (select sum(ventaSinImpuestos) vTF
+                from DWH.artus.ventaxdia vxd
+                left join DWH.dbo.dim_tiempo dtt on dtt.id_fecha = vxd.fecha
+                where vxd.fecha BETWEEN '{fecha_ini_int}' and '{fecha_fin_int}' and idCanal = 0))*100,2) PartvsTF,max(co.Objetivo) Objetivo
+                from DWH.artus.ventaDiaria a
+                left join DWH.artus.catTienda ct on a.idTienda = ct.tienda
+                left join DWH.dbo.dim_tiempo dt on a.fecha =dt.fechaComparacion
+                left join DWH.dbo.dim_tiempo dt2 on a.fecha =dt2.id_fecha
+                left join DWH.artus.catCanal cc on a.idCanal =cc.idCanal
+                left join DWH.artus.catObjetivo co on co.idTipo = cc.tipo and format(dt2.fecha,'yyyyMM')=co.nMes
+                where (dt2.fecha BETWEEN '{fecha_ini_str}' and '{fecha_fin_str}'
+                or dt.fecha BETWEEN '{fecha_ini_str}' and '{fecha_fin_str}')
+                and cc.tipo {'= '+self.filtros.canal if hayCanal else 'not in (0)'}
+                group by ct.formatoNombre 
+                order by ct.formatoNombre 
+                """
+            # print (f"query desde ejesMultiples->Temporada: {str(pipeline)}")
+            cnxn = conexion_sql('DWH')
+            cursor = cnxn.cursor().execute(pipeline)
+            arreglo = crear_diccionario(cursor)
+            if len(arreglo) > 0:
+                hayResultados = "si"
+                ventaActual = []
+                PartvsAA = []
+                PartvsTF = []
+                Objetivo = []
+                for elemento in arreglo:
+                    categories.append(elemento['formatoNombre'])
+                    if elemento['ventaActual'] is not None:
+                        ventaActual.append(elemento['ventaActual'])
+                    else:
+                        ventaActual.append(float(0))
+                    if elemento['PartvsAA'] is not None:
+                        PartvsAA.append(float(elemento['PartvsAA'])/100)
+                    else:
+                        PartvsAA.append(float(0))
+                    if elemento['PartvsTF'] is not None:
+                        PartvsTF.append(float(elemento['PartvsTF'])/100)
+                    else:
+                        PartvsTF.append(float(0))
+                    if elemento['Objetivo'] is not None:
+                        Objetivo.append(float(elemento['Objetivo'])/100)
+                    else:
+                        Objetivo.append(float(0))
+                # Creamos las series con los arreglos que hicimos
+                series = [
+                    {
+                        'name': 'Venta Actual',
+                        'data': ventaActual, 
+                        'type': 'column',
+                        'formato_tooltip':'moneda', 
+                        'color':'secondary'
+                    },
+                    {
+                        'name': 'Variación vs. Año Anterior',
                         'data': PartvsAA, 
                         'type': 'spline',
                         'formato_tooltip':'porcentaje', 
