@@ -61,6 +61,11 @@ const Temporada = () => {
             <EjesMultiples seccion={seccion} titulo='Venta por Región' fechas={fechas} canal={canal} />
         </Col>
       </Row>
+      <Row className='match-height'>
+        <Col sm='12'>
+            <EjesMultiples seccion={seccion} titulo='Venta por Departamento' fechas={fechas} canal={canal} />
+        </Col>
+      </Row>
     </>
   )
 }
