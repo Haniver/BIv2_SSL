@@ -2582,14 +2582,14 @@ class EjesMultiples():
                         'color':'secondary'
                     },
                     {
-                        'name': 'Variación vs. Año Anterior',
+                        'name': 'Var vs. Año Anterior',
                         'data': PartvsAA, 
                         'type': 'spline',
                         'formato_tooltip':'porcentaje', 
                         'color':'danger'
                     },
                     {
-                        'name': 'Participación vs. Tienda Física',
+                        'name': 'Part vs. Tienda Física',
                         'data': PartvsTF, 
                         'type': 'spline',
                         'formato_tooltip':'porcentaje', 
@@ -2664,14 +2664,14 @@ class EjesMultiples():
                         'color':'secondary'
                     },
                     {
-                        'name': 'Variación vs. Año Anterior',
+                        'name': 'Var vs. Año Anterior',
                         'data': PartvsAA, 
                         'type': 'spline',
                         'formato_tooltip':'porcentaje', 
                         'color':'danger'
                     },
                     {
-                        'name': 'Participación vs. Tienda Física',
+                        'name': 'Part vs. Tienda Física',
                         'data': PartvsTF, 
                         'type': 'spline',
                         'formato_tooltip':'porcentaje', 
@@ -2745,14 +2745,14 @@ class EjesMultiples():
                         'color':'secondary'
                     },
                     {
-                        'name': 'Variación vs. Año Anterior',
+                        'name': 'Var vs. Año Anterior',
                         'data': PartvsAA, 
                         'type': 'spline',
                         'formato_tooltip':'porcentaje', 
                         'color':'danger'
                     },
                     {
-                        'name': 'Participación vs. Tienda Física',
+                        'name': 'Part vs. Tienda Física',
                         'data': PartvsTF, 
                         'type': 'spline',
                         'formato_tooltip':'porcentaje', 

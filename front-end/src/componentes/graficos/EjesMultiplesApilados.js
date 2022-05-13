@@ -127,7 +127,7 @@ const EjesMultiplesApilados = ({ titulo, seccion, fechas, tituloAPI, canal }) =>
                                 console.log(res.data.auxiliar[0].data)
                                 const valor2 = res.data.auxiliar[1].data[datos.indexOf(this.options.y)]
                                 const valor3 = this.options.y
-                                return `% Participación: ${Highcharts.numberFormat(valor1, 2, '.', ',')}%<br> Objetivo: ${Highcharts.numberFormat(valor2, 2, '.', ',')}%<br> <b>Diferencia: ${Highcharts.numberFormat(valor3, 2, '.', ',')}%</b>`
+                                return `Part vs. Tienda Física: ${Highcharts.numberFormat(valor1, 2, '.', ',')}%<br> Objetivo: ${Highcharts.numberFormat(valor2, 2, '.', ',')}%<br> <b>Diferencia: ${Highcharts.numberFormat(valor3, 2, '.', ',')}%</b>`
                             } else {
                                 if (elemento.formato_tooltip === 'moneda') {
                                     valuePrefix = '$'

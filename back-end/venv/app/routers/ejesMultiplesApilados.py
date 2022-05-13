@@ -221,20 +221,20 @@ class EjesMultiplesApilados():
                 # Los ejes Y son fijos y los creamos aquí:
                 yAxis = [
                     {'formato': 'entero', 'titulo': 'Pedidos', 'color': 'secondary', 'opposite': False},
-                    {'formato': 'porcentaje', 'titulo': '% Participación Vs. Objetivo', 'color': 'danger', 'opposite': False},
+                    {'formato': 'porcentaje', 'titulo': 'Part Vs. Objetivo', 'color': 'danger', 'opposite': False},
                     {'formato': 'moneda', 'titulo': '', 'color': 'primary', 'opposite': True},
                     {'formato': 'moneda', 'titulo': 'Pesos', 'color': 'dark', 'opposite': True}
                 ]
                 # Creamos la serie auxiliar
                 auxiliar = [
-                    {'name': '% Participación', 'data':porc_participacion, 'formato':'porcentaje', 'lugar': 'secundario'},
+                    {'name': 'Part vs. Tienda Física', 'data':porc_participacion, 'formato':'porcentaje', 'lugar': 'secundario'},
                     {'name': 'Objetivo', 'data':objetivo, 'formato':'porcentaje', 'lugar': 'secundario'},
                     {'name': 'Diferencia', 'data':diferencia, 'formato':'porcentaje', 'lugar': 'principal'}
                 ]
                 # Creamos las series con los arreglos que hicimos
                 series = [
                     {'name': 'Pedidos', 'data':pedidos, 'type': 'column', 'yAxis': 0, 'formato_tooltip':'entero', 'color':'secondary'},
-                    {'name': 'Participación vs. Objetivo', 'data':multiple, 'type': 'spline', 'yAxis': 1, 'formato_tooltip':'multiple', 'color':'danger'},
+                    {'name': 'Part vs. Objetivo', 'data':multiple, 'type': 'spline', 'yAxis': 1, 'formato_tooltip':'multiple', 'color':'danger'},
                     {'name': 'Venta', 'data':venta, 'type': 'spline', 'yAxis': 2, 'formato_tooltip':'moneda', 'color':'primary'},
                     {'name': 'Ticket Promedio', 'data':ticketPromedio, 'type': 'spline', 'yAxis': 3, 'formato_tooltip':'moneda', 'color':'dark'},
                 ]
