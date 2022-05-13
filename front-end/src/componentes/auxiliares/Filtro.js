@@ -7,6 +7,7 @@ import CargarFiltros from '../../services/cargarFiltros'
 import fechas_srv from '../../services/fechas_srv'
 import '@styles/react/libs/flatpickr/flatpickr.scss'
 import { isNumeric } from "validator"
+import { nthElement } from '../../services/funcionesAdicionales'
 
 const Filtro = (props) => {
 
@@ -621,26 +622,26 @@ const Filtro = (props) => {
   useEffect(() => {
     if (props.periodo !== undefined) {
       if (comboPeriodo.length > 1 && props.fechas === undefined && (props.agrupador === 'semana')) { // Esto es el caso específico del dashboard CatalogoArticulos donde se muestra la semana o mes corriente, pero por default se elige la vencida
-        setPeriodoValue(comboPeriodo.at(-2))
+        setPeriodoValue(nthElement(comboPeriodo, -2))
       } else {
-        setPeriodoValue(comboPeriodo.at(-1))
+        setPeriodoValue(nthElement(comboPeriodo, -1))
       }
       if (props.botonEnviar === undefined) {
         if (comboPeriodo.length > 1 && props.fechas === undefined && (props.agrupador === 'semana')) {
           console.log(`estás trantando de poner el periodo en el penúltimo de:`)
           console.log(comboPeriodo)
-          props.setPeriodo(comboPeriodo.at(-2).value)
+          props.setPeriodo(nthElement(comboPeriodo, -2).value)
         } else {
           console.log(`estás trantando de poner el periodo en el último de:`)
           console.log(comboPeriodo)
-          props.setPeriodo(comboPeriodo.at(-1).value)
+          props.setPeriodo(nthElement(comboPeriodo, -1).value)
         }
         if (props.setPeriodoLabel !== undefined) {
-          const label_tmp = comboPeriodo.at(-1).label
+          const label_tmp = nthElement(comboPeriodo, -1).label
           props.setPeriodoLabel(label_tmp.substring(0, label_tmp.length - 5))
         }
       } else {
-        setPeriodo_tmp(comboPeriodo.at(-1).value)
+        setPeriodo_tmp(nthElement(comboPeriodo, -1).value)
       }
     }
   }, [comboPeriodo])
