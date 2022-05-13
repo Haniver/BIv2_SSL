@@ -1,10 +1,13 @@
 # job_hora_zendesk
+---
 |Periodo de Ejecucion|Hora de Ejecucion|Dependencias|
 |--|--|--|
-|(periodo)|(hora)|(dependencias)|
+|Todos los días |08:15 hrs.|Informacion en Zendesk actualizada|
+---
 # Job Steps:
 ![Vista_job_p_dwh_order_sku.png](/docs/job_hora_zendesk/Vista_job_hora_zendesk.png)
-### 1.0  Api que extrae la informacion del portar de Zendesk TRANS(dev_load_API_Zendesk)
+### 1.0  Api que extrae la informacion del portal de Zendesk TRANS(dev_load_API_Zendesk)
+![Vista_job_p_dwh_order_sku.png](/docs/job_hora_zendesk/Vista_trans_dev_load_API_Zendesk.png)
 ### 2.0  Actualiza e Inserta la informacion en la tabla hecho_ticket_zendesk  SCRIPT(insert_updat_hecho_ticket_zendesk)
 ``` sql
 UPDATE htz SET htz.priority=tz.priority,
@@ -72,3 +75,14 @@ INNER JOIN ( select htz.id,htz.priority,htz.status,htz.order_number,(htz.fecha_c
     AND dx.formulario="Incidencia" and dx.idtienda is not null
     AND dx.consigna is NOT null;
 ```
+### Ubicacion de archivo bat
+Ruta dentro del Servidor de Produccion (20.186.10.112):
+
+***F:\pdi-ce-9.0.0.0-423\data-integration\bat***
+
+File Names:
+- ***hora_job_hora_zendesk.bat***
+- ***hora_job_hora_zendesk.vbs***
+
+Task Name:
+***hora_job_hora_zendesk***

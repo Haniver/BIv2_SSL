@@ -1,8 +1,10 @@
 # job_dev_ventaDiaria
+### Este Job se encarga de Actualizar la tabla de VentaDiaria con la informacion de sapds
+---
 |Periodo de Ejecucion|Hora de Ejecucion|Dependencias|
 |--|--|--|
-|(periodo)|(hora)|(dependencias)|
-
+|Todos los días|07:30 hrs.|Que la informacion de ARTUS esté actualizada
+---
 # Job Steps:
 
 ![Vista_job_dev_ventaDiaria2.0.png](/docs/job_dev_ventaDiaria/Vista_job_dev_ventaDiaria2.0.png)
@@ -286,8 +288,9 @@ set vd2.ventaSinImpuestos=vd.ventaSinImpuestos,vd2.id=vd.id,vd2.nTicket=vd.nTick
 from temp.artus.ventaDiaria vd 
 	inner join DWH.artus.ventaDiaria vd2 on vd.fecha =vd2.fecha 
     and vd.idTienda =vd2.idTienda 
-    and vd.idCanal =vd2.idCanal a
-    nd vd.subdepto =vd2.subDepto;
+    and vd.idCanal =vd2.idCanal 
+    and vd.subdepto =vd2.subDepto;
+    
 insert into DWH.artus.ventaDiaria
 select vd.fecha,vd.idTienda,vd.idCanal,vd.subdepto,vd.ventaSinImpuestos,0 objetivo,0 proyeccion,vd.devolucion,vd.anioMes,vd.id,vd.nTicket 
 from temp.artus.ventaDiaria vd 
@@ -298,7 +301,11 @@ from temp.artus.ventaDiaria vd
 where vd2.anioMes is null;
 ```
 ### 9.0  Envio de informacion de Venta por Objetivo JOB(job_dev_envio_ventaXObjetivo)    
+
+![Vista_job_dev_envio_ventaxObjetivo.png](/docs/job_dev_ventaDiaria/Vista_job_dev_envio_ventaxObjetivo.png)
+
 9.1 Extrae la informacion de la Venta por Objetivo y la transforma en una archivo xml para despues enviarlo por correo a usuarios en especifico (dev_file_ventaxObjetivo)
+
 9.1.1 Extrae la informacion de Detalle por Mes  y la transforma en un archivo (detallexMes)
 ``` sql 
 select dt.descrip_mes,
@@ -356,7 +363,11 @@ order by dt.num_mes
 9.2 Los datos se envian por correo (dev_mail_ventaxObjetivo)
 
 ### 10.0  Envio de informacion de Venta por SKU por Proveedor JOB(job_dev_venta_departamento) 
-10.1 Extrae la informacion de Venta por Subclase por Proveedor TRANS(prod_cargaDetalleVentaxSKUxProveedor)
+
+![Vista_job_dev_venta_departamento.png](/docs/job_dev_ventaDiaria/Vista_job_prod_envio_detalleVentaxSKUxProveedor.png)
+
+10.1 Extrae la informacion de Venta por Subclase por Proveedor TRANS(prod_cargaDetalleVentaxSKUxProveedor) 
+
 10.1.1 Extrae la informacion de la Venta x Subclase por Proveedor (Table input)(cargaDetalleVentaxSubclasexProveedor)
 ``` sql 
 select fecha, b.SUBCLASE,b.PROVEEDOR,
@@ -663,4 +674,14 @@ where case when convert(date,ho.creation_date) >= '2022-01-01' and (ho.montoDevo
 	and de.descrip_consignment_status not like '%Cancel%'
 	and ISNULL(ho.tmp_n_estatus,'OTRO') IN ('COMPLETO','DEV_COMPLETA','DE_COMPLETA_FUERATIEMPO','DE_COMPLETA_ATIEMPO','DEV_COMPLETA_FUERATIEMPO','DEV_COMPLETA_ATIEMPO');
 ```
+### Ubicacion de archivo bat
+Ruta dentro del Servidor de Produccion (20.186.10.112):
 
+***F:\pdi-ce-9.0.0.0-423\data-integration\bat***
+
+File Names:
+- ***diario_job_dev_venta_diaria_IM.bat***
+- ***diario_job_dev_venta_diaria_IM.vbs***
+
+Task Name:
+***diario_job_dev_ventaDiariaIM***
