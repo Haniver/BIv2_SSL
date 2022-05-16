@@ -71,6 +71,15 @@ const Temporada = () => {
             <EjesMultiples seccion={seccion} titulo='Venta por Formato' fechas={fechas} canal={canal} />
         </Col>
       </Row>
+      <Row className='match-height'>
+        <Col sm='12'>
+          <Card>
+              <CardBody>
+              <iframe src="https://datastudio.google.com/embed/reporting/f39d3f71-6d94-4827-8a79-77f470d3ce67/page/K02eC" allowFullScreen frameBorder={0} width='100%' height='500px'></iframe>
+              </CardBody>
+          </Card>
+        </Col>
+      </Row>
     </>
   )
 }
