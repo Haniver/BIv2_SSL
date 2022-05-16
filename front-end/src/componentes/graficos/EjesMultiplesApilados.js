@@ -123,11 +123,11 @@ const EjesMultiplesApilados = ({ titulo, seccion, fechas, tituloAPI, canal }) =>
                             if (elemento.formato_tooltip === 'multiple') {
                                 // La forma correcta de hacer esto es ver, por cada elemento de "auxiliar", cuál es el formato y de ahí ir construyendo la cadena que se va a regresar para el tooltip. Pero como me agarran las prisas y lo más probable es que esto nada más lo vaya a usar para Pedidos por Día en Temporada, lo voy a hacer para ese específico
                                 console.log(`El punto es el #${this.options.y}`)
-                                const valor1 = res.data.auxiliar[0].data[datos.indexOf(this.options.y)]
-                                console.log(res.data.auxiliar[0].data)
-                                const valor2 = res.data.auxiliar[1].data[datos.indexOf(this.options.y)]
-                                const valor3 = this.options.y
-                                return `Part vs. Tienda Física: ${100 * Highcharts.numberFormat(valor1, 2, '.', ',')}%<br> Objetivo: ${100 * Highcharts.numberFormat(valor2, 2, '.', ',')}%<br> <b>Diferencia: ${100 * Highcharts.numberFormat(valor3, 2, '.', ',')}%</b>`
+                                const valor1 = 100 * parseFloat(res.data.auxiliar[0].data[datos.indexOf(this.options.y)])
+                                // console.log(res.data.auxiliar[0].data)
+                                const valor2 = 100 * parseFloat(res.data.auxiliar[1].data[datos.indexOf(this.options.y)])
+                                const valor3 = 100 * parseFloat(this.options.y)
+                                return `Part vs. Tienda Física: ${Highcharts.numberFormat(valor1, 2, '.', ',')}%<br> Objetivo: ${Highcharts.numberFormat(valor2, 2, '.', ',')}%<br> <b>Diferencia: ${Highcharts.numberFormat(valor3, 2, '.', ',')}%</b>`
                             } else {
                                 if (elemento.formato_tooltip === 'moneda') {
                                     valuePrefix = '$'

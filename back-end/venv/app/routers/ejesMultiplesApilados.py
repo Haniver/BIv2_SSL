@@ -255,14 +255,14 @@ class EjesMultiplesApilados():
                 left join DWH.dbo.dim_tiempo dt on a.fecha =dt.fechaComparacion
                 left join DWH.dbo.dim_tiempo dt2 on a.fecha =dt2.id_fecha
                 left join DWH.artus.catCanal cc on a.idCanal =cc.idCanal
-                left join DWH.artus.catObjetivo co on co.idTipo = cc.tipo and format(dt2.fecha,'yyyyMM')=co.nMes
+                left join DWH.artus.catObjetivo co on co.idTipo = cc.{'esOmnicanal' if not hayCanal else 'idCanal'} and format(dt2.fecha,'yyyyMM')=co.nMes
                 where (dt2.fecha BETWEEN '{fecha_ini_str}' and '{fecha_fin_str}'
                 or dt.fecha BETWEEN '{fecha_ini_str}' and '{fecha_fin_str}')
                 and cc.tipo {'= '+self.filtros.canal if hayCanal else 'not in (0)'}
                 group by ct.regionNombre
                 order by ct.regionNombre
                 """
-            # print (f"query desde ejesMultiples->Temporada: {str(query)}")
+            print (f"query desde ejesMultiples->Temporada -> Venta por región: {str(query)}")
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(query)
             arreglo = crear_diccionario(cursor)
@@ -340,7 +340,7 @@ class EjesMultiplesApilados():
                 left join DWH.dbo.dim_tiempo dt on a.fecha =dt.fechaComparacion
                 left join DWH.dbo.dim_tiempo dt2 on a.fecha =dt2.id_fecha
                 left join DWH.artus.catCanal cc on a.idCanal =cc.idCanal
-                left join DWH.artus.catObjetivo co on co.idTipo = cc.tipo and format(dt2.fecha,'yyyyMM')=co.nMes
+                left join DWH.artus.catObjetivo co on co.idTipo = cc.{'esOmnicanal' if not hayCanal else 'idCanal'} and format(dt2.fecha,'yyyyMM')=co.nMes
                 where (dt2.fecha BETWEEN '{fecha_ini_str}' and '{fecha_fin_str}'
                 or dt.fecha BETWEEN '{fecha_ini_str}' and '{fecha_fin_str}')
                 and cc.tipo {'= '+self.filtros.canal if hayCanal else 'not in (0)'}
@@ -426,7 +426,7 @@ class EjesMultiplesApilados():
                 left join DWH.dbo.dim_tiempo dt on a.fecha =dt.fechaComparacion
                 left join DWH.dbo.dim_tiempo dt2 on a.fecha =dt2.id_fecha
                 left join DWH.artus.catCanal cc on a.idCanal =cc.idCanal
-                left join DWH.artus.catObjetivo co on co.idTipo = cc.tipo and format(dt2.fecha,'yyyyMM')=co.nMes
+                left join DWH.artus.catObjetivo co on co.idTipo = cc.{'esOmnicanal' if not hayCanal else 'idCanal'} and format(dt2.fecha,'yyyyMM')=co.nMes
                 where (dt2.fecha BETWEEN '{fecha_ini_str}' and '{fecha_fin_str}'
                 or dt.fecha BETWEEN '{fecha_ini_str}' and '{fecha_fin_str}')
                 and cc.tipo {'= '+self.filtros.canal if hayCanal else 'not in (0)'}
@@ -497,7 +497,7 @@ class EjesMultiplesApilados():
                     }
                 ]
 
-        # print(f"Lo que vamos a regresar desde ejesMultiplesApilados: {str({'hayResultados':hayResultados,'categories':categories, 'series':series, 'yAxis': yAxis})}")
+        print(f"Lo que vamos a regresar desde ejesMultiplesApilados -> {self.titulo}: {str({'hayResultados':hayResultados,'categories':categories, 'series':series, 'yAxis': yAxis, 'auxiliar': auxiliar})}")
         return  {'hayResultados':hayResultados,'categories':categories, 'series':series, 'query': query, 'yAxis': yAxis, 'auxiliar': auxiliar}
 
 @router.post("/{seccion}")
