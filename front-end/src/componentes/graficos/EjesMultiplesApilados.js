@@ -127,7 +127,7 @@ const EjesMultiplesApilados = ({ titulo, seccion, fechas, tituloAPI, canal }) =>
                                 console.log(res.data.auxiliar[0].data)
                                 const valor2 = res.data.auxiliar[1].data[datos.indexOf(this.options.y)]
                                 const valor3 = this.options.y
-                                return `Part vs. Tienda Física: ${Highcharts.numberFormat(valor1, 2, '.', ',')}%<br> Objetivo: ${Highcharts.numberFormat(valor2, 2, '.', ',')}%<br> <b>Diferencia: ${Highcharts.numberFormat(valor3, 2, '.', ',')}%</b>`
+                                return `Part vs. Tienda Física: ${100 * Highcharts.numberFormat(valor1, 2, '.', ',')}%<br> Objetivo: ${100 * Highcharts.numberFormat(valor2, 2, '.', ',')}%<br> <b>Diferencia: ${100 * Highcharts.numberFormat(valor3, 2, '.', ',')}%</b>`
                             } else {
                                 if (elemento.formato_tooltip === 'moneda') {
                                     valuePrefix = '$'
@@ -150,30 +150,35 @@ const EjesMultiplesApilados = ({ titulo, seccion, fechas, tituloAPI, canal }) =>
             })
             const yAxis_tmp = []
             res.data.yAxis.forEach(elemento => {
-                let formato = ''
-                if (elemento.formato === 'entero') {
-                    formato = '{value:,.0f}'
-                } else if (elemento.formato === 'porcentaje') {
-                    formato = '{value:,.2f}%'
-                } else if (elemento.formato === 'moneda') {
-                    formato = '${value:,.2f}'
+                // Si no hay formato, ponga el eje invisible: {visible: false}
+                if (elemento.visible === false) {
+                    yAxis_tmp.push({visible: false})
+                } else {
+                    let formato = ''
+                    if (elemento.formato === 'entero') {
+                        formato = '{value:,.0f}'
+                    } else if (elemento.formato === 'porcentaje') {
+                        formato = '{value:,.2f}%'
+                    } else if (elemento.formato === 'moneda') {
+                        formato = '${value:,.2f}'
+                    }
+                    yAxis_tmp.push({
+                        labels: {
+                            format: formato,
+                            style: {
+                                color: colors[elemento.color].main
+                            }
+                        },
+                        title: {
+                            text: elemento.titulo,
+                            style: {
+                                color: colors[elemento.color].main
+                            }
+                        },
+                        opposite: elemento.opposite
+                
+                    })
                 }
-                yAxis_tmp.push({
-                    labels: {
-                        format: formato,
-                        style: {
-                            color: colors[elemento.color].main
-                        }
-                    },
-                    title: {
-                        text: elemento.titulo,
-                        style: {
-                            color: colors[elemento.color].main
-                        }
-                    },
-                    opposite: elemento.opposite
-            
-                })
             })
             // console.log("YAxis desde EjesMultiples:")
             // console.log(yAxis_tmp)

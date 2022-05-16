@@ -43,12 +43,12 @@ const Temporada = () => {
       </Row>
       <Row className='match-height'>
         <Col sm='12'>
-            <EjesMultiplesApilados seccion={seccion} titulo='Pedidos Levantados Hoy (con impuesto)' />
+            <EjesMultiplesApilados seccion={seccion} titulo='Pedidos Levantados Hoy (con impuesto)' fechas={fechas} />
         </Col>
       </Row>
       <Row className='match-height'>
         <Col sm='12'>
-            <EjesMultiplesApilados seccion={seccion} titulo='Pedidos Pagados Hoy (sin impuesto)' />
+            <EjesMultiplesApilados seccion={seccion} titulo='Pedidos Pagados Hoy (sin impuesto)' fechas={fechas} />
         </Col>
       </Row>
       <Row className='match-height'>
@@ -58,17 +58,17 @@ const Temporada = () => {
       </Row>
       <Row className='match-height'>
         <Col sm='12'>
-            <EjesMultiples seccion={seccion} titulo='Venta por Región' fechas={fechas} canal={canal} />
+            <EjesMultiplesApilados seccion={seccion} titulo='Venta por Región' fechas={fechas} canal={canal} />
         </Col>
       </Row>
       <Row className='match-height'>
         <Col sm='12'>
-            <EjesMultiples seccion={seccion} titulo='Venta por Departamento' fechas={fechas} canal={canal} />
+            <EjesMultiplesApilados seccion={seccion} titulo='Venta por Departamento' fechas={fechas} canal={canal} />
         </Col>
       </Row>
       <Row className='match-height'>
         <Col sm='12'>
-            <EjesMultiples seccion={seccion} titulo='Venta por Formato' fechas={fechas} canal={canal} />
+            <EjesMultiplesApilados seccion={seccion} titulo='Venta por Formato' fechas={fechas} canal={canal} />
         </Col>
       </Row>
       <Row className='match-height'>

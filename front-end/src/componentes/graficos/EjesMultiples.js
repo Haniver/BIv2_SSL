@@ -138,18 +138,7 @@ const EjesMultiples = ({ titulo, yLabel, seccion, formato, fechas, region, zona,
                         }
                     }
                 })
-                // El requerimiento fue no usar labels y títulos para el eje de las Y, pero si en un futuro lo quieres hacer, tiene que cumplir con el formato de https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/combo-multi-axes
-                // yAxis_tmp.push({
-                //     visible: false
-                // })
             })
-            // console.log("YAxis desde EjesMultiples:")
-            // console.log(yAxis_tmp)
-            // console.log("Categories desde EjesMultiples:")
-            // console.log(res.data.categories)
-            // console.log("Series desde EjesMultiples:")
-            // console.log(series_tmp)
-            // setYAxis(yAxis_tmp)
             setCategories(res.data.categories)
             setSeries(series_tmp)
             setFormato_columnas(formato_columnas_tmp)

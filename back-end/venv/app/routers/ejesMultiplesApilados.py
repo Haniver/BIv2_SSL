@@ -23,10 +23,6 @@ class EjesMultiplesApilados():
         self.filtros = filtros
         self.titulo = titulo
 
-        # if self.filtros.fechas != None:
-        #     self.fecha_ini_a12 = datetime.combine(datetime.strptime(self.filtros.fechas['fecha_ini'], '%Y-%m-%dT%H:%M:%S.%fZ'), datetime.min.time()) if self.filtros.fechas['fecha_ini'] != None and self.filtros.fechas['fecha_ini'] != '' else None
-        #     self.fecha_fin_a12 = datetime.combine(datetime.strptime(self.filtros.fechas['fecha_fin'], '%Y-%m-%dT%H:%M:%S.%fZ'), datetime.min.time()) + timedelta(days=1) if self.filtros.fechas['fecha_fin'] != None and self.filtros.fechas['fecha_fin'] != '' else None
-
     async def Temporada(self):
         yAxis = []
         series = []
@@ -37,6 +33,10 @@ class EjesMultiplesApilados():
         categories = []
         venta = [0.0]
         ticketPromedio = []
+        multiple = []
+        contador = 0
+        diferencia = []
+        hayCanal = False if self.filtros.canal == False or self.filtros.canal == 'False' or self.filtros.canal == '' else True
         if self.titulo == 'Pedidos Levantados Hoy (con impuesto)':
             categories.append(0)
             pedidosEntregados = [0]
@@ -85,9 +85,9 @@ class EjesMultiplesApilados():
                     ticketPromedio.append(0)
                 # Los ejes Y son fijos y los creamos aquí:
                 yAxis = [
-                    {'formato': 'entero', 'titulo': 'Pedidos', 'color': 'success', 'opposite': False},
-                    {'formato': 'moneda', 'titulo': '', 'color': 'primary', 'opposite': True},
-                    {'formato': 'moneda', 'titulo': 'Pesos', 'color': 'dark', 'opposite': True}
+                    {'formato': 'entero', 'titulo': 'Pedidos', 'color': 'success', 'opposite': False, 'visible': True},
+                    {'formato': 'moneda', 'titulo': '', 'color': 'primary', 'opposite': True, 'visible': True},
+                    {'formato': 'moneda', 'titulo': 'Pesos', 'color': 'dark', 'opposite': True, 'visible': True}
                 ]
                 # Creamos las series con los arreglos que hicimos
                 series = [
@@ -133,9 +133,9 @@ class EjesMultiplesApilados():
                     categories.append(int(elemento['hora']))
                 # Los ejes Y son fijos y los creamos aquí:
                 yAxis = [
-                    {'formato': 'entero', 'titulo': 'Pedidos', 'color': 'success', 'opposite': False},
-                    {'formato': 'moneda', 'titulo': '', 'color': 'primary', 'opposite': True},
-                    {'formato': 'moneda', 'titulo': 'Pesos', 'color': 'dark', 'opposite': True}
+                    {'formato': 'entero', 'titulo': 'Pedidos', 'color': 'success', 'opposite': False, 'visible': True},
+                    {'formato': 'moneda', 'titulo': '', 'color': 'primary', 'opposite': True, 'visible': True},
+                    {'formato': 'moneda', 'titulo': 'Pesos', 'color': 'dark', 'opposite': True, 'visible': True}
                 ]
                 # Creamos las series con los arreglos que hicimos
                 series = [
@@ -153,8 +153,7 @@ class EjesMultiplesApilados():
             fecha_fin_menos_1 = fecha_fin - timedelta(days=1)
             fecha_fin_menos_1 = fecha_fin_menos_1.strftime('%Y-%m-%d')
             fecha_fin = fecha_fin.strftime('%Y-%m-%d')
-            hayCanal = False if self.filtros.canal == False or self.filtros.canal == 'False' or self.filtros.canal == '' else True
-            query = f"""select a.*,case when b.vTF=0 then 0 else a.ventaSinImp / b.vTF end * 100 partvsTF,co.Objetivo
+            query = f"""select a.*,case when b.vTF=0 then 0 else a.ventaSinImp / b.vTF end * 100 PartvsTF,co.Objetivo
                 from
                 (
                 {'select vdh.idCanal' if hayCanal else 'select cc.esOmnicanal'},
@@ -173,7 +172,7 @@ class EjesMultiplesApilados():
                 group by dtt.fecha) b on a.fecha =b.fecha
                 left join DWH.artus.catObjetivo co on co.idTipo =a.{"idCanal" if hayCanal else "esOmnicanal"} and format(a.fecha,'yyyyMM')=co.nMes
                 union
-                select a.*, case when b.vTF=0 then 0 else a.ventaSinImp / b.vTF end * 100 partvsTF,co.Objetivo
+                select a.*, case when b.vTF=0 then 0 else a.ventaSinImp / b.vTF end * 100 PartvsTF,co.Objetivo
                 from
                 (
                 select {"cc.tipo" if hayCanal else "cc.esOmnicanal"},
@@ -204,26 +203,23 @@ class EjesMultiplesApilados():
                 venta = []
                 porc_participacion = []
                 objetivo = []
-                diferencia = []
-                multiple = []
-                contador = 0
                 for elemento in arreglo:
                     pedidos.append(elemento['pedidos'])
                     venta.append(elemento['ventaSinImp'])
                     ticketPromedio.append(elemento['ticketPromedio'])
-                    porc_participacion.append(elemento['partvsTF'])
-                    objetivo.append(elemento['Objetivo'])
-                    diferencia.append(float(elemento['partvsTF']) - float(elemento['Objetivo']))
+                    porc_participacion.append(float(elemento['PartvsTF'])/100)
+                    objetivo.append(float(elemento['Objetivo'])/100)
+                    diferencia.append((float(elemento['PartvsTF']) - float(elemento['Objetivo']))/100)
                     # categories.append(datetime.strptime(elemento['fecha'], '%Y-%m-%d').strftime('%d/%m/%Y'))
                     categories.append(elemento['fecha'].strftime('%d/%m/%Y'))
                     multiple.append(contador)
                     contador += 1
                 # Los ejes Y son fijos y los creamos aquí:
                 yAxis = [
-                    {'formato': 'entero', 'titulo': 'Pedidos', 'color': 'secondary', 'opposite': False},
-                    {'formato': 'porcentaje', 'titulo': 'Part Vs. Objetivo', 'color': 'danger', 'opposite': False},
-                    {'formato': 'moneda', 'titulo': '', 'color': 'primary', 'opposite': True},
-                    {'formato': 'moneda', 'titulo': 'Pesos', 'color': 'dark', 'opposite': True}
+                    {'formato': 'entero', 'titulo': 'Pedidos', 'color': 'secondary', 'opposite': False, 'visible': True},
+                    {'formato': 'porcentaje', 'titulo': 'Part Vs. Objetivo', 'color': 'danger', 'opposite': False, 'visible': True},
+                    {'formato': 'moneda', 'titulo': '', 'color': 'primary', 'opposite': True, 'visible': True},
+                    {'formato': 'moneda', 'titulo': 'Pesos', 'color': 'dark', 'opposite': True, 'visible': True}
                 ]
                 # Creamos la serie auxiliar
                 auxiliar = [
@@ -239,8 +235,270 @@ class EjesMultiplesApilados():
                     {'name': 'Ticket Promedio', 'data':ticketPromedio, 'type': 'spline', 'yAxis': 3, 'formato_tooltip':'moneda', 'color':'dark'},
                 ]
                 # print(f"Auxiliar desde ejesMultipolesApilados: {str(auxiliar)}")
+
+        fecha_ini_str = self.filtros.fechas['fecha_ini'][:10]
+        fecha_ini_int = int(fecha_ini_str[0:4]) * 10000 + int(fecha_ini_str[5:7]) * 100 + int(fecha_ini_str[8:10])
+        fecha_fin_str = self.filtros.fechas['fecha_fin'][:10]
+        fecha_fin_int = int(fecha_fin_str[0:4]) * 10000 + int(fecha_fin_str[5:7]) * 100 + int(fecha_fin_str[8:10])
+
+        if self.titulo == 'Venta por Región':
+            query = f"""select ct.regionNombre,
+                sum(case when year(GETDATE())=year(dt2.fecha) then a.ventaSinImpuestos else 0 end) ventaActual,
+                round(((sum(case when year(GETDATE())=year(dt2.fecha) then a.ventaSinImpuestos else 0 end) /
+                sum(case when year(DATEADD(yy,-1,GETDATE()))=year(dt2.fecha) then a.ventaSinImpuestos else 0 end))-1)*100,2) PartvsAA,
+                round((sum(case when year(GETDATE())=year(dt2.fecha) then a.ventaSinImpuestos else 0 end) / (select sum(ventaSinImpuestos) vTF
+                from DWH.artus.ventaxdia vxd
+                left join DWH.dbo.dim_tiempo dtt on dtt.id_fecha = vxd.fecha
+                where vxd.fecha BETWEEN '{fecha_ini_int}' and '{fecha_fin_int}' and idCanal = 0))*100,2) PartvsTF,max(co.Objetivo) Objetivo
+                from DWH.artus.ventaDiaria a
+                left join DWH.artus.catTienda ct on a.idTienda = ct.tienda
+                left join DWH.dbo.dim_tiempo dt on a.fecha =dt.fechaComparacion
+                left join DWH.dbo.dim_tiempo dt2 on a.fecha =dt2.id_fecha
+                left join DWH.artus.catCanal cc on a.idCanal =cc.idCanal
+                left join DWH.artus.catObjetivo co on co.idTipo = cc.tipo and format(dt2.fecha,'yyyyMM')=co.nMes
+                where (dt2.fecha BETWEEN '{fecha_ini_str}' and '{fecha_fin_str}'
+                or dt.fecha BETWEEN '{fecha_ini_str}' and '{fecha_fin_str}')
+                and cc.tipo {'= '+self.filtros.canal if hayCanal else 'not in (0)'}
+                group by ct.regionNombre
+                order by ct.regionNombre
+                """
+            # print (f"query desde ejesMultiples->Temporada: {str(query)}")
+            cnxn = conexion_sql('DWH')
+            cursor = cnxn.cursor().execute(query)
+            arreglo = crear_diccionario(cursor)
+            if len(arreglo) > 0:
+                hayResultados = "si"
+                ventaActual = []
+                PartvsAA = []
+                PartvsTF = []
+                Objetivo = []
+                yAxis = [
+                    {'visible': False},
+                    {'visible': False}
+                ]
+                for elemento in arreglo:
+                    categories.append(elemento['regionNombre'])
+                    if elemento['ventaActual'] is not None:
+                        ventaActual.append(elemento['ventaActual'])
+                    else:
+                        ventaActual.append(float(0))
+                    if elemento['PartvsAA'] is not None:
+                        PartvsAA.append(float(elemento['PartvsAA'])/100)
+                    else:
+                        PartvsAA.append(float(0))
+                    if elemento['PartvsTF'] is not None:
+                        PartvsTF.append(float(elemento['PartvsTF'])/100)
+                    else:
+                        PartvsTF.append(float(0))
+                    if elemento['Objetivo'] is not None:
+                        Objetivo.append(float(elemento['Objetivo'])/100)
+                    else:
+                        Objetivo.append(float(0))
+                    if elemento['PartvsTF'] is not None and elemento['Objetivo'] is not None:
+                        diferencia.append((float(elemento['PartvsTF']) - float(elemento['Objetivo']))/100)
+                    else:
+                        diferencia.append(0)
+                    multiple.append(contador)
+                    contador += 1
+                # Creamos las series con los arreglos que hicimos
+                auxiliar = [
+                    {'name': 'Part vs. Tienda Física', 'data':PartvsTF, 'formato':'porcentaje', 'lugar': 'secundario'},
+                    {'name': 'Objetivo', 'data':Objetivo, 'formato':'porcentaje', 'lugar': 'secundario'},
+                    {'name': 'Diferencia', 'data':diferencia, 'formato':'porcentaje', 'lugar': 'principal'}
+                ]
+                series = [
+                    {
+                        'name': 'Venta Actual',
+                        'data': ventaActual, 
+                        'type': 'column',
+                        'formato_tooltip':'moneda', 
+                        'color':'secondary',
+                        'yAxis': 0
+                    },
+                    {'name': 'Part vs. Objetivo', 'data':multiple, 'type': 'spline', 'yAxis': 1, 'formato_tooltip':'multiple', 'color':'danger'},
+                    {
+                        'name': 'Var vs. Año Anterior',
+                        'data': PartvsAA, 
+                        'type': 'spline',
+                        'formato_tooltip':'porcentaje', 
+                        'color':'dark',
+                        'yAxis': 1
+                    }
+                ]
+
+        if self.titulo == 'Venta por Departamento':
+            query = f"""Select cd.deptoDescrip ,
+                sum(case when year(GETDATE())=year(dt2.fecha) then a.ventaSinImpuestos else 0 end) ventaActual,
+                round(((sum(case when year(GETDATE())=year(dt2.fecha) then a.ventaSinImpuestos else 0 end) /
+                sum(case when year(DATEADD(yy,-1,GETDATE()))=year(dt2.fecha) then a.ventaSinImpuestos else 0 end))-1)*100,2) PartvsAA,
+                round((sum(case when year(GETDATE())=year(dt2.fecha) then a.ventaSinImpuestos else 0 end) / (select sum(ventaSinImpuestos) vTF
+                from DWH.artus.ventaxdia vxd
+                left join DWH.dbo.dim_tiempo dtt on dtt.id_fecha = vxd.fecha
+                where vxd.fecha BETWEEN '{fecha_ini_int}' and '{fecha_fin_int}' and idCanal = 0))*100,2) PartvsTF,max(co.Objetivo) Objetivo
+                from DWH.artus.ventaDiaria a
+                left join DWH.artus.cat_departamento cd on cd.idSubDepto = a.subDepto
+                left join DWH.dbo.dim_tiempo dt on a.fecha =dt.fechaComparacion
+                left join DWH.dbo.dim_tiempo dt2 on a.fecha =dt2.id_fecha
+                left join DWH.artus.catCanal cc on a.idCanal =cc.idCanal
+                left join DWH.artus.catObjetivo co on co.idTipo = cc.tipo and format(dt2.fecha,'yyyyMM')=co.nMes
+                where (dt2.fecha BETWEEN '{fecha_ini_str}' and '{fecha_fin_str}'
+                or dt.fecha BETWEEN '{fecha_ini_str}' and '{fecha_fin_str}')
+                and cc.tipo {'= '+self.filtros.canal if hayCanal else 'not in (0)'}
+                and cd.deptoDescrip not in ('0')
+                group by cd.deptoDescrip 
+                order by cd.deptoDescrip 
+                """
+            # print (f"query desde ejesMultiples->Temporada: {str(query)}")
+            cnxn = conexion_sql('DWH')
+            cursor = cnxn.cursor().execute(query)
+            arreglo = crear_diccionario(cursor)
+            if len(arreglo) > 0:
+                hayResultados = "si"
+                ventaActual = []
+                PartvsAA = []
+                PartvsTF = []
+                Objetivo = []
+                yAxis = [
+                    {'visible': False},
+                    {'visible': False}
+                ]
+                for elemento in arreglo:
+                    categories.append(elemento['deptoDescrip'])
+                    if elemento['ventaActual'] is not None:
+                        ventaActual.append(elemento['ventaActual'])
+                    else:
+                        ventaActual.append(float(0))
+                    if elemento['PartvsAA'] is not None:
+                        PartvsAA.append(float(elemento['PartvsAA'])/100)
+                    else:
+                        PartvsAA.append(float(0))
+                    if elemento['PartvsTF'] is not None:
+                        PartvsTF.append(float(elemento['PartvsTF'])/100)
+                    else:
+                        PartvsTF.append(float(0))
+                    if elemento['Objetivo'] is not None:
+                        Objetivo.append(float(elemento['Objetivo'])/100)
+                    else:
+                        Objetivo.append(float(0))
+                    if elemento['PartvsTF'] is not None and elemento['Objetivo'] is not None:
+                        diferencia.append((float(elemento['PartvsTF']) - float(elemento['Objetivo']))/100)
+                    else:
+                        diferencia.append(0)
+                    multiple.append(contador)
+                    contador += 1
+                # Creamos las series con los arreglos que hicimos
+                auxiliar = [
+                    {'name': 'Part vs. Tienda Física', 'data':PartvsTF, 'formato':'porcentaje', 'lugar': 'secundario'},
+                    {'name': 'Objetivo', 'data':Objetivo, 'formato':'porcentaje', 'lugar': 'secundario'},
+                    {'name': 'Diferencia', 'data':diferencia, 'formato':'porcentaje', 'lugar': 'principal'}
+                ]
+                series = [
+                    {
+                        'name': 'Venta Actual',
+                        'data': ventaActual, 
+                        'type': 'column',
+                        'formato_tooltip':'moneda', 
+                        'color':'secondary',
+                        'yAxis': 0
+                    },
+                    {'name': 'Part vs. Objetivo', 'data':multiple, 'type': 'spline', 'yAxis': 1, 'formato_tooltip':'multiple', 'color':'danger'},
+                    {
+                        'name': 'Var vs. Año Anterior',
+                        'data': PartvsAA, 
+                        'type': 'spline',
+                        'formato_tooltip':'porcentaje', 
+                        'color':'dark',
+                        'yAxis': 1
+                    }
+                ]
+
+        if self.titulo == 'Venta por Formato':
+            query = f"""Select ct.formatoNombre,
+                sum(case when year(GETDATE())=year(dt2.fecha) then a.ventaSinImpuestos else 0 end) ventaActual,
+                round(((sum(case when year(GETDATE())=year(dt2.fecha) then a.ventaSinImpuestos else 0 end) /
+                sum(case when year(DATEADD(yy,-1,GETDATE()))=year(dt2.fecha) then a.ventaSinImpuestos else 0 end))-1)*100,2) PartvsAA,
+                round((sum(case when year(GETDATE())=year(dt2.fecha) then a.ventaSinImpuestos else 0 end) / (select sum(ventaSinImpuestos) vTF
+                from DWH.artus.ventaxdia vxd
+                left join DWH.dbo.dim_tiempo dtt on dtt.id_fecha = vxd.fecha
+                where vxd.fecha BETWEEN '{fecha_ini_int}' and '{fecha_fin_int}' and idCanal = 0))*100,2) PartvsTF,max(co.Objetivo) Objetivo
+                from DWH.artus.ventaDiaria a
+                left join DWH.artus.catTienda ct on a.idTienda = ct.tienda
+                left join DWH.dbo.dim_tiempo dt on a.fecha =dt.fechaComparacion
+                left join DWH.dbo.dim_tiempo dt2 on a.fecha =dt2.id_fecha
+                left join DWH.artus.catCanal cc on a.idCanal =cc.idCanal
+                left join DWH.artus.catObjetivo co on co.idTipo = cc.tipo and format(dt2.fecha,'yyyyMM')=co.nMes
+                where (dt2.fecha BETWEEN '{fecha_ini_str}' and '{fecha_fin_str}'
+                or dt.fecha BETWEEN '{fecha_ini_str}' and '{fecha_fin_str}')
+                and cc.tipo {'= '+self.filtros.canal if hayCanal else 'not in (0)'}
+                group by ct.formatoNombre 
+                order by ct.formatoNombre 
+                """
+            # print (f"query desde ejesMultiples->Temporada: {str(query)}")
+            cnxn = conexion_sql('DWH')
+            cursor = cnxn.cursor().execute(query)
+            arreglo = crear_diccionario(cursor)
+            if len(arreglo) > 0:
+                hayResultados = "si"
+                ventaActual = []
+                PartvsAA = []
+                PartvsTF = []
+                Objetivo = []
+                yAxis = [
+                    {'visible': False},
+                    {'visible': False}
+                ]
+                for elemento in arreglo:
+                    categories.append(elemento['formatoNombre'])
+                    if elemento['ventaActual'] is not None:
+                        ventaActual.append(elemento['ventaActual'])
+                    else:
+                        ventaActual.append(float(0))
+                    if elemento['PartvsAA'] is not None:
+                        PartvsAA.append(float(elemento['PartvsAA'])/100)
+                    else:
+                        PartvsAA.append(float(0))
+                    if elemento['PartvsTF'] is not None:
+                        PartvsTF.append(float(elemento['PartvsTF'])/100)
+                    else:
+                        PartvsTF.append(float(0))
+                    if elemento['Objetivo'] is not None:
+                        Objetivo.append(float(elemento['Objetivo'])/100)
+                    else:
+                        Objetivo.append(float(0))
+                    if elemento['PartvsTF'] is not None and elemento['Objetivo'] is not None:
+                        diferencia.append((float(elemento['PartvsTF']) - float(elemento['Objetivo']))/100)
+                    else:
+                        diferencia.append(0)
+                    multiple.append(contador)
+                    contador += 1
+                # Creamos las series con los arreglos que hicimos
+                auxiliar = [
+                    {'name': 'Part vs. Tienda Física', 'data':PartvsTF, 'formato':'porcentaje', 'lugar': 'secundario'},
+                    {'name': 'Objetivo', 'data':Objetivo, 'formato':'porcentaje', 'lugar': 'secundario'},
+                    {'name': 'Diferencia', 'data':diferencia, 'formato':'porcentaje', 'lugar': 'principal'}
+                ]
+                series = [
+                    {
+                        'name': 'Venta Actual',
+                        'data': ventaActual, 
+                        'type': 'column',
+                        'formato_tooltip':'moneda', 
+                        'color':'secondary',
+                        'yAxis': 0
+                    },
+                    {'name': 'Part vs. Objetivo', 'data':multiple, 'type': 'spline', 'yAxis': 1, 'formato_tooltip':'multiple', 'color':'danger'},
+                    {
+                        'name': 'Var vs. Año Anterior',
+                        'data': PartvsAA, 
+                        'type': 'spline',
+                        'formato_tooltip':'porcentaje', 
+                        'color':'dark',
+                        'yAxis': 1
+                    }
+                ]
+
         # print(f"Lo que vamos a regresar desde ejesMultiplesApilados: {str({'hayResultados':hayResultados,'categories':categories, 'series':series, 'yAxis': yAxis})}")
-        return  {'hayResultados':hayResultados,'categories':categories, 'series':series, 'pipeline': query, 'yAxis': yAxis, 'auxiliar': auxiliar}
+        return  {'hayResultados':hayResultados,'categories':categories, 'series':series, 'query': query, 'yAxis': yAxis, 'auxiliar': auxiliar}
 
 @router.post("/{seccion}")
 async def ejes_multiples_apilados (filtros: Filtro, titulo: str, seccion: str, user: dict = Depends(get_current_active_user)):
