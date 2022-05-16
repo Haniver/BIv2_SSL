@@ -24,7 +24,7 @@ const Temporada = () => {
     <>
       <Row className='match-height'>
         <Col sm='12'>
-          <Filtro fechas={fechas} canal={canal} setFechas={setFechas} setCanal={setCanal} />
+          <Filtro mismoMes fechas={fechas} canal={canal} setFechas={setFechas} setCanal={setCanal} />
         </Col>
       </Row>
       <Row className='match-height'>

@@ -45,6 +45,9 @@ const Filtro = (props) => {
   if (props.agrupadorSinDia !== undefined) {
     numElementos -= 1
   }
+  if (props.mismoMes !== undefined) {
+    numElementos -= 1
+  }
   // Dividimos entre dos el número de elementos porque por cada filtro hay un getter y un setter, entonces se duplican los props
   numElementos = Math.round(numElementos / 2)
 
@@ -547,6 +550,25 @@ const Filtro = (props) => {
           setFechas_tmp({fecha_ini: value, fecha_fin: fecha_fin_tmp})
         }
       }
+      if (props.mismoMes !== undefined) {
+        if (value.getMonth() !== fecha_fin_tmp.getMonth()) {
+          setMensajeFechas(`Para este dashboard, la fecha inicial y la final deben de estar en el mismo mes`)
+        } else {
+          setMensajeFechas('')
+          if (props.botonEnviar === undefined) {
+            props.setFechas({fecha_ini: value, fecha_fin: fecha_fin_tmp})
+          } else {
+            setFechas_tmp({fecha_ini: value, fecha_fin: fecha_fin_tmp})
+          }
+        }
+      } else {
+        setMensajeFechas('')
+        if (props.botonEnviar === undefined) {
+          props.setFechas({fecha_ini: value, fecha_fin: fecha_fin_tmp})
+        } else {
+          setFechas_tmp({fecha_ini: value, fecha_fin: fecha_fin_tmp})
+        }
+      }
     } else {
       setMensajeFechas('La fecha final debe ser mayor a la inicial')
     }
@@ -565,6 +587,25 @@ const Filtro = (props) => {
       if (props.rango_max_dias !== undefined) {
         if (parseInt(Difference_In_Days) > parseInt(props.rango_max_dias)) {
           setMensajeFechas(`La fecha final no debe ser más de ${props.rango_max_dias} días mayor a la inicial`)
+        } else {
+          setMensajeFechas('')
+          if (props.botonEnviar === undefined) {
+            props.setFechas({fecha_ini: fecha_ini_tmp, fecha_fin: value})
+          } else {
+            setFechas_tmp({fecha_ini: fecha_ini_tmp, fecha_fin: value})
+          }
+        }
+      } else {
+        setMensajeFechas('')
+        if (props.botonEnviar === undefined) {
+          props.setFechas({fecha_ini: fecha_ini_tmp, fecha_fin: value})
+        } else {
+          setFechas_tmp({fecha_ini: fecha_ini_tmp, fecha_fin: value})
+        }
+      }
+      if (props.mismoMes !== undefined) {
+        if (parseInt(Difference_In_Days) > parseInt(props.rango_max_dias)) {
+          setMensajeFechas(`Para este dashboard, la fecha inicial y la final deben de estar en el mismo mes`)
         } else {
           setMensajeFechas('')
           if (props.botonEnviar === undefined) {
