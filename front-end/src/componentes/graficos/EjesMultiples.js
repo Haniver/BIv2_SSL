@@ -15,6 +15,7 @@ import { useSkin } from '@hooks/useSkin'
 import { Card, CardBody } from 'reactstrap'
 import drilldown from 'highcharts/modules/drilldown'
 import LoadingGif from '../auxiliares/LoadingGif'
+import { procesarSerie } from '../../services/funcionesAdicionales'
 require('highcharts/modules/data')(Highcharts)
 require('highcharts/modules/exporting')(Highcharts)
 require('highcharts/modules/export-data')(Highcharts)
@@ -115,7 +116,7 @@ const EjesMultiples = ({ titulo, yLabel, seccion, formato, fechas, region, zona,
                 }
                 series_tmp.push({
                     name: elemento.name,
-                    data: elemento.data,
+                    data: procesarSerie(elemento.data, elemento.formato_tooltip),
                     type: elemento.type,
                     yAxis: yAxis_num,
                     color: colors[elemento.color].main,
@@ -124,16 +125,14 @@ const EjesMultiples = ({ titulo, yLabel, seccion, formato, fechas, region, zona,
                                 let valueDecimals = 2
                                 let valuePrefix = ''
                                 let valueSuffix = ''
-                                let multiplicador = 1
                                 if (elemento.formato_tooltip === 'moneda') {
                                     valuePrefix = '$'
                                 } else if (elemento.formato_tooltip === 'entero') {
                                     valueDecimals = 0
                                 } else if (elemento.formato_tooltip === 'porcentaje') {
                                     valueSuffix = '%'
-                                    multiplicador = 100
                                 }
-                                const punto = multiplicador * this.options.y
+                                const punto = this.options.y
                             return `${this.series.name}: <b>${valuePrefix}${Highcharts.numberFormat(punto, valueDecimals, '.', ',')}${valueSuffix}</b>`
                         }
                     }
@@ -191,7 +190,7 @@ const EjesMultiples = ({ titulo, yLabel, seccion, formato, fechas, region, zona,
                             } else if (formato_columnas === 'entero') {
                                 return `${Highcharts.numberFormat(this.point.y, 0, '.', ',')}`
                             } else if (formato_columnas === 'porcentaje') {
-                                return `${Highcharts.numberFormat(this.point.y * 100, 2, '.', ',')}%`
+                                return `${Highcharts.numberFormat(this.point.y, 2, '.', ',')}%`
                             } else {
                                 return 'nada nada no no no'
                             }

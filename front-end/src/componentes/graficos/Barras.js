@@ -9,6 +9,7 @@ import { useSkin } from '@hooks/useSkin'
 import { Card, CardBody } from 'reactstrap'
 import drilldown from 'highcharts/modules/drilldown'
 import LoadingGif from '../auxiliares/LoadingGif'
+import { procesarSerie } from '../../services/funcionesAdicionales'
 require('highcharts/modules/data')(Highcharts)
 require('highcharts/modules/exporting')(Highcharts)
 require('highcharts/modules/export-data')(Highcharts)
@@ -85,7 +86,7 @@ const Barras = ({ titulo, yLabel, seccion, formato, fechas, region, zona, tienda
             res.data.series.forEach(elemento => {
                 series_tmp.push({
                     name: elemento.name,
-                    data: elemento.data,
+                    data: procesarSerie(elemento.data, formato),
                     color: colors[elemento.color].main
                 })
             })
@@ -128,7 +129,7 @@ const Barras = ({ titulo, yLabel, seccion, formato, fechas, region, zona, tienda
                     } else if (formato === 'entero') {
                         return `${Highcharts.numberFormat(this.value, 0, '.', ',')}`
                     } else if (formato === 'porcentaje') {
-                        return `${Highcharts.numberFormat(this.value * 100, 0, '.', ',')}%`
+                        return `${Highcharts.numberFormat(this.value, 0, '.', ',')}%`
                     }
                 },
                 overflow: 'justify'
@@ -145,7 +146,7 @@ const Barras = ({ titulo, yLabel, seccion, formato, fechas, region, zona, tienda
                         } else if (formato === 'entero') {
                             return `${Highcharts.numberFormat(this.point.y, 0, '.', ',')}`
                         } else if (formato === 'porcentaje') {
-                            return `${Highcharts.numberFormat(this.point.y * 100, 2, '.', ',')}%`
+                            return `${Highcharts.numberFormat(this.point.y, 2, '.', ',')}%`
                         }
                     },
                     color: colorTexto,
@@ -161,7 +162,7 @@ const Barras = ({ titulo, yLabel, seccion, formato, fechas, region, zona, tienda
                 } else if (formato === 'entero') {
                     return `${this.series.name}: ${Highcharts.numberFormat(this.point.y, 0, '.', ',')}`
                 } else if (formato === 'porcentaje') {
-                    return `${this.series.name}: ${Highcharts.numberFormat(this.point.y * 100, 2, '.', ',')}%`
+                    return `${this.series.name}: ${Highcharts.numberFormat(this.point.y, 2, '.', ',')}%`
                 }
             }
         },

@@ -9,6 +9,7 @@ import { useSkin } from '@hooks/useSkin'
 import { Card, CardBody } from 'reactstrap'
 import drilldown from 'highcharts/modules/drilldown'
 import LoadingGif from '../auxiliares/LoadingGif'
+import { procesarSerie } from '../../services/funcionesAdicionales'
 require('highcharts/modules/data')(Highcharts)
 require('highcharts/modules/exporting')(Highcharts)
 require('highcharts/modules/export-data')(Highcharts)
@@ -98,7 +99,7 @@ const BarrasApiladas = ({ titulo, tituloAPI, yLabel, porcentaje, sinCantidad, se
             res.data.series.forEach(elemento => {
                 series_tmp.push({
                     name: elemento.name,
-                    data: elemento.data,
+                    data: procesarSerie(elemento.data, formato),
                     color: colors[elemento.color].main
                 })
             })

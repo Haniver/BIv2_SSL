@@ -15,6 +15,7 @@ import { useSkin } from '@hooks/useSkin'
 import { Card, CardBody } from 'reactstrap'
 import drilldown from 'highcharts/modules/drilldown'
 import LoadingGif from '../auxiliares/LoadingGif'
+import { procesarSerie } from '../../services/funcionesAdicionales'
 require('highcharts/modules/data')(Highcharts)
 require('highcharts/modules/exporting')(Highcharts)
 require('highcharts/modules/export-data')(Highcharts)
@@ -104,9 +105,9 @@ const EjesMultiplesApilados = ({ titulo, seccion, fechas, tituloAPI, canal }) =>
                 }
                 let datos = []
                 if (elemento.formato_tooltip === 'multiple') {
-                    datos = res.data.auxiliar[2].data
+                    datos = procesarSerie(res.data.auxiliar[2].data, elemento.formato_tooltip)
                 } else {
-                    datos = elemento.data
+                    datos = procesarSerie(elemento.data, elemento.formato_tooltip)
                 }
                 series_tmp.push({
                     name: elemento.name,

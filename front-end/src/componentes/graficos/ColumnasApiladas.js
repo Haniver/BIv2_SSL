@@ -9,6 +9,7 @@ import { useSkin } from '@hooks/useSkin'
 import { Card, CardBody } from 'reactstrap'
 import drilldown from 'highcharts/modules/drilldown'
 import LoadingGif from '../auxiliares/LoadingGif'
+import { procesarSerie } from '../../services/funcionesAdicionales'
 require('highcharts/modules/data')(Highcharts)
 require('highcharts/modules/exporting')(Highcharts)
 require('highcharts/modules/export-data')(Highcharts)
@@ -79,7 +80,7 @@ const ColumnasApiladas = ({ titulo, yLabel, seccion, formato, fechas, region, zo
             res.data.series.forEach(elemento => {
                 series_tmp.push({
                     name: elemento.name,
-                    data: elemento.data,
+                    data: procesarSerie(elemento.data, formato),
                     color: colors[elemento.color].main
                 })
             })
@@ -129,7 +130,7 @@ const ColumnasApiladas = ({ titulo, yLabel, seccion, formato, fechas, region, zo
                     } else if (formato === 'entero') {
                         return `${Highcharts.numberFormat(this.total, 0, '.', ',')}`
                     } else if (formato === 'porcentaje') {
-                        return `${Highcharts.numberFormat(this.total * 100, 2, '.', ',')}%`
+                        return `${Highcharts.numberFormat(this.total, 2, '.', ',')}%`
                     }
                 }
             },
@@ -140,7 +141,7 @@ const ColumnasApiladas = ({ titulo, yLabel, seccion, formato, fechas, region, zo
                     } else if (formato === 'entero') {
                         return `${Highcharts.numberFormat(this.value, 0, '.', ',')}`
                     } else if (formato === 'porcentaje') {
-                        return `${Highcharts.numberFormat(this.value * 100, 2, '.', ',')}%`
+                        return `${Highcharts.numberFormat(this.value, 2, '.', ',')}%`
                     }
                 }
             }
@@ -162,7 +163,7 @@ const ColumnasApiladas = ({ titulo, yLabel, seccion, formato, fechas, region, zo
                         } else if (formato === 'entero') {
                             return `${Highcharts.numberFormat(this.point.y, 0, '.', ',')}`
                         } else if (formato === 'porcentaje') {
-                            return `${Highcharts.numberFormat(this.point.y * 100, 2, '.', ',')}%`
+                            return `${Highcharts.numberFormat(this.point.y, 2, '.', ',')}%`
                         }
                     },
                     color: colorTexto,
@@ -183,7 +184,7 @@ const ColumnasApiladas = ({ titulo, yLabel, seccion, formato, fechas, region, zo
                 } else if (formato === 'entero') {
                     return `${this.series.name}: ${Highcharts.numberFormat(this.point.y, 0, '.', ',')}<br/>Total: ${Highcharts.numberFormat(this.point.stackTotal, 0, '.', ',')}`
                 } else if (formato === 'porcentaje') {
-                    return `${this.series.name}: ${Highcharts.numberFormat(this.point.y * 100, 2, '.', ',')}%<br/>Total: ${Highcharts.numberFormat(this.point.stackTotal * 100, 2, '.', ',')}%`
+                    return `${this.series.name}: ${Highcharts.numberFormat(this.point.y, 2, '.', ',')}%<br/>Total: ${Highcharts.numberFormat(this.point.stackTotal, 2, '.', ',')}%`
                 }
         }
         },

@@ -600,7 +600,7 @@ class EjesMultiples():
                         round((arrElegUpSells/arrEleg['totales']), 4)
                     ] if len(arrEleg) > 0 else []
                     for i in range(len(serie1)):
-                        serie3.append(round((100*(serie2[i] - serie1[i])), 4))
+                        serie3.append(round((serie2[i] - serie1[i]), 4))
                     # Obtener los títulos de las series cuando el agrupador sea por semana. Los sacamos de catTiempo por alguna razón
                     if self.filtros.agrupador == 'semana':
                         cursor_semana = conexion_mongo('report').catTiempo.find({
@@ -818,7 +818,7 @@ class EjesMultiples():
                         round((arrEleg['fin']/arrEleg['ini']), 4), 
                     ] if len(arrEleg) > 0 else []
                     for i in range(len(serie1)):
-                        serie3.append(round((100*(serie2[i] - serie1[i])), 4))
+                        serie3.append(round((serie2[i] - serie1[i]), 4))
                     # Obtener los títulos de las series cuando el agrupador sea por semana. Los sacamos de catTiempo por alguna razón
                     if self.filtros.agrupador == 'semana':
                         cursor_semana = conexion_mongo('report').catTiempo.find({
