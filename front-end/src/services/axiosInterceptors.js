@@ -2,8 +2,8 @@ import axios from "axios"
 
 axios.interceptors.request.use(function (config) {
     // Do something before request is sent
-    console.log("El interceptor de Axios dice que vas a mandar: ")
-    console.log(config)
+    // console.log("El interceptor de Axios dice que vas a mandar: ")
+    // console.log(config)
     return config
   })
   
