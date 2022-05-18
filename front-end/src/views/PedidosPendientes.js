@@ -38,6 +38,14 @@ const PedidosPendientes = () => {
           <Tabla titulo={`Detalle de pedidos tienda ${tienda}`} tituloAPI= 'Detalle de pedidos tienda $tienda' seccion={seccion} region={region} zona={zona} tienda={tienda} tipoEntrega={tipoEntrega} />
         </Col>}
       </Row>
+      <Row className='match-height'>
+      {(tienda === '' || tienda === undefined || tienda === false) && <Col xl='6' sm='12'>
+          <Tabla titulo='Pedidos No Entregados o No Cancelados' seccion={seccion} region={region} zona={zona} tienda={tienda} tipoEntrega={tipoEntrega} opcionesPaginacion={[5, 10, 20, 50, 100]} />
+        </Col>}
+      {(tienda !== '' && tienda !== undefined && tienda !== false) && <Col xl='6' sm='12'>
+          <Tabla titulo={`Pedidos No Entregados o No Cancelados ${tienda}`} tituloAPI='Pedidos No Entregados o No Cancelados $tienda' seccion={seccion} region={region} zona={zona} tienda={tienda} tipoEntrega={tipoEntrega} opcionesPaginacion={[5, 10, 20, 50, 100]} />
+        </Col>}
+      </Row>
     </Fragment>
   )
 }

@@ -502,6 +502,168 @@ class Tablas():
                     {'name': 'Prioridad', 'selector':'Prioridad', 'formato':'texto', 'ancho': '150px'},
                     {'name': 'Fecha', 'selector':'FechaEntrega', 'formato':'texto', 'ancho': '110px'}
                 ]
+        if self.titulo == 'Pedidos No Entregados o No Cancelados':
+            if self.filtros.region != '' and self.filtros.region != "False":
+                self.filtro_lugar = True
+                if self.filtros.zona != '' and self.filtros.zona != "False":
+                    if self.filtros.tienda != '' and self.filtros.tienda != "False":
+                        nivel = 'idtienda'
+                        self.lugar = int(self.filtros.tienda)
+                    else:
+                        nivel = 'zona'
+                        self.lugar = int(self.filtros.zona)
+                else:
+                    nivel = 'region'
+                    self.lugar = int(self.filtros.region)
+            else:
+                self.filtro_lugar = False
+                self.lugar = ''
+            collection = conexion_mongo('report').report_pedidoPendientes48horas
+            pipeline = [{'$unwind': '$sucursal'}]
+            if self.filtro_lugar:
+                pipeline.append(
+                    {'$match': {f'sucursal.{nivel}': self.lugar}}
+                )
+            if self.filtros.tipoEntrega != None and self.filtros.tipoEntrega != "False":
+                pipeline.append({'$match': {'metodoEntrega': self.filtros.tipoEntrega}})
+            pipeline.extend([{'$project': {
+                'fechaEntrega': {'$dateToString': {'format': '%d/%m/%Y', 'date': '$fechaEntrega'}},
+                'regionNombre': '$sucursal.regionNombre',
+                'zonaNombre': '$sucursal.zonaNombre',
+                'tiendaNombre': '$sucursal.tiendaNombre',
+                'Delivering': {'$cond': [{'$eq': ["$estatus","Delivering"]}, 1, 0]},
+                'PickPack': {'$cond': [{'$eq': ["$estatus","Pick Pack"]}, 1, 0]},
+                'Ready': {'$cond': [{'$eq': ["$estatus","Ready"]}, 1, 0]},
+                'ReadyForPickUp': {'$cond': [{'$eq': ["$estatus","Ready for Pick Up"]}, 1, 0]}
+                }},
+                {'$group': {
+                    '_id': {
+                        'fechaEntrega': '$fechaEntrega',
+                        'regionNombre': '$regionNombre',
+                        'zonaNombre': '$zonaNombre',
+                        'tiendaNombre': '$tiendaNombre',
+                    },
+                    'Delivering': {'$sum': '$Delivering'},
+                    'PickPack': {'$sum': '$PickPack'},
+                    'Ready': {'$sum': '$Ready'},
+                    'ReadyForPickUp': {'$sum': '$ReadyForPickUp'}
+                }},
+                {'$project': {
+                    'fechaEntrega': '$_id.fechaEntrega',
+                    'fechaOrdenar': {
+                        '$dateFromString': {
+                            'dateString': '$_id.fechaEntrega',
+                            'format': "%d/%m/%Y"
+                    }},
+                    'regionNombre': '$_id.regionNombre',
+                    'zonaNombre': '$_id.zonaNombre',
+                    'tiendaNombre': '$_id.tiendaNombre',
+                    'Delivering': {'$sum': '$Delivering'},
+                    'PickPack': {'$sum': '$PickPack'},
+                    'Ready': {'$sum': '$Ready'},
+                    'ReadyForPickUp': {'$sum': '$ReadyForPickUp'}
+                }},
+                {'$sort': {'fechaOrdenar': 1, 'regionNombre': 1, 'zonaNombre': 1, 'tiendaNombre': 1}}
+            ])
+            cursor = collection.aggregate(pipeline)
+            arreglo = await cursor.to_list(length=1000)
+            data = []
+            if len(arreglo) >0:
+                hayResultados = "si"
+                for dato in arreglo:
+                    data.append({
+                        'fechaEntrega': dato['_id']['fechaEntrega'],
+                        'regionNombre': dato['_id']['regionNombre'],
+                        'zonaNombre': dato['_id']['zonaNombre'],
+                        'tiendaNombre': dato['_id']['tiendaNombre'],
+                        'Delivering': dato['Delivering'],
+                        'PickPack': dato['PickPack'],
+                        'Ready': dato['Ready'],
+                        'ReadyForPickUp': dato['ReadyForPickUp']
+                    })
+            else:
+                hayResultados = 'no'
+            columns = [
+                    {'name': 'Fecha de Entrega', 'selector':'fechaEntrega', 'formato':'texto'},
+                    {'name': 'Región', 'selector':'regionNombre', 'formato':'texto', 'ancho': '240px'},
+                    {'name': 'Zona', 'selector':'zonaNombre', 'formato':'texto', 'ancho': '240px'},
+                    {'name': 'Tienda', 'selector':'tiendaNombre', 'formato':'texto', 'ancho': '360px'},
+                    {'name': 'Delivering', 'selector':'Delivering', 'formato':'entero'},
+                    {'name': 'Pick Pack', 'selector':'PickPack', 'formato':'entero', 'ancho': '110px'},
+                    {'name': 'Ready', 'selector':'Ready', 'formato':'entero'},
+                    {'name': 'Ready for Pick Up', 'selector':'ReadyForPickUp', 'formato':'entero'}
+                ]
+        if self.titulo == 'Pedidos No Entregados o No Cancelados $tienda':
+            if self.filtros.region != '' and self.filtros.region != "False":
+                self.filtro_lugar = True
+                if self.filtros.zona != '' and self.filtros.zona != "False":
+                    if self.filtros.tienda != '' and self.filtros.tienda != "False":
+                        nivel = 'idtienda'
+                        self.lugar = int(self.filtros.tienda)
+                    else:
+                        nivel = 'zona'
+                        self.lugar = int(self.filtros.zona)
+                else:
+                    nivel = 'region'
+                    self.lugar = int(self.filtros.region)
+            else:
+                self.filtro_lugar = False
+                self.lugar = ''
+            collection = conexion_mongo('report').report_pedidoPendientes48horas
+            pipeline = [{'$unwind': '$sucursal'}]
+            if self.filtro_lugar:
+                pipeline.append(
+                    {'$match': {f'sucursal.{nivel}': self.lugar}}
+                )
+            if self.filtros.tipoEntrega != None and self.filtros.tipoEntrega != "False":
+                pipeline.append({'$match': {'metodoEntrega': self.filtros.tipoEntrega}})
+            pipeline.extend([{'$project': {
+                'fechaOrdenar': '$fechaEntrega',
+                'fechaEntrega': {'$dateToString': {'format': '%d/%m/%Y', 'date': '$fechaEntrega'}},
+                'regionNombre': '$sucursal.regionNombre',
+                'zonaNombre': '$sucursal.zonaNombre',
+                'tiendaNombre': '$sucursal.tiendaNombre',
+                'estatus': '$estatus',
+                'pedido': '$pedido',
+                'consigna': '$consigna',
+                'metodoEntrega': '$metodoEntrega',
+                'timeslot_from': {'$dateToString': {'format': '%d/%m/%Y %H:%M', 'date': '$timeslot_from'}},
+                'timeslot_to': {'$dateToString': {'format': '%d/%m/%Y %H:%M', 'date': '$timeslot_to'}},
+                }},
+                {'$sort': {'fechaOrdenar': 1, 'regionNombre': 1, 'zonaNombre': 1, 'tiendaNombre': 1}}
+            ])
+            cursor = collection.aggregate(pipeline)
+            arreglo = await cursor.to_list(length=1000)
+            data = []
+            if len(arreglo) >0:
+                hayResultados = "si"
+                for dato in arreglo:
+                    data.append({
+                        'fechaEntrega': dato['fechaEntrega'],
+                        'regionNombre': dato['regionNombre'],
+                        'zonaNombre': dato['zonaNombre'],
+                        'tiendaNombre': dato['tiendaNombre'],
+                        'pedido': dato['pedido'],
+                        'consigna': dato['consigna'],
+                        'timeslot_from': dato['timeslot_from'],
+                        'timeslot_to': dato['timeslot_to'],
+                        'estatus': dato['estatus'],
+                        'metodoEntrega': dato['metodoEntrega'],
+                    })
+            else:
+                hayResultados = 'no'
+            columns = [
+                    {'name': 'Fecha de Entrega', 'selector':'fechaEntrega', 'formato':'texto'},
+                    {'name': 'Región', 'selector':'regionNombre', 'formato':'texto', 'ancho': '240px'},
+                    {'name': 'Zona', 'selector':'zonaNombre', 'formato':'texto', 'ancho': '240px'},
+                    {'name': 'Tienda', 'selector':'tiendaNombre', 'formato':'texto', 'ancho': '360px'},
+                    {'name': 'Pedido', 'selector':'pedido', 'formato':'entero'},
+                    {'name': 'Estatus', 'selector':'estatus', 'formato':'texto', 'ancho': '200px'},
+                    {'name': 'Timeslot From', 'selector':'timeslot_from', 'formato':'texto'},
+                    {'name': 'Timeslot To', 'selector':'timeslot_to', 'formato':'texto'},
+                    {'name': 'consigna', 'selector':'consigna', 'formato':'texto'},
+                    {'name': 'Método Entrega', 'selector':'metodoEntrega', 'formato':'texto'},
+                ]
         return {'hayResultados':hayResultados, 'pipeline': pipeline, 'columns':columns, 'data':data}
         # Return para debugging:
         # return {'hayResultados':'no', 'pipeline': [], 'columns':[], 'data':[]}
