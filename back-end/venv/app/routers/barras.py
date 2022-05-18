@@ -48,19 +48,18 @@ class Barras():
             if filtro_lugar:
                 pipeline.append({'$match': {'sucursal.'+ nivel: lugar}})
             pipeline.append({'$match': {'fechaUltimoCambio': {'$gte': self.fecha_ini_a12, '$lt': self.fecha_fin_a12}}})
-            pipeline.append({'$group':{'_id':'$sucursal.'+siguiente_nivel, 'items_ini': {'$sum': '$items_ini'}, 'items_fin': {'$sum': '$items_fin'}, 'items_found': {'$sum': '$items_found'}}})
-            pipeline.append({'$project':{'_id':'$_id', 'fulfillment_rate': {'$divide': ['$items_fin', '$items_ini']}, 'found_rate': {'$divide': ['$items_found', '$items_ini']}}})
+            pipeline.append({'$group':{'_id':'$sucursal.'+siguiente_nivel, 'monto_ini': {'$sum': '$monto_ini'}, 'monto_fin': {'$sum': '$monto_fin'}}})
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=1000)
             if len(arreglo) >0:
                 hayResultados = "si"
                 for row in arreglo:
                     categorias.append(row['_id'])
-                    serie1.append(round((row['fulfillment_rate']), 4))
-                    serie2.append(round((row['found_rate']), 4))
+                    serie1.append(round(row['monto_ini'], 2))
+                    serie2.append(round(row['monto_fin'], 2))
                 series.extend([
-                    {'name': 'Fulfillment Rate', 'data':serie1, 'color': 'primary'},                                
-                    {'name': 'Found Rate', 'data':serie2, 'color': 'secondary'}
+                    {'name': 'Monto Inicial', 'data':serie1, 'color': 'primary'},                                
+                    {'name': 'Monto Final', 'data':serie2, 'color': 'secondary'}
                 ])
             else:
                 hayResultados = "no"
