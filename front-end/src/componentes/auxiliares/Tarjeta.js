@@ -80,15 +80,15 @@ const Tarjeta = ({ icono, titulo, tituloAPI, seccion, className, formato, fechas
         }
       }
       if (tituloMod_tmp !== undefined && tituloMod_tmp !== '') {
-        console.log(`tituloMod no está definido`)
+        // console.log(`tituloMod no está definido`)
         setTituloMostrar(tituloMod_tmp)
       } else {
-        console.log(`tituloMod sí está definido: ${tituloMod_tmp}`)
+        // console.log(`tituloMod sí está definido: ${tituloMod_tmp}`)
       }
       setNumero(numero_tmp)
     } else {
       setNumero("Sin Resultados")
-      console.log(JSON.stringify(numero_tmp))
+      // console.log(JSON.stringify(numero_tmp))
     }
     // console.log(`Query ${titulo}:\n${JSON.stringify(res.data.pipeline)}`)
   }, queCambiar)
