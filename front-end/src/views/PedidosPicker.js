@@ -38,7 +38,7 @@ const PedidosPicker = () => {
       </Row>
       <Row className='match-height'>
       {botonEnviar > 0 && agente !== undefined && agente !== '' && <Col sm='12'>
-          <Tabla titulo={`Pedidos por Día para ${agente}`} tituloAPI='Pedidos por Día para $agente' fechas={fechas} region={region} zona={zona} tienda={tienda} agente={agente} seccion={seccion} botonEnviar={botonEnviar} />
+          <Tabla titulo={`Pedidos por Día para ${agente}`} tituloAPI='Pedidos por Día para $agente' fechas={fechas} region={region} zona={zona} tienda={tienda} fromSibling={agente} seccion={seccion} botonEnviar={botonEnviar} />
         </Col>}
       </Row>
     </>

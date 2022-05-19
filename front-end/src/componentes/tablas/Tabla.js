@@ -28,7 +28,7 @@ const FilterComponent = ({ filterText, onFilter, onClear }) => (
     </>
 )
 
-const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quitarPaginacion, fechas, region, zona, tienda, proveedor, tipoEntrega, depto, subDepto, mes, canal, agrupador, periodo, reload, setProducto, setUsuario, tipoEntrega2, tipoEntrega3, detalle, estatus, formato, sku, e3, canal2, opcionesPaginacion = [5, 10, 15], setCambiarLugar, botonEnviar, mesRFM, anioRFM, agente}) => {
+const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quitarPaginacion, fechas, region, zona, tienda, proveedor, tipoEntrega, depto, subDepto, mes, canal, agrupador, periodo, reload, setProducto, setUsuario, tipoEntrega2, tipoEntrega3, detalle, estatus, formato, sku, e3, canal2, opcionesPaginacion = [5, 10, 15], setCambiarLugar, botonEnviar, mesRFM, anioRFM, fromSibling}) => {
     const tituloEnviar = (tituloAPI !== undefined) ? tituloAPI : titulo
     // Skins
     const [skin, setSkin] = useSkin()
@@ -116,7 +116,7 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
             canal2, 
             mesRFM, 
             anioRFM,
-            agente
+            fromSibling
           }
         })
         dispatchLoader({tipo: 'recibirDeAPI'})
@@ -318,7 +318,7 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
         }
         // console.log(`Query de ${tituloEnviar}:`)
         // console.log(JSON.stringify(res.data.pipeline))
-    }, [fechas, region, zona, tienda, tipoEntrega, depto, subDepto, mes, canal, agrupador, periodo, reload, tipoEntrega2, tipoEntrega3, detalle, estatus, formato, sku, e3, canal2, botonEnviar, mesRFM, anioRFM, agente])
+    }, [fechas, region, zona, tienda, tipoEntrega, depto, subDepto, mes, canal, agrupador, periodo, reload, tipoEntrega2, tipoEntrega3, detalle, estatus, formato, sku, e3, canal2, botonEnviar, mesRFM, anioRFM, fromSibling])
 
     //Búsqueda
     const [filterText, setFilterText] = useState('')
