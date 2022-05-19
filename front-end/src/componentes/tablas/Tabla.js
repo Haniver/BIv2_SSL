@@ -476,7 +476,7 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
                     onColumnOrderChange={cols => console.log(cols)}
                     paginationComponentOptions={paginationComponentOptions}
                     pagination={!quitarPaginacion} paginationRowsPerPageOptions={opcionesPaginacion}
-                    // paginationPerPage={5}
+                    paginationPerPage={opcionesPaginacion[0]}
                     customStyles={customStyles}
                     highlightOnHover
                 />}
