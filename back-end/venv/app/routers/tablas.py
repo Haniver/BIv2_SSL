@@ -593,7 +593,7 @@ class Tablas():
                     {'name': 'Ready', 'selector':'Ready', 'formato':'entero'},
                     {'name': 'Ready for Pick Up', 'selector':'ReadyForPickUp', 'formato':'entero'}
                 ]
-        if self.titulo == 'Pedidos No Entregados o No Cancelados $tienda':
+        if self.titulo == 'Pedidos No Entregados o No Cancelados Tienda $tienda':
             if self.filtros.region != '' and self.filtros.region != "False":
                 self.filtro_lugar = True
                 if self.filtros.zona != '' and self.filtros.zona != "False":
