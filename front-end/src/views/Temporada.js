@@ -84,6 +84,11 @@ const Temporada = () => {
             <Tabla quitarPaginacion seccion={seccion} titulo='Detalle Sub-Departamentos' fechas={fechas} canal={canal} fromSibling={depto} setSibling={setSubDepto} />
         </Col>
       </Row>}
+      {subDepto !== '' && subDepto !== undefined && <Row className='match-height'>
+        <Col sm='12'>
+            <Tabla quitarPaginacion seccion={seccion} titulo='Detalle Formatos' fechas={fechas} canal={canal} fromSibling={subDepto} />
+        </Col>
+      </Row>}
       <Row className='match-height'>
         <Col sm='12'>
             <EjesMultiplesApilados seccion={seccion} titulo='Venta por Formato' fechas={fechas} canal={canal} />
