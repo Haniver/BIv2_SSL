@@ -193,6 +193,7 @@ class EjesMultiplesApilados():
                 group by dtt.fecha) b on a.fecha =b.fecha
                 left join DWH.artus.catObjetivo co on co.idTipo = a.{"tipo" if hayCanal else "esOmnicanal"}
                 and format(a.fecha,'yyyyMM')=co.nMes
+                order by fecha
             """
             # print (f"query desde ejesMultiplesApilados->Temporada->Pedidos por día: {str(query)}")
             cnxn = conexion_sql('DWH')
