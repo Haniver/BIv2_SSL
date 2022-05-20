@@ -89,24 +89,25 @@ const Temporada = () => {
         </Col>
       </Row>
       <Row className='match-height'>
-        <Col lg={(subDepto !== '' && subDepto !== undefined) ? '6' : '12'} sm='12'>
+        <Col sm='12'>
             <Tabla quitarPaginacion seccion={seccion} titulo='Detalle Departamentos' fechas={fechas} canal={canal} setSibling={setDepto} />
         </Col>
-      {depto !== '' && depto !== undefined &&
-        <Col lg={(subDepto !== '' && subDepto !== undefined) ? '6' : '12'} sm='12'>
+      </Row>
+      {depto !== '' && depto !== undefined && <Row className='match-height'>
+        <Col sm='12'>
             <Tabla quitarPaginacion seccion={seccion} titulo={`Detalle Sub-Departamentos para Depto ${depto}`} tituloAPI='Detalle Sub-Departamentos para Depto $depto' fechas={fechas} canal={canal} fromSibling={depto} setSibling={setSubDepto} />
-        </Col>}
-      </Row>
-      <Row className='match-height'>
-      {subDepto !== '' && subDepto !== undefined && 
-        <Col lg={(subClase !== '' && subClase !== undefined) ? '6' : '12'} sm='12'>
+        </Col>
+      </Row>}
+      {subDepto !== '' && subDepto !== undefined && <Row className='match-height'>
+        <Col sm='12'>
             <Tabla quitarPaginacion seccion={seccion} titulo={`Detalle Clases para SubDepto ${subDepto}`} tituloAPI='Detalle Clases para SubDepto $subDepto' fechas={fechas} canal={canal} fromSibling={subDepto} setSibling={setClase} />
-        </Col>}
-      {clase !== '' && clase !== undefined &&
-        <Col lg={(subClase !== '' && subClase !== undefined) ? '6' : '12'} sm='12'>
+        </Col>
+      </Row>}
+      {clase !== '' && clase !== undefined && <Row className='match-height'>
+        <Col sm='12'>
             <Tabla quitarPaginacion seccion={seccion} titulo={`Detalle Sub-Clases para Clase ${clase}`} tituloAPI='Detalle Sub-Clases para Clase $clase' fechas={fechas} canal={canal} fromSibling={clase} setSibling={setSubClase} />
-        </Col>}
-      </Row>
+        </Col>
+      </Row>}
       {subClase !== '' && subClase !== undefined && <Row className='match-height'>
         <Col sm='12'>
             <Tabla quitarPaginacion seccion={seccion} titulo={`Detalle Formatos para SubClase ${subClase}`} tituloAPI='Detalle Formatos para SubClase $subClase' fechas={fechas} canal={canal} fromSibling={subClase} />
