@@ -278,7 +278,8 @@ const EjesMultiplesApilados = ({ titulo, seccion, fechas, tituloAPI, canal, setF
                 },
                 spline: {
                     dataLabels: {
-                        enabled: splineLabelsEnabled
+                        enabled: splineLabelsEnabled,
+                        format: '{point.y:,.2f}%'
                     }
                 }
             },
