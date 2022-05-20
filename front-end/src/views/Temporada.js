@@ -22,9 +22,8 @@ const Temporada = () => {
     const [subDepto, setSubDepto] = useState('')
 
     useEffect(() => {
-      console.log(`Depto desde Temporada = ${depto}`)
-      console.log(`SubDepto desde Temporada = ${subDepto}`)
-    }, [depto, subDepto])
+      setSubDepto('')
+    }, [depto])
 
     const seccion = 'Temporada'
 
