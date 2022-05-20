@@ -33,7 +33,7 @@ const PedidosPicker = () => {
       <Row className='match-height'>
       {/* WAWA te quedaste en ver por qué no se ve esta tabla */}
       {botonEnviar > 0 && tienda !== undefined && tienda !== '' && <Col sm='12'>
-          <Tabla titulo='Pedidos Picker por Agente' fechas={fechas} region={region} zona={zona} tienda={tienda} seccion={seccion} setCambiarLugar={setAgente} botonEnviar={botonEnviar} />
+          <Tabla titulo='Pedidos Picker por Agente' fechas={fechas} region={region} zona={zona} tienda={tienda} seccion={seccion} setSibling={setAgente} botonEnviar={botonEnviar} />
         </Col>}
       </Row>
       <Row className='match-height'>

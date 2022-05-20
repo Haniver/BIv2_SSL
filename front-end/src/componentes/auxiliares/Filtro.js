@@ -36,7 +36,7 @@ const Filtro = (props) => {
     numElementos -= 2
   }
 
-  if (props.cambiarLugar !== undefined) {
+  if (props.sibling !== undefined) {
     numElementos -= 1
   }
   if (props.setLabelTienda !== undefined) {
@@ -382,13 +382,13 @@ const Filtro = (props) => {
   }
 
   useEffect(async () => {
-    if (props.cambiarLugar !== undefined && props.cambiarLugar !== false) {
+    if (props.sibling !== undefined && props.sibling !== false) {
       // console.log('Llamando a handleRegionChange')
-      await handleRegionChange(props.cambiarLugar.region)
-      await handleZonaChange(props.cambiarLugar.zona)
-      await handleTiendaChange(props.cambiarLugar.tienda)
+      await handleRegionChange(props.sibling.region)
+      await handleZonaChange(props.sibling.zona)
+      await handleTiendaChange(props.sibling.tienda)
     }
-  }, [props.cambiarLugar])
+  }, [props.sibling])
   
   const cambiaGrupoDeptos = async (e) => {
     // setGrupoDeptosValue(e)

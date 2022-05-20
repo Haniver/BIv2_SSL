@@ -5,6 +5,7 @@ import Tarjeta from '../componentes/auxiliares/Tarjeta'
 import fechas_srv from '../services/fechas_srv'
 import EjesMultiples from '../componentes/graficos/EjesMultiples'
 import EjesMultiplesApilados from '../componentes/graficos/EjesMultiplesApilados'
+import Tabla from '../componentes/tablas/Tabla'
 import {
     DollarSign,
     Box,
@@ -17,6 +18,13 @@ const Temporada = () => {
     
     const [fechas, setFechas] = useState({fecha_ini: fechas_srv.primeroDelMesVencido(), fecha_fin: new Date()})
     const [canal, setCanal] = useState(false)
+    const [depto, setDepto] = useState('')
+    const [subDepto, setSubDepto] = useState('')
+
+    useEffect(() => {
+      console.log(`Depto desde Temporada = ${depto}`)
+      console.log(`SubDepto desde Temporada = ${subDepto}`)
+    }, [depto, subDepto])
 
     const seccion = 'Temporada'
 
@@ -66,6 +74,16 @@ const Temporada = () => {
             <EjesMultiplesApilados seccion={seccion} titulo='Venta por Departamento' fechas={fechas} canal={canal} />
         </Col>
       </Row>
+      <Row className='match-height'>
+        <Col sm='12'>
+            <Tabla quitarPaginacion seccion={seccion} titulo='Detalle Departamentos' fechas={fechas} canal={canal} setSibling={setDepto} />
+        </Col>
+      </Row>
+      {depto !== '' && depto !== undefined && <Row className='match-height'>
+        <Col sm='12'>
+            <Tabla quitarPaginacion seccion={seccion} titulo='Detalle Sub-Departamentos' fechas={fechas} canal={canal} fromSibling={depto} setSibling={setSubDepto} />
+        </Col>
+      </Row>}
       <Row className='match-height'>
         <Col sm='12'>
             <EjesMultiplesApilados seccion={seccion} titulo='Venta por Formato' fechas={fechas} canal={canal} />

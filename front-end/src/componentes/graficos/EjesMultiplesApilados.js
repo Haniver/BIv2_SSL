@@ -20,7 +20,7 @@ require('highcharts/modules/data')(Highcharts)
 require('highcharts/modules/exporting')(Highcharts)
 require('highcharts/modules/export-data')(Highcharts)
 
-const EjesMultiplesApilados = ({ titulo, seccion, fechas, tituloAPI, canal }) => {
+const EjesMultiplesApilados = ({ titulo, seccion, fechas, tituloAPI, canal, setFromSibling }) => {
     const titulo_enviar = (tituloAPI) ? tituloAPI : titulo // Como la API usa el título de la gráfica para regresar su valor, había un problema cuando ese título es variable, como cuando incluye la fecha actual. Entonces, si desde la vista le mandas el prop tituloAPI, es ese el que se usa para la API. Si lo omites, se usa la variable titulo como estaba pensado originalmente
     const [estadoLoader, dispatchLoader] = useReducer((estadoLoader, accion) => {
         switch (accion.tipo) {
@@ -35,6 +35,7 @@ const EjesMultiplesApilados = ({ titulo, seccion, fechas, tituloAPI, canal }) =>
     const [series, setSeries] = useState([])
     const [yAxis, setYAxis] = useState([])
     const [timer, setTimer] = useState(0)
+    const [cursor, setCursor] = useState(undefined)
     const [options, setOptions] = useState({
         chart: {
             zoomType: 'xy'
@@ -99,6 +100,7 @@ const EjesMultiplesApilados = ({ titulo, seccion, fechas, tituloAPI, canal }) =>
         let formato_columnas_tmp = 'entero'
         if (res.data.hayResultados === 'si') {
             const series_tmp = []
+            let n = 0
             res.data.series.forEach(elemento => {
                 if (elemento.type === 'column') {
                     formato_columnas_tmp = elemento.formato_tooltip
@@ -108,6 +110,14 @@ const EjesMultiplesApilados = ({ titulo, seccion, fechas, tituloAPI, canal }) =>
                     datos = procesarSerie(res.data.auxiliar[2].data, elemento.formato_tooltip)
                 } else {
                     datos = procesarSerie(elemento.data, elemento.formato_tooltip)
+                }
+                let click = () => {}
+                if (setFromSibling !== undefined) { // O sea, si hay drilldown,
+                    // Se hace la variable fromSibling = Un valor que se determina por un arreglo que viene de la API. Por ejemplo, pueden ser los IDs de departamento, aunque no se muestren en la gráfica. Lo importante es que SIEMPRE que desde el dashboard se mande setFromSibling, en el back end se debe mandar un arrFromSibling
+                    click = () => {
+                        setFromSibling(res.data.arrFromSibling[n])
+                    }
+                    setCursor('pointer')
                 }
                 series_tmp.push({
                     name: elemento.name,
@@ -142,12 +152,18 @@ const EjesMultiplesApilados = ({ titulo, seccion, fechas, tituloAPI, canal }) =>
                                 return `${this.series.name}: <b>${valuePrefix}${Highcharts.numberFormat(punto, valueDecimals, '.', ',')}${valueSuffix}</b>`
                             }
                         }
+                    },
+                    point: {
+                        events: {
+                            click
+                        }
                     }
                 })
                 // El requerimiento fue no usar labels y títulos para el eje de las Y, pero si en un futuro lo quieres hacer, tiene que cumplir con el formato de https://jsfiddle.net/gh/get/library/pure/highcharts/highcharts/tree/master/samples/highcharts/demo/combo-multi-axes
                 // yAxis_tmp.push({
                 //     visible: false
                 // })
+                n += 1
             })
             const yAxis_tmp = []
             res.data.yAxis.forEach(elemento => {
@@ -181,12 +197,21 @@ const EjesMultiplesApilados = ({ titulo, seccion, fechas, tituloAPI, canal }) =>
                     })
                 }
             })
-            // console.log("YAxis desde EjesMultiples:")
-            // console.log(yAxis_tmp)
-            // console.log("Categories desde EjesMultiples:")
-            // console.log(res.data.categories)
-            // console.log("Series desde EjesMultiples:")
-            // console.log(series_tmp)
+            // if (setFromSibling !== undefined) {
+            //     // Crear la función que va a ejecutarse cuando se le de click a la columna. Pero tiene que estar en texto y luego evaluarse, porque usa la variable this.categoria, y si se evalúa aquí, no va a tener sentido
+            //     console.log("setFromSibling SÍ está definido, y es:")
+            //     console.log(setFromSibling)
+            //     setClick(Function(`{
+            //         console.log('this:')
+            //         console.log(this)
+            //         console.log('this.categoria:')
+            //         console.log(this.categoria)
+            //         //setFromSibling(this.categoria)
+            //     }`))
+            //     setCursor('pointer')
+            // } else {
+            //     console.log("setFromSibling NO está definido")
+            // }
             setYAxis(yAxis_tmp)
             setCategories(res.data.categories)
             setSeries(series_tmp)
@@ -247,12 +272,14 @@ const EjesMultiplesApilados = ({ titulo, seccion, fechas, tituloAPI, canal }) =>
                                 return 'nada nada no no no'
                             }
                         }    
-                    }
-                }
-            },
-            credits: {
-                enabled: false
-            }   
+                    },
+                    // El cursor se pone como pointer si hay drilldown (o sea, setFromSibling != undefined). El getter y setter de cursor salen de un useState que está más arriba
+                    cursor
+                },
+                credits: {
+                    enabled: false
+                }   
+            }
         }
         setOptions(options)
     }, [series, formato_columnas])

@@ -170,6 +170,6 @@ const navigation = [
     }
   }
 
-  console.log('navigation:')
-  console.log(navigation)
+  // console.log('navigation:')
+  // console.log(navigation)
   export default navigation

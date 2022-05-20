@@ -28,7 +28,7 @@ const FilterComponent = ({ filterText, onFilter, onClear }) => (
     </>
 )
 
-const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quitarPaginacion, fechas, region, zona, tienda, proveedor, tipoEntrega, depto, subDepto, mes, canal, agrupador, periodo, reload, setProducto, setUsuario, tipoEntrega2, tipoEntrega3, detalle, estatus, formato, sku, e3, canal2, opcionesPaginacion = [5, 10, 15], setCambiarLugar, botonEnviar, mesRFM, anioRFM, fromSibling}) => {
+const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quitarPaginacion, fechas, region, zona, tienda, proveedor, tipoEntrega, depto, subDepto, mes, canal, agrupador, periodo, reload, setProducto, setUsuario, tipoEntrega2, tipoEntrega3, detalle, estatus, formato, sku, e3, canal2, opcionesPaginacion = [5, 10, 15], setSibling, botonEnviar, mesRFM, anioRFM, fromSibling}) => {
     const tituloEnviar = (tituloAPI !== undefined) ? tituloAPI : titulo
     // Skins
     const [skin, setSkin] = useSkin()
@@ -211,16 +211,16 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
                             ✎
                         </Button>
                     )
-                } else if (columna.formato === 'cambiarLugar') {
+                } else if (columna.formato === 'sibling') {
                     objeto_columna.cell = (d) => (
                         <Button
                             color='white'
                             onClick={e => {
-                                // console.log('Llamar a setCambiarLugar')
-                                // console.log(d.cambiarLugar.replace(/""/g, '"'))
-                                // console.log(JSON.parse(d.cambiarLugar.replace(/""/g, '"')))
-                                setCambiarLugar(JSON.parse(d.cambiarLugar.replace(/""/g, '"')))
-                                // console.log(JSON.parse(d.cambiarLugar))
+                                // console.log('Llamar a setSibling')
+                                // console.log(d.sibling.replace(/""/g, '"'))
+                                // console.log(JSON.parse(d.sibling.replace(/""/g, '"')))
+                                setSibling(JSON.parse(d.sibling.replace(/""/g, '"')))
+                                // console.log(JSON.parse(d.sibling))
                             }}
                         >
                             🔗
@@ -232,7 +232,29 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
                         <Button
                             color='white'
                             onClick={e => {
-                                setCambiarLugar(d.Agente)
+                                setSibling(d.Agente)
+                            }}
+                        >
+                            🔗
+                        </Button>
+                    )
+                } else if (columna.formato === 'detalleDepto') {
+                    objeto_columna.cell = (d) => (
+                        <Button
+                            color='white'
+                            onClick={e => {
+                                setSibling(d.IdDepto)
+                            }}
+                        >
+                            🔗
+                        </Button>
+                    )
+                } else if (columna.formato === 'detalleSubDepto') {
+                    objeto_columna.cell = (d) => (
+                        <Button
+                            color='white'
+                            onClick={e => {
+                                setSibling(d.IdSubDepto)
                             }}
                         >
                             🔗
@@ -259,7 +281,7 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
                 const objeto_a_insertar = {}
                 for (const [key, value] of Object.entries(fila)) {
                     // console.log(`Key, Value: ${key}, ${value}`)
-                    if (formatos[key] === 'texto' || formatos[key] === 'url' || formatos[key] === 'cambiarLugar') {
+                    if (formatos[key] === 'texto' || formatos[key] === 'url' || formatos[key] === 'sibling') {
                         objeto_a_insertar[key] = value
                     } else if (formatos[key] === 'entero') {
                         if (value === '--') {

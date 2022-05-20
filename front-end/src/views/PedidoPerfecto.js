@@ -16,7 +16,7 @@ const PedidoPerfecto = () => {
     const [region, setRegion] = useState('')
     const [zona, setZona] = useState('')
     const [tienda, setTienda] = useState('')
-    const [cambiarLugar, setCambiarLugar] = useState(false)
+    const [sibling, setSibling] = useState(false)
     const [labelTienda, setLabelTienda] = useState(false)
 
     const seccion = 'PedidoPerfecto'
@@ -32,7 +32,7 @@ const PedidoPerfecto = () => {
     <>
       <Row className='match-height'>
         <Col sm='12'>
-          <Filtro fechas={fechas} agrupador={agrupador} periodo={periodo} region={region} zona={zona} tienda={tienda} cambiarLugar={cambiarLugar} setFechas={setFechas} setAgrupador={setAgrupador} setPeriodo={setPeriodo} setRegion={setRegion} setZona={setZona} setTienda={setTienda} setLabelTienda={setLabelTienda} />
+          <Filtro fechas={fechas} agrupador={agrupador} periodo={periodo} region={region} zona={zona} tienda={tienda} sibling={sibling} setFechas={setFechas} setAgrupador={setAgrupador} setPeriodo={setPeriodo} setRegion={setRegion} setZona={setZona} setTienda={setTienda} setLabelTienda={setLabelTienda} />
         </Col>
       </Row>
       <Row className='match-height'>
@@ -72,7 +72,7 @@ const PedidoPerfecto = () => {
       </Row>
       <Row className='match-height'>
         <Col sm='12'>
-          <Tabla titulo='50 Tiendas con % Pedido Perfecto más bajo' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} setCambiarLugar={setCambiarLugar} />
+          <Tabla titulo='50 Tiendas con % Pedido Perfecto más bajo' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} setSibling={setSibling} />
         </Col>
       </Row>
       {tienda !== undefined && tienda !== '' && <Row className='match-height'>
