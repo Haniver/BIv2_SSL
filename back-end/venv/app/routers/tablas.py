@@ -3749,26 +3749,26 @@ class Tablas():
                         'IdDepto': row['DEPTO'],
                         'DeptoNombre': row['DEPTO_NOMBRE'],
                         'VentaHoy': row['DiaActual_AnioActual'],
-                        'VentaHoyHaceUnAnio': row['DiaActual_AnioAnterior'],
+                        'VentaHoyAA': row['DiaActual_AnioAnterior'],
                         'PorcPartHoy': row['porc_part_dia_actual'],
-                        'PorcPartHoyVsAnioAnterior': row['porcParDiff'],
+                        'PorcPartHoyVsAA': row['porcParDiff'],
                         'VentaAyer': row['DiaVencidoAnioActual'],
-                        'VentaAyerHaceUnAnio': row['DiaVencidoAnioAnterior'],
+                        'VentaAyerAA': row['DiaVencidoAnioAnterior'],
                         'PorcPartAyer': row['porc_part_dia_vencido'],
-                        'PorcPartAyerVsAnioAnterior': row['porcParDiffVencido']
+                        'PorcPartAyerVsAA': row['porcParDiffVencido']
                     })
                 columns = [
                     {'name': 'Ver Detalle', 'selector':'detalleDepto', 'formato':'detalleDepto'},
                     {'name': 'ID Depto', 'selector':'IdDepto', 'formato':'entero'},
                     {'name': 'Nombre Depto', 'selector':'DeptoNombre', 'formato':'texto', 'ancho': '240px'},
                     {'name': 'Venta Hoy', 'selector':'VentaHoy', 'formato':'moneda', 'ancho': '150px'},
-                    {'name': 'Venta Hoy Hace Un Año', 'selector':'VentaHoyHaceUnAnio', 'formato':'moneda', 'ancho': '150px'},
+                    {'name': 'Venta Hoy AA', 'selector':'VentaHoyAA', 'formato':'moneda', 'ancho': '150px'},
                     {'name': '% Part Hoy', 'selector':'PorcPartHoy', 'formato':'porcentaje'},
-                    {'name': '% Part Hoy Vs. Año Anterior', 'selector':'PorcPartHoyVsAnioAnterior', 'formato':'porcentaje'},
+                    {'name': '% Part Hoy Vs. AA', 'selector':'PorcPartHoyVsAA', 'formato':'porcentaje'},
                     {'name': 'Venta Ayer', 'selector':'VentaAyer', 'formato':'moneda', 'ancho': '150px'},
-                    {'name': 'Venta Ayer Hace Un Año', 'selector':'VentaAyerHaceUnAnio', 'formato':'moneda', 'ancho': '150px'},
+                    {'name': 'Venta Ayer AA', 'selector':'VentaAyerAA', 'formato':'moneda', 'ancho': '150px'},
                     {'name': '% Part Ayer', 'selector':'PorcPartAyer', 'formato':'porcentaje'},
-                    {'name': '% Part Ayer Vs. Año Anterior', 'selector':'PorcPartAyerVsAnioAnterior', 'formato':'porcentaje'}
+                    {'name': '% Part Ayer Vs. AA', 'selector':'PorcPartAyerVsAA', 'formato':'porcentaje'}
                 ]
             else:
                 hayResultados = 'no'
@@ -3802,26 +3802,26 @@ class Tablas():
                         'IdSubDepto': row['SUBDEPTO'],
                         'SubDeptoNombre': row['SUBDEPTO_NOMBRE'],
                         'VentaHoy': row['DiaActual_AnioActual'],
-                        'VentaHoyHaceUnAnio': row['DiaActual_AnioAnterior'],
+                        'VentaHoyAA': row['DiaActual_AnioAnterior'],
                         'PorcPartHoy': row['porc_part_dia_actual'],
-                        'PorcPartHoyVsAnioAnterior': row['porcParDiff'],
+                        'PorcPartHoyVsAA': row['porcParDiff'],
                         'VentaAyer': row['DiaVencidoAnioActual'],
-                        'VentaAyerHaceUnAnio': row['DiaVencidoAnioAnterior'],
+                        'VentaAyerAA': row['DiaVencidoAnioAnterior'],
                         'PorcPartAyer': row['porc_part_dia_vencido'],
-                        'PorcPartAyerVsAnioAnterior': row['porcParDiffVencido']
+                        'PorcPartAyerVsAA': row['porcParDiffVencido']
                     })
                 columns = [
                     {'name': 'Ver Detalle', 'selector':'detalleSubDepto', 'formato':'detalleSubDepto'},
                     {'name': 'ID SubDepto', 'selector':'IdSubDepto', 'formato':'entero'},
                     {'name': 'Nombre SubDepto', 'selector':'SubDeptoNombre', 'formato':'texto', 'ancho': '240px'},
                     {'name': 'Venta Hoy', 'selector':'VentaHoy', 'formato':'moneda', 'ancho': '150px'},
-                    {'name': 'Venta Hoy Hace Un Año', 'selector':'VentaHoyHaceUnAnio', 'formato':'moneda', 'ancho': '150px'},
+                    {'name': 'Venta Hoy AA', 'selector':'VentaHoyAA', 'formato':'moneda', 'ancho': '150px'},
                     {'name': '% Part Hoy', 'selector':'PorcPartHoy', 'formato':'porcentaje'},
-                    {'name': '% Part Hoy Vs. Año Anterior', 'selector':'PorcPartHoyVsAnioAnterior', 'formato':'porcentaje'},
+                    {'name': '% Part Hoy Vs. AA', 'selector':'PorcPartHoyVsAA', 'formato':'porcentaje'},
                     {'name': 'Venta Ayer', 'selector':'VentaAyer', 'formato':'moneda', 'ancho': '150px'},
-                    {'name': 'Venta Ayer Hace Un Año', 'selector':'VentaAyerHaceUnAnio', 'formato':'moneda', 'ancho': '150px'},
+                    {'name': 'Venta Ayer AA', 'selector':'VentaAyerAA', 'formato':'moneda', 'ancho': '150px'},
                     {'name': '% Part Ayer', 'selector':'PorcPartAyer', 'formato':'porcentaje'},
-                    {'name': '% Part Ayer Vs. Año Anterior', 'selector':'PorcPartAyerVsAnioAnterior', 'formato':'porcentaje'}
+                    {'name': '% Part Ayer Vs. AA', 'selector':'PorcPartAyerVsAA', 'formato':'porcentaje'}
                 ]
             else:
                 hayResultados = 'no'
@@ -3855,26 +3855,26 @@ class Tablas():
                         'IdClase': row['CLASE'],
                         'ClaseNombre': row['CLASE_NOMBRE'],
                         'VentaHoy': row['DiaActual_AnioActual'],
-                        'VentaHoyHaceUnAnio': row['DiaActual_AnioAnterior'],
+                        'VentaHoyAA': row['DiaActual_AnioAnterior'],
                         'PorcPartHoy': row['porc_part_dia_actual'],
-                        'PorcPartHoyVsAnioAnterior': row['porcParDiff'],
+                        'PorcPartHoyVsAA': row['porcParDiff'],
                         'VentaAyer': row['DiaVencidoAnioActual'],
-                        'VentaAyerHaceUnAnio': row['DiaVencidoAnioAnterior'],
+                        'VentaAyerAA': row['DiaVencidoAnioAnterior'],
                         'PorcPartAyer': row['porc_part_dia_vencido'],
-                        'PorcPartAyerVsAnioAnterior': row['porcParDiffVencido']
+                        'PorcPartAyerVsAA': row['porcParDiffVencido']
                     })
                 columns = [
                     {'name': 'Ver Detalle', 'selector':'detalleClase', 'formato':'detalleClase'},
                     {'name': 'ID Clase', 'selector':'IdClase', 'formato':'entero'},
                     {'name': 'Nombre Clase', 'selector':'ClaseNombre', 'formato':'texto', 'ancho': '240px'},
                     {'name': 'Venta Hoy', 'selector':'VentaHoy', 'formato':'moneda', 'ancho': '150px'},
-                    {'name': 'Venta Hoy Hace Un Año', 'selector':'VentaHoyHaceUnAnio', 'formato':'moneda', 'ancho': '150px'},
+                    {'name': 'Venta Hoy AA', 'selector':'VentaHoyAA', 'formato':'moneda', 'ancho': '150px'},
                     {'name': '% Part Hoy', 'selector':'PorcPartHoy', 'formato':'porcentaje'},
-                    {'name': '% Part Hoy Vs. Año Anterior', 'selector':'PorcPartHoyVsAnioAnterior', 'formato':'porcentaje'},
+                    {'name': '% Part Hoy Vs. AA', 'selector':'PorcPartHoyVsAA', 'formato':'porcentaje'},
                     {'name': 'Venta Ayer', 'selector':'VentaAyer', 'formato':'moneda', 'ancho': '150px'},
-                    {'name': 'Venta Ayer Hace Un Año', 'selector':'VentaAyerHaceUnAnio', 'formato':'moneda', 'ancho': '150px'},
+                    {'name': 'Venta Ayer AA', 'selector':'VentaAyerAA', 'formato':'moneda', 'ancho': '150px'},
                     {'name': '% Part Ayer', 'selector':'PorcPartAyer', 'formato':'porcentaje'},
-                    {'name': '% Part Ayer Vs. Año Anterior', 'selector':'PorcPartAyerVsAnioAnterior', 'formato':'porcentaje'}
+                    {'name': '% Part Ayer Vs. AA', 'selector':'PorcPartAyerVsAA', 'formato':'porcentaje'}
                 ]
             else:
                 hayResultados = 'no'
@@ -3908,26 +3908,26 @@ class Tablas():
                         'IdSubClase': row['SUBCLASE'],
                         'SubClaseNombre': row['SUBCLASE_NOMBRE'],
                         'VentaHoy': row['DiaActual_AnioActual'],
-                        'VentaHoyHaceUnAnio': row['DiaActual_AnioAnterior'],
+                        'VentaHoyAA': row['DiaActual_AnioAnterior'],
                         'PorcPartHoy': row['porc_part_dia_actual'],
-                        'PorcPartHoyVsAnioAnterior': row['porcParDiff'],
+                        'PorcPartHoyVsAA': row['porcParDiff'],
                         'VentaAyer': row['DiaVencidoAnioActual'],
-                        'VentaAyerHaceUnAnio': row['DiaVencidoAnioAnterior'],
+                        'VentaAyerAA': row['DiaVencidoAnioAnterior'],
                         'PorcPartAyer': row['porc_part_dia_vencido'],
-                        'PorcPartAyerVsAnioAnterior': row['porcParDiffVencido']
+                        'PorcPartAyerVsAA': row['porcParDiffVencido']
                     })
                 columns = [
                     {'name': 'Ver Detalle', 'selector':'detalleSubClase', 'formato':'detalleSubClase'},
                     {'name': 'ID SubClase', 'selector':'IdSubClase', 'formato':'entero'},
                     {'name': 'Nombre SubClase', 'selector':'SubClaseNombre', 'formato':'texto', 'ancho': '240px'},
                     {'name': 'Venta Hoy', 'selector':'VentaHoy', 'formato':'moneda', 'ancho': '150px'},
-                    {'name': 'Venta Hoy Hace Un Año', 'selector':'VentaHoyHaceUnAnio', 'formato':'moneda', 'ancho': '150px'},
+                    {'name': 'Venta Hoy AA', 'selector':'VentaHoyAA', 'formato':'moneda', 'ancho': '150px'},
                     {'name': '% Part Hoy', 'selector':'PorcPartHoy', 'formato':'porcentaje'},
-                    {'name': '% Part Hoy Vs. Año Anterior', 'selector':'PorcPartHoyVsAnioAnterior', 'formato':'porcentaje'},
+                    {'name': '% Part Hoy Vs. AA', 'selector':'PorcPartHoyVsAA', 'formato':'porcentaje'},
                     {'name': 'Venta Ayer', 'selector':'VentaAyer', 'formato':'moneda', 'ancho': '150px'},
-                    {'name': 'Venta Ayer Hace Un Año', 'selector':'VentaAyerHaceUnAnio', 'formato':'moneda', 'ancho': '150px'},
+                    {'name': 'Venta Ayer AA', 'selector':'VentaAyerAA', 'formato':'moneda', 'ancho': '150px'},
                     {'name': '% Part Ayer', 'selector':'PorcPartAyer', 'formato':'porcentaje'},
-                    {'name': '% Part Ayer Vs. Año Anterior', 'selector':'PorcPartAyerVsAnioAnterior', 'formato':'porcentaje'}
+                    {'name': '% Part Ayer Vs. AA', 'selector':'PorcPartAyerVsAA', 'formato':'porcentaje'}
                 ]
             else:
                 hayResultados = 'no'
@@ -3959,24 +3959,24 @@ class Tablas():
                     data.append({
                         'FormatoNombre': row['FORMATO_NOMBRE'],
                         'VentaHoy': row['DiaActual_AnioActual'],
-                        'VentaHoyHaceUnAnio': row['DiaActual_AnioAnterior'],
+                        'VentaHoyAA': row['DiaActual_AnioAnterior'],
                         'PorcPartHoy': row['porc_part_dia_actual'],
-                        'PorcPartHoyVsAnioAnterior': row['porcParDiff'],
+                        'PorcPartHoyVsAA': row['porcParDiff'],
                         'VentaAyer': row['DiaVencidoAnioActual'],
-                        'VentaAyerHaceUnAnio': row['DiaVencidoAnioAnterior'],
+                        'VentaAyerAA': row['DiaVencidoAnioAnterior'],
                         'PorcPartAyer': row['porc_part_dia_vencido'],
-                        'PorcPartAyerVsAnioAnterior': row['porcParDiffVencido']
+                        'PorcPartAyerVsAA': row['porcParDiffVencido']
                     })
                 columns = [
                     {'name': 'Formato', 'selector':'FormatoNombre', 'formato':'texto', 'ancho': '240px'},
                     {'name': 'Venta Hoy', 'selector':'VentaHoy', 'formato':'moneda', 'ancho': '150px'},
-                    {'name': 'Venta Hoy Hace Un Año', 'selector':'VentaHoyHaceUnAnio', 'formato':'moneda', 'ancho': '150px'},
+                    {'name': 'Venta Hoy AA', 'selector':'VentaHoyAA', 'formato':'moneda', 'ancho': '150px'},
                     {'name': '% Part Hoy', 'selector':'PorcPartHoy', 'formato':'porcentaje'},
-                    {'name': '% Part Hoy Vs. Año Anterior', 'selector':'PorcPartHoyVsAnioAnterior', 'formato':'porcentaje'},
+                    {'name': '% Part Hoy Vs. AA', 'selector':'PorcPartHoyVsAA', 'formato':'porcentaje'},
                     {'name': 'Venta Ayer', 'selector':'VentaAyer', 'formato':'moneda', 'ancho': '150px'},
-                    {'name': 'Venta Ayer Hace Un Año', 'selector':'VentaAyerHaceUnAnio', 'formato':'moneda', 'ancho': '150px'},
+                    {'name': 'Venta Ayer AA', 'selector':'VentaAyerAA', 'formato':'moneda', 'ancho': '150px'},
                     {'name': '% Part Ayer', 'selector':'PorcPartAyer', 'formato':'porcentaje'},
-                    {'name': '% Part Ayer Vs. Año Anterior', 'selector':'PorcPartAyerVsAnioAnterior', 'formato':'porcentaje'}
+                    {'name': '% Part Ayer Vs. AA', 'selector':'PorcPartAyerVsAA', 'formato':'porcentaje'}
                 ]
             else:
                 hayResultados = 'no'
