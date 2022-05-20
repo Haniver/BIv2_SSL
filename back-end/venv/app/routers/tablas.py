@@ -3840,8 +3840,8 @@ class Tablas():
             else:
                 hayResultados = 'no'
                 
-        if self.titulo == 'Detalle Formatos para SubDepto $subDepto':
-            pipeline = f"""select FORMATO_NOMBRE,
+        if self.titulo == 'Detalle Clases para SubDepto $subDepto':
+            pipeline = f"""select CLASE, CLASE_NOMBRE,
                 sum(DiaActual_AnioActual) DiaActual_AnioActual, sum(DiaActual_AnioAnterior) DiaActual_AnioAnterior,
                 (sum(DiaActual_AnioActual)*100/sum(DiaActual_AnioActualTF)) porc_part_dia_actual,
                 (sum(DiaActual_AnioActual)*100/sum(DiaActual_AnioActualTF))-(sum(DiaActual_AnioAnterior)*100/sum(DiaActual_AnioAnteriorTF)) porcParDiff,
@@ -3854,6 +3854,112 @@ class Tablas():
                 from DWH.artus.catCanal ) cc on vhs.idTipo =cc.tipo
                 left join DWH.artus.catObjetivo co{" on cc.esOmnicanal =co.idTipo and co.nMes=format(GETDATE(),'yyyyMM')" if not hayCanal else 'o on vhs.idTipo =coo.idTipo'}
                 where SUBDEPTO = {self.filtros.fromSibling}
+                {'and vhs.idTipo = '+self.filtros.canal if hayCanal else ''}
+                group by CLASE, CLASE_NOMBRE"""
+
+            # print(f"query desde tablas->Temporada->Detalle Deptos: {str(pipeline)}")
+            cnxn = conexion_sql('DWH')
+            cursor = cnxn.cursor().execute(pipeline)
+            arreglo = crear_diccionario(cursor)
+            if len(arreglo) > 0:
+                hayResultados = "si"
+                for row in arreglo:
+                    data.append({
+                        'detalleClase': '',
+                        'IdClase': row['CLASE'],
+                        'ClaseNombre': row['CLASE_NOMBRE'],
+                        'VentaHoy': row['DiaActual_AnioActual'],
+                        'VentaHoyHaceUnAnio': row['DiaActual_AnioAnterior'],
+                        'PorcPartHoy': row['porc_part_dia_actual'],
+                        'PorcPartHoyVsAnioAnterior': row['porcParDiff'],
+                        'VentaAyer': row['DiaVencidoAnioActual'],
+                        'VentaAyerHaceUnAnio': row['DiaVencidoAnioAnterior'],
+                        'PorcPartAyer': row['porc_part_dia_vencido'],
+                        'PorcPartAyerVsAnioAnterior': row['porcParDiffVencido']
+                    })
+                columns = [
+                    {'name': 'Ver Detalle', 'selector':'detalleClase', 'formato':'detalleClase'},
+                    {'name': 'ID Clase', 'selector':'IdClase', 'formato':'entero'},
+                    {'name': 'Nombre Clase', 'selector':'ClaseNombre', 'formato':'texto', 'ancho': '240px'},
+                    {'name': 'Venta Hoy', 'selector':'VentaHoy', 'formato':'moneda', 'ancho': '150px'},
+                    {'name': 'Venta Hoy Hace Un Año', 'selector':'VentaHoyHaceUnAnio', 'formato':'moneda', 'ancho': '150px'},
+                    {'name': '% Part Hoy', 'selector':'PorcPartHoy', 'formato':'porcentaje'},
+                    {'name': '% Part Hoy Vs. Año Anterior', 'selector':'PorcPartHoyVsAnioAnterior', 'formato':'porcentaje'},
+                    {'name': 'Venta Ayer', 'selector':'VentaAyer', 'formato':'moneda', 'ancho': '150px'},
+                    {'name': 'Venta Ayer Hace Un Año', 'selector':'VentaAyerHaceUnAnio', 'formato':'moneda', 'ancho': '150px'},
+                    {'name': '% Part Ayer', 'selector':'PorcPartAyer', 'formato':'porcentaje'},
+                    {'name': '% Part Ayer Vs. Año Anterior', 'selector':'PorcPartAyerVsAnioAnterior', 'formato':'porcentaje'}
+                ]
+            else:
+                hayResultados = 'no'
+
+        if self.titulo == 'Detalle Sub-Clases para Clase $clase':
+            pipeline = f"""select SUBCLASE, SUBCLASE_NOMBRE,
+                sum(DiaActual_AnioActual) DiaActual_AnioActual, sum(DiaActual_AnioAnterior) DiaActual_AnioAnterior,
+                (sum(DiaActual_AnioActual)*100/sum(DiaActual_AnioActualTF)) porc_part_dia_actual,
+                (sum(DiaActual_AnioActual)*100/sum(DiaActual_AnioActualTF))-(sum(DiaActual_AnioAnterior)*100/sum(DiaActual_AnioAnteriorTF)) porcParDiff,
+                avg(co{'o' if hayCanal else ''}.objetivo) objetivo,
+                sum(DiaVencido_AnioActual) DiaVencidoAnioActual, sum(DiaVencido_AnioAnterior) DiaVencidoAnioAnterior,
+                (sum(DiaVencido_AnioActual)*100/sum(DiaVencido_AnioActualTF)) porc_part_dia_vencido,
+                (sum(DiaVencido_AnioActual)*100/sum(DiaVencido_AnioActualTF))-(sum(DiaVencido_AnioAnterior)*100/sum(DiaVencido_AnioAnteriorTF)) porcParDiffVencido
+                from DWH.artus.ventaHotSale vhs
+                left join (select DISTINCT tipo,esOmnicanal
+                from DWH.artus.catCanal ) cc on vhs.idTipo =cc.tipo
+                left join DWH.artus.catObjetivo co{" on cc.esOmnicanal =co.idTipo and co.nMes=format(GETDATE(),'yyyyMM')" if not hayCanal else 'o on vhs.idTipo =coo.idTipo'}
+                where CLASE = {self.filtros.fromSibling}
+                {'and vhs.idTipo = '+self.filtros.canal if hayCanal else ''}
+                group by SUBCLASE, SUBCLASE_NOMBRE"""
+
+            # print(f"query desde tablas->Temporada->Detalle Deptos: {str(pipeline)}")
+            cnxn = conexion_sql('DWH')
+            cursor = cnxn.cursor().execute(pipeline)
+            arreglo = crear_diccionario(cursor)
+            if len(arreglo) > 0:
+                hayResultados = "si"
+                for row in arreglo:
+                    data.append({
+                        'detalleSubClase': '',
+                        'IdSubClase': row['SUBCLASE'],
+                        'SubClaseNombre': row['SUBCLASE_NOMBRE'],
+                        'VentaHoy': row['DiaActual_AnioActual'],
+                        'VentaHoyHaceUnAnio': row['DiaActual_AnioAnterior'],
+                        'PorcPartHoy': row['porc_part_dia_actual'],
+                        'PorcPartHoyVsAnioAnterior': row['porcParDiff'],
+                        'VentaAyer': row['DiaVencidoAnioActual'],
+                        'VentaAyerHaceUnAnio': row['DiaVencidoAnioAnterior'],
+                        'PorcPartAyer': row['porc_part_dia_vencido'],
+                        'PorcPartAyerVsAnioAnterior': row['porcParDiffVencido']
+                    })
+                columns = [
+                    {'name': 'Ver Detalle', 'selector':'detalleSubClase', 'formato':'detalleSubClase'},
+                    {'name': 'ID SubClase', 'selector':'IdSubClase', 'formato':'entero'},
+                    {'name': 'Nombre SubClase', 'selector':'SubClaseNombre', 'formato':'texto', 'ancho': '240px'},
+                    {'name': 'Venta Hoy', 'selector':'VentaHoy', 'formato':'moneda', 'ancho': '150px'},
+                    {'name': 'Venta Hoy Hace Un Año', 'selector':'VentaHoyHaceUnAnio', 'formato':'moneda', 'ancho': '150px'},
+                    {'name': '% Part Hoy', 'selector':'PorcPartHoy', 'formato':'porcentaje'},
+                    {'name': '% Part Hoy Vs. Año Anterior', 'selector':'PorcPartHoyVsAnioAnterior', 'formato':'porcentaje'},
+                    {'name': 'Venta Ayer', 'selector':'VentaAyer', 'formato':'moneda', 'ancho': '150px'},
+                    {'name': 'Venta Ayer Hace Un Año', 'selector':'VentaAyerHaceUnAnio', 'formato':'moneda', 'ancho': '150px'},
+                    {'name': '% Part Ayer', 'selector':'PorcPartAyer', 'formato':'porcentaje'},
+                    {'name': '% Part Ayer Vs. Año Anterior', 'selector':'PorcPartAyerVsAnioAnterior', 'formato':'porcentaje'}
+                ]
+            else:
+                hayResultados = 'no'
+
+        if self.titulo == 'Detalle Formatos para SubClase $subClase':
+            pipeline = f"""select FORMATO_NOMBRE,
+                sum(DiaActual_AnioActual) DiaActual_AnioActual, sum(DiaActual_AnioAnterior) DiaActual_AnioAnterior,
+                (sum(DiaActual_AnioActual)*100/sum(DiaActual_AnioActualTF)) porc_part_dia_actual,
+                (sum(DiaActual_AnioActual)*100/sum(DiaActual_AnioActualTF))-(sum(DiaActual_AnioAnterior)*100/sum(DiaActual_AnioAnteriorTF)) porcParDiff,
+                avg(co{'o' if hayCanal else ''}.objetivo) objetivo,
+                sum(DiaVencido_AnioActual) DiaVencidoAnioActual, sum(DiaVencido_AnioAnterior) DiaVencidoAnioAnterior,
+                (sum(DiaVencido_AnioActual)*100/sum(DiaVencido_AnioActualTF)) porc_part_dia_vencido,
+                (sum(DiaVencido_AnioActual)*100/sum(DiaVencido_AnioActualTF))-(sum(DiaVencido_AnioAnterior)*100/sum(DiaVencido_AnioAnteriorTF)) porcParDiffVencido
+                from DWH.artus.ventaHotSale vhs
+                left join (select DISTINCT tipo,esOmnicanal
+                from DWH.artus.catCanal ) cc on vhs.idTipo =cc.tipo
+                left join DWH.artus.catObjetivo co{" on cc.esOmnicanal =co.idTipo and co.nMes=format(GETDATE(),'yyyyMM')" if not hayCanal else 'o on vhs.idTipo =coo.idTipo'}
+                where SUBCLASE = {self.filtros.fromSibling}
                 {'and vhs.idTipo = '+self.filtros.canal if hayCanal else ''}
                 group by FORMATO_NOMBRE"""
 

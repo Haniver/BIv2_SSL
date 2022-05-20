@@ -261,6 +261,30 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
                             🔗
                         </Button>
                     )
+                } else if (columna.formato === 'detalleClase') {
+                    objeto_columna.cell = (d) => (
+                        <Button
+                            color='white'
+                            onClick={e => {
+                                const clase_a_enviar = d.IdClase.replace(/,/g, '')
+                                setSibling(clase_a_enviar)
+                            }}
+                        >
+                            🔗
+                        </Button>
+                    )
+                } else if (columna.formato === 'detalleSubClase') {
+                    objeto_columna.cell = (d) => (
+                        <Button
+                            color='white'
+                            onClick={e => {
+                                const subClase_a_enviar = d.IdSubClase.replace(/,/g, '')
+                                setSibling(subClase_a_enviar)
+                            }}
+                        >
+                            🔗
+                        </Button>
+                    )
                 }
                 // Esto es para poner un código de colores a las celdas
                 if (columna.colores === true) {
