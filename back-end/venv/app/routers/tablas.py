@@ -3726,7 +3726,7 @@ class Tablas():
         if self.titulo == 'Detalle Departamentos':
             pipeline = f"""select DEPTO, DEPTO_NOMBRE,
                 sum(DiaActual_AnioActual) DiaActual_AnioActual, sum(DiaActual_AnioAnterior) DiaActual_AnioAnterior,
-                (sum(DiaActual_AnioActual)*100/sum(DiaActual_AnioActualTF)) porc_part_dia_actual,
+                (sum(DiaActual_AnioActual)/max(DiaActual_AnioActualTF))*100 porc_part_dia_actual,
                 (sum(DiaActual_AnioActual)*100/sum(DiaActual_AnioActualTF))-(sum(DiaActual_AnioAnterior)*100/sum(DiaActual_AnioAnteriorTF)) porcParDiff,
                 avg(co{'o' if hayCanal else ''}.objetivo) objetivo,
                 sum(DiaVencido_AnioActual) DiaVencidoAnioActual, sum(DiaVencido_AnioAnterior) DiaVencidoAnioAnterior,
@@ -3776,7 +3776,7 @@ class Tablas():
         if self.titulo == 'Detalle Sub-Departamentos para Depto $depto':
             pipeline = f"""select SUBDEPTO, SUBDEPTO_NOMBRE,
                 sum(DiaActual_AnioActual) DiaActual_AnioActual, sum(DiaActual_AnioAnterior) DiaActual_AnioAnterior,
-                (sum(DiaActual_AnioActual)*100/sum(DiaActual_AnioActualTF)) porc_part_dia_actual,
+                (sum(DiaActual_AnioActual)/max(DiaActual_AnioActualTF))*100 porc_part_dia_actual,
                 (sum(DiaActual_AnioActual)*100/sum(DiaActual_AnioActualTF))-(sum(DiaActual_AnioAnterior)*100/sum(DiaActual_AnioAnteriorTF)) porcParDiff,
                 avg(co{'o' if hayCanal else ''}.objetivo) objetivo,
                 sum(DiaVencido_AnioActual) DiaVencidoAnioActual, sum(DiaVencido_AnioAnterior) DiaVencidoAnioAnterior,
@@ -3829,7 +3829,7 @@ class Tablas():
         if self.titulo == 'Detalle Clases para SubDepto $subDepto':
             pipeline = f"""select CLASE, CLASE_NOMBRE,
                 sum(DiaActual_AnioActual) DiaActual_AnioActual, sum(DiaActual_AnioAnterior) DiaActual_AnioAnterior,
-                (sum(DiaActual_AnioActual)*100/sum(DiaActual_AnioActualTF)) porc_part_dia_actual,
+                (sum(DiaActual_AnioActual)/max(DiaActual_AnioActualTF))*100 porc_part_dia_actual,
                 (sum(DiaActual_AnioActual)*100/sum(DiaActual_AnioActualTF))-(sum(DiaActual_AnioAnterior)*100/sum(DiaActual_AnioAnteriorTF)) porcParDiff,
                 avg(co{'o' if hayCanal else ''}.objetivo) objetivo,
                 sum(DiaVencido_AnioActual) DiaVencidoAnioActual, sum(DiaVencido_AnioAnterior) DiaVencidoAnioAnterior,
@@ -3882,7 +3882,7 @@ class Tablas():
         if self.titulo == 'Detalle Sub-Clases para Clase $clase':
             pipeline = f"""select SUBCLASE, SUBCLASE_NOMBRE,
                 sum(DiaActual_AnioActual) DiaActual_AnioActual, sum(DiaActual_AnioAnterior) DiaActual_AnioAnterior,
-                (sum(DiaActual_AnioActual)*100/sum(DiaActual_AnioActualTF)) porc_part_dia_actual,
+                (sum(DiaActual_AnioActual)/max(DiaActual_AnioActualTF))*100 porc_part_dia_actual,
                 (sum(DiaActual_AnioActual)*100/sum(DiaActual_AnioActualTF))-(sum(DiaActual_AnioAnterior)*100/sum(DiaActual_AnioAnteriorTF)) porcParDiff,
                 avg(co{'o' if hayCanal else ''}.objetivo) objetivo,
                 sum(DiaVencido_AnioActual) DiaVencidoAnioActual, sum(DiaVencido_AnioAnterior) DiaVencidoAnioAnterior,
@@ -3935,7 +3935,7 @@ class Tablas():
         if self.titulo == 'Detalle Formatos para SubClase $subClase':
             pipeline = f"""select FORMATO_NOMBRE,
                 sum(DiaActual_AnioActual) DiaActual_AnioActual, sum(DiaActual_AnioAnterior) DiaActual_AnioAnterior,
-                (sum(DiaActual_AnioActual)*100/sum(DiaActual_AnioActualTF)) porc_part_dia_actual,
+                (sum(DiaActual_AnioActual)/max(DiaActual_AnioActualTF))*100 porc_part_dia_actual,
                 (sum(DiaActual_AnioActual)*100/sum(DiaActual_AnioActualTF))-(sum(DiaActual_AnioAnterior)*100/sum(DiaActual_AnioAnteriorTF)) porcParDiff,
                 avg(co{'o' if hayCanal else ''}.objetivo) objetivo,
                 sum(DiaVencido_AnioActual) DiaVencidoAnioActual, sum(DiaVencido_AnioAnterior) DiaVencidoAnioAnterior,
