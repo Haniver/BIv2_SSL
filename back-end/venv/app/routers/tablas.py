@@ -3737,21 +3737,7 @@ class Tablas():
                 from DWH.artus.catCanal ) cc on vhs.idTipo =cc.tipo
                 left join DWH.artus.catObjetivo co{" on cc.esOmnicanal =co.idTipo and co.nMes=format(GETDATE(),'yyyyMM')" if not hayCanal else 'o on vhs.idTipo =coo.idTipo where vhs.idTipo = '+self.filtros.canal}
                 group by DEPTO, DEPTO_NOMBRE"""
-        if self.titulo == 'Detalle Departamentos':
-            pipeline = f"""select DEPTO, DEPTO_NOMBRE,
-                sum(DiaActual_AnioActual) DiaActual_AnioActual, sum(DiaActual_AnioAnterior) DiaActual_AnioAnterior,
-                (sum(DiaActual_AnioActual)*100/sum(DiaActual_AnioActualTF)) porc_part_dia_actual,
-                (sum(DiaActual_AnioActual)*100/sum(DiaActual_AnioActualTF))-(sum(DiaActual_AnioAnterior)*100/sum(DiaActual_AnioAnteriorTF)) porcParDiff,
-                avg(co{'o' if hayCanal else ''}.objetivo) objetivo,
-                sum(DiaVencido_AnioActual) DiaVencidoAnioActual, sum(DiaVencido_AnioAnterior) DiaVencidoAnioAnterior,
-                (sum(DiaVencido_AnioActual)*100/sum(DiaVencido_AnioActualTF)) porc_part_dia_vencido,
-                (sum(DiaVencido_AnioActual)*100/sum(DiaVencido_AnioActualTF))-(sum(DiaVencido_AnioAnterior)*100/sum(DiaVencido_AnioAnteriorTF)) porcParDiffVencido
-                from DWH.artus.ventaHotSale vhs
-                left join (select DISTINCT tipo,esOmnicanal
-                from DWH.artus.catCanal ) cc on vhs.idTipo =cc.tipo
-                left join DWH.artus.catObjetivo co{" on cc.esOmnicanal =co.idTipo and co.nMes=format(GETDATE(),'yyyyMM')" if not hayCanal else 'o on vhs.idTipo =coo.idTipo where vhs.idTipo = '+self.filtros.canal}
-                group by DEPTO, DEPTO_NOMBRE"""
-            print(f"query desde tablas->Temporada->Detalle Deptos: {str(pipeline)}")
+            # print(f"query desde tablas->Temporada->Detalle Deptos: {str(pipeline)}")
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)

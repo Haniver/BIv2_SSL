@@ -194,7 +194,7 @@ class EjesMultiplesApilados():
                 left join DWH.artus.catObjetivo co on co.idTipo = a.{"tipo" if hayCanal else "esOmnicanal"}
                 and format(a.fecha,'yyyyMM')=co.nMes
             """
-            # print (f"query desde ejesMultiplesApilados->Temporada->3a. gráfica: {str(query)}")
+            # print (f"query desde ejesMultiplesApilados->Temporada->Pedidos por día: {str(query)}")
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(query)
             arreglo = crear_diccionario(cursor)
@@ -231,7 +231,7 @@ class EjesMultiplesApilados():
                 # Creamos las series con los arreglos que hicimos
                 series = [
                     {'name': 'Pedidos', 'data':pedidos, 'type': 'column', 'yAxis': 0, 'formato_tooltip':'entero', 'color':'secondary'},
-                    {'name': 'Part vs. Objetivo', 'data':multiple, 'type': 'spline', 'yAxis': 1, 'formato_tooltip':'multiple', 'color':'danger'},
+                    {'name': 'Part vs. TF', 'data':multiple, 'type': 'spline', 'yAxis': 1, 'formato_tooltip':'multiple', 'color':'danger'},
                     {'name': 'Venta', 'data':venta, 'type': 'spline', 'yAxis': 2, 'formato_tooltip':'moneda', 'color':'primary'},
                     {'name': 'Ticket Promedio', 'data':ticketPromedio, 'type': 'spline', 'yAxis': 3, 'formato_tooltip':'moneda', 'color':'dark'},
                 ]
@@ -316,7 +316,7 @@ class EjesMultiplesApilados():
                         'color':'secondary',
                         'yAxis': 0
                     },
-                    {'name': 'Part vs. Objetivo', 'data':multiple, 'type': 'spline', 'yAxis': 1, 'formato_tooltip':'multiple', 'color':'danger'},
+                    {'name': 'Part vs. TF', 'data':multiple, 'type': 'spline', 'yAxis': 1, 'formato_tooltip':'multiple', 'color':'danger'},
                     {
                         'name': 'Var vs. Año Anterior',
                         'data': PartvsAA, 
@@ -403,7 +403,7 @@ class EjesMultiplesApilados():
                         'color':'secondary',
                         'yAxis': 0
                     },
-                    {'name': 'Part vs. Objetivo', 'data':multiple, 'type': 'spline', 'yAxis': 1, 'formato_tooltip':'multiple', 'color':'danger'},
+                    {'name': 'Part vs. TF', 'data':multiple, 'type': 'spline', 'yAxis': 1, 'formato_tooltip':'multiple', 'color':'danger'},
                     {
                         'name': 'Var vs. Año Anterior',
                         'data': PartvsAA, 
@@ -488,7 +488,7 @@ class EjesMultiplesApilados():
                         'color':'secondary',
                         'yAxis': 0
                     },
-                    {'name': 'Part vs. Objetivo', 'data':multiple, 'type': 'spline', 'yAxis': 1, 'formato_tooltip':'multiple', 'color':'danger'},
+                    {'name': 'Part vs. TF', 'data':multiple, 'type': 'spline', 'yAxis': 1, 'formato_tooltip':'multiple', 'color':'danger'},
                     {
                         'name': 'Var vs. Año Anterior',
                         'data': PartvsAA, 

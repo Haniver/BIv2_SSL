@@ -506,7 +506,7 @@ class Tarjetas():
                 where fecha = {hoyInt}
                 and idCanal {'not in (0' if not hayCanal else 'in ('+str(self.filtros.canal)})
                 """
-            # print(f"query desde tarjetas.py -> Temporada -> Venta Hoy: {str(query)}")
+            # print(f"query desde tarjetas.py -> Temporada -> % Participación Venta Hoy: {str(query)}")
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(query)
             arreglo = crear_diccionario(cursor)

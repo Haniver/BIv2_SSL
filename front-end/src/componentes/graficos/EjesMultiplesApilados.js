@@ -20,7 +20,7 @@ require('highcharts/modules/data')(Highcharts)
 require('highcharts/modules/exporting')(Highcharts)
 require('highcharts/modules/export-data')(Highcharts)
 
-const EjesMultiplesApilados = ({ titulo, seccion, fechas, tituloAPI, canal, setFromSibling }) => {
+const EjesMultiplesApilados = ({ titulo, seccion, fechas, tituloAPI, canal, setFromSibling, splineLabelsEnabled }) => {
     const titulo_enviar = (tituloAPI) ? tituloAPI : titulo // Como la API usa el título de la gráfica para regresar su valor, había un problema cuando ese título es variable, como cuando incluye la fecha actual. Entonces, si desde la vista le mandas el prop tituloAPI, es ese el que se usa para la API. Si lo omites, se usa la variable titulo como estaba pensado originalmente
     const [estadoLoader, dispatchLoader] = useReducer((estadoLoader, accion) => {
         switch (accion.tipo) {
@@ -107,7 +107,7 @@ const EjesMultiplesApilados = ({ titulo, seccion, fechas, tituloAPI, canal, setF
                 }
                 let datos = []
                 if (elemento.formato_tooltip === 'multiple') {
-                    datos = procesarSerie(res.data.auxiliar[2].data, elemento.formato_tooltip)
+                    datos = procesarSerie(res.data.auxiliar[0].data, elemento.formato_tooltip)
                 } else {
                     datos = procesarSerie(elemento.data, elemento.formato_tooltip)
                 }
@@ -134,11 +134,11 @@ const EjesMultiplesApilados = ({ titulo, seccion, fechas, tituloAPI, canal, setF
                             if (elemento.formato_tooltip === 'multiple') {
                                 // La forma correcta de hacer esto es ver, por cada elemento de "auxiliar", cuál es el formato y de ahí ir construyendo la cadena que se va a regresar para el tooltip. Pero como me agarran las prisas y lo más probable es que esto nada más lo vaya a usar para Pedidos por Día en Temporada, lo voy a hacer para ese específico
                                 // console.log(`El punto es el #${this.options.y}`)
-                                const valor1 = 100 * parseFloat(res.data.auxiliar[0].data[datos.indexOf(this.options.y)])
+                                const valor1 = parseFloat(this.options.y)
                                 // console.log(res.data.auxiliar[0].data)
                                 const valor2 = 100 * parseFloat(res.data.auxiliar[1].data[datos.indexOf(this.options.y)])
-                                const valor3 = parseFloat(this.options.y)
-                                return `Part vs. Tienda Física: ${Highcharts.numberFormat(valor1, 2, '.', ',')}%<br> Objetivo: ${Highcharts.numberFormat(valor2, 2, '.', ',')}%<br> <b>Diferencia: ${Highcharts.numberFormat(valor3, 2, '.', ',')}%</b>`
+                                const valor3 = 100 * parseFloat(res.data.auxiliar[2].data[datos.indexOf(this.options.y)])
+                                return `<b>Part vs. Tienda Física:</b> ${Highcharts.numberFormat(valor1, 2, '.', ',')}%<br>Objetivo: ${Highcharts.numberFormat(valor2, 2, '.', ',')}%<br>Diferencia: ${Highcharts.numberFormat(valor3, 2, '.', ',')}%`
                             } else {
                                 if (elemento.formato_tooltip === 'moneda') {
                                     valuePrefix = '$'
@@ -276,10 +276,15 @@ const EjesMultiplesApilados = ({ titulo, seccion, fechas, tituloAPI, canal, setF
                     // El cursor se pone como pointer si hay drilldown (o sea, setFromSibling != undefined). El getter y setter de cursor salen de un useState que está más arriba
                     cursor
                 },
-                credits: {
-                    enabled: false
-                }   
-            }
+                spline: {
+                    dataLabels: {
+                        enabled: splineLabelsEnabled
+                    }
+                }
+            },
+            credits: {
+                enabled: false
+            }   
         }
         setOptions(options)
     }, [series, formato_columnas])
