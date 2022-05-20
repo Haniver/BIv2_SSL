@@ -254,7 +254,8 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
                         <Button
                             color='white'
                             onClick={e => {
-                                setSibling(d.IdSubDepto)
+                                const subDepto_a_enviar = d.IdSubDepto.replace(/,/g, '')
+                                setSibling(subDepto_a_enviar)
                             }}
                         >
                             🔗

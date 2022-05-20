@@ -3787,7 +3787,7 @@ class Tablas():
             else:
                 hayResultados = 'no'
                 
-        if self.titulo == 'Detalle Sub-Departamentos':
+        if self.titulo == 'Detalle Sub-Departamentos para Depto $depto':
             pipeline = f"""select SUBDEPTO, SUBDEPTO_NOMBRE,
                 sum(DiaActual_AnioActual) DiaActual_AnioActual, sum(DiaActual_AnioAnterior) DiaActual_AnioAnterior,
                 (sum(DiaActual_AnioActual)*100/sum(DiaActual_AnioActualTF)) porc_part_dia_actual,
@@ -3840,7 +3840,7 @@ class Tablas():
             else:
                 hayResultados = 'no'
                 
-        if self.titulo == 'Detalle Formatos':
+        if self.titulo == 'Detalle Formatos para SubDepto $subDepto':
             pipeline = f"""select FORMATO_NOMBRE,
                 sum(DiaActual_AnioActual) DiaActual_AnioActual, sum(DiaActual_AnioAnterior) DiaActual_AnioAnterior,
                 (sum(DiaActual_AnioActual)*100/sum(DiaActual_AnioActualTF)) porc_part_dia_actual,

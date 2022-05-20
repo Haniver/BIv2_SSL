@@ -86,12 +86,12 @@ const Temporada = () => {
       </Row>
       {depto !== '' && depto !== undefined && <Row className='match-height'>
         <Col sm='12'>
-            <Tabla quitarPaginacion seccion={seccion} titulo='Detalle Sub-Departamentos' fechas={fechas} canal={canal} fromSibling={depto} setSibling={setSubDepto} />
+            <Tabla quitarPaginacion seccion={seccion} titulo={`Detalle Sub-Departamentos para Depto ${depto}`} tituloAPI='Detalle Sub-Departamentos para Depto $depto' fechas={fechas} canal={canal} fromSibling={depto} setSibling={setSubDepto} />
         </Col>
       </Row>}
       {subDepto !== '' && subDepto !== undefined && <Row className='match-height'>
         <Col sm='12'>
-            <Tabla quitarPaginacion seccion={seccion} titulo='Detalle Formatos' fechas={fechas} canal={canal} fromSibling={subDepto} />
+            <Tabla quitarPaginacion seccion={seccion} titulo={`Detalle Formatos para SubDepto ${subDepto}`} tituloAPI='Detalle Formatos para SubDepto $subDepto' fechas={fechas} canal={canal} fromSibling={subDepto} />
         </Col>
       </Row>}
       <Row className='match-height'>
