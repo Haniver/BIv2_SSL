@@ -34,7 +34,6 @@ const EjesMultiplesApilados = ({ titulo, seccion, fechas, tituloAPI, canal, setF
       }, {contador: 0})
     const [series, setSeries] = useState([])
     const [yAxis, setYAxis] = useState([])
-    const [timer, setTimer] = useState(0)
     const [cursor, setCursor] = useState(undefined)
     const [options, setOptions] = useState({
         chart: {
@@ -223,12 +222,7 @@ const EjesMultiplesApilados = ({ titulo, seccion, fechas, tituloAPI, canal, setF
             setSeries([])
             setFormato_columnas(formato_columnas_tmp)
         }
-        // console.log(`Pipeline de ${titulo}: ${JSON.stringify(res.data.pipeline)}`)
-        // Timer
-        const timeout = setTimeout(() => {
-            setTimer(timer + 1)
-        }, 300000)
-      }, [fechas, canal, timer])
+      }, [fechas, canal])
 
     useEffect(() => {
         const options = {
