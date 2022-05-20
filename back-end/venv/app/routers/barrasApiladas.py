@@ -357,7 +357,7 @@ class BarrasApiladas():
             {filtroLugar}
             group by {lugar}
             """
-            # print(f"query desde barrasApiladas : {query}")
+            # print(f"query para Porcentaje CMV: {query}")
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(query)
             resultados = crear_diccionario(cursor)
@@ -384,7 +384,7 @@ class BarrasApiladas():
             {filtroLugar}
             group by {lugar}
             """
-            # print(f"query desde barrasApiladas : {query}")
+            # print(f"query para Porcentaje CDB: {query}")
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(query)
             resultados = crear_diccionario(cursor)

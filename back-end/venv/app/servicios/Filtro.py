@@ -30,4 +30,4 @@ class Filtro(BaseModel):
     grupoDeptos: Optional[str]
     deptoAgrupado: Optional[str]
     subDeptoAgrupado: Optional[str]
-    agente: Optional[str]
+    fromSibling: Optional[str]

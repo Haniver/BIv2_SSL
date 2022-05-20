@@ -1285,7 +1285,7 @@ class Tablas():
                         {'name': 'Región', 'selector':'Region', 'formato':'texto', 'ancho': '220px'},
                         {'name': 'Zona', 'selector':'Zona', 'formato':'texto', 'ancho': '220px'},
                         {'name': 'Tienda', 'selector':'Tienda', 'formato':'texto', 'ancho': '420px'},
-                        {'name': 'Ver Detalle de Tienda', 'selector':'cambiarLugar', 'formato':'cambiarLugar'},
+                        {'name': 'Ver Detalle de Tienda', 'selector':'sibling', 'formato':'sibling'},
                         {'name': 'Total Pedidos', 'selector':'Totales', 'formato':'entero'},
                         {'name': 'Con Queja', 'selector':'Quejas', 'formato':'entero'},
                         {'name': '% Con Queja', 'selector':'Porc_Quejas', 'formato':'porcentaje'},
@@ -1333,7 +1333,7 @@ class Tablas():
                             'Region': row['_id']['regionNombre'],
                             'Zona': row['_id']['zonaNombre'],
                             'Tienda': row['_id']['tiendaNombre'],
-                            'cambiarLugar': cambiar_lugar,
+                            'sibling': cambiar_lugar,
                             # 'Tienda': row['_id']['tiendaNombre'],
                             'Totales': row['totales'],
                             'Quejas': row['quejas'],
@@ -3543,14 +3543,14 @@ class Tablas():
                     'Estatus': row['estatus'],
                     'Editar': 0
                 })
-                columns = [
-                    {'name': 'Email', 'selector':'Email', 'formato':'texto'},
-                    {'name': 'Nombre', 'selector':'Nombre', 'formato':'texto'},
-                    {'name': 'Rol', 'selector':'Rol', 'formato':'texto'},
-                    # {'name': 'Tienda', 'selector':'Tienda', 'formato':'texto', 'ancho':'240px'},
-                    {'name': 'Estatus', 'selector':'Estatus', 'formato':'texto'},
-                    {'name': 'Editar', 'selector':'Editar', 'formato':'botonUsuario'}
-                ]
+            columns = [
+                {'name': 'Email', 'selector':'Email', 'formato':'texto'},
+                {'name': 'Nombre', 'selector':'Nombre', 'formato':'texto'},
+                {'name': 'Rol', 'selector':'Rol', 'formato':'texto'},
+                # {'name': 'Tienda', 'selector':'Tienda', 'formato':'texto', 'ancho':'240px'},
+                {'name': 'Estatus', 'selector':'Estatus', 'formato':'texto'},
+                {'name': 'Editar', 'selector':'Editar', 'formato':'botonUsuario'}
+            ]
         else:
             hayResultados = 'no'
         return {'hayResultados':hayResultados, 'pipeline': pipeline, 'columns':columns, 'data':data}
@@ -3617,16 +3617,16 @@ class Tablas():
                         'PedidosPorPicker': row['Pedidos_por_picker'],
                         'PedidosPorDia': row['Pedidos_dia']
                     })
-                    columns = [
-                        {'name': lugarMayus, 'selector':lugarMayus, 'formato':'texto', 'ancho': '350px'},
-                        {'name': 'Pedidos Entregados', 'selector':'PedidosEntregados', 'formato':'entero'},
-                        {'name': 'Pedidos Picker', 'selector':'PedidosPicker', 'formato':'entero'},
-                        {'name': 'Picker Oficial', 'selector':'PickerOficial', 'formato':'entero'},
-                        {'name': 'Picker General', 'selector':'PickerGeneral', 'formato':'entero'},
-                        {'name': 'Item Picker', 'selector':'ItemPicker', 'formato':'entero'},
-                        {'name': 'Pedidos Por Picker', 'selector':'PedidosPorPicker', 'formato':'entero'},
-                        {'name': 'Pedidos Por Día', 'selector':'PedidosPorDia', 'formato':'decimales'}
-                    ]
+                columns = [
+                    {'name': lugarMayus, 'selector':lugarMayus, 'formato':'texto', 'ancho': '350px'},
+                    {'name': 'Pedidos Entregados', 'selector':'PedidosEntregados', 'formato':'entero'},
+                    {'name': 'Pedidos Picker', 'selector':'PedidosPicker', 'formato':'entero'},
+                    {'name': 'Picker Oficial', 'selector':'PickerOficial', 'formato':'entero'},
+                    {'name': 'Picker General', 'selector':'PickerGeneral', 'formato':'entero'},
+                    {'name': 'Item Picker', 'selector':'ItemPicker', 'formato':'entero'},
+                    {'name': 'Pedidos Por Picker', 'selector':'PedidosPorPicker', 'formato':'entero'},
+                    {'name': 'Pedidos Por Día', 'selector':'PedidosPorDia', 'formato':'decimales'}
+                ]
             else:
                 hayResultados = 'no'
                 
@@ -3659,17 +3659,17 @@ class Tablas():
                         'Porc_Productividad': float(row['productividad']) / 100,
                         'Comision': row['comision']
                     })
-                    columns = [
-                        {'name': 'Ver Detalle', 'selector':'detalleAgente', 'formato':'detalleAgente'},
-                        {'name': 'ID Nómina', 'selector':'IDNomina', 'formato':'texto'},
-                        {'name': 'Agente', 'selector':'Agente', 'formato':'texto', 'ancho': '300px'},
-                        {'name': 'Rol', 'selector':'Rol', 'formato':'texto', 'ancho': '300px'},
-                        {'name': 'Pedidos Picker', 'selector':'PedidosPicker', 'formato':'entero'},
-                        {'name': 'Item Picker', 'selector':'ItemPicker', 'formato':'entero'},
-                        {'name': 'Días Trabajados', 'selector':'DiasTrabajados', 'formato':'entero'},
-                        {'name': '% Productividad', 'selector':'Porc_Productividad', 'formato':'porcentaje'},
-                        {'name': 'Comisión', 'selector':'Comision', 'formato':'moneda'}
-                    ]
+                columns = [
+                    {'name': 'Ver Detalle', 'selector':'detalleAgente', 'formato':'detalleAgente'},
+                    {'name': 'ID Nómina', 'selector':'IDNomina', 'formato':'texto'},
+                    {'name': 'Agente', 'selector':'Agente', 'formato':'texto', 'ancho': '300px'},
+                    {'name': 'Rol', 'selector':'Rol', 'formato':'texto', 'ancho': '300px'},
+                    {'name': 'Pedidos Picker', 'selector':'PedidosPicker', 'formato':'entero'},
+                    {'name': 'Item Picker', 'selector':'ItemPicker', 'formato':'entero'},
+                    {'name': 'Días Trabajados', 'selector':'DiasTrabajados', 'formato':'entero'},
+                    {'name': '% Productividad', 'selector':'Porc_Productividad', 'formato':'porcentaje'},
+                    {'name': 'Comisión', 'selector':'Comision', 'formato':'moneda'}
+                ]
             else:
                 hayResultados = 'no'
                 
@@ -3679,7 +3679,7 @@ class Tablas():
             from DWH.report.pedido_picker_productividad
             where nombre is not null
             and fecha_ultimo_cambio BETWEEN '{self.fecha_ini}' AND '{self.fecha_fin}'
-            and nombre = '{self.filtros.agente}'
+            and nombre = '{self.filtros.fromSibling}'
             group by  fecha_ultimo_cambio, rol
             order by fecha_ultimo_cambio"""
             print(f"query desde tablas->Faltantes->PedidosPicker: {str(pipeline)}")
@@ -3699,13 +3699,193 @@ class Tablas():
                         'Porc_Productividad': float(row['productividad']) / 100,
                         'Comision': row['comision']
                     })
-                    columns = [
-                        {'name': 'Fecha', 'selector':'Fecha', 'formato':'texto'},
-                        {'name': 'Pedidos Picker', 'selector':'PedidosPicker', 'formato':'entero'},
-                        {'name': 'Item Picker', 'selector':'ItemPicker', 'formato':'entero'},
-                        {'name': '% Productividad', 'selector':'Porc_Productividad', 'formato':'porcentaje'},
-                        {'name': 'Comisión', 'selector':'Comision', 'formato':'moneda'}
-                    ]
+                columns = [
+                    {'name': 'Fecha', 'selector':'Fecha', 'formato':'texto'},
+                    {'name': 'Pedidos Picker', 'selector':'PedidosPicker', 'formato':'entero'},
+                    {'name': 'Item Picker', 'selector':'ItemPicker', 'formato':'entero'},
+                    {'name': '% Productividad', 'selector':'Porc_Productividad', 'formato':'porcentaje'},
+                    {'name': 'Comisión', 'selector':'Comision', 'formato':'moneda'}
+                ]
+            else:
+                hayResultados = 'no'
+                
+        return {'hayResultados':hayResultados, 'pipeline': pipeline, 'columns':columns, 'data':data}
+        # Return para debugging:
+        # return {'hayResultados':'no', 'pipeline': [], 'columns':[], 'data':[]}
+
+    async def Temporada(self):
+        pipeline = []
+        data = []
+        columns = []
+        hayResultados = 'no'
+        self.fecha_ini = datetime.strptime(self.filtros.fechas['fecha_ini'], '%Y-%m-%dT%H:%M:%S.%fZ').strftime('%Y-%m-%d')
+        self.fecha_fin = datetime.strptime(self.filtros.fechas['fecha_fin'], '%Y-%m-%dT%H:%M:%S.%fZ').strftime('%Y-%m-%d')
+
+        hayCanal = False if self.filtros.canal == False or self.filtros.canal == 'False' or self.filtros.canal == '' else True
+
+        if self.titulo == 'Detalle Departamentos':
+            pipeline = f"""select DEPTO, DEPTO_NOMBRE,
+                sum(DiaActual_AnioActual) DiaActual_AnioActual, sum(DiaActual_AnioAnterior) DiaActual_AnioAnterior,
+                (sum(DiaActual_AnioActual)*100/sum(DiaActual_AnioActualTF)) porc_part_dia_actual,
+                (sum(DiaActual_AnioActual)*100/sum(DiaActual_AnioActualTF))-(sum(DiaActual_AnioAnterior)*100/sum(DiaActual_AnioAnteriorTF)) porcParDiff,
+                avg(co{'o' if hayCanal else ''}.objetivo) objetivo,
+                sum(DiaVencido_AnioActual) DiaVencidoAnioActual, sum(DiaVencido_AnioAnterior) DiaVencidoAnioAnterior,
+                (sum(DiaVencido_AnioActual)*100/sum(DiaVencido_AnioActualTF)) porc_part_dia_vencido,
+                (sum(DiaVencido_AnioActual)*100/sum(DiaVencido_AnioActualTF))-(sum(DiaVencido_AnioAnterior)*100/sum(DiaVencido_AnioAnteriorTF)) porcParDiffVencido
+                from DWH.artus.ventaHotSale vhs
+                left join (select DISTINCT tipo,esOmnicanal
+                from DWH.artus.catCanal ) cc on vhs.idTipo =cc.tipo
+                left join DWH.artus.catObjetivo co{" on cc.esOmnicanal =co.idTipo and co.nMes=format(GETDATE(),'yyyyMM')" if not hayCanal else 'o on vhs.idTipo =coo.idTipo where vhs.idTipo = '+self.filtros.canal}
+                group by DEPTO, DEPTO_NOMBRE"""
+        if self.titulo == 'Detalle Departamentos':
+            pipeline = f"""select DEPTO, DEPTO_NOMBRE,
+                sum(DiaActual_AnioActual) DiaActual_AnioActual, sum(DiaActual_AnioAnterior) DiaActual_AnioAnterior,
+                (sum(DiaActual_AnioActual)*100/sum(DiaActual_AnioActualTF)) porc_part_dia_actual,
+                (sum(DiaActual_AnioActual)*100/sum(DiaActual_AnioActualTF))-(sum(DiaActual_AnioAnterior)*100/sum(DiaActual_AnioAnteriorTF)) porcParDiff,
+                avg(co{'o' if hayCanal else ''}.objetivo) objetivo,
+                sum(DiaVencido_AnioActual) DiaVencidoAnioActual, sum(DiaVencido_AnioAnterior) DiaVencidoAnioAnterior,
+                (sum(DiaVencido_AnioActual)*100/sum(DiaVencido_AnioActualTF)) porc_part_dia_vencido,
+                (sum(DiaVencido_AnioActual)*100/sum(DiaVencido_AnioActualTF))-(sum(DiaVencido_AnioAnterior)*100/sum(DiaVencido_AnioAnteriorTF)) porcParDiffVencido
+                from DWH.artus.ventaHotSale vhs
+                left join (select DISTINCT tipo,esOmnicanal
+                from DWH.artus.catCanal ) cc on vhs.idTipo =cc.tipo
+                left join DWH.artus.catObjetivo co{" on cc.esOmnicanal =co.idTipo and co.nMes=format(GETDATE(),'yyyyMM')" if not hayCanal else 'o on vhs.idTipo =coo.idTipo where vhs.idTipo = '+self.filtros.canal}
+                group by DEPTO, DEPTO_NOMBRE"""
+            print(f"query desde tablas->Temporada->Detalle Deptos: {str(pipeline)}")
+            cnxn = conexion_sql('DWH')
+            cursor = cnxn.cursor().execute(pipeline)
+            arreglo = crear_diccionario(cursor)
+            if len(arreglo) > 0:
+                hayResultados = "si"
+                for row in arreglo:
+                    data.append({
+                        'detalleDepto': '',
+                        'IdDepto': row['DEPTO'],
+                        'DeptoNombre': row['DEPTO_NOMBRE'],
+                        'VentaHoy': row['DiaActual_AnioActual'],
+                        'VentaHoyHaceUnAnio': row['DiaActual_AnioAnterior'],
+                        'PorcPartHoy': row['porc_part_dia_actual'],
+                        'PorcPartHoyVsAnioAnterior': row['porcParDiff'],
+                        'VentaAyer': row['DiaVencidoAnioActual'],
+                        'VentaAyerHaceUnAnio': row['DiaVencidoAnioAnterior'],
+                        'PorcPartAyer': row['porc_part_dia_vencido'],
+                        'PorcPartAyerVsAnioAnterior': row['porcParDiffVencido']
+                    })
+                columns = [
+                    {'name': 'Ver Detalle', 'selector':'detalleDepto', 'formato':'detalleDepto'},
+                    {'name': 'ID Depto', 'selector':'IdDepto', 'formato':'entero'},
+                    {'name': 'Nombre Depto', 'selector':'DeptoNombre', 'formato':'texto', 'ancho': '240px'},
+                    {'name': 'Venta Hoy', 'selector':'VentaHoy', 'formato':'moneda', 'ancho': '150px'},
+                    {'name': 'Venta Hoy Hace Un Año', 'selector':'VentaHoyHaceUnAnio', 'formato':'moneda', 'ancho': '150px'},
+                    {'name': '% Part Hoy', 'selector':'PorcPartHoy', 'formato':'porcentaje'},
+                    {'name': '% Part Hoy Vs. Año Anterior', 'selector':'PorcPartHoyVsAnioAnterior', 'formato':'porcentaje'},
+                    {'name': 'Venta Ayer', 'selector':'VentaAyer', 'formato':'moneda', 'ancho': '150px'},
+                    {'name': 'Venta Ayer Hace Un Año', 'selector':'VentaAyerHaceUnAnio', 'formato':'moneda', 'ancho': '150px'},
+                    {'name': '% Part Ayer', 'selector':'PorcPartAyer', 'formato':'porcentaje'},
+                    {'name': '% Part Ayer Vs. Año Anterior', 'selector':'PorcPartAyerVsAnioAnterior', 'formato':'porcentaje'}
+                ]
+            else:
+                hayResultados = 'no'
+                
+        if self.titulo == 'Detalle Sub-Departamentos':
+            pipeline = f"""select SUBDEPTO, SUBDEPTO_NOMBRE,
+                sum(DiaActual_AnioActual) DiaActual_AnioActual, sum(DiaActual_AnioAnterior) DiaActual_AnioAnterior,
+                (sum(DiaActual_AnioActual)*100/sum(DiaActual_AnioActualTF)) porc_part_dia_actual,
+                (sum(DiaActual_AnioActual)*100/sum(DiaActual_AnioActualTF))-(sum(DiaActual_AnioAnterior)*100/sum(DiaActual_AnioAnteriorTF)) porcParDiff,
+                avg(co{'o' if hayCanal else ''}.objetivo) objetivo,
+                sum(DiaVencido_AnioActual) DiaVencidoAnioActual, sum(DiaVencido_AnioAnterior) DiaVencidoAnioAnterior,
+                (sum(DiaVencido_AnioActual)*100/sum(DiaVencido_AnioActualTF)) porc_part_dia_vencido,
+                (sum(DiaVencido_AnioActual)*100/sum(DiaVencido_AnioActualTF))-(sum(DiaVencido_AnioAnterior)*100/sum(DiaVencido_AnioAnteriorTF)) porcParDiffVencido
+                from DWH.artus.ventaHotSale vhs
+                left join (select DISTINCT tipo,esOmnicanal
+                from DWH.artus.catCanal ) cc on vhs.idTipo =cc.tipo
+                left join DWH.artus.catObjetivo co{" on cc.esOmnicanal =co.idTipo and co.nMes=format(GETDATE(),'yyyyMM')" if not hayCanal else 'o on vhs.idTipo =coo.idTipo'}
+                where DEPTO = {self.filtros.fromSibling}
+                {'and vhs.idTipo = '+self.filtros.canal if hayCanal else ''}
+                group by SUBDEPTO, SUBDEPTO_NOMBRE"""
+
+            # print(f"query desde tablas->Temporada->Detalle Deptos: {str(pipeline)}")
+            cnxn = conexion_sql('DWH')
+            cursor = cnxn.cursor().execute(pipeline)
+            arreglo = crear_diccionario(cursor)
+            if len(arreglo) > 0:
+                hayResultados = "si"
+                for row in arreglo:
+                    data.append({
+                        'detalleSubDepto': '',
+                        'IdSubDepto': row['SUBDEPTO'],
+                        'SubDeptoNombre': row['SUBDEPTO_NOMBRE'],
+                        'VentaHoy': row['DiaActual_AnioActual'],
+                        'VentaHoyHaceUnAnio': row['DiaActual_AnioAnterior'],
+                        'PorcPartHoy': row['porc_part_dia_actual'],
+                        'PorcPartHoyVsAnioAnterior': row['porcParDiff'],
+                        'VentaAyer': row['DiaVencidoAnioActual'],
+                        'VentaAyerHaceUnAnio': row['DiaVencidoAnioAnterior'],
+                        'PorcPartAyer': row['porc_part_dia_vencido'],
+                        'PorcPartAyerVsAnioAnterior': row['porcParDiffVencido']
+                    })
+                columns = [
+                    {'name': 'Ver Detalle', 'selector':'detalleSubDepto', 'formato':'detalleSubDepto'},
+                    {'name': 'ID SubDepto', 'selector':'IdSubDepto', 'formato':'entero'},
+                    {'name': 'Nombre SubDepto', 'selector':'SubDeptoNombre', 'formato':'texto', 'ancho': '240px'},
+                    {'name': 'Venta Hoy', 'selector':'VentaHoy', 'formato':'moneda', 'ancho': '150px'},
+                    {'name': 'Venta Hoy Hace Un Año', 'selector':'VentaHoyHaceUnAnio', 'formato':'moneda', 'ancho': '150px'},
+                    {'name': '% Part Hoy', 'selector':'PorcPartHoy', 'formato':'porcentaje'},
+                    {'name': '% Part Hoy Vs. Año Anterior', 'selector':'PorcPartHoyVsAnioAnterior', 'formato':'porcentaje'},
+                    {'name': 'Venta Ayer', 'selector':'VentaAyer', 'formato':'moneda', 'ancho': '150px'},
+                    {'name': 'Venta Ayer Hace Un Año', 'selector':'VentaAyerHaceUnAnio', 'formato':'moneda', 'ancho': '150px'},
+                    {'name': '% Part Ayer', 'selector':'PorcPartAyer', 'formato':'porcentaje'},
+                    {'name': '% Part Ayer Vs. Año Anterior', 'selector':'PorcPartAyerVsAnioAnterior', 'formato':'porcentaje'}
+                ]
+            else:
+                hayResultados = 'no'
+                
+        if self.titulo == 'Detalle Formatos':
+            pipeline = f"""select FORMATO_NOMBRE,
+                sum(DiaActual_AnioActual) DiaActual_AnioActual, sum(DiaActual_AnioAnterior) DiaActual_AnioAnterior,
+                (sum(DiaActual_AnioActual)*100/sum(DiaActual_AnioActualTF)) porc_part_dia_actual,
+                (sum(DiaActual_AnioActual)*100/sum(DiaActual_AnioActualTF))-(sum(DiaActual_AnioAnterior)*100/sum(DiaActual_AnioAnteriorTF)) porcParDiff,
+                avg(co{'o' if hayCanal else ''}.objetivo) objetivo,
+                sum(DiaVencido_AnioActual) DiaVencidoAnioActual, sum(DiaVencido_AnioAnterior) DiaVencidoAnioAnterior,
+                (sum(DiaVencido_AnioActual)*100/sum(DiaVencido_AnioActualTF)) porc_part_dia_vencido,
+                (sum(DiaVencido_AnioActual)*100/sum(DiaVencido_AnioActualTF))-(sum(DiaVencido_AnioAnterior)*100/sum(DiaVencido_AnioAnteriorTF)) porcParDiffVencido
+                from DWH.artus.ventaHotSale vhs
+                left join (select DISTINCT tipo,esOmnicanal
+                from DWH.artus.catCanal ) cc on vhs.idTipo =cc.tipo
+                left join DWH.artus.catObjetivo co{" on cc.esOmnicanal =co.idTipo and co.nMes=format(GETDATE(),'yyyyMM')" if not hayCanal else 'o on vhs.idTipo =coo.idTipo'}
+                where SUBDEPTO = {self.filtros.fromSibling}
+                {'and vhs.idTipo = '+self.filtros.canal if hayCanal else ''}
+                group by FORMATO_NOMBRE"""
+
+            # print(f"query desde tablas->Temporada->Detalle Deptos: {str(pipeline)}")
+            cnxn = conexion_sql('DWH')
+            cursor = cnxn.cursor().execute(pipeline)
+            arreglo = crear_diccionario(cursor)
+            if len(arreglo) > 0:
+                hayResultados = "si"
+                for row in arreglo:
+                    data.append({
+                        'FormatoNombre': row['FORMATO_NOMBRE'],
+                        'VentaHoy': row['DiaActual_AnioActual'],
+                        'VentaHoyHaceUnAnio': row['DiaActual_AnioAnterior'],
+                        'PorcPartHoy': row['porc_part_dia_actual'],
+                        'PorcPartHoyVsAnioAnterior': row['porcParDiff'],
+                        'VentaAyer': row['DiaVencidoAnioActual'],
+                        'VentaAyerHaceUnAnio': row['DiaVencidoAnioAnterior'],
+                        'PorcPartAyer': row['porc_part_dia_vencido'],
+                        'PorcPartAyerVsAnioAnterior': row['porcParDiffVencido']
+                    })
+                columns = [
+                    {'name': 'Formato', 'selector':'FormatoNombre', 'formato':'texto', 'ancho': '240px'},
+                    {'name': 'Venta Hoy', 'selector':'VentaHoy', 'formato':'moneda', 'ancho': '150px'},
+                    {'name': 'Venta Hoy Hace Un Año', 'selector':'VentaHoyHaceUnAnio', 'formato':'moneda', 'ancho': '150px'},
+                    {'name': '% Part Hoy', 'selector':'PorcPartHoy', 'formato':'porcentaje'},
+                    {'name': '% Part Hoy Vs. Año Anterior', 'selector':'PorcPartHoyVsAnioAnterior', 'formato':'porcentaje'},
+                    {'name': 'Venta Ayer', 'selector':'VentaAyer', 'formato':'moneda', 'ancho': '150px'},
+                    {'name': 'Venta Ayer Hace Un Año', 'selector':'VentaAyerHaceUnAnio', 'formato':'moneda', 'ancho': '150px'},
+                    {'name': '% Part Ayer', 'selector':'PorcPartAyer', 'formato':'porcentaje'},
+                    {'name': '% Part Ayer Vs. Año Anterior', 'selector':'PorcPartAyerVsAnioAnterior', 'formato':'porcentaje'}
+                ]
             else:
                 hayResultados = 'no'
                 

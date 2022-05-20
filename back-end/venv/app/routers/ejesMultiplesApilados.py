@@ -36,6 +36,7 @@ class EjesMultiplesApilados():
         multiple = []
         contador = 0
         diferencia = []
+        arrFromSibling = []
         hayCanal = False if self.filtros.canal == False or self.filtros.canal == 'False' or self.filtros.canal == '' else True
         if self.titulo == 'Pedidos Levantados Hoy (con impuesto)':
             categories.append(0)
@@ -162,7 +163,7 @@ class EjesMultiplesApilados():
                 left join DWH.dbo.dim_tiempo dt on dt.id_fecha =vdh.fecha
                 left join (select distinct tipo,esOmnicanal from DWH.artus.catCanal) cc on vdh.idCanal =cc.Tipo
                 where dt.fecha = '{fecha_fin}'
-                and {'vdh.idCanal = 1' if hayCanal else 'cc.esOmnicanal = -1'}
+                and {'vdh.idCanal = '+self.filtros.canal if hayCanal else 'cc.esOmnicanal = -1'}
                 group by {"vdh.idCanal" if hayCanal else "cc.esOmnicanal"}, dt.fecha
                 ) a
                 left join (select dtt.fecha,sum(ventaSinImpuestos) vTF
@@ -181,7 +182,7 @@ class EjesMultiplesApilados():
                 inner join DWH.dbo.dim_tiempo dt on dt.id_fecha = vd.fecha
                 left join DWH.artus.catCanal cc on cc.idCanal = vd.idCanal
                 where dt.fecha BETWEEN '{fecha_ini}' and '{fecha_fin_menos_1}'
-                and {"cc.tipo=1" if hayCanal else "cc.esOmnicanal = -1"}
+                and {"cc.tipo="+self.filtros.canal if hayCanal else "cc.esOmnicanal = -1"}
                 group by {"cc.tipo" if hayCanal else "cc.esOmnicanal"}, dt.fecha
                 ) a
                 left join (select dtt.fecha,sum(ventaSinImpuestos) vTF
@@ -262,7 +263,7 @@ class EjesMultiplesApilados():
                 group by ct.regionNombre
                 order by ct.regionNombre
                 """
-            print (f"query desde ejesMultiples->Temporada -> Venta por región: {str(query)}")
+            # print (f"query desde ejesMultiples->Temporada -> Venta por región: {str(query)}")
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(query)
             arreglo = crear_diccionario(cursor)
@@ -327,7 +328,7 @@ class EjesMultiplesApilados():
                 ]
 
         if self.titulo == 'Venta por Departamento':
-            query = f"""Select cd.deptoDescrip ,
+            query = f"""Select cd.deptoDescrip, cd.idDepto,
                 sum(case when year(GETDATE())=year(dt2.fecha) then a.ventaSinImpuestos else 0 end) ventaActual,
                 round(((sum(case when year(GETDATE())=year(dt2.fecha) then a.ventaSinImpuestos else 0 end) /
                 sum(case when year(DATEADD(yy,-1,GETDATE()))=year(dt2.fecha) then a.ventaSinImpuestos else 0 end))-1)*100,2) PartvsAA,
@@ -345,10 +346,10 @@ class EjesMultiplesApilados():
                 or dt.fecha BETWEEN '{fecha_ini_str}' and '{fecha_fin_str}')
                 and cc.tipo {'= '+self.filtros.canal if hayCanal else 'not in (0)'}
                 and cd.deptoDescrip not in ('0')
-                group by cd.deptoDescrip 
+                group by cd.deptoDescrip, cd.idDepto 
                 order by cd.deptoDescrip 
                 """
-            # print (f"query desde ejesMultiples->Temporada: {str(query)}")
+            # print (f"query desde ejesMultiples->Temporada-> Vta por depto: {str(query)}")
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(query)
             arreglo = crear_diccionario(cursor)
@@ -364,6 +365,7 @@ class EjesMultiplesApilados():
                 ]
                 for elemento in arreglo:
                     categories.append(elemento['deptoDescrip'])
+                    arrFromSibling.append(elemento['idDepto'])
                     if elemento['ventaActual'] is not None:
                         ventaActual.append(elemento['ventaActual'])
                     else:
@@ -497,8 +499,8 @@ class EjesMultiplesApilados():
                     }
                 ]
 
-        print(f"Lo que vamos a regresar desde ejesMultiplesApilados -> {self.titulo}: {str({'hayResultados':hayResultados,'categories':categories, 'series':series, 'yAxis': yAxis, 'auxiliar': auxiliar})}")
-        return  {'hayResultados':hayResultados,'categories':categories, 'series':series, 'query': query, 'yAxis': yAxis, 'auxiliar': auxiliar}
+        # print(f"Lo que vamos a regresar desde ejesMultiplesApilados -> {self.titulo}: {str({'hayResultados':hayResultados,'categories':categories, 'series':series, 'yAxis': yAxis, 'auxiliar': auxiliar})}")
+        return  {'hayResultados':hayResultados,'categories':categories, 'series':series, 'query': query, 'yAxis': yAxis, 'auxiliar': auxiliar, 'arrFromSibling': arrFromSibling}
 
 @router.post("/{seccion}")
 async def ejes_multiples_apilados (filtros: Filtro, titulo: str, seccion: str, user: dict = Depends(get_current_active_user)):

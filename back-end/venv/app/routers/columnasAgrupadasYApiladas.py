@@ -103,7 +103,7 @@ class ColumnasAgrupadasYApiladas():
         OR idSemDS = {self.filtros.periodo['semana']})
         order by idSemDS
         """
-        print(f"query 1 desde columnasAgrupadasYApiladas: {query}")
+        # print(f"query 1 desde columnasAgrupadasYApiladas: {query}")
         cnxn = conexion_sql('DWH')
         cursor = cnxn.cursor().execute(query)
         resultados = crear_diccionario(cursor)
@@ -116,7 +116,7 @@ class ColumnasAgrupadasYApiladas():
             where idSemDS in ({','.join([str(i) for i in idSemDS])}) {where_departamento}
             group by nSemDS, {select_departamento}"""
 
-            print(f"query 2 desde columnasAgrupadasYApiladas: {query}")
+            # print(f"query 2 desde columnasAgrupadasYApiladas: {query}")
 
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(query)
@@ -223,7 +223,7 @@ class ColumnasAgrupadasYApiladas():
                 hayResultados = "no"
         else:
             hayResultados = "no"
-            print(f"len(resultados) no es 2, sino {len(resultados)}: {str(resultados)}")
+            # print(f"len(resultados) no es 2, sino {len(resultados)}: {str(resultados)}")
 
         # print('Lo que se devuelve desde columnasApiladas es: ' + str({'hayResultados':hayResultados,'categorias':categorias, 'series':series, 'pipeline': query}))
         return {'hayResultados':hayResultados,'categorias':categorias, 'series':series, 'pipeline': query}
