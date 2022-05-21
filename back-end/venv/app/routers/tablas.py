@@ -3731,18 +3731,20 @@ class Tablas():
                 avg(co{'o' if hayCanal else ''}.objetivo) objetivo,
                 sum(DiaVencido_AnioActual) DiaVencidoAnioActual, sum(DiaVencido_AnioAnterior) DiaVencidoAnioAnterior,
                 (sum(DiaVencido_AnioActual)/sum(DiaVencido_AnioActualTF)) porc_part_dia_vencido,
-                (sum(DiaVencido_AnioActual)/sum(DiaVencido_AnioActualTF))-(sum(DiaVencido_AnioAnterior)/sum(DiaVencido_AnioAnteriorTF)) porcParDiffVencido
+                (sum(DiaVencido_AnioActual)/sum(DiaVencido_AnioActualTF))-(sum(DiaVencido_AnioAnterior)/sum(DiaVencido_AnioAnteriorTF)) porcParDiffVencido,
+                max(hora) hora
                 from DWH.artus.ventaHotSale vhs
                 left join (select DISTINCT tipo,esOmnicanal
                 from DWH.artus.catCanal ) cc on vhs.idTipo =cc.tipo
                 left join DWH.artus.catObjetivo co{" on cc.esOmnicanal =co.idTipo and co.nMes=format(GETDATE(),'yyyyMM')" if not hayCanal else 'o on vhs.idTipo =coo.idTipo where vhs.idTipo = '+self.filtros.canal}
                 group by DEPTO, DEPTO_NOMBRE"""
-            print(f"quer|y desde tablas->Temporada->Detalle Deptos: {str(pipeline)}")
+            print(f"query desde tablas->Temporada->Detalle Deptos: {str(pipeline)}")
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)
             if len(arreglo) > 0:
                 hayResultados = "si"
+                maxHora = 0
                 for row in arreglo:
                     data.append({
                         'detalleDepto': '',
@@ -3757,11 +3759,12 @@ class Tablas():
                         'PorcPartAyer': row['porc_part_dia_vencido'],
                         'PorcPartAyerVsAA': row['porcParDiffVencido']
                     })
+                    maxHora = int(row['hora']) if row['hora'] is not None and maxHora < int(row['hora']) else maxHora
                 columns = [
                     {'name': 'Ver Detalle', 'selector':'detalleDepto', 'formato':'detalleDepto'},
                     {'name': 'ID Depto', 'selector':'IdDepto', 'formato':'entero'},
                     {'name': 'Nombre Depto', 'selector':'DeptoNombre', 'formato':'texto', 'ancho': '240px'},
-                    {'name': 'Venta Hoy', 'selector':'VentaHoy', 'formato':'moneda', 'ancho': '150px'},
+                    {'name': 'Venta Hoy ('+str(maxHora)+':00)', 'selector':'VentaHoy', 'formato':'moneda', 'ancho': '150px'},
                     {'name': 'Venta Hoy AA', 'selector':'VentaHoyAA', 'formato':'moneda', 'ancho': '150px'},
                     {'name': '% Part Hoy', 'selector':'PorcPartHoy', 'formato':'porcentaje'},
                     {'name': '% Part Hoy Vs. AA', 'selector':'PorcPartHoyVsAA', 'formato':'porcentaje'},
@@ -3781,7 +3784,8 @@ class Tablas():
                 avg(co{'o' if hayCanal else ''}.objetivo) objetivo,
                 sum(DiaVencido_AnioActual) DiaVencidoAnioActual, sum(DiaVencido_AnioAnterior) DiaVencidoAnioAnterior,
                 (sum(DiaVencido_AnioActual)/sum(DiaVencido_AnioActualTF)) porc_part_dia_vencido,
-                (sum(DiaVencido_AnioActual)/sum(DiaVencido_AnioActualTF))-(sum(DiaVencido_AnioAnterior)/sum(DiaVencido_AnioAnteriorTF)) porcParDiffVencido
+                (sum(DiaVencido_AnioActual)/sum(DiaVencido_AnioActualTF))-(sum(DiaVencido_AnioAnterior)/sum(DiaVencido_AnioAnteriorTF)) porcParDiffVencido,
+                max(hora) hora
                 from DWH.artus.ventaHotSale vhs
                 left join (select DISTINCT tipo,esOmnicanal
                 from DWH.artus.catCanal ) cc on vhs.idTipo =cc.tipo
@@ -3796,6 +3800,7 @@ class Tablas():
             arreglo = crear_diccionario(cursor)
             if len(arreglo) > 0:
                 hayResultados = "si"
+                maxHora = 0
                 for row in arreglo:
                     data.append({
                         'detalleSubDepto': '',
@@ -3810,11 +3815,12 @@ class Tablas():
                         'PorcPartAyer': row['porc_part_dia_vencido'],
                         'PorcPartAyerVsAA': row['porcParDiffVencido']
                     })
+                    maxHora = int(row['hora']) if row['hora'] is not None and maxHora < int(row['hora']) else maxHora
                 columns = [
                     {'name': 'Ver Detalle', 'selector':'detalleSubDepto', 'formato':'detalleSubDepto'},
                     {'name': 'ID SubDepto', 'selector':'IdSubDepto', 'formato':'entero'},
                     {'name': 'Nombre SubDepto', 'selector':'SubDeptoNombre', 'formato':'texto', 'ancho': '240px'},
-                    {'name': 'Venta Hoy', 'selector':'VentaHoy', 'formato':'moneda', 'ancho': '150px'},
+                    {'name': 'Venta Hoy ('+str(maxHora)+':00)', 'selector':'VentaHoy', 'formato':'moneda', 'ancho': '150px'},
                     {'name': 'Venta Hoy AA', 'selector':'VentaHoyAA', 'formato':'moneda', 'ancho': '150px'},
                     {'name': '% Part Hoy', 'selector':'PorcPartHoy', 'formato':'porcentaje'},
                     {'name': '% Part Hoy Vs. AA', 'selector':'PorcPartHoyVsAA', 'formato':'porcentaje'},
@@ -3834,7 +3840,8 @@ class Tablas():
                 avg(co{'o' if hayCanal else ''}.objetivo) objetivo,
                 sum(DiaVencido_AnioActual) DiaVencidoAnioActual, sum(DiaVencido_AnioAnterior) DiaVencidoAnioAnterior,
                 (sum(DiaVencido_AnioActual)/sum(DiaVencido_AnioActualTF)) porc_part_dia_vencido,
-                (sum(DiaVencido_AnioActual)/sum(DiaVencido_AnioActualTF))-(sum(DiaVencido_AnioAnterior)/sum(DiaVencido_AnioAnteriorTF)) porcParDiffVencido
+                (sum(DiaVencido_AnioActual)/sum(DiaVencido_AnioActualTF))-(sum(DiaVencido_AnioAnterior)/sum(DiaVencido_AnioAnteriorTF)) porcParDiffVencido,
+                max(hora) hora
                 from DWH.artus.ventaHotSale vhs
                 left join (select DISTINCT tipo,esOmnicanal
                 from DWH.artus.catCanal ) cc on vhs.idTipo =cc.tipo
@@ -3849,6 +3856,7 @@ class Tablas():
             arreglo = crear_diccionario(cursor)
             if len(arreglo) > 0:
                 hayResultados = "si"
+                maxHora = 0
                 for row in arreglo:
                     data.append({
                         'detalleClase': '',
@@ -3863,11 +3871,12 @@ class Tablas():
                         'PorcPartAyer': row['porc_part_dia_vencido'],
                         'PorcPartAyerVsAA': row['porcParDiffVencido']
                     })
+                    maxHora = int(row['hora']) if row['hora'] is not None and maxHora < int(row['hora']) else maxHora
                 columns = [
                     {'name': 'Ver Detalle', 'selector':'detalleClase', 'formato':'detalleClase'},
                     {'name': 'ID Clase', 'selector':'IdClase', 'formato':'entero'},
                     {'name': 'Nombre Clase', 'selector':'ClaseNombre', 'formato':'texto', 'ancho': '240px'},
-                    {'name': 'Venta Hoy', 'selector':'VentaHoy', 'formato':'moneda', 'ancho': '150px'},
+                    {'name': 'Venta Hoy ('+str(maxHora)+':00)', 'selector':'VentaHoy', 'formato':'moneda', 'ancho': '150px'},
                     {'name': 'Venta Hoy AA', 'selector':'VentaHoyAA', 'formato':'moneda', 'ancho': '150px'},
                     {'name': '% Part Hoy', 'selector':'PorcPartHoy', 'formato':'porcentaje'},
                     {'name': '% Part Hoy Vs. AA', 'selector':'PorcPartHoyVsAA', 'formato':'porcentaje'},
@@ -3887,7 +3896,8 @@ class Tablas():
                 avg(co{'o' if hayCanal else ''}.objetivo) objetivo,
                 sum(DiaVencido_AnioActual) DiaVencidoAnioActual, sum(DiaVencido_AnioAnterior) DiaVencidoAnioAnterior,
                 (sum(DiaVencido_AnioActual)/sum(DiaVencido_AnioActualTF)) porc_part_dia_vencido,
-                (sum(DiaVencido_AnioActual)/sum(DiaVencido_AnioActualTF))-(sum(DiaVencido_AnioAnterior)/sum(DiaVencido_AnioAnteriorTF)) porcParDiffVencido
+                (sum(DiaVencido_AnioActual)/sum(DiaVencido_AnioActualTF))-(sum(DiaVencido_AnioAnterior)/sum(DiaVencido_AnioAnteriorTF)) porcParDiffVencido,
+                max(hora) hora
                 from DWH.artus.ventaHotSale vhs
                 left join (select DISTINCT tipo,esOmnicanal
                 from DWH.artus.catCanal ) cc on vhs.idTipo =cc.tipo
@@ -3902,6 +3912,7 @@ class Tablas():
             arreglo = crear_diccionario(cursor)
             if len(arreglo) > 0:
                 hayResultados = "si"
+                maxHora = 0
                 for row in arreglo:
                     data.append({
                         'detalleSubClase': '',
@@ -3916,11 +3927,12 @@ class Tablas():
                         'PorcPartAyer': row['porc_part_dia_vencido'],
                         'PorcPartAyerVsAA': row['porcParDiffVencido']
                     })
+                    maxHora = int(row['hora']) if row['hora'] is not None and maxHora < int(row['hora']) else maxHora
                 columns = [
                     {'name': 'Ver Detalle', 'selector':'detalleSubClase', 'formato':'detalleSubClase'},
                     {'name': 'ID SubClase', 'selector':'IdSubClase', 'formato':'entero'},
                     {'name': 'Nombre SubClase', 'selector':'SubClaseNombre', 'formato':'texto', 'ancho': '240px'},
-                    {'name': 'Venta Hoy', 'selector':'VentaHoy', 'formato':'moneda', 'ancho': '150px'},
+                    {'name': 'Venta Hoy ('+str(maxHora)+':00)', 'selector':'VentaHoy', 'formato':'moneda', 'ancho': '150px'},
                     {'name': 'Venta Hoy AA', 'selector':'VentaHoyAA', 'formato':'moneda', 'ancho': '150px'},
                     {'name': '% Part Hoy', 'selector':'PorcPartHoy', 'formato':'porcentaje'},
                     {'name': '% Part Hoy Vs. AA', 'selector':'PorcPartHoyVsAA', 'formato':'porcentaje'},
@@ -3940,7 +3952,8 @@ class Tablas():
                 avg(co{'o' if hayCanal else ''}.objetivo) objetivo,
                 sum(DiaVencido_AnioActual) DiaVencidoAnioActual, sum(DiaVencido_AnioAnterior) DiaVencidoAnioAnterior,
                 (sum(DiaVencido_AnioActual)/sum(DiaVencido_AnioActualTF)) porc_part_dia_vencido,
-                (sum(DiaVencido_AnioActual)/sum(DiaVencido_AnioActualTF))-(sum(DiaVencido_AnioAnterior)/sum(DiaVencido_AnioAnteriorTF)) porcParDiffVencido
+                (sum(DiaVencido_AnioActual)/sum(DiaVencido_AnioActualTF))-(sum(DiaVencido_AnioAnterior)/sum(DiaVencido_AnioAnteriorTF)) porcParDiffVencido,
+                max(hora) hora
                 from DWH.artus.ventaHotSale vhs
                 left join (select DISTINCT tipo,esOmnicanal
                 from DWH.artus.catCanal ) cc on vhs.idTipo =cc.tipo
@@ -3955,6 +3968,7 @@ class Tablas():
             arreglo = crear_diccionario(cursor)
             if len(arreglo) > 0:
                 hayResultados = "si"
+                maxHora = 0
                 for row in arreglo:
                     data.append({
                         'FormatoNombre': row['FORMATO_NOMBRE'],
@@ -3967,9 +3981,10 @@ class Tablas():
                         'PorcPartAyer': row['porc_part_dia_vencido'],
                         'PorcPartAyerVsAA': row['porcParDiffVencido']
                     })
+                    maxHora = int(row['hora']) if row['hora'] is not None and maxHora < int(row['hora']) else maxHora
                 columns = [
                     {'name': 'Formato', 'selector':'FormatoNombre', 'formato':'texto', 'ancho': '240px'},
-                    {'name': 'Venta Hoy', 'selector':'VentaHoy', 'formato':'moneda', 'ancho': '150px'},
+                    {'name': 'Venta Hoy ('+str(maxHora)+':00)', 'selector':'VentaHoy', 'formato':'moneda', 'ancho': '150px'},
                     {'name': 'Venta Hoy AA', 'selector':'VentaHoyAA', 'formato':'moneda', 'ancho': '150px'},
                     {'name': '% Part Hoy', 'selector':'PorcPartHoy', 'formato':'porcentaje'},
                     {'name': '% Part Hoy Vs. AA', 'selector':'PorcPartHoyVsAA', 'formato':'porcentaje'},
