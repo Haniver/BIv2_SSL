@@ -183,6 +183,7 @@ class EjesMultiplesApilados():
                 left join DWH.artus.catCanal cc on cc.idCanal = vd.idCanal
                 where dt.fecha BETWEEN '{fecha_ini}' and '{fecha_fin_menos_1}'
                 and {"cc.tipo="+self.filtros.canal if hayCanal else "cc.esOmnicanal = -1"}
+                and vd.ventaSinImpuestos <> 0
                 group by {"cc.tipo" if hayCanal else "cc.esOmnicanal"}, dt.fecha
                 ) a
                 left join (select dtt.fecha,sum(ventaSinImpuestos) vTF
