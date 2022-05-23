@@ -103,9 +103,9 @@ class EjesMultiplesApilados():
         if self.titulo == 'Pedidos Pagados Hoy (sin impuesto)':
             hoy = int(datetime.today().strftime('%Y%m%d'))
             if self.filtros.canal == False or self.filtros.canal == 'False' or self.filtros.canal == '':
-                filtroCanal = f'and idCanal = {self.filtros.canal}'
-            else:
                 filtroCanal = 'and idCanal not in (0)'
+            else:
+                filtroCanal = f'and idCanal = {self.filtros.canal}'
             query = f"""select hora, sum(nTicket) pedidos, sum(ventaSinImpuestos) venta
             from DWH.artus.ventaDiariaHora vdh
             where fecha = {hoy}
