@@ -3724,9 +3724,11 @@ class Tablas():
         hayCanal = False if self.filtros.canal == False or self.filtros.canal == 'False' or self.filtros.canal == '' else True
 
         if self.titulo == 'Detalle Departamentos':
+            nMes = datetime.strptime(self.filtros.fechas['fecha_ini'], '%Y-%m-%dT%H:%M:%S.%fZ').month
+            nMes = '0'+ str(nMes) if nMes < 10 else f'{nMes}'
+            print('Número de Mes actual: '+str(nMes))
             pipeline = f"""select DEPTO, DEPTO_NOMBRE,
-                sum(DiaActual_AnioActual) DiaActual_AnioActual, sum(DiaActual_AnioAnterior) DiaActual_AnioAnterior,
-                (sum(DiaActual_AnioActual)/max(DiaActual_AnioActualTF)) porc_part_dia_actual,
+                sum(DiaActual_AnioActual) DiaActual_AnioActual, sum(DiaActual_AnioAnterior) DiaActual_AnioAnterior, sum(DiaComparable_AnioAnterior) DiaComparable_AnioAnterior,(sum(DiaActual_AnioActual)/max(DiaActual_AnioActualTF)) porc_part_dia_actual, (sum(DiaComparable_AnioAnterior)/max(DiaComparable_AnioAnteriorTF)) DiaComparable_AnioAnteriorTF,
                 (sum(DiaActual_AnioActual)/max(DiaActual_AnioActualTF))-(sum(DiaActual_AnioAnterior)/max(DiaActual_AnioAnteriorTF)) porcParDiff,
                 avg(co{'o' if hayCanal else ''}.objetivo) objetivo,
                 sum(DiaVencido_AnioActual) DiaVencidoAnioActual, sum(DiaVencido_AnioAnterior) DiaVencidoAnioAnterior,
@@ -3736,16 +3738,17 @@ class Tablas():
                 from DWH.artus.ventaHotSale vhs
                 left join (select DISTINCT tipo,esOmnicanal
                 from DWH.artus.catCanal ) cc on vhs.idTipo =cc.tipo
-                left join DWH.artus.catObjetivo co{" on cc.esOmnicanal =co.idTipo and co.nMes=format(GETDATE(),'yyyyMM')" if not hayCanal else 'o on vhs.idTipo =coo.idTipo where vhs.idTipo = '+self.filtros.canal}
+                left join DWH.artus.catObjetivo co{" on cc.esOmnicanal =co.idTipo and co.nMes=format(GETDATE(),'yyyyMM')" if not hayCanal else ' on vhs.idTipo =co.idTipo where vhs.idTipo = '+self.filtros.canal}
+                and co.nMes = 2022{nMes}
                 group by DEPTO, DEPTO_NOMBRE"""
-            # print(f"query desde tablas->Temporada->Detalle Deptos: {str(pipeline)}")
+            print(f"query desde tablas->Temporada->Detalle Deptos: {str(pipeline)}")
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)
             if len(arreglo) > 0:
                 hayResultados = "si"
                 maxHora = 0
-                totales = {'DiaActual_AnioActual': 0, 'DiaActual_AnioAnterior': 0, 'porc_part_dia_actual': 0, 'porcParDiff': 0, 'DiaVencidoAnioActual': 0, 'DiaVencidoAnioAnterior': 0, 'porc_part_dia_vencido': 0, 'porcParDiffVencido': 0}
+                totales = {'DiaActual_AnioActual': 0, 'DiaActual_AnioAnterior': 0, 'DiaComparable_AnioAnterior': 0, 'porc_part_dia_actual': 0, 'DiaComparable_AnioAnteriorTF': 0, 'porcParDiff': 0, 'DiaVencidoAnioActual': 0, 'DiaVencidoAnioAnterior': 0, 'porc_part_dia_vencido': 0, 'porcParDiffVencido': 0}
                 for row in arreglo:
                     data.append({
                         'detalleDepto': '',
@@ -3753,7 +3756,9 @@ class Tablas():
                         'DeptoNombre': row['DEPTO_NOMBRE'],
                         'VentaHoy': row['DiaActual_AnioActual'],
                         'VentaHoyAA': row['DiaActual_AnioAnterior'],
+                        'DiaComparable_AnioAnterior': row['DiaComparable_AnioAnterior'],
                         'PorcPartHoy': row['porc_part_dia_actual'],
+                        'DiaComparable_AnioAnteriorTF': row['DiaComparable_AnioAnteriorTF'],
                         'PorcPartHoyVsAA': row['porcParDiff'],
                         'VentaAyer': row['DiaVencidoAnioActual'],
                         'VentaAyerAA': row['DiaVencidoAnioAnterior'],
@@ -3763,7 +3768,9 @@ class Tablas():
                     })
                     totales['DiaActual_AnioActual'] += float(row['DiaActual_AnioActual'])
                     totales['DiaActual_AnioAnterior'] += float(row['DiaActual_AnioAnterior'])
+                    totales['DiaComparable_AnioAnterior'] += float(row['DiaComparable_AnioAnterior'])
                     totales['porc_part_dia_actual'] += float(row['porc_part_dia_actual'])
+                    totales['DiaComparable_AnioAnteriorTF'] += float(row['DiaComparable_AnioAnteriorTF'])
                     totales['porcParDiff'] += float(row['porcParDiff'])
                     totales['DiaVencidoAnioActual'] += float(row['DiaVencidoAnioActual'])
                     totales['DiaVencidoAnioAnterior'] += float(row['DiaVencidoAnioAnterior'])
@@ -3776,7 +3783,9 @@ class Tablas():
                     'DeptoNombre': 'Total:',
                     'VentaHoy': totales['DiaActual_AnioActual'],
                     'VentaHoyAA': totales['DiaActual_AnioAnterior'],
+                    'DiaComparable_AnioAnterior': totales['DiaComparable_AnioAnterior'],
                     'PorcPartHoy': totales['porc_part_dia_actual'],
+                    'DiaComparable_AnioAnteriorTF': totales['DiaComparable_AnioAnteriorTF'],
                     'PorcPartHoyVsAA': totales['porcParDiff'],
                     'VentaAyer': totales['DiaVencidoAnioActual'],
                     'VentaAyerAA': totales['DiaVencidoAnioAnterior'],
@@ -3790,7 +3799,9 @@ class Tablas():
                     {'name': 'Nombre Depto', 'selector':'DeptoNombre', 'formato':'texto', 'ancho': '240px'},
                     {'name': 'Venta Hoy ('+str(maxHora)+':00)', 'selector':'VentaHoy', 'formato':'moneda', 'ancho': '150px'},
                     {'name': 'Venta Hoy AA', 'selector':'VentaHoyAA', 'formato':'moneda', 'ancho': '150px'},
+                    {'name': 'Día Comparable', 'selector':'DiaComparable_AnioAnterior', 'formato':'moneda', 'ancho': '150px'},
                     {'name': '% Part Hoy', 'selector':'PorcPartHoy', 'formato':'porcentaje'},
+                    {'name': '% Part Comparable', 'selector':'DiaComparable_AnioAnteriorTF', 'formato':'porcentaje'},
                     {'name': '% Part Hoy Vs. AA', 'selector':'PorcPartHoyVsAA', 'formato':'porcentaje'},
                     {'name': 'Venta Ayer', 'selector':'VentaAyer', 'formato':'moneda', 'ancho': '150px'},
                     {'name': 'Venta Ayer AA', 'selector':'VentaAyerAA', 'formato':'moneda', 'ancho': '150px'},
