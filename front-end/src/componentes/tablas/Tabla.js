@@ -240,7 +240,7 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
                     )
                 } else if (columna.formato === 'detalleDepto') {
                     objeto_columna.cell = (d) => (
-                        <Button
+                        d.IdDepto !== '--' && <Button
                             color='white'
                             onClick={e => {
                                 setSibling(d.IdDepto)

@@ -3727,11 +3727,11 @@ class Tablas():
             pipeline = f"""select DEPTO, DEPTO_NOMBRE,
                 sum(DiaActual_AnioActual) DiaActual_AnioActual, sum(DiaActual_AnioAnterior) DiaActual_AnioAnterior,
                 (sum(DiaActual_AnioActual)/max(DiaActual_AnioActualTF)) porc_part_dia_actual,
-                (sum(DiaActual_AnioActual)/sum(DiaActual_AnioActualTF))-(sum(DiaActual_AnioAnterior)/sum(DiaActual_AnioAnteriorTF)) porcParDiff,
+                (sum(DiaActual_AnioActual)/max(DiaActual_AnioActualTF))-(sum(DiaActual_AnioAnterior)/max(DiaActual_AnioAnteriorTF)) porcParDiff,
                 avg(co{'o' if hayCanal else ''}.objetivo) objetivo,
                 sum(DiaVencido_AnioActual) DiaVencidoAnioActual, sum(DiaVencido_AnioAnterior) DiaVencidoAnioAnterior,
-                (sum(DiaVencido_AnioActual)/sum(DiaVencido_AnioActualTF)) porc_part_dia_vencido,
-                (sum(DiaVencido_AnioActual)/sum(DiaVencido_AnioActualTF))-(sum(DiaVencido_AnioAnterior)/sum(DiaVencido_AnioAnteriorTF)) porcParDiffVencido,
+                (sum(DiaVencido_AnioActual)/max(DiaVencido_AnioActualTF)) porc_part_dia_vencido,
+                (sum(DiaVencido_AnioActual)/max(DiaVencido_AnioActualTF))-(sum(DiaVencido_AnioAnterior)/max(DiaVencido_AnioAnteriorTF)) porcParDiffVencido,
                 max(hora) hora
                 from DWH.artus.ventaHotSale vhs
                 left join (select DISTINCT tipo,esOmnicanal
@@ -3745,6 +3745,7 @@ class Tablas():
             if len(arreglo) > 0:
                 hayResultados = "si"
                 maxHora = 0
+                totales = {'DiaActual_AnioActual': 0, 'DiaActual_AnioAnterior': 0, 'porc_part_dia_actual': 0, 'porcParDiff': 0, 'DiaVencidoAnioActual': 0, 'DiaVencidoAnioAnterior': 0, 'porc_part_dia_vencido': 0, 'porcParDiffVencido': 0}
                 for row in arreglo:
                     data.append({
                         'detalleDepto': '',
@@ -3757,9 +3758,32 @@ class Tablas():
                         'VentaAyer': row['DiaVencidoAnioActual'],
                         'VentaAyerAA': row['DiaVencidoAnioAnterior'],
                         'PorcPartAyer': row['porc_part_dia_vencido'],
-                        'PorcPartAyerVsAA': row['porcParDiffVencido']
+                        'PorcPartAyerVsAA': row['porcParDiffVencido'],
+
                     })
+                    totales['DiaActual_AnioActual'] += float(row['DiaActual_AnioActual'])
+                    totales['DiaActual_AnioAnterior'] += float(row['DiaActual_AnioAnterior'])
+                    totales['porc_part_dia_actual'] += float(row['porc_part_dia_actual'])
+                    totales['porcParDiff'] += float(row['porcParDiff'])
+                    totales['DiaVencidoAnioActual'] += float(row['DiaVencidoAnioActual'])
+                    totales['DiaVencidoAnioAnterior'] += float(row['DiaVencidoAnioAnterior'])
+                    totales['porc_part_dia_vencido'] += float(row['porc_part_dia_vencido'])
+                    totales['porcParDiffVencido'] += float(row['porcParDiffVencido'])
                     maxHora = int(row['hora']) if row['hora'] is not None and maxHora < int(row['hora']) else maxHora
+                data.append({
+                    'detalleDepto': '',
+                    'IdDepto': '--',
+                    'DeptoNombre': 'Total:',
+                    'VentaHoy': totales['DiaActual_AnioActual'],
+                    'VentaHoyAA': totales['DiaActual_AnioAnterior'],
+                    'PorcPartHoy': totales['porc_part_dia_actual'],
+                    'PorcPartHoyVsAA': totales['porcParDiff'],
+                    'VentaAyer': totales['DiaVencidoAnioActual'],
+                    'VentaAyerAA': totales['DiaVencidoAnioAnterior'],
+                    'PorcPartAyer': totales['porc_part_dia_vencido'],
+                    'PorcPartAyerVsAA': totales['porcParDiffVencido'],
+
+                })
                 columns = [
                     {'name': 'Ver Detalle', 'selector':'detalleDepto', 'formato':'detalleDepto'},
                     {'name': 'ID Depto', 'selector':'IdDepto', 'formato':'entero'},
@@ -3780,11 +3804,11 @@ class Tablas():
             pipeline = f"""select SUBDEPTO, SUBDEPTO_NOMBRE,
                 sum(DiaActual_AnioActual) DiaActual_AnioActual, sum(DiaActual_AnioAnterior) DiaActual_AnioAnterior,
                 (sum(DiaActual_AnioActual)/max(DiaActual_AnioActualTF)) porc_part_dia_actual,
-                (sum(DiaActual_AnioActual)/sum(DiaActual_AnioActualTF))-(sum(DiaActual_AnioAnterior)/sum(DiaActual_AnioAnteriorTF)) porcParDiff,
+                (sum(DiaActual_AnioActual)/max(DiaActual_AnioActualTF))-(sum(DiaActual_AnioAnterior)/max(DiaActual_AnioAnteriorTF)) porcParDiff,
                 avg(co{'o' if hayCanal else ''}.objetivo) objetivo,
                 sum(DiaVencido_AnioActual) DiaVencidoAnioActual, sum(DiaVencido_AnioAnterior) DiaVencidoAnioAnterior,
-                (sum(DiaVencido_AnioActual)/sum(DiaVencido_AnioActualTF)) porc_part_dia_vencido,
-                (sum(DiaVencido_AnioActual)/sum(DiaVencido_AnioActualTF))-(sum(DiaVencido_AnioAnterior)/sum(DiaVencido_AnioAnteriorTF)) porcParDiffVencido,
+                (sum(DiaVencido_AnioActual)/max(DiaVencido_AnioActualTF)) porc_part_dia_vencido,
+                (sum(DiaVencido_AnioActual)/max(DiaVencido_AnioActualTF))-(sum(DiaVencido_AnioAnterior)/max(DiaVencido_AnioAnteriorTF)) porcParDiffVencido,
                 max(hora) hora
                 from DWH.artus.ventaHotSale vhs
                 left join (select DISTINCT tipo,esOmnicanal
@@ -3836,11 +3860,11 @@ class Tablas():
             pipeline = f"""select CLASE, CLASE_NOMBRE,
                 sum(DiaActual_AnioActual) DiaActual_AnioActual, sum(DiaActual_AnioAnterior) DiaActual_AnioAnterior,
                 (sum(DiaActual_AnioActual)/max(DiaActual_AnioActualTF)) porc_part_dia_actual,
-                (sum(DiaActual_AnioActual)/sum(DiaActual_AnioActualTF))-(sum(DiaActual_AnioAnterior)/sum(DiaActual_AnioAnteriorTF)) porcParDiff,
+                (sum(DiaActual_AnioActual)/max(DiaActual_AnioActualTF))-(sum(DiaActual_AnioAnterior)/max(DiaActual_AnioAnteriorTF)) porcParDiff,
                 avg(co{'o' if hayCanal else ''}.objetivo) objetivo,
                 sum(DiaVencido_AnioActual) DiaVencidoAnioActual, sum(DiaVencido_AnioAnterior) DiaVencidoAnioAnterior,
-                (sum(DiaVencido_AnioActual)/sum(DiaVencido_AnioActualTF)) porc_part_dia_vencido,
-                (sum(DiaVencido_AnioActual)/sum(DiaVencido_AnioActualTF))-(sum(DiaVencido_AnioAnterior)/sum(DiaVencido_AnioAnteriorTF)) porcParDiffVencido,
+                (sum(DiaVencido_AnioActual)/max(DiaVencido_AnioActualTF)) porc_part_dia_vencido,
+                (sum(DiaVencido_AnioActual)/max(DiaVencido_AnioActualTF))-(sum(DiaVencido_AnioAnterior)/max(DiaVencido_AnioAnteriorTF)) porcParDiffVencido,
                 max(hora) hora
                 from DWH.artus.ventaHotSale vhs
                 left join (select DISTINCT tipo,esOmnicanal
@@ -3892,11 +3916,11 @@ class Tablas():
             pipeline = f"""select SUBCLASE, SUBCLASE_NOMBRE,
                 sum(DiaActual_AnioActual) DiaActual_AnioActual, sum(DiaActual_AnioAnterior) DiaActual_AnioAnterior,
                 (sum(DiaActual_AnioActual)/max(DiaActual_AnioActualTF)) porc_part_dia_actual,
-                (sum(DiaActual_AnioActual)/sum(DiaActual_AnioActualTF))-(sum(DiaActual_AnioAnterior)/sum(DiaActual_AnioAnteriorTF)) porcParDiff,
+                (sum(DiaActual_AnioActual)/max(DiaActual_AnioActualTF))-(sum(DiaActual_AnioAnterior)/max(DiaActual_AnioAnteriorTF)) porcParDiff,
                 avg(co{'o' if hayCanal else ''}.objetivo) objetivo,
                 sum(DiaVencido_AnioActual) DiaVencidoAnioActual, sum(DiaVencido_AnioAnterior) DiaVencidoAnioAnterior,
-                (sum(DiaVencido_AnioActual)/sum(DiaVencido_AnioActualTF)) porc_part_dia_vencido,
-                (sum(DiaVencido_AnioActual)/sum(DiaVencido_AnioActualTF))-(sum(DiaVencido_AnioAnterior)/sum(DiaVencido_AnioAnteriorTF)) porcParDiffVencido,
+                (sum(DiaVencido_AnioActual)/max(DiaVencido_AnioActualTF)) porc_part_dia_vencido,
+                (sum(DiaVencido_AnioActual)/max(DiaVencido_AnioActualTF))-(sum(DiaVencido_AnioAnterior)/max(DiaVencido_AnioAnteriorTF)) porcParDiffVencido,
                 max(hora) hora
                 from DWH.artus.ventaHotSale vhs
                 left join (select DISTINCT tipo,esOmnicanal
@@ -3948,11 +3972,11 @@ class Tablas():
             pipeline = f"""select FORMATO_NOMBRE,
                 sum(DiaActual_AnioActual) DiaActual_AnioActual, sum(DiaActual_AnioAnterior) DiaActual_AnioAnterior,
                 (sum(DiaActual_AnioActual)/max(DiaActual_AnioActualTF)) porc_part_dia_actual,
-                (sum(DiaActual_AnioActual)/sum(DiaActual_AnioActualTF))-(sum(DiaActual_AnioAnterior)/sum(DiaActual_AnioAnteriorTF)) porcParDiff,
+                (sum(DiaActual_AnioActual)/max(DiaActual_AnioActualTF))-(sum(DiaActual_AnioAnterior)/max(DiaActual_AnioAnteriorTF)) porcParDiff,
                 avg(co{'o' if hayCanal else ''}.objetivo) objetivo,
                 sum(DiaVencido_AnioActual) DiaVencidoAnioActual, sum(DiaVencido_AnioAnterior) DiaVencidoAnioAnterior,
-                (sum(DiaVencido_AnioActual)/sum(DiaVencido_AnioActualTF)) porc_part_dia_vencido,
-                (sum(DiaVencido_AnioActual)/sum(DiaVencido_AnioActualTF))-(sum(DiaVencido_AnioAnterior)/sum(DiaVencido_AnioAnteriorTF)) porcParDiffVencido,
+                (sum(DiaVencido_AnioActual)/max(DiaVencido_AnioActualTF)) porc_part_dia_vencido,
+                (sum(DiaVencido_AnioActual)/max(DiaVencido_AnioActualTF))-(sum(DiaVencido_AnioAnterior)/max(DiaVencido_AnioAnteriorTF)) porcParDiffVencido,
                 max(hora) hora
                 from DWH.artus.ventaHotSale vhs
                 left join (select DISTINCT tipo,esOmnicanal
