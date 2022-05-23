@@ -101,7 +101,6 @@ class EjesMultiplesApilados():
                 # Cambiamos el formato de hora de las categorías para que se vea más chido:
                 categories = [f"0{str(horaInt)}:00" if horaInt < 10 else f"{str(horaInt)}:00" for horaInt in categories]
         if self.titulo == 'Pedidos Pagados Hoy (sin impuesto)':
-            categories.append(0)
             hoy = int(datetime.today().strftime('%Y%m%d'))
             if self.filtros.canal == False or self.filtros.canal == 'False' or self.filtros.canal == '':
                 filtroCanal = f'and idCanal = {self.filtros.canal}'
@@ -114,7 +113,7 @@ class EjesMultiplesApilados():
             group by hora
             order by hora
             """
-            # print (f"query desde ejesMultiplesApilados->Temporada->2a. gráfica: {str(query)}")
+            # print (f"query desde ejesMultiplesApilados->Temporada->Pedidos Pagados hoy: {str(query)}")
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(query)
             arreglo = crear_diccionario(cursor)

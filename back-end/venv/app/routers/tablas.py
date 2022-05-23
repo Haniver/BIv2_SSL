@@ -3738,7 +3738,7 @@ class Tablas():
                 from DWH.artus.catCanal ) cc on vhs.idTipo =cc.tipo
                 left join DWH.artus.catObjetivo co{" on cc.esOmnicanal =co.idTipo and co.nMes=format(GETDATE(),'yyyyMM')" if not hayCanal else 'o on vhs.idTipo =coo.idTipo where vhs.idTipo = '+self.filtros.canal}
                 group by DEPTO, DEPTO_NOMBRE"""
-            print(f"query desde tablas->Temporada->Detalle Deptos: {str(pipeline)}")
+            # print(f"query desde tablas->Temporada->Detalle Deptos: {str(pipeline)}")
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)
@@ -3818,7 +3818,7 @@ class Tablas():
                 {'and vhs.idTipo = '+self.filtros.canal if hayCanal else ''}
                 group by SUBDEPTO, SUBDEPTO_NOMBRE"""
 
-            # print(f"query desde tablas->Temporada->Detalle Deptos: {str(pipeline)}")
+            # print(f"query desde tablas->Temporada->Detalle subDeptos: {str(pipeline)}")
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)
@@ -3874,7 +3874,7 @@ class Tablas():
                 {'and vhs.idTipo = '+self.filtros.canal if hayCanal else ''}
                 group by CLASE, CLASE_NOMBRE"""
 
-            # print(f"query desde tablas->Temporada->Detalle Deptos: {str(pipeline)}")
+            # print(f"query desde tablas->Temporada->Detalle clases: {str(pipeline)}")
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)
@@ -3930,7 +3930,7 @@ class Tablas():
                 {'and vhs.idTipo = '+self.filtros.canal if hayCanal else ''}
                 group by SUBCLASE, SUBCLASE_NOMBRE"""
 
-            # print(f"query desde tablas->Temporada->Detalle Deptos: {str(pipeline)}")
+            # print(f"query desde tablas->Temporada->Detalle subclases: {str(pipeline)}")
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)
@@ -3986,7 +3986,7 @@ class Tablas():
                 {'and vhs.idTipo = '+self.filtros.canal if hayCanal else ''}
                 group by FORMATO_NOMBRE"""
 
-            # print(f"query desde tablas->Temporada->Detalle Deptos: {str(pipeline)}")
+            # print(f"query desde tablas->Temporada->Detalle formatos: {str(pipeline)}")
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)
