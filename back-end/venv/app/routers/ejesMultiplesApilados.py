@@ -436,7 +436,7 @@ class EjesMultiplesApilados():
                 group by ct.formatoNombre 
                 order by ct.formatoNombre 
                 """
-            # print (f"query desde ejesMultiples->Temporada: {str(query)}")
+            # print (f"query desde ejesMultiples->Temporada-> Venta por formato: {str(query)}")
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(query)
             arreglo = crear_diccionario(cursor)
