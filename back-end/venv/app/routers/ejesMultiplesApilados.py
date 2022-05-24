@@ -210,8 +210,14 @@ class EjesMultiplesApilados():
                     venta.append(elemento['ventaSinImp'])
                     ticketPromedio.append(elemento['ticketPromedio'])
                     porc_participacion.append(float(elemento['PartvsTF'])/100)
-                    objetivo.append(float(elemento['Objetivo'])/100)
-                    diferencia.append((float(elemento['PartvsTF']) - float(elemento['Objetivo']))/100)
+                    if elemento['Objetivo'] is not None:
+                        objetivo.append(float(elemento['Objetivo'])/100)
+                    else:
+                        objetivo.append(0)
+                    if elemento['Objetivo'] is not None and elemento['PartvsTF'] is not None:
+                        diferencia.append((float(elemento['PartvsTF']) - float(elemento['Objetivo']))/100)
+                    else:
+                        diferencia.append(0)
                     # categories.append(datetime.strptime(elemento['fecha'], '%Y-%m-%d').strftime('%d/%m/%Y'))
                     categories.append(elemento['fecha'].strftime('%d/%m/%Y'))
                     multiple.append(contador)
@@ -246,8 +252,8 @@ class EjesMultiplesApilados():
         if self.titulo == 'Venta por Región':
             query = f"""select ct.regionNombre,
                 sum(case when year(GETDATE())=year(dt2.fecha) then a.ventaSinImpuestos else 0 end) ventaActual,
-                round(((sum(case when year(GETDATE())=year(dt2.fecha) then a.ventaSinImpuestos else 0 end) /
-                sum(case when year(DATEADD(yy,-1,GETDATE()))=year(dt2.fecha) then a.ventaSinImpuestos else 0 end))-1)*100,2) PartvsAA,
+                case when sum(case when year(DATEADD(yy,-1,GETDATE()))=year(dt2.fecha) then a.ventaSinImpuestos else 0 end)=0 then 0 else round(((sum(case when year(GETDATE())=year(dt2.fecha) then a.ventaSinImpuestos else 0 end) /
+                sum(case when year(DATEADD(yy,-1,GETDATE()))=year(dt2.fecha) then a.ventaSinImpuestos else 0 end))-1)*100,2) end PartvsAA,
                 round((sum(case when year(GETDATE())=year(dt2.fecha) then a.ventaSinImpuestos else 0 end) / (select sum(ventaSinImpuestos) vTF
                 from DWH.artus.ventaxdia vxd
                 left join DWH.dbo.dim_tiempo dtt on dtt.id_fecha = vxd.fecha
@@ -331,8 +337,8 @@ class EjesMultiplesApilados():
         if self.titulo == 'Venta por Departamento':
             query = f"""Select cd.deptoDescrip, cd.idDepto,
                 sum(case when year(GETDATE())=year(dt2.fecha) then a.ventaSinImpuestos else 0 end) ventaActual,
-                round(((sum(case when year(GETDATE())=year(dt2.fecha) then a.ventaSinImpuestos else 0 end) /
-                sum(case when year(DATEADD(yy,-1,GETDATE()))=year(dt2.fecha) then a.ventaSinImpuestos else 0 end))-1)*100,2) PartvsAA,
+                case when sum(case when year(DATEADD(yy,-1,GETDATE()))=year(dt2.fecha) then a.ventaSinImpuestos else 0 end)=0 then 0 else round(((sum(case when year(GETDATE())=year(dt2.fecha) then a.ventaSinImpuestos else 0 end) /
+                sum(case when year(DATEADD(yy,-1,GETDATE()))=year(dt2.fecha) then a.ventaSinImpuestos else 0 end))-1)*100,2) end PartvsAA,
                 round((sum(case when year(GETDATE())=year(dt2.fecha) then a.ventaSinImpuestos else 0 end) / (select sum(ventaSinImpuestos) vTF
                 from DWH.artus.ventaxdia vxd
                 left join DWH.dbo.dim_tiempo dtt on dtt.id_fecha = vxd.fecha
@@ -418,8 +424,8 @@ class EjesMultiplesApilados():
         if self.titulo == 'Venta por Formato':
             query = f"""Select ct.formatoNombre,
                 sum(case when year(GETDATE())=year(dt2.fecha) then a.ventaSinImpuestos else 0 end) ventaActual,
-                round(((sum(case when year(GETDATE())=year(dt2.fecha) then a.ventaSinImpuestos else 0 end) /
-                sum(case when year(DATEADD(yy,-1,GETDATE()))=year(dt2.fecha) then a.ventaSinImpuestos else 0 end))-1)*100,2) PartvsAA,
+                case when sum(case when year(DATEADD(yy,-1,GETDATE()))=year(dt2.fecha) then a.ventaSinImpuestos else 0 end)=0 then 0 else round(((sum(case when year(GETDATE())=year(dt2.fecha) then a.ventaSinImpuestos else 0 end) /
+                sum(case when year(DATEADD(yy,-1,GETDATE()))=year(dt2.fecha) then a.ventaSinImpuestos else 0 end))-1)*100,2) end PartvsAA,
                 round((sum(case when year(GETDATE())=year(dt2.fecha) then a.ventaSinImpuestos else 0 end) / (select sum(ventaSinImpuestos) vTF
                 from DWH.artus.ventaxdia vxd
                 left join DWH.dbo.dim_tiempo dtt on dtt.id_fecha = vxd.fecha
