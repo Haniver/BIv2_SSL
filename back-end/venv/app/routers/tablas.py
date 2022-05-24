@@ -579,7 +579,8 @@ class Tablas():
                         'Delivering': dato['Delivering'],
                         'PickPack': dato['PickPack'],
                         'Ready': dato['Ready'],
-                        'ReadyForPickUp': dato['ReadyForPickUp']
+                        'ReadyForPickUp': dato['ReadyForPickUp'],
+                        'Suma': int(dato['Delivering']) + int(dato['PickPack']) + int(dato['Ready']) + int(dato['ReadyForPickUp'])
                     })
             else:
                 hayResultados = 'no'
@@ -591,7 +592,8 @@ class Tablas():
                     {'name': 'Delivering', 'selector':'Delivering', 'formato':'entero'},
                     {'name': 'Pick Pack', 'selector':'PickPack', 'formato':'entero', 'ancho': '110px'},
                     {'name': 'Ready', 'selector':'Ready', 'formato':'entero'},
-                    {'name': 'Ready for Pick Up', 'selector':'ReadyForPickUp', 'formato':'entero'}
+                    {'name': 'Ready for Pick Up', 'selector':'ReadyForPickUp', 'formato':'entero'},
+                    {'name': 'Suma', 'selector':'Suma', 'formato':'entero'}
                 ]
         if self.titulo == 'Pedidos No Entregados o No Cancelados Tienda $tienda':
             if self.filtros.region != '' and self.filtros.region != "False":
