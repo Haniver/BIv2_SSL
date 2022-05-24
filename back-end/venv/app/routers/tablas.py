@@ -3730,7 +3730,7 @@ class Tablas():
             pipeline = f"""select DEPTO, DEPTO_NOMBRE,
                 sum(DiaActual_AnioActual) DiaActual_AnioActual, sum(DiaActual_AnioAnterior) DiaActual_AnioAnterior, sum(DiaComparable_AnioAnterior) DiaComparable_AnioAnterior,(sum(DiaActual_AnioActual)/max(DiaActual_AnioActualTF)) porc_part_dia_actual, (sum(DiaComparable_AnioAnterior)/max(DiaComparable_AnioAnteriorTF)) DiaComparable_AnioAnteriorTF,
                 (sum(DiaActual_AnioActual)/max(DiaActual_AnioActualTF))-(sum(DiaActual_AnioAnterior)/max(DiaActual_AnioAnteriorTF)) porcParDiff,
-                avg(co{'o' if hayCanal else ''}.objetivo) objetivo,
+                avg(co.objetivo) objetivo,
                 sum(DiaVencido_AnioActual) DiaVencidoAnioActual, sum(DiaVencido_AnioAnterior) DiaVencidoAnioAnterior,
                 (sum(DiaVencido_AnioActual)/max(DiaVencido_AnioActualTF)) porc_part_dia_vencido,
                 (sum(DiaVencido_AnioActual)/max(DiaVencido_AnioActualTF))-(sum(DiaVencido_AnioAnterior)/max(DiaVencido_AnioAnteriorTF)) porcParDiffVencido,
