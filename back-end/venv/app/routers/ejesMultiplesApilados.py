@@ -147,6 +147,7 @@ class EjesMultiplesApilados():
                 categories = [f"0{str(horaInt)}:00" if horaInt < 10 else f"{str(horaInt)}:00" for horaInt in categories]
         if self.titulo == 'Pedidos por Día':
             hoy = int(datetime.today().strftime('%Y%m%d'))
+            print(f"Hoy es {datetime.today()}")
             # print(f"Fecha_fin: {self.filtros.fechas['fecha_fin']}")
             fecha_ini = datetime.strptime(self.filtros.fechas['fecha_ini'], '%Y-%m-%dT%H:%M:%S.%fZ').strftime('%Y-%m-%d')
             fecha_fin = datetime.strptime(self.filtros.fechas['fecha_fin'], '%Y-%m-%dT%H:%M:%S.%fZ')

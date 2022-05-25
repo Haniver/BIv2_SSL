@@ -580,7 +580,7 @@ class Tablas():
                         'PickPack': dato['PickPack'],
                         'Ready': dato['Ready'],
                         'ReadyForPickUp': dato['ReadyForPickUp'],
-                        'Total': int(dato['Delivering']) + int(dato['PickPack']) + int(dato['Ready']) + int(dato['ReadyForPickUp'])
+                        'Suma': int(dato['Delivering']) + int(dato['PickPack']) + int(dato['Ready']) + int(dato['ReadyForPickUp'])
                     })
             else:
                 hayResultados = 'no'
@@ -593,7 +593,7 @@ class Tablas():
                     {'name': 'Pick Pack', 'selector':'PickPack', 'formato':'entero', 'ancho': '110px'},
                     {'name': 'Ready', 'selector':'Ready', 'formato':'entero'},
                     {'name': 'Ready for Pick Up', 'selector':'ReadyForPickUp', 'formato':'entero'},
-                    {'name': 'Total', 'selector':'Total', 'formato':'entero'}
+                    {'name': 'Suma', 'selector':'Suma', 'formato':'entero'}
                 ]
         if self.titulo == 'Pedidos No Entregados o No Cancelados Tienda $tienda':
             if self.filtros.region != '' and self.filtros.region != "False":
@@ -3641,7 +3641,7 @@ class Tablas():
             and fecha_ultimo_cambio BETWEEN '{self.fecha_ini}' AND '{self.fecha_fin}'
             and ct.tienda = '{self.filtros.tienda}'
             group by  nombre, rol, nomina"""
-            print(f"query desde tablas->Faltantes->PedidosPicker: {str(pipeline)}")
+            # print(f"query desde tablas->Faltantes->PedidosPicker: {str(pipeline)}")
             lugarMayus = self.nivel_lugar[:1].upper() + self.nivel_lugar[1:]
             cnxn = conexion_sql('DJANGO')
             cursor = cnxn.cursor().execute(pipeline)
@@ -3684,7 +3684,7 @@ class Tablas():
             and nombre = '{self.filtros.fromSibling}'
             group by  fecha_ultimo_cambio, rol
             order by fecha_ultimo_cambio"""
-            print(f"query desde tablas->Faltantes->PedidosPicker: {str(pipeline)}")
+            # print(f"query desde tablas->Faltantes->PedidosPicker: {str(pipeline)}")
             lugarMayus = self.nivel_lugar[:1].upper() + self.nivel_lugar[1:]
             cnxn = conexion_sql('DJANGO')
             cursor = cnxn.cursor().execute(pipeline)
