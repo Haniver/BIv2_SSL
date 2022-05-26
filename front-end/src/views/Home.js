@@ -24,7 +24,8 @@ const Home = () => {
   const fechas_dia = {fecha_ini: hoy, fecha_fin: hoy}
   const fechas_mes = {fecha_ini: fechas_srv.primeroDelMesSinVencer(), fecha_fin: hoy}
   const agrupador = 'dia'
-  console.log(`Hoy es ${new Date()}`)
+  console.log(`Hoy es:`)
+  console.log(hoy)
 
   return (
     <Fragment>

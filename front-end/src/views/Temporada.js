@@ -16,12 +16,13 @@ import {
 
 const Temporada = () => {
     
-    const [fechas, setFechas] = useState({fecha_ini: fechas_srv.primeroDelMesVencido(), fecha_fin: new Date()})
+    const [fechas, setFechas] = useState({fecha_ini: fechas_srv.primeroDelMesVencido(), fecha_fin: fechas_srv.hoy_fin()})
     const [canal, setCanal] = useState(false)
     const [depto, setDepto] = useState('')
     const [subDepto, setSubDepto] = useState('')
     const [clase, setClase] = useState('')
     const [subClase, setSubClase] = useState('')
+    // console.log(`Fecha y hora actual: ${new Date()}`)
 
     useEffect(() => {
       setSubDepto('')
@@ -34,6 +35,10 @@ const Temporada = () => {
     useEffect(() => {
       setSubClase('')
     }, [clase])
+
+    // useEffect(() => {
+    //   console.log(fechas)
+    // }, [fechas])
 
     const seccion = 'Temporada'
 

@@ -128,6 +128,18 @@ class fechas_srv {
             return `${this.mesTexto(mes - 2, false)} ${anio}`
         }
     }
+    noUTC(fecha) {
+        console.log("entramos a fechas_srv -> noUtc")
+        const offset = fecha.getTimezoneOffset()
+        console.log(`Offset: ${offset}`)
+        return new Date(fecha.getTime() - (offset * 60000))
+        // return fecha
+    }
+    hoy_fin() {
+        const endOfDay = new Date()
+        endOfDay.setUTCHours(23, 59, 59, 999)
+        return endOfDay
+    }
 }
   
 export default new fechas_srv()

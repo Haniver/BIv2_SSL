@@ -35,6 +35,8 @@ const EjesMultiplesApilados = ({ titulo, seccion, fechas, tituloAPI, canal, setF
     const [series, setSeries] = useState([])
     const [yAxis, setYAxis] = useState([])
     const [cursor, setCursor] = useState(undefined)
+    // console.log("Las fechas que se están recibiendo en EjesMultiplesApilados:")
+    // console.log(fechas)
     const [options, setOptions] = useState({
         chart: {
             zoomType: 'xy'
@@ -86,6 +88,8 @@ const EjesMultiplesApilados = ({ titulo, seccion, fechas, tituloAPI, canal, setF
 
     useEffect(async () => {
         dispatchLoader({tipo: 'llamarAPI'})
+        // console.log("Las fechas que se van a enviar a API desde EjesMultiplesApilados:")
+        // console.log(fechas)
         const res = await axios({
           method: 'post',
           url: `${CustomUrls.ApiUrl()}ejesMultiplesApilados/${seccion}?titulo=${titulo_enviar}`,
