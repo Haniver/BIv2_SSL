@@ -3808,7 +3808,7 @@ class Tablas():
         --- se agrega el filtro del nivel que quieren consultar
         group by {agrupador} ---se cambia el agrupador
         order by {'c.' if self.titulo == 'Detalle Formatos para SubClase $subClase' else 'b.'}{campoB}"""
-        # print(f"query desde tablas->Temporada->{self.titulo}: {str(pipeline)}")
+        print(f"query desde tablas->Temporada->{self.titulo}: {str(pipeline)}")
         cnxn = conexion_sql('DWH')
         cursor = cnxn.cursor().execute(pipeline)
         arreglo = crear_diccionario(cursor)
@@ -3816,7 +3816,7 @@ class Tablas():
             hayResultados = "si"
             maxHora = 0
             if self.titulo == 'Detalle Departamentos':
-                totales = {'DiaActual_AnioActual': 0, 'DiaActual_AnioAnterior': 0, 'DiaComparable_AnioAnterior': 0, 'porc_part_dia_actual': 0, 'DiaComparable_AnioAnteriorTF': 0, 'porcParDiff': 0, 'DiaVencidoAnioActual': 0, 'DiaVencidoAnioAnterior': 0, 'porc_part_dia_vencido': 0, 'porcParDiffVencido': 0}
+                totales = {'DiaActual_AnioActual': 0, 'DiaActual_AnioAnterior': 0, 'DiaComparable_AnioAnterior': 0, 'porc_part_dia_actual': 0, 'DiaComparable_AnioAnteriorTF': 0, 'porcParDiff': 0, 'DiaVencidoAnioActual': 0, 'DiaVencidoAnioAnterior': 0, 'porc_part_dia_vencido': 0, 'porcParDiffVencido': 0, 'DiaAyerComparable_AnioAnterior': 0}
             for row in arreglo:
                 dicc = {
                     tituloColumnas+'Nombre': row[campoB],
@@ -3828,6 +3828,7 @@ class Tablas():
                     'PorcPartHoyVsAA': row['porcParDiff'],
                     'VentaAyer': row['DiaVencidoAnioActual'],
                     'VentaAyerAA': row['DiaVencidoAnioAnterior'],
+                    'DiaAyerComparable_AnioAnterior': row['DiaAyerComparable_AnioAnterior'],
                     'PorcPartAyer': row['porc_part_dia_vencido'],
                     'PorcPartAyerVsAA': row['porcParDiffVencido']
                 }
@@ -3845,6 +3846,7 @@ class Tablas():
                     totales['porcParDiff'] += float(row['porcParDiff'])
                     totales['DiaVencidoAnioActual'] += float(row['DiaVencidoAnioActual'])
                     totales['DiaVencidoAnioAnterior'] += float(row['DiaVencidoAnioAnterior'])
+                    totales['DiaAyerComparable_AnioAnterior'] += float(row['DiaAyerComparable_AnioAnterior'])
                     totales['porc_part_dia_vencido'] += float(row['porc_part_dia_vencido'])
                     totales['porcParDiffVencido'] += float(row['porcParDiffVencido'])
             if self.titulo == 'Detalle Departamentos':
@@ -3860,6 +3862,7 @@ class Tablas():
                     'PorcPartHoyVsAA': totales['porcParDiff'],
                     'VentaAyer': totales['DiaVencidoAnioActual'],
                     'VentaAyerAA': totales['DiaVencidoAnioAnterior'],
+                    'DiaAyerComparable_AnioAnterior': totales['DiaAyerComparable_AnioAnterior'],
                     'PorcPartAyer': totales['porc_part_dia_vencido'],
                     'PorcPartAyerVsAA': totales['porcParDiffVencido']
                     })
@@ -3879,6 +3882,7 @@ class Tablas():
                 {'name': '% Part Hoy Vs. AA', 'selector':'PorcPartHoyVsAA', 'formato':'porcentaje'},
                 {'name': 'Venta Ayer', 'selector':'VentaAyer', 'formato':'moneda', 'ancho': '150px'},
                 {'name': 'Venta Ayer AA', 'selector':'VentaAyerAA', 'formato':'moneda', 'ancho': '150px'},
+                {'name': 'Venta Ayer Comparable', 'selector':'DiaAyerComparable_AnioAnterior', 'formato':'moneda', 'ancho': '150px'},
                 {'name': '% Part Ayer', 'selector':'PorcPartAyer', 'formato':'porcentaje'},
                 {'name': '% Part Ayer Vs. AA', 'selector':'PorcPartAyerVsAA', 'formato':'porcentaje'}
             ])
