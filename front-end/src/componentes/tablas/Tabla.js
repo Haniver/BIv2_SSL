@@ -238,23 +238,23 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
                             🔗
                         </Button>
                     )
-                } else if (columna.formato === 'detalleDepto') {
+                } else if (columna.formato === 'detalleDepartamento') {
                     objeto_columna.cell = (d) => (
                         d.IdDepto !== '--' && <Button
                             color='white'
                             onClick={e => {
-                                setSibling(d.IdDepto)
+                                setSibling(d.IdDepartamento)
                             }}
                         >
                             🔗
                         </Button>
                     )
-                } else if (columna.formato === 'detalleSubDepto') {
+                } else if (columna.formato === 'detalleSubDepartamento') {
                     objeto_columna.cell = (d) => (
                         <Button
                             color='white'
                             onClick={e => {
-                                const subDepto_a_enviar = d.IdSubDepto.replace(/,/g, '')
+                                const subDepto_a_enviar = d.IdSubDepartamento.replace(/,/g, '')
                                 setSibling(subDepto_a_enviar)
                             }}
                         >
