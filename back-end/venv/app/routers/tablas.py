@@ -3841,14 +3841,14 @@ class Tablas():
                     totales['DiaActual_AnioActual'] += float(row['DiaActual_AnioActual'])
                     totales['DiaActual_AnioAnterior'] += float(row['DiaActual_AnioAnterior'])
                     totales['DiaComparable_AnioAnterior'] += float(row['DiaComparable_AnioAnterior'])
-                    totales['porc_part_dia_actual'] += float(row['porc_part_dia_actual'])
-                    totales['DiaComparable_AnioAnteriorTF'] += float(row['DiaComparable_AnioAnteriorTF'])
-                    totales['porcParDiff'] += float(row['porcParDiff'])
+                    # totales['porc_part_dia_actual'] += float(row['porc_part_dia_actual'])
+                    # totales['DiaComparable_AnioAnteriorTF'] += float(row['DiaComparable_AnioAnteriorTF'])
+                    # totales['porcParDiff'] += float(row['porcParDiff'])
                     totales['DiaVencidoAnioActual'] += float(row['DiaVencidoAnioActual'])
                     totales['DiaVencidoAnioAnterior'] += float(row['DiaVencidoAnioAnterior'])
                     totales['DiaAyerComparable_AnioAnterior'] += float(row['DiaAyerComparable_AnioAnterior'])
-                    totales['porc_part_dia_vencido'] += float(row['porc_part_dia_vencido'])
-                    totales['porcParDiffVencido'] += float(row['porcParDiffVencido'])
+                    # totales['porc_part_dia_vencido'] += float(row['porc_part_dia_vencido'])
+                    # totales['porcParDiffVencido'] += float(row['porcParDiffVencido'])
             if self.titulo == 'Detalle Departamentos':
                 data.append({
                     'detalleDepartamento': '',
@@ -3857,14 +3857,19 @@ class Tablas():
                     'VentaHoy': totales['DiaActual_AnioActual'],
                     'VentaHoyAA': totales['DiaActual_AnioAnterior'],
                     'DiaComparable_AnioAnterior': totales['DiaComparable_AnioAnterior'],
-                    'PorcPartHoy': totales['porc_part_dia_actual'],
-                    'DiaComparable_AnioAnteriorTF': totales['DiaComparable_AnioAnteriorTF'],
-                    'PorcPartHoyVsAA': totales['porcParDiff'],
+                    # 'PorcPartHoy': totales['porc_part_dia_actual'],
+                    'PorcPartHoy': '--',
+                    # 'DiaComparable_AnioAnteriorTF': totales['DiaComparable_AnioAnteriorTF'],
+                    'DiaComparable_AnioAnteriorTF': '--',
+                    # 'PorcPartHoyVsAA': totales['porcParDiff'],
+                    'PorcPartHoyVsAA': '--',
                     'VentaAyer': totales['DiaVencidoAnioActual'],
                     'VentaAyerAA': totales['DiaVencidoAnioAnterior'],
                     'DiaAyerComparable_AnioAnterior': totales['DiaAyerComparable_AnioAnterior'],
-                    'PorcPartAyer': totales['porc_part_dia_vencido'],
-                    'PorcPartAyerVsAA': totales['porcParDiffVencido']
+                    # 'PorcPartAyer': totales['porc_part_dia_vencido'],
+                    'PorcPartAyer': '--',
+                    # 'PorcPartAyerVsAA': totales['porcParDiffVencido']
+                    'PorcPartAyerVsAA': '--'
                     })
             columns = []
             if self.titulo != 'Detalle Formatos para SubClase $subClase':
