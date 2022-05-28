@@ -3763,20 +3763,20 @@ class Tablas():
         -- para canal cc.tipo <>0 reemplazar por cc.tipo = 1 o 35,36,38
         select {agrupador}, ---se cambia el agrupador
         sum(case when dt2.fecha = convert(date,GETDATE()) and {'a.idTipo <> 0' if not hayCanal else 'a.idTipo = '+self.filtros.canal} then vtaSinImp else 0 end) DiaActual_AnioActual,
-        sum(case when dt2.fecha = convert(date,DATEADD(yy,-1,GETDATE())) and {'a.idTipo <> 0' if not hayCanal else 'a.idTipo = '+self.filtros.canal} and a.hora <= DATEPART( hh,GETDATE()) then vtaSinImp else 0 end) DiaActual_AnioAnterior,
-        sum(case when dt.fecha = convert(date,GETDATE()) and {'a.idTipo <> 0' if not hayCanal else 'a.idTipo = '+self.filtros.canal} and a.hora <= DATEPART( hh,GETDATE()) then vtaSinImp else 0 end) DiaComparable_AnioAnterior,
-        case when sum(case when dt2.fecha = convert(date,GETDATE()) and a.idTipo = 0 and a.hora <= DATEPART( hh,GETDATE()) then vtaSinImp else 0 end) = 0 then 0 else
-        sum(case when dt2.fecha = convert(date,GETDATE()) and {'a.idTipo <> 0' if not hayCanal else 'a.idTipo = '+self.filtros.canal} and a.hora <= DATEPART( hh,GETDATE()) then vtaSinImp else 0 end) /
-        sum(case when dt2.fecha = convert(date,GETDATE()) and a.idTipo = 0 and a.hora <= DATEPART( hh,GETDATE()) then vtaSinImp else 0 end) end porc_part_dia_actual,
-        case when sum(case when dt.fecha = convert(date,GETDATE()) and a.idTipo = 0 and a.hora <= DATEPART( hh,GETDATE()) then vtaSinImp else 0 end) = 0 then 0 else
-        sum(case when dt.fecha = convert(date,GETDATE()) and {'a.idTipo <> 0' if not hayCanal else 'a.idTipo = '+self.filtros.canal} and a.hora <= DATEPART( hh,GETDATE()) then vtaSinImp else 0 end) /
-        sum(case when dt.fecha = convert(date,GETDATE()) and a.idTipo = 0 and a.hora <= DATEPART( hh,GETDATE()) then vtaSinImp else 0 end) end DiaComparable_AnioAnteriorTF,
-        case when sum(case when dt2.fecha = convert(date,GETDATE()) and a.idTipo = 0 and a.hora <= DATEPART( hh,GETDATE()) then vtaSinImp else 0 end)= 0 then 0 else
-        (sum(case when dt2.fecha = convert(date,GETDATE()) and {'a.idTipo <> 0' if not hayCanal else 'a.idTipo = '+self.filtros.canal} and a.hora <= DATEPART( hh,GETDATE()) then vtaSinImp else 0 end) /
-        sum(case when dt2.fecha = convert(date,GETDATE()) and a.idTipo = 0 and a.hora <= DATEPART( hh,GETDATE()) then vtaSinImp else 0 end)) end -
-        case when sum(case when dt2.fecha = convert(date,DATEADD(yy,-1,GETDATE())) and a.idTipo = 0 and a.hora <= DATEPART( hh,GETDATE()) then vtaSinImp else 0 end)=0 then 0 ELSE
-        (sum(case when dt2.fecha = convert(date,DATEADD(yy,-1,GETDATE())) and {'a.idTipo <> 0' if not hayCanal else 'a.idTipo = '+self.filtros.canal} and a.hora <= DATEPART( hh,GETDATE()) then vtaSinImp else 0 end) /
-        sum(case when dt2.fecha = convert(date,DATEADD(yy,-1,GETDATE())) and a.idTipo = 0 and a.hora <= DATEPART( hh,GETDATE()) then vtaSinImp else 0 end)) end porcParDiff,
+        sum(case when dt2.fecha = convert(date,DATEADD(yy,-1,GETDATE())) and {'a.idTipo <> 0' if not hayCanal else 'a.idTipo = '+self.filtros.canal} and a.hora < DATEPART( hh,GETDATE()) then vtaSinImp else 0 end) DiaActual_AnioAnterior,
+        sum(case when dt.fecha = convert(date,GETDATE()) and {'a.idTipo <> 0' if not hayCanal else 'a.idTipo = '+self.filtros.canal} and a.hora < DATEPART( hh,GETDATE()) then vtaSinImp else 0 end) DiaComparable_AnioAnterior,
+        case when sum(case when dt2.fecha = convert(date,GETDATE()) and a.idTipo = 0 and a.hora < DATEPART( hh,GETDATE()) then vtaSinImp else 0 end) = 0 then 0 else
+        sum(case when dt2.fecha = convert(date,GETDATE()) and {'a.idTipo <> 0' if not hayCanal else 'a.idTipo = '+self.filtros.canal} and a.hora < DATEPART( hh,GETDATE()) then vtaSinImp else 0 end) /
+        sum(case when dt2.fecha = convert(date,GETDATE()) and a.idTipo = 0 and a.hora < DATEPART( hh,GETDATE()) then vtaSinImp else 0 end) end porc_part_dia_actual,
+        case when sum(case when dt.fecha = convert(date,GETDATE()) and a.idTipo = 0 and a.hora < DATEPART( hh,GETDATE()) then vtaSinImp else 0 end) = 0 then 0 else
+        sum(case when dt.fecha = convert(date,GETDATE()) and {'a.idTipo <> 0' if not hayCanal else 'a.idTipo = '+self.filtros.canal} and a.hora < DATEPART( hh,GETDATE()) then vtaSinImp else 0 end) /
+        sum(case when dt.fecha = convert(date,GETDATE()) and a.idTipo = 0 and a.hora < DATEPART( hh,GETDATE()) then vtaSinImp else 0 end) end DiaComparable_AnioAnteriorTF,
+        case when sum(case when dt2.fecha = convert(date,GETDATE()) and a.idTipo = 0 and a.hora < DATEPART( hh,GETDATE()) then vtaSinImp else 0 end)= 0 then 0 else
+        (sum(case when dt2.fecha = convert(date,GETDATE()) and {'a.idTipo <> 0' if not hayCanal else 'a.idTipo = '+self.filtros.canal} and a.hora < DATEPART( hh,GETDATE()) then vtaSinImp else 0 end) /
+        sum(case when dt2.fecha = convert(date,GETDATE()) and a.idTipo = 0 and a.hora < DATEPART( hh,GETDATE()) then vtaSinImp else 0 end)) end -
+        case when sum(case when dt2.fecha = convert(date,DATEADD(yy,-1,GETDATE())) and a.idTipo = 0 and a.hora < DATEPART( hh,GETDATE()) then vtaSinImp else 0 end)=0 then 0 ELSE
+        (sum(case when dt2.fecha = convert(date,DATEADD(yy,-1,GETDATE())) and {'a.idTipo <> 0' if not hayCanal else 'a.idTipo = '+self.filtros.canal} and a.hora < DATEPART( hh,GETDATE()) then vtaSinImp else 0 end) /
+        sum(case when dt2.fecha = convert(date,DATEADD(yy,-1,GETDATE())) and a.idTipo = 0 and a.hora < DATEPART( hh,GETDATE()) then vtaSinImp else 0 end)) end porcParDiff,
         max(case when dt2.fecha =convert(date,GETDATE()) then co.Objetivo end) objetivo,
         sum(case when dt2.fecha = convert(date,GETDATE()-1) and {'a.idTipo <> 0' if not hayCanal else 'a.idTipo = '+self.filtros.canal} then vtaSinImp else 0 end) DiaVencidoAnioActual,
         sum(case when dt2.fecha = convert(date,DATEADD(yy,-1,GETDATE()-1)) and {'a.idTipo <> 0' if not hayCanal else 'a.idTipo = '+self.filtros.canal} then vtaSinImp else 0 end) DiaVencidoAnioAnterior,
@@ -3790,7 +3790,7 @@ class Tablas():
         case when sum(case when dt2.fecha = convert(date,DATEADD(yy,-1,GETDATE()-1)) and a.idTipo = 0 then vtaSinImp else 0 end)=0 then 0 else
         (sum(case when dt2.fecha = convert(date,DATEADD(yy,-1,GETDATE()-1)) and {'a.idTipo <> 0' if not hayCanal else 'a.idTipo = '+self.filtros.canal} then vtaSinImp else 0 end) /
         sum(case when dt2.fecha = convert(date,DATEADD(yy,-1,GETDATE()-1)) and a.idTipo = 0 then vtaSinImp else 0 end)) end porcParDiffVencido,
-        max(case when dt2.fecha = convert(date,GETDATE()) and a.hora <= DATEPART( hh,GETDATE()) then hora end) hora
+        max(case when dt2.fecha = convert(date,GETDATE()) and a.hora < DATEPART( hh,GETDATE()) then hora end) hora
         from DWH.artus.ventaDiarioHoraSubClase a
         left join DWH.dbo.dim_tiempo dt on a.fecha =dt.fechaComparacion
         left join DWH.dbo.dim_tiempo dt2 on a.fecha =dt2.id_fecha
@@ -3808,7 +3808,7 @@ class Tablas():
         --- se agrega el filtro del nivel que quieren consultar
         group by {agrupador} ---se cambia el agrupador
         order by {'c.' if self.titulo == 'Detalle Formatos para SubClase $subClase' else 'b.'}{campoB}"""
-        print(f"query desde tablas->Temporada->{self.titulo}: {str(pipeline)}")
+        # print(f"query desde tablas->Temporada->{self.titulo}: {str(pipeline)}")
         cnxn = conexion_sql('DWH')
         cursor = cnxn.cursor().execute(pipeline)
         arreglo = crear_diccionario(cursor)
@@ -3894,247 +3894,8 @@ class Tablas():
         else:
             hayResultados = 'no'
                 
-        print(f"Data desde Tablas -> Temporada: {str(data)}")
+        # print(f"Data desde Tablas -> Temporada: {str(data)}")
         return {'hayResultados':hayResultados, 'pipeline': pipeline, 'columns':columns, 'data':data}
-        # if self.titulo == 'Detalle Sub-Departamentos para Depto $depto':
-        #     pipeline = f"""select SUBDEPTO, SUBDEPTO_NOMBRE,
-        #         sum(DiaActual_AnioActual) DiaActual_AnioActual, sum(DiaActual_AnioAnterior) DiaActual_AnioAnterior, sum(DiaComparable_AnioAnterior) DiaComparable_AnioAnterior,(sum(DiaActual_AnioActual)/max(DiaActual_AnioActualTF)) porc_part_dia_actual, (sum(DiaComparable_AnioAnterior)/max(DiaComparable_AnioAnteriorTF)) DiaComparable_AnioAnteriorTF,
-        #         (sum(DiaActual_AnioActual)/max(DiaActual_AnioActualTF))-(sum(DiaActual_AnioAnterior)/max(DiaActual_AnioAnteriorTF)) porcParDiff,
-        #         avg(co.objetivo) objetivo,
-        #         sum(DiaVencido_AnioActual) DiaVencidoAnioActual, sum(DiaVencido_AnioAnterior) DiaVencidoAnioAnterior,
-        #         (sum(DiaVencido_AnioActual)/max(DiaVencido_AnioActualTF)) porc_part_dia_vencido,
-        #         (sum(DiaVencido_AnioActual)/max(DiaVencido_AnioActualTF))-(sum(DiaVencido_AnioAnterior)/max(DiaVencido_AnioAnteriorTF)) porcParDiffVencido,
-        #         max(hora) hora
-        #         from DWH.artus.ventaHotSale vhs
-        #         left join (select DISTINCT tipo,esOmnicanal
-        #         from DWH.artus.catCanal ) cc on vhs.idTipo =cc.tipo
-        #         left join DWH.artus.catObjetivo co{" on cc.esOmnicanal =co.idTipo and co.nMes=format(GETDATE(),'yyyyMM')" if not hayCanal else ' on vhs.idTipo =co.idTipo'}
-        #         where DEPTO = {self.filtros.fromSibling}
-        #         {'and vhs.idTipo = '+self.filtros.canal if hayCanal else ''}
-        #         and co.nMes = 2022{nMes}
-        #         group by SUBDEPTO, SUBDEPTO_NOMBRE"""
-
-        #     # print(f"query desde tablas->Temporada->Detalle subDeptos: {str(pipeline)}")
-        #     cnxn = conexion_sql('DWH')
-        #     cursor = cnxn.cursor().execute(pipeline)
-        #     arreglo = crear_diccionario(cursor)
-        #     if len(arreglo) > 0:
-        #         hayResultados = "si"
-        #         maxHora = 0
-        #         for row in arreglo:
-        #             data.append({
-        #                 'detalleSubDepto': '',
-        #                 'IdSubDepto': row['SUBDEPTO'],
-        #                 'SubDeptoNombre': row['SUBDEPTO_NOMBRE'],
-        #                 'VentaHoy': row['DiaActual_AnioActual'],
-        #                 'VentaHoyAA': row['DiaActual_AnioAnterior'],
-        #                 'DiaComparable_AnioAnterior': row['DiaComparable_AnioAnterior'],
-        #                 'PorcPartHoy': row['porc_part_dia_actual'],
-        #                 'DiaComparable_AnioAnteriorTF': row['DiaComparable_AnioAnteriorTF'],
-        #                 'PorcPartHoyVsAA': row['porcParDiff'],
-        #                 'VentaAyer': row['DiaVencidoAnioActual'],
-        #                 'VentaAyerAA': row['DiaVencidoAnioAnterior'],
-        #                 'PorcPartAyer': row['porc_part_dia_vencido'],
-        #                 'PorcPartAyerVsAA': row['porcParDiffVencido']
-        #             })
-        #             maxHora = int(row['hora']) if row['hora'] is not None and maxHora < int(row['hora']) else maxHora
-        #         columns = [
-        #             {'name': 'Ver Detalle', 'selector':'detalleSubDepto', 'formato':'detalleSubDepto'},
-        #             {'name': 'ID SubDepto', 'selector':'IdSubDepto', 'formato':'entero'},
-        #             {'name': 'Nombre SubDepto', 'selector':'SubDeptoNombre', 'formato':'texto', 'ancho': '240px'},
-        #             {'name': 'Venta Hoy ('+str(maxHora)+':00)', 'selector':'VentaHoy', 'formato':'moneda', 'ancho': '150px'},
-        #             {'name': 'Venta Hoy AA', 'selector':'VentaHoyAA', 'formato':'moneda', 'ancho': '150px'},
-        #             {'name': 'Día Comparable', 'selector':'DiaComparable_AnioAnterior', 'formato':'moneda', 'ancho': '150px'},
-        #             {'name': '% Part Hoy', 'selector':'PorcPartHoy', 'formato':'porcentaje'},
-        #             {'name': '% Part Comparable', 'selector':'DiaComparable_AnioAnteriorTF', 'formato':'porcentaje'},
-        #             {'name': '% Part Hoy Vs. AA', 'selector':'PorcPartHoyVsAA', 'formato':'porcentaje'},
-        #             {'name': 'Venta Ayer', 'selector':'VentaAyer', 'formato':'moneda', 'ancho': '150px'},
-        #             {'name': 'Venta Ayer AA', 'selector':'VentaAyerAA', 'formato':'moneda', 'ancho': '150px'},
-        #             {'name': '% Part Ayer', 'selector':'PorcPartAyer', 'formato':'porcentaje'},
-        #             {'name': '% Part Ayer Vs. AA', 'selector':'PorcPartAyerVsAA', 'formato':'porcentaje'}
-        #         ]
-        #     else:
-        #         hayResultados = 'no'
-                
-        # if self.titulo == 'Detalle Clases para SubDepto $subDepto':
-        #     pipeline = f"""select CLASE, CLASE_NOMBRE,
-        #         sum(DiaActual_AnioActual) DiaActual_AnioActual, sum(DiaActual_AnioAnterior) DiaActual_AnioAnterior, sum(DiaComparable_AnioAnterior) DiaComparable_AnioAnterior,(sum(DiaActual_AnioActual)/max(DiaActual_AnioActualTF)) porc_part_dia_actual, (sum(DiaComparable_AnioAnterior)/max(DiaComparable_AnioAnteriorTF)) DiaComparable_AnioAnteriorTF,
-        #         (sum(DiaActual_AnioActual)/max(DiaActual_AnioActualTF))-(sum(DiaActual_AnioAnterior)/max(DiaActual_AnioAnteriorTF)) porcParDiff,
-        #         avg(co.objetivo) objetivo,
-        #         sum(DiaVencido_AnioActual) DiaVencidoAnioActual, sum(DiaVencido_AnioAnterior) DiaVencidoAnioAnterior,
-        #         (sum(DiaVencido_AnioActual)/max(DiaVencido_AnioActualTF)) porc_part_dia_vencido,
-        #         (sum(DiaVencido_AnioActual)/max(DiaVencido_AnioActualTF))-(sum(DiaVencido_AnioAnterior)/max(DiaVencido_AnioAnteriorTF)) porcParDiffVencido,
-        #         max(hora) hora
-        #         from DWH.artus.ventaHotSale vhs
-        #         left join (select DISTINCT tipo,esOmnicanal
-        #         from DWH.artus.catCanal ) cc on vhs.idTipo =cc.tipo
-        #         left join DWH.artus.catObjetivo co{" on cc.esOmnicanal =co.idTipo and co.nMes=format(GETDATE(),'yyyyMM')" if not hayCanal else ' on vhs.idTipo =co.idTipo'}
-        #         where SUBDEPTO = {self.filtros.fromSibling}
-        #         {'and vhs.idTipo = '+self.filtros.canal if hayCanal else ''}
-        #         and co.nMes = 2022{nMes}
-        #         group by CLASE, CLASE_NOMBRE"""
-
-        #     # print(f"query desde tablas->Temporada->Detalle clases: {str(pipeline)}")
-        #     cnxn = conexion_sql('DWH')
-        #     cursor = cnxn.cursor().execute(pipeline)
-        #     arreglo = crear_diccionario(cursor)
-        #     if len(arreglo) > 0:
-        #         hayResultados = "si"
-        #         maxHora = 0
-        #         for row in arreglo:
-        #             data.append({
-        #                 'detalleClase': '',
-        #                 'IdClase': row['CLASE'],
-        #                 'ClaseNombre': row['CLASE_NOMBRE'],
-        #                 'VentaHoy': row['DiaActual_AnioActual'],
-        #                 'VentaHoyAA': row['DiaActual_AnioAnterior'],
-        #                 'DiaComparable_AnioAnterior': row['DiaComparable_AnioAnterior'],
-        #                 'PorcPartHoy': row['porc_part_dia_actual'],
-        #                 'DiaComparable_AnioAnteriorTF': row['DiaComparable_AnioAnteriorTF'],
-        #                 'PorcPartHoyVsAA': row['porcParDiff'],
-        #                 'VentaAyer': row['DiaVencidoAnioActual'],
-        #                 'VentaAyerAA': row['DiaVencidoAnioAnterior'],
-        #                 'PorcPartAyer': row['porc_part_dia_vencido'],
-        #                 'PorcPartAyerVsAA': row['porcParDiffVencido']
-        #             })
-        #             maxHora = int(row['hora']) if row['hora'] is not None and maxHora < int(row['hora']) else maxHora
-        #         columns = [
-        #             {'name': 'Ver Detalle', 'selector':'detalleClase', 'formato':'detalleClase'},
-        #             {'name': 'ID Clase', 'selector':'IdClase', 'formato':'entero'},
-        #             {'name': 'Nombre Clase', 'selector':'ClaseNombre', 'formato':'texto', 'ancho': '240px'},
-        #             {'name': 'Venta Hoy ('+str(maxHora)+':00)', 'selector':'VentaHoy', 'formato':'moneda', 'ancho': '150px'},
-        #             {'name': 'Venta Hoy AA', 'selector':'VentaHoyAA', 'formato':'moneda', 'ancho': '150px'},
-        #             {'name': 'Día Comparable', 'selector':'DiaComparable_AnioAnterior', 'formato':'moneda', 'ancho': '150px'},
-        #             {'name': '% Part Hoy', 'selector':'PorcPartHoy', 'formato':'porcentaje'},
-        #             {'name': '% Part Comparable', 'selector':'DiaComparable_AnioAnteriorTF', 'formato':'porcentaje'},
-        #             {'name': '% Part Hoy Vs. AA', 'selector':'PorcPartHoyVsAA', 'formato':'porcentaje'},
-        #             {'name': 'Venta Ayer', 'selector':'VentaAyer', 'formato':'moneda', 'ancho': '150px'},
-        #             {'name': 'Venta Ayer AA', 'selector':'VentaAyerAA', 'formato':'moneda', 'ancho': '150px'},
-        #             {'name': '% Part Ayer', 'selector':'PorcPartAyer', 'formato':'porcentaje'},
-        #             {'name': '% Part Ayer Vs. AA', 'selector':'PorcPartAyerVsAA', 'formato':'porcentaje'}
-        #         ]
-        #     else:
-        #         hayResultados = 'no'
-
-        # if self.titulo == 'Detalle Sub-Clases para Clase $clase':
-        #     pipeline = f"""select SUBCLASE, SUBCLASE_NOMBRE,
-        #         sum(DiaActual_AnioActual) DiaActual_AnioActual, sum(DiaActual_AnioAnterior) DiaActual_AnioAnterior, sum(DiaComparable_AnioAnterior) DiaComparable_AnioAnterior,(sum(DiaActual_AnioActual)/max(DiaActual_AnioActualTF)) porc_part_dia_actual, (sum(DiaComparable_AnioAnterior)/max(DiaComparable_AnioAnteriorTF)) DiaComparable_AnioAnteriorTF,
-        #         (sum(DiaActual_AnioActual)/max(DiaActual_AnioActualTF))-(sum(DiaActual_AnioAnterior)/max(DiaActual_AnioAnteriorTF)) porcParDiff,
-        #         avg(co.objetivo) objetivo,
-        #         sum(DiaVencido_AnioActual) DiaVencidoAnioActual, sum(DiaVencido_AnioAnterior) DiaVencidoAnioAnterior,
-        #         (sum(DiaVencido_AnioActual)/max(DiaVencido_AnioActualTF)) porc_part_dia_vencido,
-        #         (sum(DiaVencido_AnioActual)/max(DiaVencido_AnioActualTF))-(sum(DiaVencido_AnioAnterior)/max(DiaVencido_AnioAnteriorTF)) porcParDiffVencido,
-        #         max(hora) hora
-        #         from DWH.artus.ventaHotSale vhs
-        #         left join (select DISTINCT tipo,esOmnicanal
-        #         from DWH.artus.catCanal ) cc on vhs.idTipo =cc.tipo
-        #         left join DWH.artus.catObjetivo co{" on cc.esOmnicanal =co.idTipo and co.nMes=format(GETDATE(),'yyyyMM')" if not hayCanal else ' on vhs.idTipo =co.idTipo'}
-        #         where CLASE = {self.filtros.fromSibling}
-        #         {'and vhs.idTipo = '+self.filtros.canal if hayCanal else ''}
-        #         and co.nMes = 2022{nMes}
-        #         group by SUBCLASE, SUBCLASE_NOMBRE"""
-
-        #     # print(f"query desde tablas->Temporada->Detalle subclases: {str(pipeline)}")
-        #     cnxn = conexion_sql('DWH')
-        #     cursor = cnxn.cursor().execute(pipeline)
-        #     arreglo = crear_diccionario(cursor)
-        #     if len(arreglo) > 0:
-        #         hayResultados = "si"
-        #         maxHora = 0
-        #         for row in arreglo:
-        #             data.append({
-        #                 'detalleSubClase': '',
-        #                 'IdSubClase': row['SUBCLASE'],
-        #                 'SubClaseNombre': row['SUBCLASE_NOMBRE'],
-        #                 'VentaHoy': row['DiaActual_AnioActual'],
-        #                 'VentaHoyAA': row['DiaActual_AnioAnterior'],
-        #                 'DiaComparable_AnioAnterior': row['DiaComparable_AnioAnterior'],
-        #                 'PorcPartHoy': row['porc_part_dia_actual'],
-        #                 'DiaComparable_AnioAnteriorTF': row['DiaComparable_AnioAnteriorTF'],
-        #                 'PorcPartHoyVsAA': row['porcParDiff'],
-        #                 'VentaAyer': row['DiaVencidoAnioActual'],
-        #                 'VentaAyerAA': row['DiaVencidoAnioAnterior'],
-        #                 'PorcPartAyer': row['porc_part_dia_vencido'],
-        #                 'PorcPartAyerVsAA': row['porcParDiffVencido']
-        #             })
-        #             maxHora = int(row['hora']) if row['hora'] is not None and maxHora < int(row['hora']) else maxHora
-        #         columns = [
-        #             {'name': 'Ver Detalle', 'selector':'detalleSubClase', 'formato':'detalleSubClase'},
-        #             {'name': 'ID SubClase', 'selector':'IdSubClase', 'formato':'entero'},
-        #             {'name': 'Nombre SubClase', 'selector':'SubClaseNombre', 'formato':'texto', 'ancho': '240px'},
-        #             {'name': 'Venta Hoy ('+str(maxHora)+':00)', 'selector':'VentaHoy', 'formato':'moneda', 'ancho': '150px'},
-        #             {'name': 'Venta Hoy AA', 'selector':'VentaHoyAA', 'formato':'moneda', 'ancho': '150px'},
-        #             {'name': 'Día Comparable', 'selector':'DiaComparable_AnioAnterior', 'formato':'moneda', 'ancho': '150px'},
-        #             {'name': '% Part Hoy', 'selector':'PorcPartHoy', 'formato':'porcentaje'},
-        #             {'name': '% Part Comparable', 'selector':'DiaComparable_AnioAnteriorTF', 'formato':'porcentaje'},
-        #             {'name': '% Part Hoy Vs. AA', 'selector':'PorcPartHoyVsAA', 'formato':'porcentaje'},
-        #             {'name': 'Venta Ayer', 'selector':'VentaAyer', 'formato':'moneda', 'ancho': '150px'},
-        #             {'name': 'Venta Ayer AA', 'selector':'VentaAyerAA', 'formato':'moneda', 'ancho': '150px'},
-        #             {'name': '% Part Ayer', 'selector':'PorcPartAyer', 'formato':'porcentaje'},
-        #             {'name': '% Part Ayer Vs. AA', 'selector':'PorcPartAyerVsAA', 'formato':'porcentaje'}
-        #         ]
-        #     else:
-        #         hayResultados = 'no'
-
-        # if self.titulo == 'Detalle Formatos para SubClase $subClase':
-        #     pipeline = f"""select FORMATO_NOMBRE,
-        #         sum(DiaActual_AnioActual) DiaActual_AnioActual, sum(DiaActual_AnioAnterior) DiaActual_AnioAnterior, sum(DiaComparable_AnioAnterior) DiaComparable_AnioAnterior,(sum(DiaActual_AnioActual)/max(DiaActual_AnioActualTF)) porc_part_dia_actual, (sum(DiaComparable_AnioAnterior)/max(DiaComparable_AnioAnteriorTF)) DiaComparable_AnioAnteriorTF,
-        #         (sum(DiaActual_AnioActual)/max(DiaActual_AnioActualTF))-(sum(DiaActual_AnioAnterior)/max(DiaActual_AnioAnteriorTF)) porcParDiff,
-        #         avg(co.objetivo) objetivo,
-        #         sum(DiaVencido_AnioActual) DiaVencidoAnioActual, sum(DiaVencido_AnioAnterior) DiaVencidoAnioAnterior,
-        #         (sum(DiaVencido_AnioActual)/max(DiaVencido_AnioActualTF)) porc_part_dia_vencido,
-        #         (sum(DiaVencido_AnioActual)/max(DiaVencido_AnioActualTF))-(sum(DiaVencido_AnioAnterior)/max(DiaVencido_AnioAnteriorTF)) porcParDiffVencido,
-        #         max(hora) hora
-        #         from DWH.artus.ventaHotSale vhs
-        #         left join (select DISTINCT tipo,esOmnicanal
-        #         from DWH.artus.catCanal ) cc on vhs.idTipo =cc.tipo
-        #         left join DWH.artus.catObjetivo co{" on cc.esOmnicanal =co.idTipo and co.nMes=format(GETDATE(),'yyyyMM')" if not hayCanal else ' on vhs.idTipo =co.idTipo'}
-        #         where SUBCLASE = {self.filtros.fromSibling}
-        #         {'and vhs.idTipo = '+self.filtros.canal if hayCanal else ''}
-        #         and co.nMes = 2022{nMes}
-        #         group by FORMATO_NOMBRE"""
-
-        #     # print(f"query desde tablas->Temporada->Detalle formatos: {str(pipeline)}")
-        #     cnxn = conexion_sql('DWH')
-        #     cursor = cnxn.cursor().execute(pipeline)
-        #     arreglo = crear_diccionario(cursor)
-        #     if len(arreglo) > 0:
-        #         hayResultados = "si"
-        #         maxHora = 0
-        #         for row in arreglo:
-        #             data.append({
-        #                 'FormatoNombre': row['FORMATO_NOMBRE'],
-        #                 'VentaHoy': row['DiaActual_AnioActual'],
-        #                 'VentaHoyAA': row['DiaActual_AnioAnterior'],
-        #                 'DiaComparable_AnioAnterior': row['DiaComparable_AnioAnterior'],
-        #                 'PorcPartHoy': row['porc_part_dia_actual'],
-        #                 'DiaComparable_AnioAnteriorTF': row['DiaComparable_AnioAnteriorTF'],
-        #                 'PorcPartHoyVsAA': row['porcParDiff'],
-        #                 'VentaAyer': row['DiaVencidoAnioActual'],
-        #                 'VentaAyerAA': row['DiaVencidoAnioAnterior'],
-        #                 'PorcPartAyer': row['porc_part_dia_vencido'],
-        #                 'PorcPartAyerVsAA': row['porcParDiffVencido']
-        #             })
-        #             maxHora = int(row['hora']) if row['hora'] is not None and maxHora < int(row['hora']) else maxHora
-        #         columns = [
-        #             {'name': 'Formato', 'selector':'FormatoNombre', 'formato':'texto', 'ancho': '240px'},
-        #             {'name': 'Venta Hoy ('+str(maxHora)+':00)', 'selector':'VentaHoy', 'formato':'moneda', 'ancho': '150px'},
-        #             {'name': 'Venta Hoy AA', 'selector':'VentaHoyAA', 'formato':'moneda', 'ancho': '150px'},
-        #             {'name': 'Día Comparable', 'selector':'DiaComparable_AnioAnterior', 'formato':'moneda', 'ancho': '150px'},
-        #             {'name': '% Part Hoy', 'selector':'PorcPartHoy', 'formato':'porcentaje'},
-        #             {'name': '% Part Comparable', 'selector':'DiaComparable_AnioAnteriorTF', 'formato':'porcentaje'},
-        #             {'name': '% Part Hoy Vs. AA', 'selector':'PorcPartHoyVsAA', 'formato':'porcentaje'},
-        #             {'name': 'Venta Ayer', 'selector':'VentaAyer', 'formato':'moneda', 'ancho': '150px'},
-        #             {'name': 'Venta Ayer AA', 'selector':'VentaAyerAA', 'formato':'moneda', 'ancho': '150px'},
-        #             {'name': '% Part Ayer', 'selector':'PorcPartAyer', 'formato':'porcentaje'},
-        #             {'name': '% Part Ayer Vs. AA', 'selector':'PorcPartAyerVsAA', 'formato':'porcentaje'}
-        #         ]
-        #     else:
-        #         hayResultados = 'no'
-                
-        # return {'hayResultados':hayResultados, 'pipeline': pipeline, 'columns':columns, 'data':data}
-        # Return para debugging:
-        # return {'hayResultados':'no', 'pipeline': [], 'columns':[], 'data':[]}
 
 @router.post("/{seccion}")
 async def tablas (filtros: Filtro, titulo: str, seccion: str, user: dict = Depends(get_current_active_user)):
