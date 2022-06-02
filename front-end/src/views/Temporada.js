@@ -22,6 +22,7 @@ const Temporada = () => {
     const [subDepto, setSubDepto] = useState('')
     const [clase, setClase] = useState('')
     const [subClase, setSubClase] = useState('')
+    const [dataStudio, setDataStudio] = useState('')
     // console.log(`Fecha y hora actual: ${new Date()}`)
 
     useEffect(() => {
@@ -36,9 +37,15 @@ const Temporada = () => {
       setSubClase('')
     }, [clase])
 
-    // useEffect(() => {
-    //   console.log(fechas)
-    // }, [fechas])
+    useEffect(() => {
+      if (fechas.fecha_ini.getMonth() === 4 && fechas.fecha_fin.getMonth() === 4) {
+        setDataStudio('https://datastudio.google.com/embed/reporting/f39d3f71-6d94-4827-8a79-77f470d3ce67/page/K02eC')
+      } else if (fechas.fecha_ini.getMonth() > 4 && fechas.fecha_fin.getMonth() > 4) {
+        setDataStudio('https://datastudio.google.com/embed/reporting/ccd588c9-6f90-4f72-b878-8f6c7233cde3/page/K02eC')
+      } else {
+        setDataStudio('')
+      }
+    }, [fechas])
 
     const seccion = 'Temporada'
 
@@ -121,9 +128,9 @@ const Temporada = () => {
       <Row className='match-height'>
         <Col sm='12'>
           <Card>
-              <CardBody>
-              <iframe src="https://datastudio.google.com/embed/reporting/f39d3f71-6d94-4827-8a79-77f470d3ce67/page/K02eC" allowFullScreen frameBorder={0} width='100%' height='500px'></iframe>
-              </CardBody>
+            <CardBody>
+              <iframe src={dataStudio} allowFullScreen frameBorder={0} width='100%' height='500px'></iframe>
+            </CardBody>
           </Card>
         </Col>
       </Row>
