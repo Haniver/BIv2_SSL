@@ -28,9 +28,9 @@ class TokenData(BaseModel):
 
 class User(BaseModel):
     usuario: str
-    id_rol: Optional[int] = None
+    # id_rol: Optional[int] = None
     nombre: Optional[str] = None
-    rol: Optional[str] = 'normal' # Esto es para fines de ajustarse a utils.js de Vuexy. Debería ser el rol real, o usar el id_rol
+    rol: Optional[str] # Esto es para fines de ajustarse a utils.js de Vuexy. Debería ser el rol real, o usar el id_rol
     id: Optional[int] = None
     vistas: Optional[str]
     documentos: Optional[str]
@@ -40,6 +40,7 @@ class User(BaseModel):
     apellidoP: Optional[str]
     apellidoM: Optional[str]
     menu: Optional[str]
+    nivel: Optional[int]
 
 class UserInDB(User):
     password: str
@@ -56,25 +57,26 @@ def buscar_usuario_en_bd(usuario):
     respuesta = []
     cnxn = conectar_sql.conexion_sql('DJANGO')
     cursor = cnxn.cursor()
-    # Obtener datos básicos del usuario
-    cursor.execute(f"""select us.id, us.usuario, us.id_rol, us.password, us.nombre, r.rol, us.idTienda
-    from DJANGO.php.usuarios us 
-    left join DJANGO.php.rol r on us.id_rol = r.id
+    cursor.execute(f"""select id, usuario, nivel, password, nombre, idTienda
+    from DJANGO.php.usuarios
     where usuario = '{usuario}'""")
     resultados = conectar_sql.crear_diccionario(cursor)
     usuario = resultados[0]['usuario']
-    id_rol = resultados[0]['id_rol']
+    # id_rol = resultados[0]['id_rol']
     password = resultados[0]['password']
     nombre = resultados[0]['nombre']
-    rol = resultados[0]['rol']
+    # rol = resultados[0]['rol']
+    nivel = resultados[0]['nivel']
     id = resultados[0]['id']
     tienda = resultados[0]['idTienda']
+
     # Obtener Vistas a las que tiene acceso el usuario
-    cursor.execute(f"""select uv.id_vista, v.categoria, v.idReact, v.title, v.icon 
+    cursor.execute(f"""select distinct v.id_vista, v.categoria, v.idReact, v.title, v.icon 
     from DJANGO.php.usuarios us 
-    left join DJANGO.php.usuario_vista uv on uv.id_rol = us.id_rol
-    left join DJANGO.php.vistas v on uv.id_vista = v.id_vista 
-    where us.usuario = '{usuario}'
+    left join DJANGO.php.usuariosAreas ua on ua.id_usuario = us.id
+    left join DJANGO.php.permisosVistas pv on pv.area = ua.area
+    left join DJANGO.php.vistas v on v.id_vista = pv.vista
+    where us.id = {id}
     and v.activado = 1
     and v.idReact is not NULL 
     and v.idReact != ''""")
@@ -89,27 +91,28 @@ def buscar_usuario_en_bd(usuario):
             "icon": row['icon']
         })
     # Obtener Documentos a los que tiene acceso el usuario
-    query = f"""select vd.title, vd.categoria, vd.icon, vd.nombre_archivo, vd.id_vista 
-    from DJANGO.php.vistas_documentos vd 
-    left join DJANGO.php.usuario_vista uv on uv.id_vista = vd.id_vista 
-    left join DJANGO.php.usuarios u on uv.id_rol = u.id_rol 
-    where u.usuario = '{usuario}'
-    and vd.activado = 1
-    order by vd.lugar"""
-    # print(f"Query para el diccionario de documentos desde auth.py: {str(query)}")
-    cursor.execute(query)
-    resultados = conectar_sql.crear_diccionario(cursor)
-    # print(f"Diccionario de documentos desde auth.py: {str(resultados)}")
+    # query = f"""select vd.title, vd.categoria, vd.icon, vd.nombre_archivo, vd.id_vista 
+    # from DJANGO.php.vistas_documentos vd 
+    # left join DJANGO.php.usuario_vista uv on uv.id_vista = vd.id_vista 
+    # left join DJANGO.php.usuarios u on uv.id_rol = u.id_rol 
+    # where u.usuario = '{usuario}'
+    # and vd.activado = 1
+    # order by vd.lugar"""
+    # # print(f"Query para el diccionario de documentos desde auth.py: {str(query)}")
+    # cursor.execute(query)
+    # resultados = conectar_sql.crear_diccionario(cursor)
+    # # print(f"Diccionario de documentos desde auth.py: {str(resultados)}")
     documentos = []
-    for row in resultados:
-        documentos.append({
-            "nombre_archivo": row['nombre_archivo'],
-            "categoria": row['categoria'],
-            "id_vista": int(row['id_vista']),
-            "title": row['title'],
-            "icon": row['icon']
-        })
-    respuesta = {usuario: {'usuario': usuario, 'id_rol': id_rol, 'password': password, 'nombre': nombre, 'rol': rol, 'id': id, 'vistas': json.dumps(vistas), 'documentos': json.dumps(documentos), 'tienda': tienda}}
+    # for row in resultados:
+    #     documentos.append({
+    #         "nombre_archivo": row['nombre_archivo'],
+    #         "categoria": row['categoria'],
+    #         "id_vista": int(row['id_vista']),
+    #         "title": row['title'],
+    #         "icon": row['icon']
+    #     })
+    rol = f'Usuario Nivel {str(nivel)}'
+    respuesta = {usuario: {'usuario': usuario, 'password': password, 'nombre': nombre, 'nivel': nivel, 'rol': rol, 'id': id, 'vistas': json.dumps(vistas), 'documentos': json.dumps(documentos), 'tienda': tienda}}
     # print(f"Respuesta desde auth.py: {str(respuesta)}")
     return respuesta
 

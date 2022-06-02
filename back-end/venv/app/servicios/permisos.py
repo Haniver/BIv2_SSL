@@ -1,14 +1,15 @@
 from app.servicios.conectar_sql import conexion_sql, crear_diccionario
 
-def tienePermiso(id_rol, seccion):
+def tienePermiso(idUsuario, seccion):
     # El ID de los componentes de React (idReact en la BD) es igual a la sección, pero con la primera letra en minúscula
     if seccion == "Home":
         return True
     idReact = seccion[0].lower() + seccion[1:]
-    query = f"""select *
-    from DJANGO.php.usuario_vista uv
-    left join DJANGO.php.vistas v on uv.id_vista = v.id_vista
-    where id_rol = {id_rol} and v.idReact = '{idReact}'"""
+    query = f"""select * from DJANGO.php.permisosVistas pv 
+    left join DJANGO.php.usuariosAreas ua on pv.area = ua.area 
+    left join DJANGO.php.vistas v on v.id_vista = pv.vista 
+    where ua.id_usuario  = {idUsuario}
+    and v.idReact='{idReact}'"""
     cnxn = conexion_sql('DJANGO')
     cursor = cnxn.cursor().execute(query)
     resultados = crear_diccionario(cursor)

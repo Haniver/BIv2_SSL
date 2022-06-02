@@ -8,8 +8,11 @@ import fechas_srv from '../../services/fechas_srv'
 import '@styles/react/libs/flatpickr/flatpickr.scss'
 import { isNumeric } from "validator"
 import { nthElement } from '../../services/funcionesAdicionales'
+import UserService from '../../services/user.service'
 
 const Filtro = (props) => {
+  // Prueba para ver si puedo obtener el nivel del usuario
+  console.log(`Nivel de usuario: ${UserService.getNivel()}. Tienda: ${UserService.getTienda()}`)
 
   // Contar cuántos filtros se van a mostrar en el layout en Bootstrap
   let numElementos = 0
@@ -697,7 +700,11 @@ const Filtro = (props) => {
   // Rellenado inicial de combos variables
 
   useEffect(async () => {
-    if (props.region !== undefined) {
+    if (props.region !== undefined && UserService.getNivel() >= 4) {
+      const comboRegion_temp = await CargarFiltros.cargarRegion()
+      setComboRegion(comboRegion_temp)
+    }
+    if (props.zona !== undefined && UserService.getNivel() === 3) {
       const comboRegion_temp = await CargarFiltros.cargarRegion()
       setComboRegion(comboRegion_temp)
     }

@@ -34,7 +34,7 @@ const Home = () => {
           <h2 className='centrado'>{tiendaNombre}</h2>
         </Col>
       </Row>}
-      {tienda !== null && <Row className='match-height'>
+      {/* {tienda !== null && <Row className='match-height'>
         <Col xl='6' sm='12'>
           <ColumnasApiladas titulo='Pedidos del Día' seccion={seccion} formato='entero' yLabel='Pedidos' fechas={fechas_dia} tienda={tienda} />
         </Col>
@@ -58,7 +58,7 @@ const Home = () => {
             <img className='img-fluid' src={source} alt='Login V2' />
           </div>
         </Col>
-      </Row>}
+      </Row>} */}
     </Fragment>
   )
 }

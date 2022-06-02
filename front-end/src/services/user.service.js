@@ -101,6 +101,15 @@ class UserService {
       }
     })
   }
+
+  getNivel() {
+    const userData = JSON.parse(localStorage.getItem('userData'))
+    return userData["nivel"]
+  }
+  getTienda() {
+    const userData = JSON.parse(localStorage.getItem('userData'))
+    return userData["tienda"]
+  }
 }
 
 export default new UserService()

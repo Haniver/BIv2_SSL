@@ -133,7 +133,7 @@ class TarjetasCombinadas():
 
 @router.post("/{seccion}")
 async def tarjetas_combinadas (filtros: Filtro, titulo: str, seccion: str, user: dict = Depends(get_current_active_user)):
-    if tienePermiso(user.id_rol, seccion):
+    if tienePermiso(user.id, seccion):
         objeto = TarjetasCombinadas(filtros, titulo)
         funcion = getattr(objeto, seccion)
         diccionario = await funcion()

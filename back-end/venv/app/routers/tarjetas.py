@@ -519,7 +519,8 @@ class Tarjetas():
 
 @router.post("/{seccion}")
 async def tarjetas (filtros: Filtro, titulo: str, seccion: str, user: dict = Depends(get_current_active_user)):
-    if tienePermiso(user.id_rol, seccion):
+    print("El usuario desde tarjetas .py es: {str(user)}")
+    if tienePermiso(user.id, seccion):
         objeto = Tarjetas(filtros, titulo)
         funcion = getattr(objeto, seccion)
         diccionario = await funcion()
