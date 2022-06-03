@@ -6,6 +6,7 @@ import fechas_srv from '../services/fechas_srv'
 import EjesMultiples from '../componentes/graficos/EjesMultiples'
 import Tabla from '../componentes/tablas/Tabla'
 import tarjetasCombinadas from '../services/tarjetasCombinadas'
+import userService from '../services/user.service'
 
 import {
   DollarSign,
@@ -78,6 +79,21 @@ const VentaSinImpuesto = () => {
 
   return (
     <>
+      {userService.getNivel() === 1 && <Row className='match-height'>
+        <Col sm='12'>
+          <h2 className='centrado'>Tienda: {userService.getTienda()}</h2>
+        </Col>
+      </Row>}
+      {userService.getNivel() === 2 && <Row className='match-height'>
+        <Col sm='12'>
+          <h2 className='centrado'>Zona: {userService.getZona()}</h2>
+        </Col>
+      </Row>}
+      {userService.getNivel() === 3 && <Row className='match-height'>
+        <Col sm='12'>
+          <h2 className='centrado'>Región: {userService.getRegión()}</h2>
+        </Col>
+      </Row>}
       <Row className='match-height'>
         <Col sm='12'>
           <Filtro anio={anio} mes={mes} fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} setAnio={setAnio} setMes={setMes} setFechas={setFechas} setRegion={setRegion} setZona={setZona} setTienda={setTienda} setCanal={setCanal} setDepto={setDepto} setSubDepto={setSubDepto} />
@@ -135,10 +151,10 @@ const VentaSinImpuesto = () => {
           </Row>
         </Col>
       </Row>
-        {/* <Col>
+        <Col>
            <Tarjeta icono={<DollarSign size={21} />} formato='moneda' titulo={`Venta del 1 al ${dia} ${fechas_srv.mesTexto(mes)} ${anio}`} tituloAPI='Venta 1 al $dia $mes $anioActual' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} resAPI={tarjetasCombinadasMesAlDia} />
-        </Col> */}
-      {/* <Row className='match-height'>
+        </Col>
+      <Row className='match-height'>
         <Col sm='12'>
           <EjesMultiples titulo={`Venta anual por mes: ${anio} vs. ${anio - 1} y Objetivo`} tituloAPI='Venta anual por mes: $anioActual vs. $anioAnterior y Objetivo' formato='moneda' yLabel='Pesos' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} seccion={seccion} />
         </Col>
@@ -162,7 +178,7 @@ const VentaSinImpuesto = () => {
         <Col sm='12'>
           <Tabla quitarBusqueda={true} titulo='Venta sin impuesto por Departamento o Sub Departamento' formato='moneda' yLabel='Pesos' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} mes={mes} seccion={seccion} />
         </Col>
-      </Row> */}
+      </Row>
     </>
   )
 }
