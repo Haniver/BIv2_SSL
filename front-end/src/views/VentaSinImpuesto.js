@@ -91,7 +91,7 @@ const VentaSinImpuesto = () => {
       </Row>}
       {userService.getNivel() === 3 && <Row className='match-height'>
         <Col sm='12'>
-          <h2 className='centrado'>Región: {userService.getRegión()}</h2>
+          <h2 className='centrado'>Región: {userService.getRegion()}</h2>
         </Col>
       </Row>}
       <Row className='match-height'>

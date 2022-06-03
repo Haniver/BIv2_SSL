@@ -12,9 +12,6 @@ import UserService from '../../services/user.service'
 import { Users } from 'react-feather'
 
 const Filtro = (props) => {
-  // Prueba para ver si puedo obtener el nivel del usuario
-  console.log(`Nivel de usuario: ${UserService.getNivel()}. Tienda: ${UserService.getTienda()}`)
-
   // Contar cuántos filtros se van a mostrar en el layout en Bootstrap
   let numElementos = 0
   let bootstrap = {}
@@ -706,12 +703,14 @@ const Filtro = (props) => {
       setComboRegion(comboRegion_temp)
     } else {
       props.setRegion(UserService.getRegion)
+      handleRegionChange({value: UserService.getRegion()})
     }
     if (props.zona !== undefined && UserService.getNivel() <= 2) {
       props.setZona(UserService.getZona)
+      handleZonaChange({value: UserService.getZona()})
     }
     if (props.tienda !== undefined && UserService.getNivel() === 1) {
-      props.getTienda(UserService.getTienda)
+      props.setTienda(UserService.getTienda)
     }
     if (props.proveedor !== undefined) {
       const comboProveedor_temp = await CargarFiltros.cargarProveedor()
