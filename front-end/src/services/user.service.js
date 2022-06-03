@@ -110,6 +110,14 @@ class UserService {
     const userData = JSON.parse(localStorage.getItem('userData'))
     return userData["tienda"]
   }
+  getRegion() {
+    const userData = JSON.parse(localStorage.getItem('userData'))
+    return userData["region"]
+  }
+  getZona() {
+    const userData = JSON.parse(localStorage.getItem('userData'))
+    return userData["zona"]
+  }
 }
 
 export default new UserService()

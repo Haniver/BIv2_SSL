@@ -9,6 +9,7 @@ import '@styles/react/libs/flatpickr/flatpickr.scss'
 import { isNumeric } from "validator"
 import { nthElement } from '../../services/funcionesAdicionales'
 import UserService from '../../services/user.service'
+import { Users } from 'react-feather'
 
 const Filtro = (props) => {
   // Prueba para ver si puedo obtener el nivel del usuario
@@ -703,10 +704,14 @@ const Filtro = (props) => {
     if (props.region !== undefined && UserService.getNivel() >= 4) {
       const comboRegion_temp = await CargarFiltros.cargarRegion()
       setComboRegion(comboRegion_temp)
+    } else {
+      props.setRegion(UserService.getRegion)
     }
-    if (props.zona !== undefined && UserService.getNivel() === 3) {
-      const comboRegion_temp = await CargarFiltros.cargarRegion()
-      setComboRegion(comboRegion_temp)
+    if (props.zona !== undefined && UserService.getNivel() <= 2) {
+      props.setZona(UserService.getZona)
+    }
+    if (props.tienda !== undefined && UserService.getNivel() === 1) {
+      props.getTienda(UserService.getTienda)
     }
     if (props.proveedor !== undefined) {
       const comboProveedor_temp = await CargarFiltros.cargarProveedor()
@@ -963,7 +968,7 @@ const Filtro = (props) => {
               }}
             />
           </Col>}
-          {props.region !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
+          {props.region !== undefined && UserService.getNivel() >= 4 && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
             <Label>🗺 Región</Label>
             <Select
               theme={selectThemeColors}
@@ -976,7 +981,7 @@ const Filtro = (props) => {
               onChange={handleRegionChange}
             />
           </Col>}
-          {props.zona !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
+          {props.zona !== undefined && UserService.getNivel() >= 3  && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
             <Label>🗻 Zona</Label>
             <Select
               theme={selectThemeColors}
@@ -989,7 +994,7 @@ const Filtro = (props) => {
               value={zonaValue}
             />
           </Col>}
-          {props.tienda !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
+          {props.tienda !== undefined && UserService.getNivel() >= 2 && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
             <Label>🏬 Tienda</Label>
             <Select
               theme={selectThemeColors}
