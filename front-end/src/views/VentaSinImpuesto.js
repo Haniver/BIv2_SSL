@@ -73,9 +73,11 @@ const VentaSinImpuesto = () => {
     setTarjetasCombinadasMesAlDia(resMesAlDia)
   }, [fechas, region, zona, tienda, canal, depto, subDepto])
 
-//   useEffect(() => {
-//     console.log("useEffect disparado")
-//   }, [])
+  useEffect(() => {
+    console.log(`region: ${region}`)
+    console.log(`zona: ${zona}`)
+    console.log(`tienda: ${tienda}`)
+  }, [region, zona, tienda])
 
   return (
     <>
@@ -164,16 +166,16 @@ const VentaSinImpuesto = () => {
           <EjesMultiples titulo={`Venta mensual por día: ${anio} vs. ${anio - 1} y Objetivo`} tituloAPI='Venta mensual por día: $anioActual vs. $anioAnterior y Objetivo' formato='moneda' yLabel='Pesos' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} mes={mes} seccion={seccion} />
         </Col>
       </Row>
-      <Row className='match-height'>
+      {(tienda === false || tienda === '') && <Row className='match-height'>
         <Col sm='12'>
-          <EjesMultiples titulo={`Venta anual por zona: ${anio} vs. ${anio - 1} y Objetivo`} tituloAPI='Venta anual por zona: $anioActual vs. $anioAnterior y Objetivo' formato='moneda' yLabel='Pesos' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} mes={mes} seccion={seccion} />
+          <EjesMultiples titulo={`Venta anual por lugar: ${anio} vs. ${anio - 1} y Objetivo`} tituloAPI='Venta anual por lugar: $anioActual vs. $anioAnterior y Objetivo' formato='moneda' yLabel='Pesos' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} mes={mes} seccion={seccion} />
         </Col>
-      </Row>
-      <Row className='match-height'>
+      </Row>}
+      {(tienda === false || tienda === '') && <Row className='match-height'>
         <Col sm='12'>
-          <EjesMultiples titulo={`Venta mensual por zona: ${anio} vs. ${anio - 1} y Objetivo`} tituloAPI='Venta mensual por zona: $anioActual vs. $anioAnterior y Objetivo' formato='moneda' yLabel='Pesos' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} mes={mes} seccion={seccion} />
+          <EjesMultiples titulo={`Venta mensual por lugar: ${anio} vs. ${anio - 1} y Objetivo`} tituloAPI='Venta mensual por lugar: $anioActual vs. $anioAnterior y Objetivo' formato='moneda' yLabel='Pesos' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} mes={mes} seccion={seccion} />
         </Col>
-      </Row>
+      </Row>}
       <Row className='match-height'>
         <Col sm='12'>
           <Tabla quitarBusqueda={true} titulo='Venta sin impuesto por Departamento o Sub Departamento' formato='moneda' yLabel='Pesos' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} mes={mes} seccion={seccion} />

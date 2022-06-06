@@ -170,7 +170,7 @@ class EjesMultiples():
                     pipeline += f""" and cd.idDepto = {self.filtros.depto} """
             pipeline += f" group by dt.descrip_fecha order by dt.descrip_fecha "
 
-        if self.titulo == 'Venta anual por zona: $anioActual vs. $anioAnterior y Objetivo':
+        if self.titulo == 'Venta anual por lugar: $anioActual vs. $anioAnterior y Objetivo':
             # print('self.filtros.canal = '+self.filtros.canal)
             mod_titulo_serie = ''
             serie1 = []
@@ -208,7 +208,7 @@ class EjesMultiples():
                     pipeline += f""" and cd.idDepto = {self.filtros.depto} """
             pipeline += f" group by ct.{campo_siguiente_lugar} "
 
-        if self.titulo == 'Venta mensual por zona: $anioActual vs. $anioAnterior y Objetivo':
+        if self.titulo == 'Venta mensual por lugar: $anioActual vs. $anioAnterior y Objetivo':
             # print('self.filtros.canal = '+self.filtros.canal)
             mod_titulo_serie = f"{mesTexto(mesElegido)} "
             serie1 = []

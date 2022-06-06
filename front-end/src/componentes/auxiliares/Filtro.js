@@ -319,6 +319,8 @@ const Filtro = (props) => {
     }
     setZonaValue({label: '', value: ''})
     if (props.botonEnviar === undefined) {
+      console.log("Poniendo zona en '' desde 1 (handleRegionChange)")
+      console.log(e)
       props.setZona('')
     } else {
       setZona_tmp('')
@@ -335,6 +337,8 @@ const Filtro = (props) => {
   const handleZonaChange = async (e) => {
     if (e) {
       if (props.botonEnviar === undefined) {
+        console.log("cambiando zona desde 2 con e:")
+        console.log(e)
         props.setZona(e.value)
       } else {
         setZona_tmp(e.value)
@@ -345,6 +349,7 @@ const Filtro = (props) => {
       setIsTiendaDisabled(false)
     } else {
       if (props.botonEnviar === undefined) {
+        console.log("cambiando zona desde 3")
         props.setZona('')
       } else {
         setZona_tmp('')
@@ -701,16 +706,18 @@ const Filtro = (props) => {
     if (props.region !== undefined && UserService.getNivel() >= 4) {
       const comboRegion_temp = await CargarFiltros.cargarRegion()
       setComboRegion(comboRegion_temp)
-    } else {
-      props.setRegion(UserService.getRegion)
+    } else if (props.region !== undefined && UserService.getNivel() === 3) {
+      props.setRegion(UserService.getRegion())
       handleRegionChange({value: UserService.getRegion()})
-    }
-    if (props.zona !== undefined && UserService.getNivel() <= 2) {
-      props.setZona(UserService.getZona)
+    } else if (props.zona !== undefined && UserService.getNivel() === 2) {
+      console.log("cambiando zona desde 4")
+      props.setRegion(UserService.getRegion())
+      props.setZona(UserService.getZona())
       handleZonaChange({value: UserService.getZona()})
-    }
-    if (props.tienda !== undefined && UserService.getNivel() === 1) {
-      props.setTienda(UserService.getTienda)
+    } else if (props.tienda !== undefined && UserService.getNivel() === 1) {
+      props.setRegion(UserService.getRegion())
+      props.setZona(UserService.getZona())
+      props.setTienda(UserService.getTienda())
     }
     if (props.proveedor !== undefined) {
       const comboProveedor_temp = await CargarFiltros.cargarProveedor()
