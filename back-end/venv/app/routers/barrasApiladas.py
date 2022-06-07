@@ -75,7 +75,7 @@ class BarrasApiladas():
                 {'$unwind': '$quejas'},
             ])
 
-        if self.titulo == 'Quejas por región $periodo2':
+        if self.titulo == 'Quejas por lugar $periodo2':
             pipeline.extend([
                 {'$group': {
                     '_id': {
@@ -116,7 +116,7 @@ class BarrasApiladas():
                         {'$month': '$fecha'}
                     ]}
                 ])
-                modTitulo = 'Quejas por región ' + mesTexto(mes) + ' ' + str(anio)
+                modTitulo = 'Quejas por lugar ' + mesTexto(mes) + ' ' + str(anio)
             # Modificamos el pipeline para el caso de que el agrupador sea por semana:
             elif self.filtros.agrupador == 'semana':
                 semana = self.filtros.periodo['semana']
@@ -126,7 +126,7 @@ class BarrasApiladas():
                         '$idSemDS'
                     ]}
                 ])
-                modTitulo = 'Quejas por región Sem ' + str(semana)[4:6] + ' ' + str(semana)[0:4]
+                modTitulo = 'Quejas por lugar Sem ' + str(semana)[4:6] + ' ' + str(semana)[0:4]
             # Modificamos los facets para el caso de que el agrupador sea por día:
             elif self.filtros.agrupador == 'dia':
                 anio = self.filtros.periodo['anio']
@@ -146,7 +146,7 @@ class BarrasApiladas():
                         {'$dayOfMonth': '$fecha'}
                     ]}
                 ])
-                modTitulo = 'Quejas por región ' + str(dia) + ' ' + mesTexto(mes) + ' ' + str(anio)
+                modTitulo = 'Quejas por lugar ' + str(dia) + ' ' + mesTexto(mes) + ' ' + str(anio)
             # Ejecutamos el query:
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=1000)
@@ -168,7 +168,7 @@ class BarrasApiladas():
                 hayResultados = "no"
                 # print("No hay resultados 2")
 
-        elif self.titulo == 'Quejas por región $periodo1':
+        elif self.titulo == 'Quejas por lugar $periodo1':
             pipeline.extend([
                 {'$group': {
                     '_id': {
@@ -215,7 +215,7 @@ class BarrasApiladas():
                         {'$month': '$fecha'}
                     ]}
                 ])
-                modTitulo = 'Quejas por región ' + mesTexto(mes_anterior) + ' ' + str(anio_anterior)
+                modTitulo = 'Quejas por lugar ' + mesTexto(mes_anterior) + ' ' + str(anio_anterior)
             # Modificamos el pipeline para el caso de que el agrupador sea por semana:
             elif self.filtros.agrupador == 'semana':
                 semana_elegida_txt = self.filtros.periodo['semana']
@@ -236,7 +236,7 @@ class BarrasApiladas():
                         '$idSemDS'
                     ]}
                 ])
-                modTitulo = 'Quejas por región Sem ' + str(semana_anterior_txt)[4:6] + ' ' + str(anio_anterior)[0:4]
+                modTitulo = 'Quejas por lugar Sem ' + str(semana_anterior_txt)[4:6] + ' ' + str(anio_anterior)[0:4]
             # Modificamos los facets para el caso de que el agrupador sea por día:
             elif self.filtros.agrupador == 'dia':
                 anio_elegido = self.filtros.periodo['anio']
@@ -268,7 +268,7 @@ class BarrasApiladas():
                         {'$dayOfMonth': '$fecha'}
                     ]}
                 ])
-                modTitulo = 'Quejas por región ' + str(dia_anterior) + ' ' + mesTexto(mes_anterior) + ' ' + str(anio_anterior)
+                modTitulo = 'Quejas por lugar ' + str(dia_anterior) + ' ' + mesTexto(mes_anterior) + ' ' + str(anio_anterior)
             # Ejecutamos el query:
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=1000)
@@ -410,7 +410,7 @@ class BarrasApiladas():
 
 @router.post("/{seccion}")
 async def barras_apiladas (filtros: Filtro, titulo: str, seccion: str, user: dict = Depends(get_current_active_user)):
-    if tienePermiso(user.id_rol, seccion):
+    if tienePermiso(user.id, seccion):
         objeto = BarrasApiladas(filtros, titulo)
         funcion = getattr(objeto, seccion)
         diccionario = await funcion()

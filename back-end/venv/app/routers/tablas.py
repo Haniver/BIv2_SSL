@@ -1513,6 +1513,7 @@ class Tablas():
                     hayResultados = 'no'
             else:
                 hayResultados = 'no'
+            print(f"Query desde tabla $Tienda en pedidoPerfecto: {str(pipeline)}")
         return {'hayResultados':hayResultados, 'pipeline': pipeline, 'columns':columns, 'data':data}
         # Return para debugging:
         # return {'hayResultados':'no', 'pipeline': [], 'columns':[], 'data':[]}

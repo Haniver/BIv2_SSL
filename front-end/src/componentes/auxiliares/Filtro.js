@@ -718,6 +718,9 @@ const Filtro = (props) => {
       props.setRegion(UserService.getRegion())
       props.setZona(UserService.getZona())
       props.setTienda(UserService.getTienda())
+      if (props.setLabelTienda !== undefined) {
+        props.setLabelTienda(`Tienda ${UserService.getTienda()}`)
+      }
     }
     if (props.proveedor !== undefined) {
       const comboProveedor_temp = await CargarFiltros.cargarProveedor()
