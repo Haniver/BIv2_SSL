@@ -13,7 +13,9 @@ origins = [
     urls.apiUrlHttp(),
     urls.apiUrlHttps(),
     urls.bdSQLHttp(),
-    urls.bdSQLHttps()
+    urls.bdSQLHttps(),
+    urls.bdMongoHttp(),
+    urls.bdMongoHttps()
 ]
 
 app.add_middleware(
