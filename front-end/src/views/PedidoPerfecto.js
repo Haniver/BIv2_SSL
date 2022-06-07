@@ -19,31 +19,34 @@ const PedidoPerfecto = () => {
     const [tienda, setTienda] = useState('')
     const [sibling, setSibling] = useState(false)
     const [labelTienda, setLabelTienda] = useState(false)
+    const [quitarBusqueda, setQuitarBusqueda] = useState(false)
+    const [quitarPaginacion, setQuitarPaginacion] = useState(false)
+    const [sufijoTituloTabla, setSufijoTituloTabla] = useState('')
+    const [prefijoTituloTabla, setPrefijoTituloTabla] = useState('')
 
     const seccion = 'PedidoPerfecto'
 
+
     useEffect(() => {
-      console.log(`Región = ${region}`)
-      console.log(`Zona = ${zona}`)
-      console.log(`Tienda = ${tienda}`)
-    }, [region, zona, tienda])
+      if (!tienda) {
+        setQuitarBusqueda(false)
+        setQuitarPaginacion(false)
+        setPrefijoTituloTabla('50 tiendas con ')
+        setSufijoTituloTabla(' más bajo')
+      } else {
+        setQuitarBusqueda(true)
+        setQuitarPaginacion(true)
+        setPrefijoTituloTabla('')
+        setSufijoTituloTabla('')
+      }
+    }, [tienda])
     
 
   return (
     <>
-      {userService.getNivel() === 1 && <Row className='match-height'>
+      {userService.getNivel() <= 3 && <Row className='match-height'>
         <Col sm='12'>
-          <h2 className='centrado'>Tienda: {userService.getTienda()}</h2>
-        </Col>
-      </Row>}
-      {userService.getNivel() === 2 && <Row className='match-height'>
-        <Col sm='12'>
-          <h2 className='centrado'>Zona: {userService.getZona()}</h2>
-        </Col>
-      </Row>}
-      {userService.getNivel() === 3 && <Row className='match-height'>
-        <Col sm='12'>
-          <h2 className='centrado'>Región: {userService.getRegion()}</h2>
+          <h2 className='centrado'>{userService.getLugarNombre()}</h2>
         </Col>
       </Row>}
       <Row className='match-height'>
@@ -62,14 +65,14 @@ const PedidoPerfecto = () => {
           <EjesMultiples titulo='Evaluación por KPI' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} />
         </Col>
       </Row>
-      {/* {(tienda === '' || tienda === undefined) && <Row className='match-height'>
+      {!tienda && <Row className='match-height'>
         <Col sm='12' lg='6'>
           <ColumnasApiladas titulo='Evaluación de KPI Pedido Perfecto por Lugar' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} formato='porcentaje' />
         </Col>
         <Col sm='12' lg='6'>
           <EjesMultiples titulo='Evaluación Pedido Perfecto por Lugar' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} />
         </Col>
-      </Row>} */}
+      </Row>}
       <Row className='match-height'>
         <Col sm='12' lg='6'>
           <EjesMultiples titulo='Motivos de Quejas' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} />
@@ -78,17 +81,17 @@ const PedidoPerfecto = () => {
           <ColumnasApiladas titulo='Pedidos por Tipo de Entrega' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} formato='entero' />
         </Col>
       </Row>
-      {/* {(tienda === '' || tienda === undefined) && <Row className='match-height'>
+      {!tienda && <Row className='match-height'>
         <Col sm='12' lg='6'>
           <BarrasApiladas tituloAPI='Quejas por lugar $periodo1' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} formato='entero' />
         </Col>
         <Col sm='12' lg='6'>
           <BarrasApiladas tituloAPI='Quejas por lugar $periodo2' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} formato='entero' />
         </Col>
-      </Row>} */}
+      </Row>}
       <Row className='match-height'>
         <Col sm='12'>
-          <Tabla titulo='50 Tiendas con % Pedido Perfecto más bajo' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} setSibling={setSibling} />
+          <Tabla tituloAPI='50 Tiendas con % Pedido Perfecto más bajo' titulo={`${prefijoTituloTabla}% Pedido Perfecto${sufijoTituloTabla}`} fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} setSibling={setSibling} quitarBusqueda={quitarBusqueda} quitarPaginacion={quitarPaginacion} />
         </Col>
       </Row>
       {tienda !== undefined && tienda !== '' && <Row className='match-height'>

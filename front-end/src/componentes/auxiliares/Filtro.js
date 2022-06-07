@@ -741,8 +741,14 @@ const Filtro = (props) => {
     if (props.canal !== undefined) {
       const comboCanal_temp = await CargarFiltros.cargarCanal()
       setComboCanal(comboCanal_temp)
+      
     }
   }, [])
+
+  // Poner valor inicial para canal
+  useEffect(() => {
+    setCanalValue(nthElement(comboCanal, -1))
+  }, [comboCanal])
 
   // Validar que SKU sea numérico
   useEffect(async () => {
@@ -1023,6 +1029,7 @@ const Filtro = (props) => {
               value={canalValue}
               className='react-select'
               classNamePrefix='select'
+              // defaultValue={nthElement(comboCanal, -1)}
               name='filtroCanal'
               options={comboCanal}
               isClearable={true}

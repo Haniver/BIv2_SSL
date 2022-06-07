@@ -81,19 +81,9 @@ const VentaSinImpuesto = () => {
 
   return (
     <>
-      {userService.getNivel() === 1 && <Row className='match-height'>
+      {userService.getNivel() <= 3 && <Row className='match-height'>
         <Col sm='12'>
-          <h2 className='centrado'>Tienda: {userService.getTienda()}</h2>
-        </Col>
-      </Row>}
-      {userService.getNivel() === 2 && <Row className='match-height'>
-        <Col sm='12'>
-          <h2 className='centrado'>Zona: {userService.getZona()}</h2>
-        </Col>
-      </Row>}
-      {userService.getNivel() === 3 && <Row className='match-height'>
-        <Col sm='12'>
-          <h2 className='centrado'>Región: {userService.getRegion()}</h2>
+          <h2 className='centrado'>{userService.getLugarNombre()}</h2>
         </Col>
       </Row>}
       <Row className='match-height'>

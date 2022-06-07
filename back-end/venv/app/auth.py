@@ -43,6 +43,7 @@ class User(BaseModel):
     nivel: Optional[int]
     region: Optional[int]
     zona: Optional[int]
+    lugarNombre: Optional[str]
 
 class UserInDB(User):
     password: str
@@ -59,7 +60,7 @@ def buscar_usuario_en_bd(usuario):
     respuesta = []
     cnxn = conectar_sql.conexion_sql('DJANGO')
     cursor = cnxn.cursor()
-    cursor.execute(f"""select u.id, u.usuario, u.nivel, u.password, u.nombre, u.idTienda, ct.region, ct.zona
+    cursor.execute(f"""select u.id, u.usuario, u.nivel, u.password, u.nombre, u.idTienda, ct.region, ct.zona, ct.regionNombre, ct.zonaNombre, ct.tiendaNombre
     from DJANGO.php.usuarios u
     left join DWH.artus.catTienda ct on  u.idTienda =ct.tienda
     where usuario = '{usuario}'""")
@@ -74,6 +75,12 @@ def buscar_usuario_en_bd(usuario):
     tienda = resultados[0]['idTienda']
     region = resultados[0]['region']
     zona = resultados[0]['zona']
+    if nivel == 1:
+        lugarNombre = resultados[0]['tiendaNombre']
+    elif nivel == 2:
+        lugarNombre = resultados[0]['zonaNombre']
+    else:
+        lugarNombre = resultados[0]['regionNombre']
 
     # Obtener Vistas a las que tiene acceso el usuario
     cursor.execute(f"""select distinct v.id_vista, v.categoria, v.idReact, v.title, v.icon 
@@ -117,7 +124,7 @@ def buscar_usuario_en_bd(usuario):
     #         "icon": row['icon']
     #     })
     rol = f'Usuario Nivel {str(nivel)}'
-    respuesta = {usuario: {'usuario': usuario, 'password': password, 'nombre': nombre, 'nivel': nivel, 'rol': rol, 'id': id, 'vistas': json.dumps(vistas), 'documentos': json.dumps(documentos), 'tienda': tienda, 'region': region, 'zona': zona}}
+    respuesta = {usuario: {'usuario': usuario, 'password': password, 'nombre': nombre, 'nivel': nivel, 'rol': rol, 'id': id, 'vistas': json.dumps(vistas), 'documentos': json.dumps(documentos), 'tienda': tienda, 'region': region, 'zona': zona, 'lugarNombre': lugarNombre}}
     # print(f"Respuesta desde auth.py: {str(respuesta)}")
     return respuesta
 
