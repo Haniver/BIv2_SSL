@@ -319,8 +319,8 @@ const Filtro = (props) => {
     }
     setZonaValue({label: '', value: ''})
     if (props.botonEnviar === undefined) {
-      console.log("Poniendo zona en '' desde 1 (handleRegionChange)")
-      console.log(e)
+      // console.log("Poniendo zona en '' desde 1 (handleRegionChange)")
+      // console.log(e)
       props.setZona('')
     } else {
       setZona_tmp('')
@@ -703,21 +703,32 @@ const Filtro = (props) => {
   // Rellenado inicial de combos variables
 
   useEffect(async () => {
+    // Llenar región, zona y tienda dependiendo del nivel del usuario
     if (props.region !== undefined && UserService.getNivel() >= 4) {
       const comboRegion_temp = await CargarFiltros.cargarRegion()
       setComboRegion(comboRegion_temp)
     } else if (props.region !== undefined && UserService.getNivel() === 3) {
-      props.setRegion(UserService.getRegion())
+      // props.setRegion(UserService.getRegion())
       handleRegionChange({value: UserService.getRegion()})
     } else if (props.zona !== undefined && UserService.getNivel() === 2) {
       console.log("cambiando zona desde 4")
-      props.setRegion(UserService.getRegion())
-      props.setZona(UserService.getZona())
+      if (props.botonEnviar === undefined) {
+        props.setRegion(UserService.getRegion())
+      } else {
+        setRegion_tmp(UserService.getRegion())
+      }
+      // props.setZona(UserService.getZona())
       handleZonaChange({value: UserService.getZona()})
     } else if (props.tienda !== undefined && UserService.getNivel() === 1) {
-      props.setRegion(UserService.getRegion())
-      props.setZona(UserService.getZona())
-      props.setTienda(UserService.getTienda())
+      if (props.botonEnviar === undefined)  {
+        props.setRegion(UserService.getRegion())
+        props.setZona(UserService.getZona())
+        props.setTienda(UserService.getTienda())
+      } else {
+        setRegion_tmp(UserService.getRegion())
+        setZona_tmp(UserService.getZona())
+        setTienda_tmp(UserService.getTienda())
+      }
       if (props.setLabelTienda !== undefined) {
         props.setLabelTienda(`Tienda ${UserService.getTienda()}`)
       }
