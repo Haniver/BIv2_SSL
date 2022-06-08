@@ -173,7 +173,7 @@ const Filtro = (props) => {
 
   const comboMes = []
   for (let i = 0; i < 12; i++) {
-    comboMes.push({label: `${fechas_srv.mesTexto(i)}`, value: i})
+    comboMes.push({label: `${fechas_srv.mesTexto(i, true)}`, value: i})
   }
 
   const comboMesRFM = []

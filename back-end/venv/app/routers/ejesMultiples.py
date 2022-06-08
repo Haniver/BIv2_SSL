@@ -26,6 +26,8 @@ class EjesMultiples():
         if self.filtros.fechas != None:
             self.fecha_ini_a12 = datetime.combine(datetime.strptime(self.filtros.fechas['fecha_ini'], '%Y-%m-%dT%H:%M:%S.%fZ'), datetime.min.time()) if self.filtros.fechas['fecha_ini'] != None and self.filtros.fechas['fecha_ini'] != '' else None
             self.fecha_fin_a12 = datetime.combine(datetime.strptime(self.filtros.fechas['fecha_fin'], '%Y-%m-%dT%H:%M:%S.%fZ'), datetime.min.time()) + timedelta(days=1) if self.filtros.fechas['fecha_fin'] != None and self.filtros.fechas['fecha_fin'] != '' else None
+            # print(f"self.filtros.fechas['fecha_fin']: {str(self.filtros.fechas['fecha_fin'])}")
+            # print(f"self.fecha_fin_a12: {str(self.fecha_fin_a12)}")
 
     async def FoundRate(self):
         categories = []
@@ -81,8 +83,12 @@ class EjesMultiples():
         return  {'hayResultados':hayResultados,'categories':categories, 'series':series, 'pipeline': pipeline, 'lenArreglo':len(arreglo)}
 
     async def VentaSinImpuesto(self):
-        anioElegido = self.fecha_fin_a12.year
-        mesElegido = self.fecha_fin_a12.month
+        print(f"Fecha desde filtro: {self.filtros.fechas['fecha_fin']}")
+        fecha_fin = datetime.strptime(self.filtros.fechas['fecha_fin'], '%Y-%m-%dT%H:%M:%S.%fZ')
+        print(f"Fecha como datetime: {str(fecha_fin)}")
+        anioElegido = fecha_fin.year
+        mesElegido = fecha_fin.month
+        print(f"Mes: {str(mesElegido)}")
         categories = []
         series = []
         pipeline = []
