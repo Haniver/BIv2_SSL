@@ -726,17 +726,17 @@ class Tablas():
         if len(arreglo) > 0:
             hayResultados = "si"
             for i in range(len(arreglo)):
-                if self.filtros.canal == '1':
-                    objetivo = arreglo[i]['objetivo']
-                    objetivoDia = arreglo[i]['objetivoDia']
-                    # print(f'objetivoDia = {str(objetivoDia)}')
-                    alcance = (arreglo[i]['AActual']/objetivo) - 1 if objetivo else '--'
-                    alcanceDia = (arreglo[i]['AActual']/objetivoDia) - 1 if objetivoDia else '--'
-                else:
-                    alcance = '--'
-                    objetivo = '--'
-                    alcanceDia = '--'
-                    objetivoDia = '--'
+                # if self.filtros.canal == '1':
+                objetivo = arreglo[i]['objetivo']
+                objetivoDia = arreglo[i]['objetivoDia']
+                # print(f'objetivoDia = {str(objetivoDia)}')
+                alcance = (arreglo[i]['AActual']/objetivo) - 1 if objetivo else '--'
+                alcanceDia = (arreglo[i]['AActual']/objetivoDia) - 1 if objetivoDia else '--'
+                # else:
+                #     alcance = '--'
+                #     objetivo = '--'
+                #     alcanceDia = '--'
+                #     objetivoDia = '--'
                 vsaa = (arreglo[i]['AActual'] / arreglo[i]['AAnterior']) - 1 if arreglo[i]['AAnterior'] != 0 else '--'
                 data.append({
                     'depto': arreglo[i][titulo_nivel_producto],
