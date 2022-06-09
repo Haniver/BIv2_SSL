@@ -190,7 +190,7 @@ class ColumnasApiladas():
         serie3 = []
         serie4 = []
 
-        if self.titulo == 'Estatus Pedidos por Región':
+        if self.titulo == 'Estatus Pedidos por Lugar':
 
             if self.filtros.region != '' and self.filtros.region != "False":
                 filtro_lugar = True
