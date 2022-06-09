@@ -1444,7 +1444,7 @@ class Tablas():
                 # print(str(pipeline))
                 # Ejecutamos el query:
                 cursor = collection.aggregate(pipeline)
-                arreglo = await cursor.to_list(length=50)
+                arreglo = await cursor.to_list(length=None)
                 # print(str(arreglo))
                 if len(arreglo) >0:
                     hayResultados = "si"
