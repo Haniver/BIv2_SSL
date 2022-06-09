@@ -4,6 +4,7 @@ import fechas_srv from '../services/fechas_srv'
 import Tabla from '../componentes/tablas/Tabla'
 import Filtro from '../componentes/auxiliares/Filtro'
 import UpdateFaltantes from '../componentes/auxiliares/UpdateFaltantes'
+import userService from '../services/user.service'
 
 const ReporteFaltantes = () => {
     const [fechas, setFechas] = useState({fecha_ini: fechas_srv.primeroDelMesVencido(), fecha_fin: ''})
@@ -20,6 +21,11 @@ const ReporteFaltantes = () => {
 
   return (
     <>
+      {userService.getNivel() <= 3 && <Row className='match-height'>
+        <Col sm='12'>
+          <h2 className='centrado'>{userService.getLugarNombre()}</h2>
+        </Col>
+      </Row>}
       <Row className='match-height'>
         <Col sm='12'>
           <Filtro botonEnviar={botonEnviar} setBotonEnviar={setBotonEnviar} fechas={fechas} region={region} zona={zona} tienda={tienda} depto={depto} subDepto={subDepto} setFechas={setFechas} setRegion={setRegion} setZona={setZona} setTienda={setTienda} setDepto={setDepto} setSubDepto={setSubDepto} />

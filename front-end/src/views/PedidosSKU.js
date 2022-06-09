@@ -3,6 +3,7 @@ import { Row, Col } from 'reactstrap'
 import fechas_srv from '../services/fechas_srv'
 import Tabla from '../componentes/tablas/Tabla'
 import Filtro from '../componentes/auxiliares/Filtro'
+import userService from '../services/user.service'
 
 const PedidosSKU = () => {
     const [fechas, setFechas] = useState({
@@ -24,6 +25,11 @@ const PedidosSKU = () => {
 
   return (
     <>
+      {userService.getNivel() <= 3 && <Row className='match-height'>
+        <Col sm='12'>
+          <h2 className='centrado'>{userService.getLugarNombre()}</h2>
+        </Col>
+      </Row>}
       <Row className='match-height'>
         <Col sm='12'>
           <Filtro sku={sku} fechas={fechas} rango_max_dias={15} region={region} zona={zona} tienda={tienda} setSku={setSku} setFechas={setFechas} setRegion={setRegion} setZona={setZona} setTienda={setTienda} botonEnviar={botonEnviar} setBotonEnviar={setBotonEnviar} />
