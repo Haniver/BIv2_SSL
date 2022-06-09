@@ -195,16 +195,20 @@ class ColumnasApiladas():
             if self.filtros.region != '' and self.filtros.region != "False":
                 filtro_lugar = True
                 if self.filtros.zona != '' and self.filtros.zona != "False":
+                    if self.filtros.tienda != '' and self.filtros.tienda != "False":
+                        nivel = 'tienda'
+                        siguiente_nivel = {'$dayOfMonth': 'fechaUltimoCambio'}
+                        lugar = int(self.filtros.tienda)
                     nivel = 'zona'
-                    siguiente_nivel = 'tiendaNombre'
+                    siguiente_nivel = '$sucursal.tiendaNombre'
                     lugar = int(self.filtros.zona)
                 else:
                     nivel = 'region'
-                    siguiente_nivel = 'zonaNombre'
+                    siguiente_nivel = '$sucursal.zonaNombre'
                     lugar = int(self.filtros.region)
             else:
                 filtro_lugar = False
-                siguiente_nivel = 'regionNombre'
+                siguiente_nivel = '$sucursal.regionNombre'
                 lugar = ''
 
             collection = conexion_mongo('report').report_foundRate
@@ -214,7 +218,7 @@ class ColumnasApiladas():
             pipeline.append({'$match': {'fechaUltimoCambio': {'$gte': self.fecha_ini_a12, '$lt': self.fecha_fin_a12}}})
             if self.filtros.categoria and self.filtros.categoria != "False":
                 pipeline.append({'$match': {'tercero': self.filtros.categoria}})
-            pipeline.append({'$group':{'_id':'$sucursal.'+siguiente_nivel, 'COMPLETO': {'$sum': '$COMPLETO'}, 'INC_SIN_STOCK': {'$sum': '$INC_SIN_STOCK'}, 'INC_SUSTITUTOS': {'$sum': '$INC_SUSTITUTOS'}, 'INCOMPLETO': {'$sum': '$INCOMPLETO'}}})
+            pipeline.append({'$group':{'_id':siguiente_nivel, 'COMPLETO': {'$sum': '$COMPLETO'}, 'INC_SIN_STOCK': {'$sum': '$INC_SIN_STOCK'}, 'INC_SUSTITUTOS': {'$sum': '$INC_SUSTITUTOS'}, 'INCOMPLETO': {'$sum': '$INCOMPLETO'}}})
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=1000)
             if len(arreglo) >0:

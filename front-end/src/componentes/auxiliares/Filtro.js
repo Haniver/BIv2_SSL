@@ -730,7 +730,7 @@ const Filtro = (props) => {
         setTienda_tmp(UserService.getTienda())
       }
       if (props.setLabelTienda !== undefined) {
-        props.setLabelTienda(`Tienda ${UserService.getTienda()}`)
+        props.setLabelTienda(UserService.getLugarNombre())
       }
     }
     if (props.proveedor !== undefined) {
