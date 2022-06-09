@@ -281,8 +281,8 @@ class EjesMultiples():
             # if self.filtros.canal == '1' or self.filtros.canal == '35' or self.filtros.canal == '36':
             series.append({'name': 'Objetivo '+mod_titulo_serie+str(anioElegido), 'data':serie3, 'type': 'column', 'formato_tooltip':'moneda', 'color':'secondary'})
             series.append({'name': '% Var Actual', 'data':serie4, 'type': 'spline', 'formato_tooltip':'porcentaje', 'color':'dark'})
-            if self.filtros.canal == '1' or self.filtros.canal == '35' or self.filtros.canal == '36':
-                series.append({'name': '% Var Objetivo', 'data':serie5, 'type': 'spline', 'formato_tooltip':'porcentaje', 'color':'danger'})
+            # if self.filtros.canal == '1' or self.filtros.canal == '35' or self.filtros.canal == '36':
+            series.append({'name': '% Var Objetivo', 'data':serie5, 'type': 'spline', 'formato_tooltip':'porcentaje', 'color':'danger'})
         else:
             hayResultados = "no"
             categories = []

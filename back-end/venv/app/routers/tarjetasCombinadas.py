@@ -83,7 +83,7 @@ class TarjetasCombinadas():
                 query += f""" and cd.idDepto = {self.filtros.depto} """
         query += " group by dt.anio order by dt.anio "
 
-        # print(f"Query para {self.titulo}:\n{query}")
+        print(f"Query para {self.titulo}:\n{query}")
         cnxn = conexion_sql('DWH')
         cursor = cnxn.cursor().execute(query)
         arreglo = crear_diccionario(cursor)
@@ -91,17 +91,23 @@ class TarjetasCombinadas():
             # print(f'Query MesAlDia en TarjetasCombinadas: {str(query)}')
         # print(str(arreglo))
 
-        if len(arreglo) >= 2:
+        if len(arreglo) <= 0:
+            hayResultados = "no"
+            res = '--'
+        else:
             hayResultados = "si"
-            # print(f"arreglo desde tarjetasCombinadas: {str(arreglo)}")
-            venta_pasado = arreglo[0]['venta']
-            venta_actual = arreglo[1]['venta']
-            objetivo = arreglo[1]['objetivo']
+            if len(arreglo) >= 2:
+                venta_pasado = arreglo[0]['venta']
+                venta_actual = arreglo[1]['venta']
+                objetivo = arreglo[1]['objetivo']
+            elif len(arreglo) == 1:
+                venta_pasado = 0
+                venta_actual = arreglo[0]['venta']
+                objetivo = arreglo[0]['objetivo']
             dias_en_mes = monthrange(self.anioElegido, self.mesElegido)[1]
             proyeccion_actual = dias_en_mes*venta_actual/self.diaElegido
             avance_actual = venta_actual/objetivo if objetivo != 0 else '--'
             alcance_actual = proyeccion_actual/objetivo - 1 if objetivo != 0 else '--'
-
             res = {}
             if self.titulo == 'Anio':
                 res['Venta $anio'] = venta_actual
@@ -116,17 +122,19 @@ class TarjetasCombinadas():
                 res['Avance $mes $anio'] = avance_actual
                 res['Alcance $mes $anio'] = alcance_actual
             elif self.titulo == 'MesAlDia':
-                objetivoDia = arreglo[1]['objetivoDia']
-                ventaDiaActual = arreglo[1]['ventaDia']
-                ventaDiaAnterior = arreglo[0]['ventaDia']
+                if len(arreglo) >= 2:
+                    objetivoDia = arreglo[1]['objetivoDia']
+                    ventaDiaActual = arreglo[1]['ventaDia']
+                    ventaDiaAnterior = arreglo[0]['ventaDia']
+                else:
+                    objetivoDia = arreglo[0]['objetivoDia']
+                    ventaDiaActual = arreglo[0]['ventaDia']
+                    ventaDiaAnterior = 0
                 res['Venta 1 al $dia $mes $anioActual'] = ventaDiaActual
                 res['Objetivo 1 al $dia $mes $anio'] = objetivoDia
                 res['Objetivo Vs. Venta al $dia $mes $anio'] = float(ventaDiaActual)/float(objetivoDia) - 1 if objetivoDia != 0 else '--'
                 res['Venta 1 al $dia $mes $anioAnterior'] = ventaDiaAnterior
                 res['Venta $anioAnterior Vs. $anioActual al $dia $mes'] = (ventaDiaActual/ventaDiaAnterior) - 1 if ventaDiaAnterior != 0 else '--'
-        else:
-            hayResultados = "no"
-            res = '--'
 
         # print(f'Respuesta desde TarjetasCombinadas: {res}')
         return {'hayResultados':hayResultados, 'pipeline':query, 'res':res}
