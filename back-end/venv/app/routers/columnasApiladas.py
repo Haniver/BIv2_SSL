@@ -195,10 +195,6 @@ class ColumnasApiladas():
             if self.filtros.region != '' and self.filtros.region != "False":
                 filtro_lugar = True
                 if self.filtros.zona != '' and self.filtros.zona != "False":
-                    if self.filtros.tienda != '' and self.filtros.tienda != "False":
-                        nivel = 'tienda'
-                        siguiente_nivel = {'$dayOfMonth': 'fechaUltimoCambio'}
-                        lugar = int(self.filtros.tienda)
                     nivel = 'zona'
                     siguiente_nivel = '$sucursal.tiendaNombre'
                     lugar = int(self.filtros.zona)
@@ -219,12 +215,41 @@ class ColumnasApiladas():
             if self.filtros.categoria and self.filtros.categoria != "False":
                 pipeline.append({'$match': {'tercero': self.filtros.categoria}})
             pipeline.append({'$group':{'_id':siguiente_nivel, 'COMPLETO': {'$sum': '$COMPLETO'}, 'INC_SIN_STOCK': {'$sum': '$INC_SIN_STOCK'}, 'INC_SUSTITUTOS': {'$sum': '$INC_SUSTITUTOS'}, 'INCOMPLETO': {'$sum': '$INCOMPLETO'}}})
+            pipeline.append({'$sort':{'_id': 1}})
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=1000)
             if len(arreglo) >0:
                 hayResultados = "si"
                 for row in arreglo:
                     categorias.append(row['_id'])
+                    serie1.append(row['COMPLETO'])
+                    serie2.append(row['INC_SIN_STOCK'])
+                    serie3.append(row['INC_SUSTITUTOS'])
+                    serie4.append(row['INCOMPLETO'])
+                series.extend([
+                    {'name': 'Completo', 'data':serie1, 'color': 'success'},                                
+                    {'name': 'Incompleto Sin Stock', 'data':serie2, 'color': 'primary'},
+                    {'name': 'Incompleto Sustitutos', 'data':serie3, 'color': 'warning'},
+                    {'name': 'Incompleto', 'data':serie4, 'color': 'danger'}
+                ])
+            else:
+                hayResultados = "no"
+
+        if self.titulo == 'Estatus Pedidos por Día':
+            collection = conexion_mongo('report').report_foundRate
+            pipeline.append({'$unwind': '$sucursal'})
+            pipeline.append({'$match': {'sucursal.tienda': int(self.filtros.tienda)}})
+            pipeline.append({'$match': {'fechaUltimoCambio': {'$gte': self.fecha_ini_a12, '$lt': self.fecha_fin_a12}}})
+            if self.filtros.categoria and self.filtros.categoria != "False":
+                pipeline.append({'$match': {'tercero': self.filtros.categoria}})
+            pipeline.append({'$group':{'_id':{'dia': {'$dayOfMonth': '$fechaUltimoCambio'}, 'mes': {'$month':'$fechaUltimoCambio'}}, 'COMPLETO': {'$sum': '$COMPLETO'}, 'INC_SIN_STOCK': {'$sum': '$INC_SIN_STOCK'}, 'INC_SUSTITUTOS': {'$sum': '$INC_SUSTITUTOS'}, 'INCOMPLETO': {'$sum': '$INCOMPLETO'}}})
+            pipeline.append({'$sort':{'_id': 1}})
+            cursor = collection.aggregate(pipeline)
+            arreglo = await cursor.to_list(length=1000)
+            if len(arreglo) >0:
+                hayResultados = "si"
+                for row in arreglo:
+                    categorias.append(str(row['_id']['dia'])+' '+mesTexto(row['_id']['mes']))
                     serie1.append(row['COMPLETO'])
                     serie2.append(row['INC_SIN_STOCK'])
                     serie3.append(row['INC_SUSTITUTOS'])

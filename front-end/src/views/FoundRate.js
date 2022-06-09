@@ -37,6 +37,14 @@ const FoundRate = () => {
           <Barras titulo='Monto Original Vs. Final' seccion={seccion} formato='moneda' yLabel='' fechas={fechas} region={region} zona={zona} tienda={tienda} />
         </Col>
       </Row>}
+      {tienda !== false && tienda !== '' && <Row className='match-height'>
+        <Col xl='6' sm='12'>
+          <ColumnasApiladas titulo='Estatus Pedidos por Día' seccion={seccion} formato='entero' yLabel='Pedidos' fechas={fechas} region={region} zona={zona} tienda={tienda} />
+        </Col>
+        <Col xl='6' sm='12'>
+          <Barras titulo='Monto Original Vs. Final' seccion={seccion} formato='moneda' yLabel='' fechas={fechas} region={region} zona={zona} tienda={tienda} />
+        </Col>
+      </Row>}
       {(tienda === false || tienda === '') && <Row className='match-height'>
         <Col xl='6' sm='12'>
           <ColumnasBasicas titulo='Found Rate Vs. Fulfillment Rate' seccion={seccion} formato='porcentaje' yLabel='Porcentaje' fechas={fechas} region={region} zona={zona} tienda={tienda} />
