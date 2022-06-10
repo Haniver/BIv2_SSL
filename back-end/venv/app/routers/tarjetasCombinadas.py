@@ -2,8 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from app.auth import get_current_active_user
 from app.servicios.conectar_sql import conexion_sql, crear_diccionario
+from app.servicios.conectar_mongo import conexion_mongo
 from app.servicios.Filtro import Filtro
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from calendar import monthrange
 from app.servicios.formatoFechas import mesTexto
 from app.servicios.permisos import tienePermiso
@@ -138,6 +139,32 @@ class TarjetasCombinadas():
 
         # print(f'Respuesta desde TarjetasCombinadas: {res}')
         return {'hayResultados':hayResultados, 'pipeline':query, 'res':res}
+
+    async def FoundRate(self):
+        self.fecha_ini_a12 = datetime.combine(datetime.strptime(self.filtros.fechas['fecha_ini'], '%Y-%m-%dT%H:%M:%S.%fZ'), datetime.min.time()) if self.filtros.fechas['fecha_ini'] != None and self.filtros.fechas['fecha_ini'] != '' else None
+        self.fecha_fin_a12 = datetime.combine(datetime.strptime(self.filtros.fechas['fecha_fin'], '%Y-%m-%dT%H:%M:%S.%fZ'), datetime.min.time()) + timedelta(days=1) if self.filtros.fechas['fecha_fin'] != None and self.filtros.fechas['fecha_fin'] != '' else None
+        collection = conexion_mongo('report').report_foundRate
+        pipeline = [{'$unwind': '$sucursal'}]
+        pipeline.append({'$match': {'sucursal.tienda': int(self.filtros.tienda)}})
+        pipeline.append({'$match': {'fechaUltimoCambio': {'$gte': self.fecha_ini_a12, '$lt': self.fecha_fin_a12}}})
+        pipeline.append({'$group':{'_id':'$sucursal.tienda', 'monto_ini': {'$sum': '$monto_ini'}, 'monto_fin': {'$sum': '$monto_fin'}}})
+        cursor = collection.aggregate(pipeline)
+        arreglo = await cursor.to_list(length=1000)
+        res = {}
+        if len(arreglo) >0:
+            hayResultados = "si"
+            for row in arreglo:
+                monto_ini = float(row['monto_ini'])
+                monto_fin = float(row['monto_fin'])
+                res['Monto Original'] = round(monto_ini, 2)
+                res['Monto Final'] = round(monto_fin, 2)
+                res['% Variación'] = round((monto_fin/monto_ini)-1, 2)
+        else:
+            hayResultados = 'no'
+
+        # print(f'Respuesta desde TarjetasCombinadas: {res}')
+        return {'hayResultados':hayResultados, 'pipeline':pipeline, 'res':res}
+        return {'hayResultados':'no', 'pipeline':'', 'res':''}
 
 @router.post("/{seccion}")
 async def tarjetas_combinadas (filtros: Filtro, titulo: str, seccion: str, user: dict = Depends(get_current_active_user)):
