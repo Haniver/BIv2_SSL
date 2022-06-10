@@ -72,7 +72,7 @@ const FoundRate = () => {
           <Tarjeta formato='moneda' icono={<LogOut size={21} />} titulo='Monto Final' fechas={fechas} region={region} zona={zona} tienda={tienda} resAPI={tarjetasCombinadasTienda}  />
         </Col>
         <Col sm='4'>
-          <Tarjeta formato='porcentaje' icono={<Percent size={21} />} titulo='% Variación' fechas={fechas} region={region} zona={zona} tienda={tienda} resAPI={tarjetasCombinadasTienda}  />
+          <Tarjeta formato='porcentaje' icono={<Percent size={21} />} titulo='% Variación' colorPositivo fechas={fechas} region={region} zona={zona} tienda={tienda} resAPI={tarjetasCombinadasTienda}  />
         </Col>
       </Row>}
       {(tienda === false || tienda === '') && <Row className='match-height'>

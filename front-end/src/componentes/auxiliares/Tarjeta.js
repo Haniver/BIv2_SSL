@@ -100,7 +100,7 @@ const Tarjeta = ({ icono, titulo, tituloAPI, seccion, className, formato, fechas
           <div className={`avatar p-50 m-0 mb-1 bg-light-primary`}>
             <div className='avatar-content'>{icono}</div>
           </div>
-          <h3 className={`font-weight-bolder${(colorPositivo) ? ((parseFloat(numero) < 0) ? ' texto-rojo' : ' texto-verde') : ''}`}>{ numero }</h3>
+          <h3 className={`font-weight-bolder${(colorPositivo) ? ((parseFloat(numero) < 0) ? ' texto-rojo' : ' texto-verde') : ''}`}>{(colorPositivo) ? ((parseFloat(numero) < 0) ? '🠗' : '🠕') : ''}{ numero }</h3>
           <p className='card-text line-ellipsis'>{tituloMostrar}</p>
         </>}
         {(estadoLoader.contador !== 0 || resAPI === 'cargando') && <LoadingGif />}

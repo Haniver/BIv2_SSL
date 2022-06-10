@@ -156,9 +156,9 @@ class TarjetasCombinadas():
             for row in arreglo:
                 monto_ini = float(row['monto_ini'])
                 monto_fin = float(row['monto_fin'])
-                res['Monto Original'] = round(monto_ini, 2)
-                res['Monto Final'] = round(monto_fin, 2)
-                res['% Variación'] = round((monto_fin/monto_ini)-1, 2)
+                res['Monto Original'] = monto_ini
+                res['Monto Final'] = monto_fin
+                res['% Variación'] = (monto_fin/monto_ini)-1
         else:
             hayResultados = 'no'
 
