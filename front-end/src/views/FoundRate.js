@@ -10,6 +10,7 @@ import EjesMultiples from '../componentes/graficos/EjesMultiples'
 import userService from '../services/user.service'
 import tarjetasCombinadas from '../services/tarjetasCombinadas'
 import Tarjeta from '../componentes/auxiliares/Tarjeta'
+import Pie from '../componentes/graficos/Pie'
 
 import {
   LogIn,
@@ -81,6 +82,11 @@ const FoundRate = () => {
         </Col>
         <Col xl='6' sm='12'>
           <Tabla titulo='Detalle Porcentaje Estatus por Lugar' seccion={seccion} fechas={fechas} region={region} zona={zona} tienda={tienda} />
+        </Col>
+      </Row>}
+      {tienda !== false && tienda !== '' && <Row className='match-height'>
+        <Col sm='12'>
+          <Pie titulo='Detalle Porcentaje Estatus por Lugar' formato='porcentaje' seccion={seccion} fechas={fechas} region={region} zona={zona} tienda={tienda} />
         </Col>
       </Row>}
       <Row className='match-height'>

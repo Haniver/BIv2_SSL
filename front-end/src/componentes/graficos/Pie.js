@@ -113,6 +113,8 @@ const Pie = ({ titulo, seccion, formato, fechas, region, zona, tienda }) => {
                     return `${this.point.name}<br>Monto: $${Highcharts.numberFormat(this.point.y, 2, '.', ',')}`
                 } else if (formato === 'entero') {
                     return `${this.point.name}<br>Cantidad: ${Highcharts.numberFormat(this.point.y, 0, '.', ',')}`
+                } else if (formato === 'porcentaje') {
+                    return `${this.point.name}<br>Porcentaje: ${100 * Highcharts.numberFormat(this.point.y, 4, '.', ',')}%`
                 }
             },
             shared: true
@@ -129,6 +131,8 @@ const Pie = ({ titulo, seccion, formato, fechas, region, zona, tienda }) => {
                             return `${this.point.name}<br>${Highcharts.numberFormat(this.point.percentage, 1, '.', ',')}%<br>$${Highcharts.numberFormat(this.point.y, 2, '.', ',')}`
                         } else if (formato === 'entero') {
                             return `${this.point.name}<br>${Highcharts.numberFormat(this.point.percentage, 1, '.', ',')}%<br>${Highcharts.numberFormat(this.point.y, 0, '.', ',')}`
+                        } else if (formato === 'porcentaje') {
+                            return `${this.point.name}<br>${Highcharts.numberFormat(100 * this.point.y, 2, '.', ',')}%`
                         }
                     }
                 },

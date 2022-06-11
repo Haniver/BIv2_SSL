@@ -146,9 +146,82 @@ class Pie():
             ]
         return {'hayResultados':hayResultados, 'res': res, 'pipeline':pipeline}
 
+    async def FoundRate(self):
+        # print("Entrando a Pie Home")
+        pipeline = []
+        if self.titulo == 'Detalle Porcentaje Estatus por Lugar':
+            if self.filtros.region != '' and self.filtros.region != "False":
+                self.filtro_lugar = True
+                if self.filtros.zona != '' and self.filtros.zona != "False":
+                    nivel = 'zona'
+                    siguiente_nivel = 'tiendaNombre'
+                    self.lugar = int(self.filtros.zona)
+                else:
+                    nivel = 'region'
+                    siguiente_nivel = 'zonaNombre'
+                    self.lugar = int(self.filtros.region)
+            else:
+                self.filtro_lugar = False
+                siguiente_nivel = 'regionNombre'
+                self.lugar = ''
+
+            collection = conexion_mongo('report').report_foundRate
+            pipeline.append({'$unwind': '$sucursal'})
+            pipeline.append({'$match': {'sucursal.tienda': int(self.filtros.tienda)}})
+            pipeline.append({'$match': {'fechaUltimoCambio': {'$gte': self.fecha_ini_a12, '$lt': self.fecha_fin_a12}}})
+            pipeline.append({'$group':{'_id':'$sucursal.tiendaNombre', 'COMPLETO': {'$sum': '$COMPLETO'}, 'INC_SIN_STOCK': {'$sum': '$INC_SIN_STOCK'}, 'INC_SUSTITUTOS': {'$sum': '$INC_SUSTITUTOS'}, 'INCOMPLETO': {'$sum': '$INCOMPLETO'}, 'num_pedidos':{'$sum': '$n_pedido'}}})
+            pipeline.append({'$project':{'_id':0, 'lugar':'$_id', 'COMPLETO': {'$divide':['$COMPLETO', '$num_pedidos']}, 'INC_SIN_STOCK': {'$divide':['$INC_SIN_STOCK', '$num_pedidos']}, 'INC_SUSTITUTOS': {'$divide':['$INC_SUSTITUTOS', '$num_pedidos']}, 'INCOMPLETO': {'$divide':['$INCOMPLETO', '$num_pedidos']}}})
+            cursor = collection.aggregate(pipeline)
+            arreglo = await cursor.to_list(length=1000)
+            if len(arreglo) >0:
+                hayResultados = "si"
+                res = [
+                        {'name': 'Completo', 'y':arreglo[0]['COMPLETO']},
+                        {'name': 'Incompleto Sin Stock', 'y':arreglo[0]['INC_SIN_STOCK']},
+                        {'name': 'Incompleto Sustitutos', 'y':arreglo[0]['INC_SUSTITUTOS']},
+                        {'name': 'Incompleto', 'y':arreglo[0]['INCOMPLETO']}
+                    ]
+            else:
+                hayResultados = 'no'
+
+        # if self.titulo == 'Estatus de Entrega y No Entrega por Área':
+        #     print("Título es Estatus de Entrega y No Entrega por Área")
+        #     collection = conexion_mongo('report').report_pedidoAtrasado
+        #     pipeline.extend([{'$unwind': '$sucursal'}, {'$match': {'sucursal.idTienda': int(self.filtros.tienda)}}])
+        #     pipeline.append({'$match': {'fechaEntrega': {'$gte': self.fecha_ini_a12, '$lt': self.fecha_fin_a12}}})
+        #     if self.filtros.categoria and self.filtros.categoria != "False":
+        #         pipeline.append({'$match': {'tercero': self.filtros.categoria}})
+        #     if self.filtros.tipoEntrega != None and self.filtros.tipoEntrega != "False":
+        #         pipeline.append({'$match': {'tipoEntrega': self.filtros.tipoEntrega}})
+        #     pipeline.append({'$project':{'Entregado_Fuera_tiempo': {'$cond': [{'$eq':['$evaluacion','Entregado-Fuera de tiempo']}, '$pedidos', 0]}, 'Entregado_tiempo': {'$cond': [{'$eq':['$evaluacion','Entregado-A tiempo']}, '$pedidos', 0]}, 'No_entregado_Fuera_tiempo': {'$cond': [{'$eq':['$evaluacion','No entregado-Fuera de tiempo']}, '$pedidos', 0]}, 'No_entregado_tiempo': {'$cond': [{'$eq':['$evaluacion','No entregado-A tiempo']}, '$pedidos', 0]}, 'Despachado_Fuera_tiempo': {'$cond': [{'$eq':['$evaluacion','Despachado-Fuera de tiempo']}, '$pedidos', 0]}, 'Despachado_tiempo': {'$cond': [{'$eq':['$evaluacion','Despachado-A tiempo']}, '$pedidos', 0]}}})
+        #     pipeline.append({'$group':{'_id':0, 'Entregado_Fuera_tiempo':{'$sum':'$Entregado_Fuera_tiempo'}, 'Entregado_tiempo':{'$sum':'$Entregado_tiempo'}, 'No_entregado_Fuera_tiempo':{'$sum':'$No_entregado_Fuera_tiempo'}, 'No_entregado_tiempo':{'$sum':'$No_entregado_tiempo'}, 'Despachado_Fuera_tiempo':{'$sum':'$Despachado_Fuera_tiempo'}, 'Despachado_tiempo':{'$sum':'$Despachado_tiempo'}}})
+        #     print(str(pipeline))
+        #     cursor = collection.aggregate(pipeline)
+        #     arreglo = await cursor.to_list(length=1000)
+        #     # print(str(arreglo))
+        # if len(arreglo) <= 0:
+        #     print("No hubo resultados")
+        #     hayResultados = "no"
+        #     res = pipeline
+        # else:
+        #     hayResultados = "si"
+        #     objeto = arreglo[0]
+        #     print('Desde Pie Home: '+str(objeto))
+        #     res = [
+        #         {'name': 'Entregado - Fuera de tiempo', 'y': objeto['Entregado_Fuera_tiempo']},
+        #         {'name': 'Entregado - A tiempo', 'y': objeto['Entregado_tiempo']},
+        #         {'name': 'No entregado - Fuera de tiempo', 'y': objeto['No_entregado_Fuera_tiempo']},
+        #         {'name': 'No entregado - A tiempo', 'y': objeto['No_entregado_tiempo']},
+        #         {'name': 'Despachado - Fuera de tiempo', 'y': objeto['Despachado_Fuera_tiempo']},
+        #         {'name': 'Despachado - A tiempo', 'y': objeto['Despachado_tiempo']}
+        #     ]
+        print(f"Res desde pie -> FoundRate: {str(res)}")
+        return {'hayResultados':hayResultados, 'res': res, 'pipeline':pipeline}
+        # return {'hayResultados':'no', 'res': '', 'pipeline':''}
+
 @router.post("/{seccion}")
 async def pie (filtros: Filtro, titulo: str, seccion: str, user: dict = Depends(get_current_active_user)):
-    if tienePermiso(user.id_rol, seccion):
+    if tienePermiso(user.id, seccion):
         objeto = Pie(filtros, titulo)
         funcion = getattr(objeto, seccion)
         diccionario = await funcion()
