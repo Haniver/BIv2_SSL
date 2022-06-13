@@ -25,18 +25,18 @@ const FoundRateCornershop = () => {
         <Col sm='12' lg='6'>
           <EjesMultiples titulo='Found Rate Cornershop Vs. Chedraui' fechas={fechas} region={region} zona={zona} tienda={tienda} seccion={seccion} />
         </Col>
-        <Col sm='12' lg='6'>
+        {(tienda === '' || tienda === false || tienda === undefined) && <Col sm='12' lg='6'>
           <EjesMultiples titulo='Found Rate Cornershop Vs. Chedraui Por Lugar' fechas={fechas} region={region} zona={zona} tienda={tienda} seccion={seccion} />
-        </Col>
+        </Col>}
       </Row>
-      <Row className='match-height'>
+      {(tienda === '' || tienda === false || tienda === undefined) && <Row className='match-height'>
         <Col sm='12' lg='6'>
           <Tabla titulo='Top 10 Tiendas con mejor Found Rate Chedraui' quitarBusqueda quitarPaginacion quitarExportar fechas={fechas} region={region} zona={zona} tienda={tienda} seccion={seccion} />
         </Col>
         <Col sm='12' lg='6'>
           <Tabla titulo='Top 10 Tiendas con mejor Found Rate Cornershop' quitarBusqueda quitarPaginacion quitarExportar fechas={fechas} region={region} zona={zona} tienda={tienda} seccion={seccion} />
         </Col>
-      </Row>
+      </Row>}
       <Row className='match-height'>
         <Col sm='12' lg='5'>
           <Tabla titulo='Detalle Found Rate por Departamento' quitarBusqueda quitarPaginacion quitarExportar fechas={fechas} region={region} zona={zona} tienda={tienda} seccion={seccion} />

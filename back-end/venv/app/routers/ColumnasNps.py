@@ -93,7 +93,7 @@ class ColumnasNps():
 
 @router.post("/{seccion}")
 async def columnas_nps (filtros: Filtro, titulo: str, seccion: str, user: dict = Depends(get_current_active_user)):
-    if tienePermiso(user.id_rol, seccion):
+    if tienePermiso(user.id, seccion):
         objeto = ColumnasNps(filtros, titulo)
         funcion = getattr(objeto, seccion)
         diccionario = await funcion()
