@@ -145,26 +145,76 @@ class TarjetasCombinadas():
         self.fecha_fin_a12 = datetime.combine(datetime.strptime(self.filtros.fechas['fecha_fin'], '%Y-%m-%dT%H:%M:%S.%fZ'), datetime.min.time()) + timedelta(days=1) if self.filtros.fechas['fecha_fin'] != None and self.filtros.fechas['fecha_fin'] != '' else None
         collection = conexion_mongo('report').report_foundRate
         pipeline = [{'$unwind': '$sucursal'}]
-        pipeline.append({'$match': {'sucursal.tienda': int(self.filtros.tienda)}})
-        pipeline.append({'$match': {'fechaUltimoCambio': {'$gte': self.fecha_ini_a12, '$lt': self.fecha_fin_a12}}})
-        pipeline.append({'$group':{'_id':'$sucursal.tienda', 'monto_ini': {'$sum': '$monto_ini'}, 'monto_fin': {'$sum': '$monto_fin'}}})
-        cursor = collection.aggregate(pipeline)
-        arreglo = await cursor.to_list(length=1000)
         res = {}
-        if len(arreglo) >0:
-            hayResultados = "si"
-            for row in arreglo:
-                monto_ini = float(row['monto_ini'])
-                monto_fin = float(row['monto_fin'])
+        if self.titulo == 'OriginalYFinal':
+            if self.filtros.region is not None and  self.filtros.region != '' and  self.filtros.region != False and  self.filtros.region != "False":
+                if self.filtros.zona is not None and  self.filtros.zona != '' and  self.filtros.zona != False and  self.filtros.zona != "False":
+                    if self.filtros.tienda is not None and  self.filtros.tienda != '' and  self.filtros.tienda != False and  self.filtros.tienda != "False":
+                        nivel = 'tienda'
+                        lugar = int(self.filtros.tienda)
+                        filtroLugar = True
+                    else:
+                        nivel = 'zona'
+                        lugar = int(self.filtros.zona)
+                        filtroLugar = True
+                else:
+                    nivel = 'region'
+                    lugar = int(self.filtros.region)
+                    filtroLugar = True
+            else:
+                filtroLugar = False
+            if filtroLugar:
+                pipeline.append({'$match': {f'sucursal.{nivel}': lugar}})
+            pipeline.append({'$match': {'fechaUltimoCambio': {'$gte': self.fecha_ini_a12, '$lt': self.fecha_fin_a12}}})
+            pipeline.append({'$group':{'_id':0, 'monto_ini': {'$sum': '$monto_ini'}, 'monto_fin': {'$sum': '$monto_fin'}}})
+            cursor = collection.aggregate(pipeline)
+            arreglo = await cursor.to_list(length=1000)
+            if len(arreglo) >0:
+                hayResultados = "si"
+                monto_ini = float(arreglo[0]['monto_ini'])
+                monto_fin = float(arreglo[0]['monto_fin'])
                 res['Monto Original'] = monto_ini
                 res['Monto Final'] = monto_fin
                 res['% Variación'] = (monto_fin/monto_ini)-1
-        else:
-            hayResultados = 'no'
+            else:
+                hayResultados = 'no'
 
-        # print(f'Respuesta desde TarjetasCombinadas: {res}')
+        elif self.titulo == 'FoundYFulfillment':
+
+            if self.filtros.region != '' and self.filtros.region != "False":
+                filtro_lugar = True
+                if self.filtros.zona != '' and self.filtros.zona != "False":
+                    nivel = 'zona'
+                    siguiente_nivel = 'tiendaNombre'
+                    lugar = int(self.filtros.zona)
+                else:
+                    nivel = 'region'
+                    siguiente_nivel = 'zonaNombre'
+                    lugar = int(self.filtros.region)
+            else:
+                filtro_lugar = False
+                siguiente_nivel = 'regionNombre'
+                lugar = ''
+
+            collection = conexion_mongo('report').report_foundRate
+            pipeline = [{'$unwind': '$sucursal'}]
+            if filtro_lugar:
+                pipeline.append({'$match': {'sucursal.'+ nivel: lugar}})
+            pipeline.append({'$match': {'fechaUltimoCambio': {'$gte': self.fecha_ini_a12, '$lt': self.fecha_fin_a12}}})
+            pipeline.append({'$group':{'_id':0, 'items_ini': {'$sum': '$items_ini'}, 'items_fin': {'$sum': '$items_fin'}, 'items_found': {'$sum': '$items_found'}}})
+            pipeline.append({'$project':{'_id':0, 'fulfillment_rate': {'$divide': ['$items_fin', '$items_ini']}, 'found_rate': {'$divide': ['$items_found', '$items_ini']}}})
+            cursor = collection.aggregate(pipeline)
+            arreglo = await cursor.to_list(length=1000)
+            if len(arreglo) >0:
+                hayResultados = "si"
+                res['Fulfillment Rate'] = round(arreglo[0]['fulfillment_rate'], 4)
+                res['Found Rate'] = round(arreglo[0]['found_rate'], 4)
+            else:
+                hayResultados = "no"
+
+        print(f'Respuesta desde TarjetasCombinadas -> {self.titulo}: {res}')
         return {'hayResultados':hayResultados, 'pipeline':pipeline, 'res':res}
-        return {'hayResultados':'no', 'pipeline':'', 'res':''}
+        # return {'hayResultados':'no', 'pipeline':'', 'res':''}
 
 @router.post("/{seccion}")
 async def tarjetas_combinadas (filtros: Filtro, titulo: str, seccion: str, user: dict = Depends(get_current_active_user)):
