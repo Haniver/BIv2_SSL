@@ -170,7 +170,7 @@ class Pie():
             pipeline.append({'$match': {'sucursal.tienda': int(self.filtros.tienda)}})
             pipeline.append({'$match': {'fechaUltimoCambio': {'$gte': self.fecha_ini_a12, '$lt': self.fecha_fin_a12}}})
             pipeline.append({'$group':{'_id':'$sucursal.tiendaNombre', 'COMPLETO': {'$sum': '$COMPLETO'}, 'INC_SIN_STOCK': {'$sum': '$INC_SIN_STOCK'}, 'INC_SUSTITUTOS': {'$sum': '$INC_SUSTITUTOS'}, 'INCOMPLETO': {'$sum': '$INCOMPLETO'}, 'num_pedidos':{'$sum': '$n_pedido'}}})
-            pipeline.append({'$project':{'_id':0, 'lugar':'$_id', 'COMPLETO': {'$divide':['$COMPLETO', '$num_pedidos']}, 'INC_SIN_STOCK': {'$divide':['$INC_SIN_STOCK', '$num_pedidos']}, 'INC_SUSTITUTOS': {'$divide':['$INC_SUSTITUTOS', '$num_pedidos']}, 'INCOMPLETO': {'$divide':['$INCOMPLETO', '$num_pedidos']}}})
+            # pipeline.append({'$project':{'_id':0, 'lugar':'$_id', 'COMPLETO': {'$divide':['$COMPLETO', '$num_pedidos']}, 'INC_SIN_STOCK': {'$divide':['$INC_SIN_STOCK', '$num_pedidos']}, 'INC_SUSTITUTOS': {'$divide':['$INC_SUSTITUTOS', '$num_pedidos']}, 'INCOMPLETO': {'$divide':['$INCOMPLETO', '$num_pedidos']}}})
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=1000)
             if len(arreglo) >0:

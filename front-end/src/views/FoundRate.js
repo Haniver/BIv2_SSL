@@ -86,7 +86,7 @@ const FoundRate = () => {
       </Row>}
       {tienda !== false && tienda !== '' && <Row className='match-height'>
         <Col sm='12'>
-          <Pie titulo='Detalle Porcentaje Estatus por Lugar' formato='porcentaje' seccion={seccion} fechas={fechas} region={region} zona={zona} tienda={tienda} />
+          <Pie titulo='Detalle Porcentaje Estatus por Lugar' formato='entero' seccion={seccion} fechas={fechas} region={region} zona={zona} tienda={tienda} />
         </Col>
       </Row>}
       <Row className='match-height'>
