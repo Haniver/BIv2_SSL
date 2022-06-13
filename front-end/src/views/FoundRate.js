@@ -53,6 +53,11 @@ const FoundRate = () => {
         </Col>
       </Row>
       {(tienda === false || tienda === '') && <Row className='match-height'>
+        <Col sm='12'>
+          <Pie titulo='Estatus de pedidos (Totales)' formato='entero' seccion={seccion} fechas={fechas} region={region} zona={zona} tienda={tienda} />
+        </Col>
+      </Row>}
+      {(tienda === false || tienda === '') && <Row className='match-height'>
         <Col xl='6' sm='12'>
           <ColumnasApiladas titulo='Estatus Pedidos por Lugar' seccion={seccion} formato='entero' yLabel='Pedidos' fechas={fechas} region={region} zona={zona} tienda={tienda} />
         </Col>
