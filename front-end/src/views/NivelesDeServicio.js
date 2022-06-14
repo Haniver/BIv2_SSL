@@ -4,6 +4,7 @@ import Filtro from '../componentes/auxiliares/Filtro'
 import fechas_srv from '../services/fechas_srv'
 import ColumnasApiladas from '../componentes/graficos/ColumnasApiladas'
 import Pie from '../componentes/graficos/Pie'
+import Tabla from '../componentes/tablas/Tabla'
 
 const NivelesDeServicio = () => {
   const [fechas, setFechas] = useState({fecha_ini: fechas_srv.primeroDelMesVencido(), fecha_fin: fechas_srv.actualVencida()})
@@ -33,6 +34,11 @@ const NivelesDeServicio = () => {
         </Col>
         <Col xl='6' sm='12'>
           <ColumnasApiladas titulo='Pedidos Cancelados por Área' seccion={seccion} formato='entero' yLabel='Pedidos' fechas={fechas} region={region} zona={zona} tienda={tienda} categoria={categoria} tipoEntrega={tipoEntrega} />
+        </Col>
+      </Row>}
+      {(tienda === '' || tienda === false || tienda === undefined) && <Row className='match-height'>
+        <Col sm='12'>
+          <Tabla titulo='Estatus de Entrega y No Entrega por Área' seccion={seccion} fechas={fechas} region={region} zona={zona} tienda={tienda} categoria={categoria} tipoEntrega={tipoEntrega} />
         </Col>
       </Row>}
       {tienda !== '' && tienda !== false && tienda !== undefined && <Row className='match-height'>
