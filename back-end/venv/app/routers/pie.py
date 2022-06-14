@@ -113,10 +113,26 @@ class Pie():
     async def Home(self):
         # print("Entrando a Pie Home")
         pipeline = []
+        if self.filtros.region != '' and self.filtros.region != "False":
+            filtro_lugar = True
+            if self.filtros.zona != '' and self.filtros.zona != "False":
+                if self.filtros.tienda != '' and self.filtros.tienda != "False":
+                    nivel = 'idTienda'
+                    lugar = int(self.filtros.tienda)
+                else:
+                    nivel = 'zona'
+                    lugar = int(self.filtros.zona)
+            else:
+                nivel = 'region'
+                lugar = int(self.filtros.region)
+        else:
+            filtro_lugar = False
+            lugar = ''
         if self.titulo == 'Estatus de Entrega y No Entrega por Área':
-            print("Título es Estatus de Entrega y No Entrega por Área")
+            # print("Título es Estatus de Entrega y No Entrega por Área")
             collection = conexion_mongo('report').report_pedidoAtrasado
-            pipeline.extend([{'$unwind': '$sucursal'}, {'$match': {'sucursal.idTienda': int(self.filtros.tienda)}}])
+            if filtro_lugar:
+                pipeline.extend([{'$unwind': '$sucursal'}, {'$match': {f'sucursal.{nivel}': lugar}}])
             pipeline.append({'$match': {'fechaEntrega': {'$gte': self.fecha_ini_a12, '$lt': self.fecha_fin_a12}}})
             if self.filtros.categoria and self.filtros.categoria != "False":
                 pipeline.append({'$match': {'tercero': self.filtros.categoria}})
@@ -129,13 +145,13 @@ class Pie():
             arreglo = await cursor.to_list(length=1000)
             # print(str(arreglo))
         if len(arreglo) <= 0:
-            print("No hubo resultados")
+            # print("No hubo resultados")
             hayResultados = "no"
             res = pipeline
         else:
             hayResultados = "si"
             objeto = arreglo[0]
-            print('Desde Pie Home: '+str(objeto))
+            # print('Desde Pie Home: '+str(objeto))
             res = [
                 {'name': 'Entregado - Fuera de tiempo', 'y': objeto['Entregado_Fuera_tiempo']},
                 {'name': 'Entregado - A tiempo', 'y': objeto['Entregado_tiempo']},

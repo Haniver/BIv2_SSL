@@ -2196,11 +2196,27 @@ class EjesMultiples():
         serie1 = []
         serie2 = []
         serie3 = []
+        if self.filtros.region != '' and self.filtros.region != "False":
+            filtro_lugar = True
+            if self.filtros.zona != '' and self.filtros.zona != "False":
+                if self.filtros.tienda != '' and self.filtros.tienda != "False":
+                    nivel = 'tienda'
+                    lugar = int(self.filtros.tienda)
+                else:
+                    nivel = 'zona'
+                    lugar = int(self.filtros.zona)
+            else:
+                nivel = 'region'
+                lugar = int(self.filtros.region)
+        else:
+            filtro_lugar = False
+            lugar = ''
         if self.titulo == 'Fulfillment Rate y Found Rate':
             print("Entrando a Home Ejes Múltiples")
             collection = conexion_mongo('report').report_foundRate
-            pipeline = [{'$unwind': '$sucursal'}]
-            pipeline.append({'$match': {'sucursal.tienda': int(self.filtros.tienda)}})
+            if filtro_lugar:
+                pipeline = [{'$unwind': '$sucursal'}]
+                pipeline.append({'$match': {f'sucursal.{nivel}': lugar}})
             pipeline.append({'$match': {'fechaUltimoCambio': {'$gte': self.fecha_ini_a12, '$lt': self.fecha_fin_a12}}})
             pipeline.append({'$group':{'_id': {'fecha_interna': '$fechaUltimoCambio', 'fecha_mostrar': '$descrip_fecha'}, 'pedidos': {'$sum': '$n_pedido'}, 'items_ini': {'$sum': '$items_ini'}, 'items_fin': {'$sum': '$items_fin'}, 'items_found': {'$sum': '$items_found'}}})
             pipeline.append({'$project':{'_id':0, 'fecha_interna':'$_id.fecha_interna', 'fecha_mostrar':'$_id.fecha_mostrar', 'fulfillment_rate': {'$divide': ['$items_fin', '$items_ini']}, 'found_rate': {'$divide': ['$items_found', '$items_ini']}}})
@@ -2221,12 +2237,10 @@ class EjesMultiples():
             else:
                 hayResultados = "no"
 
-
         if self.titulo == 'Pedidos Perfectos':
-            serie1 = []
-            serie2 = []
-            pipeline = [{'$unwind': '$sucursal'}]
-            pipeline.append({'$match': {'sucursal.idtienda': int(self.filtros.tienda)}})
+            if filtro_lugar:
+                pipeline.append({'$unwind': '$sucursal'})
+                pipeline.append({'$match': {f'sucursal.{nivel}': lugar}})
             collection = conexion_mongo('report').report_pedidoPerfecto
             pipeline.append(
                 {'$match': {

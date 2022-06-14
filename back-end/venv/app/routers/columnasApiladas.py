@@ -744,11 +744,27 @@ class ColumnasApiladas():
         serie1 = []
         serie2 = []
         serie3 = []
+        if self.filtros.region != '' and self.filtros.region != "False":
+            filtro_lugar = True
+            if self.filtros.zona != '' and self.filtros.zona != "False":
+                if self.filtros.tienda != '' and self.filtros.tienda != "False":
+                    nivel = 'idTienda'
+                    lugar = int(self.filtros.tienda)
+                else:
+                    nivel = 'zona'
+                    lugar = int(self.filtros.zona)
+            else:
+                nivel = 'region'
+                lugar = int(self.filtros.region)
+        else:
+            filtro_lugar = False
+            lugar = ''
 
         if self.titulo == 'Pedidos del Día':
             collection = conexion_mongo('report').report_pedidoPendientes
-            pipeline = [{'$unwind': '$sucursal'}]
-            pipeline.append({'$match': {'sucursal.idTienda': int(self.filtros.tienda)}})
+            if filtro_lugar:
+                pipeline = [{'$unwind': '$sucursal'}]
+                pipeline.append({'$match': {f'sucursal.{nivel}': lugar}})
             pipeline.append({'$match': {'prioridad': {'$in': ['ENTREGADO', 'HOY ATRASADO', 'HOY A TIEMPO']}}})
             pipeline.append({'$project': {'rango': '$rango', 'ENTREGADO': {'$cond': [{'$eq':['$prioridad', 'ENTREGADO']}, 1, 0]}, 'HOY_ATRASADO': {'$cond': [{'$eq':['$prioridad', 'HOY ATRASADO']}, 1, 0]}, 'HOY_A_TIEMPO': {'$cond': [{'$eq':['$prioridad', 'HOY A TIEMPO']}, 1, 0]}}})
             pipeline.append({'$group':{'_id':'$rango', 'ENTREGADO':{'$sum':'$ENTREGADO'}, 'HOY_ATRASADO':{'$sum':'$HOY_ATRASADO'}, 'HOY_A_TIEMPO':{'$sum':'$HOY_A_TIEMPO'}}})
