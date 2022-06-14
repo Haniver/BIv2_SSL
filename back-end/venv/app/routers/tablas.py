@@ -2954,7 +2954,7 @@ class Tablas():
             else:
                 hayResultados = 'no'
 
-        if self.titulo == 'Las 30 Tiendas con NPS Más Bajo':
+        if self.titulo == 'Tiendas por NPS Más Bajo':
             if self.filtros.agrupador == 'dia':
                 mes = int(self.filtros.periodo['mes'])
                 mes = str(mes) if mes >= 10 else '0'+str(mes)
