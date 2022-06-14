@@ -258,7 +258,7 @@ class Tablas():
             else:
                 hayResultados = 'no'
 
-        if self.titulo == 'Tiendas Top 20 Estatus Completo':
+        if self.titulo == 'Estatus por Tienda':
             if self.filtros.region != '' and self.filtros.region != "False":
                 self.filtro_lugar = True
                 if self.filtros.zona != '' and self.filtros.zona != "False":
@@ -301,48 +301,48 @@ class Tablas():
             else:
                 hayResultados = 'no'
 
-        if self.titulo == 'Tiendas Top 20 Estatus Incompleto':
-            if self.filtros.region != '' and self.filtros.region != "False":
-                self.filtro_lugar = True
-                if self.filtros.zona != '' and self.filtros.zona != "False":
-                    nivel = 'zona'
-                    self.lugar = int(self.filtros.zona)
-                else:
-                    nivel = 'region'
-                    self.lugar = int(self.filtros.region)
-            else:
-                self.filtro_lugar = False
-                self.lugar = ''
+        # if self.titulo == 'Tiendas Top 20 Estatus Incompleto':
+        #     if self.filtros.region != '' and self.filtros.region != "False":
+        #         self.filtro_lugar = True
+        #         if self.filtros.zona != '' and self.filtros.zona != "False":
+        #             nivel = 'zona'
+        #             self.lugar = int(self.filtros.zona)
+        #         else:
+        #             nivel = 'region'
+        #             self.lugar = int(self.filtros.region)
+        #     else:
+        #         self.filtro_lugar = False
+        #         self.lugar = ''
 
-            collection = conexion_mongo('report').report_foundRate
-            pipeline.append({'$unwind': '$sucursal'})
-            if self.filtro_lugar:
-                pipeline.append({'$match': {'sucursal.'+ nivel: self.lugar}})
-            pipeline.append({'$match': {'fechaUltimoCambio': {'$gte': self.fecha_ini, '$lt': self.fecha_fin}}})
-            pipeline.append({'$group':{'_id':'$sucursal.tiendaNombre', 'COMPLETO': {'$sum': '$COMPLETO'}, 'INC_SIN_STOCK': {'$sum': '$INC_SIN_STOCK'}, 'INC_SUSTITUTOS': {'$sum': '$INC_SUSTITUTOS'}, 'INCOMPLETO': {'$sum': '$INCOMPLETO'}, 'num_pedidos':{'$sum': '$n_pedido'}}})
-            pipeline.append({'$project':{'_id':0, 'lugar':'$_id', 'COMPLETO': {'$divide':['$COMPLETO', '$num_pedidos']}, 'INC_SIN_STOCK': {'$divide':['$INC_SIN_STOCK', '$num_pedidos']}, 'INC_SUSTITUTOS': {'$divide':['$INC_SUSTITUTOS', '$num_pedidos']}, 'INCOMPLETO': {'$divide':['$INCOMPLETO', '$num_pedidos']}}})
-            pipeline.append({'$sort':{'INCOMPLETO':-1}})
-            cursor = collection.aggregate(pipeline)
-            arreglo = await cursor.to_list(length=20)
-            if len(arreglo) >0:
-                hayResultados = "si"
-                for dato in arreglo:
-                    data.append({
-                        'lugar': dato['lugar'],
-                        'COMPLETO': dato['COMPLETO'],
-                        'INC_SIN_STOCK': dato['INC_SIN_STOCK'],
-                        'INC_SUSTITUTOS': dato['INC_SUSTITUTOS'],
-                        'INCOMPLETO': dato['INCOMPLETO']
-                    })
-                columns = [
-                        {'name': 'lugar', 'selector':'lugar', 'formato':'texto', 'ancho': '350px'},
-                        {'name': 'Completo', 'selector':'COMPLETO', 'formato':'porcentaje'},
-                        {'name': 'Incompleto Sin Stock', 'selector':'INC_SIN_STOCK', 'formato':'porcentaje'},
-                        {'name': 'Incompleto Sustitutos', 'selector':'INC_SUSTITUTOS', 'formato':'porcentaje'},
-                        {'name': 'Incompleto', 'selector':'INCOMPLETO', 'formato':'porcentaje'}
-                    ]
-            else:
-                hayResultados = 'no'
+        #     collection = conexion_mongo('report').report_foundRate
+        #     pipeline.append({'$unwind': '$sucursal'})
+        #     if self.filtro_lugar:
+        #         pipeline.append({'$match': {'sucursal.'+ nivel: self.lugar}})
+        #     pipeline.append({'$match': {'fechaUltimoCambio': {'$gte': self.fecha_ini, '$lt': self.fecha_fin}}})
+        #     pipeline.append({'$group':{'_id':'$sucursal.tiendaNombre', 'COMPLETO': {'$sum': '$COMPLETO'}, 'INC_SIN_STOCK': {'$sum': '$INC_SIN_STOCK'}, 'INC_SUSTITUTOS': {'$sum': '$INC_SUSTITUTOS'}, 'INCOMPLETO': {'$sum': '$INCOMPLETO'}, 'num_pedidos':{'$sum': '$n_pedido'}}})
+        #     pipeline.append({'$project':{'_id':0, 'lugar':'$_id', 'COMPLETO': {'$divide':['$COMPLETO', '$num_pedidos']}, 'INC_SIN_STOCK': {'$divide':['$INC_SIN_STOCK', '$num_pedidos']}, 'INC_SUSTITUTOS': {'$divide':['$INC_SUSTITUTOS', '$num_pedidos']}, 'INCOMPLETO': {'$divide':['$INCOMPLETO', '$num_pedidos']}}})
+        #     pipeline.append({'$sort':{'INCOMPLETO':-1}})
+        #     cursor = collection.aggregate(pipeline)
+        #     arreglo = await cursor.to_list(length=20)
+        #     if len(arreglo) >0:
+        #         hayResultados = "si"
+        #         for dato in arreglo:
+        #             data.append({
+        #                 'lugar': dato['lugar'],
+        #                 'COMPLETO': dato['COMPLETO'],
+        #                 'INC_SIN_STOCK': dato['INC_SIN_STOCK'],
+        #                 'INC_SUSTITUTOS': dato['INC_SUSTITUTOS'],
+        #                 'INCOMPLETO': dato['INCOMPLETO']
+        #             })
+        #         columns = [
+        #                 {'name': 'lugar', 'selector':'lugar', 'formato':'texto', 'ancho': '350px'},
+        #                 {'name': 'Completo', 'selector':'COMPLETO', 'formato':'porcentaje'},
+        #                 {'name': 'Incompleto Sin Stock', 'selector':'INC_SIN_STOCK', 'formato':'porcentaje'},
+        #                 {'name': 'Incompleto Sustitutos', 'selector':'INC_SUSTITUTOS', 'formato':'porcentaje'},
+        #                 {'name': 'Incompleto', 'selector':'INCOMPLETO', 'formato':'porcentaje'}
+        #             ]
+        #     else:
+        #         hayResultados = 'no'
 
         if self.titulo == 'Detalle de Pedidos Tienda':
             collection = conexion_mongo('report').report_detallePedidos
@@ -785,7 +785,7 @@ class Tablas():
             periodo = {'semana': {'$week': '$fecha'}, 'anio': {'$year':'$fecha'}}
         elif self.filtros.agrupador == 'dia':
             periodo = {'dia': {'$dayOfMonth': '$fecha'}, 'mes': {'$month': '$fecha'}, 'anio': {'$year':'$fecha'}}
-        else:
+        # else:
             # print("No jaló, porque el agrupador es "+ self.filtros.agrupador)
         pipeline_periodos = deepcopy(pipeline)
         pipeline_periodos.extend([

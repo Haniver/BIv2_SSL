@@ -115,12 +115,12 @@ const FoundRate = () => {
         </Col>
       </Row>
       {(tienda === false || tienda === '') && <Row className='match-height'>
-        <Col xl='6' sm='12'>
-          <Tabla titulo='Tiendas Top 20 Estatus Completo' quitarPaginacion seccion={seccion} fechas={fechas} region={region} zona={zona} tienda={tienda} />
+        <Col sm='12'>
+          <Tabla titulo='Estatus por Tienda' quitarPaginacion seccion={seccion} fechas={fechas} region={region} zona={zona} tienda={tienda} />
         </Col>
-        <Col xl='6' sm='12'>
+        {/* <Col xl='6' sm='12'>
           <Tabla titulo='Tiendas Top 20 Estatus Incompleto' quitarPaginacion seccion={seccion} fechas={fechas} region={region} zona={zona} tienda={tienda} />
-        </Col>
+        </Col> */}
       </Row>}
       {tienda !== false && tienda !== '' && <Row className='match-height'>
         <Col sm='12'>
