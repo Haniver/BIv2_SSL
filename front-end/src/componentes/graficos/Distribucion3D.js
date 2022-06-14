@@ -332,8 +332,8 @@ const Distribucion3D = ({ titulo, yLabel, seccion, formato, fechas, region, zona
         dispatchLoader({tipo: 'recibirDeAPI'})
         if (res.data.hayResultados === 'si') {
             const series_tmp = []
-            console.log('Data desde Distribucion3D:')
-            console.log(res.data.data)
+            // console.log('Data desde Distribucion3D:')
+            // console.log(res.data.data)
             setData(res.data.data)
             setTituloX(res.data.tituloX)
             setTituloY(res.data.tituloY)

@@ -128,7 +128,7 @@ const AreaBasica = ({ titulo, yLabel, seccion, formato, fechas, region, zona, ti
             setData(res.data.data)
             setTituloY(res.data.tituloY)
             setTituloX(res.data.tituloX)
-            console.log(`Color desde AreaBasica: ${res.data.color} que se traduce a ${colors[colorSerie].main}`)
+            // console.log(`Color desde AreaBasica: ${res.data.color} que se traduce a ${colors[colorSerie].main}`)
             setColorSerie(res.data.color)
             // console.log(JSON.stringify(res.data.pipeline))
         } else {

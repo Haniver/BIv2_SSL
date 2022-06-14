@@ -189,8 +189,8 @@ const Registro = () => {
   const [comboRoles, setComboRoles] = useState({label: '', value: ''})
   useEffect(async () => {
     const tmp = await userService.roles()
-    console.log('comboRoles:')
-    console.log(tmp.data)
+    // console.log('comboRoles:')
+    // console.log(tmp.data)
     setComboRoles(tmp.data)
   }, [])
   const [rol, setRol] = useState('')

@@ -21,17 +21,17 @@ const SkuCornershopChedraui = () => {
 
     const seccion = 'SkuCornershopChedraui'
 
-    useEffect(() => {
-        console.log(`Fechas desde parent:`)
-        console.log(fechas)
-        console.log(`region: ${region}`)
-        console.log(`zona: ${zona}`)
-        console.log(`tienda: ${tienda}`)
-        console.log(`depto: ${depto}`)
-        console.log(`subDepto: ${subDepto}`)
-        console.log(`e3: ${e3}`)
-        console.log(`canal2: ${canal2}`)
-    }, [fechas])
+    // useEffect(() => {
+    //     console.log(`Fechas desde parent:`)
+    //     console.log(fechas)
+    //     console.log(`region: ${region}`)
+    //     console.log(`zona: ${zona}`)
+    //     console.log(`tienda: ${tienda}`)
+    //     console.log(`depto: ${depto}`)
+    //     console.log(`subDepto: ${subDepto}`)
+    //     console.log(`e3: ${e3}`)
+    //     console.log(`canal2: ${canal2}`)
+    // }, [fechas])
 
   return (
     <>

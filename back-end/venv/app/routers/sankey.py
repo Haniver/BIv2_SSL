@@ -85,7 +85,7 @@ class Sankey():
         {filtroAgrupador}
         {filtroLugar}
         """
-        print(f"query desde sankey: {query}")
+        # print(f"query desde sankey: {query}")
         cnxn = conexion_sql('DWH')
         cursor = cnxn.cursor().execute(query)
         resultados = crear_diccionario(cursor)

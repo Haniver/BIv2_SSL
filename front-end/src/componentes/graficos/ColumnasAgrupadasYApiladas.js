@@ -55,7 +55,7 @@ const ColumnasAgrupadasYApiladas = ({ titulo, tituloAPI, seccion, grupoDeptos, d
 
     useEffect(async () => {
         dispatchLoader({tipo: 'llamarAPI'})
-        console.log("Vamos a mandar datos a la API desde ColumnasAgrupadasYApiladas")
+        // console.log("Vamos a mandar datos a la API desde ColumnasAgrupadasYApiladas")
         const res = await axios({
           method: 'post',
           url: `${CustomUrls.ApiUrl()}columnasAgrupadasYApiladas/${seccion}?titulo=${titulo_enviar}`,

@@ -83,12 +83,12 @@ class EjesMultiples():
         return  {'hayResultados':hayResultados,'categories':categories, 'series':series, 'pipeline': pipeline, 'lenArreglo':len(arreglo)}
 
     async def VentaSinImpuesto(self):
-        print(f"Fecha desde filtro: {self.filtros.fechas['fecha_fin']}")
+        # print(f"Fecha desde filtro: {self.filtros.fechas['fecha_fin']}")
         fecha_fin = datetime.strptime(self.filtros.fechas['fecha_fin'], '%Y-%m-%dT%H:%M:%S.%fZ')
-        print(f"Fecha como datetime: {str(fecha_fin)}")
+        # print(f"Fecha como datetime: {str(fecha_fin)}")
         anioElegido = fecha_fin.year
         mesElegido = fecha_fin.month
-        print(f"Mes: {str(mesElegido)}")
+        # print(f"Mes: {str(mesElegido)}")
         categories = []
         series = []
         pipeline = []
@@ -1625,7 +1625,7 @@ class EjesMultiples():
 
             # print("query desde ejes multiples nps: "+pipeline)
             cnxn = conexion_sql('DWH')
-            print('NPS por Día desde EjesMultiples: '+pipeline)
+            # print('NPS por Día desde EjesMultiples: '+pipeline)
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)
 
@@ -2212,7 +2212,7 @@ class EjesMultiples():
             filtro_lugar = False
             lugar = ''
         if self.titulo == 'Fulfillment Rate y Found Rate':
-            print("Entrando a Home Ejes Múltiples")
+            # print("Entrando a Home Ejes Múltiples")
             collection = conexion_mongo('report').report_foundRate
             if filtro_lugar:
                 pipeline = [{'$unwind': '$sucursal'}]
@@ -2221,7 +2221,7 @@ class EjesMultiples():
             pipeline.append({'$group':{'_id': {'fecha_interna': '$fechaUltimoCambio', 'fecha_mostrar': '$descrip_fecha'}, 'pedidos': {'$sum': '$n_pedido'}, 'items_ini': {'$sum': '$items_ini'}, 'items_fin': {'$sum': '$items_fin'}, 'items_found': {'$sum': '$items_found'}}})
             pipeline.append({'$project':{'_id':0, 'fecha_interna':'$_id.fecha_interna', 'fecha_mostrar':'$_id.fecha_mostrar', 'fulfillment_rate': {'$divide': ['$items_fin', '$items_ini']}, 'found_rate': {'$divide': ['$items_found', '$items_ini']}}})
             pipeline.append({'$sort':{'fecha_interna': 1}})
-            print(str(pipeline))
+            # print(str(pipeline))
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=1000)
             if len(arreglo) >0:
@@ -2316,7 +2316,7 @@ class EjesMultiples():
                 }},
                 {'$sort': {'_id.anio': 1, '_id.mes': 1}}
             ])
-            print('Pipeline desde ResultadoRFM de EjesMultiples: '+str(pipeline))
+            # print('Pipeline desde ResultadoRFM de EjesMultiples: '+str(pipeline))
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=1000)
             if len(arreglo) > 0:
@@ -2484,7 +2484,7 @@ class EjesMultiples():
             # print('Pipeline desde Ctes por segmento en Tablas: '+str(pipeline))
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=1000)
-            print('Arreglo desde Quejas por Segmento y Calificación NPS en ejesMultiples: '+str(arreglo))
+            # print('Arreglo desde Quejas por Segmento y Calificación NPS en ejesMultiples: '+str(arreglo))
             if len(arreglo) > 0:
                 hayResultados = "si"
                 for row in arreglo:

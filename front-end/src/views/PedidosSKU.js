@@ -18,10 +18,10 @@ const PedidosSKU = () => {
 
     const seccion = 'PedidosSKU'
 
-    useEffect(() => {
-        console.log(`Fechas desde parent:`)
-        console.log(fechas)
-    }, [fechas])
+    // useEffect(() => {
+    //     console.log(`Fechas desde parent:`)
+    //     console.log(fechas)
+    // }, [fechas])
 
   return (
     <>

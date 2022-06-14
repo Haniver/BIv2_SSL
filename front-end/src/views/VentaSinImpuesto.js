@@ -73,11 +73,11 @@ const VentaSinImpuesto = () => {
     setTarjetasCombinadasMesAlDia(resMesAlDia)
   }, [fechas, region, zona, tienda, canal, depto, subDepto])
 
-  useEffect(() => {
-    console.log(`region: ${region}`)
-    console.log(`zona: ${zona}`)
-    console.log(`tienda: ${tienda}`)
-  }, [region, zona, tienda])
+  // useEffect(() => {
+  //   console.log(`region: ${region}`)
+  //   console.log(`zona: ${zona}`)
+  //   console.log(`tienda: ${tienda}`)
+  // }, [region, zona, tienda])
 
   return (
     <>

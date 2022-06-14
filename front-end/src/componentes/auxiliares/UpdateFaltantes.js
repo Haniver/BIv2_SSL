@@ -17,7 +17,7 @@ const UpdateFaltantes = ({producto, setProducto, reloadTabla, setReloadTabla, fe
             url: `${CustomUrls.ApiUrl()}cargarMotivosFaltantes`,
             headers: authHeader()
         })
-        console.log(resp.data)
+        // console.log(resp.data)
         setComboMotivos(resp.data)
 
     }, [])

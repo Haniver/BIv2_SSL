@@ -424,7 +424,7 @@ class Tarjetas():
                 res = '--'
             else:
                 hayResultados = "si"
-                print(str(arreglo[0]))
+                # print(str(arreglo[0]))
                 montoTotalCompra = arreglo[0]['montoTotalCompra']
                 cantCompras = arreglo[0]['cantCompras']
                 res = float(montoTotalCompra) / float(cantCompras)
@@ -519,7 +519,7 @@ class Tarjetas():
 
 @router.post("/{seccion}")
 async def tarjetas (filtros: Filtro, titulo: str, seccion: str, user: dict = Depends(get_current_active_user)):
-    print("El usuario desde tarjetas .py es: {str(user)}")
+    # print("El usuario desde tarjetas .py es: {str(user)}")
     if tienePermiso(user.id, seccion):
         objeto = Tarjetas(filtros, titulo)
         funcion = getattr(objeto, seccion)

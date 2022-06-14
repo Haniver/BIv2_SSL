@@ -8,8 +8,8 @@ axios.interceptors.request.use(function (config) {
   })
   
   axios.interceptors.response.use(function (response) {
-    console.log('La API regresó:')
-    console.log(response)
+    // console.log('La API regresó:')
+    // console.log(response)
     return response
   }, function (error) {
     console.log("ERROR DE AXIOS")

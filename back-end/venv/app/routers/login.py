@@ -53,7 +53,7 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     WHERE usuario='{user.usuario}'"""
     cursor.execute(query)
     arreglo = crear_diccionario(cursor)
-    print(f"El estatus del usuario (desde login.py) es: {arreglo[0]['estatus']}")
+    # print(f"El estatus del usuario (desde login.py) es: {arreglo[0]['estatus']}")
     if arreglo[0]['estatus'] != 'activo':
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -86,7 +86,7 @@ async def roles():
     rows = cursor.fetchall()
     for row in rows:
         respuesta.append({'value': row.id, 'label': row.rol})
-    print(f'Respuesta desde roles en login.py: {str(respuesta)}')
+    # print(f'Respuesta desde roles en login.py: {str(respuesta)}')
     return respuesta
 
 @router.post("/recuperarPassword")
@@ -157,7 +157,7 @@ async def verificar_usuario(input: TokenData):
     cnxn = conexion_sql('DJANGO')
     cursor = cnxn.cursor().execute(query)
     arreglo = crear_diccionario(cursor)
-    print(f'arreglo desde verificarUsuario en login.py: {str(arreglo)}')
+    # print(f'arreglo desde verificarUsuario en login.py: {str(arreglo)}')
     return True if len(arreglo) > 0 else False
 
 ############# Endpoints Restringidos #############
@@ -206,7 +206,7 @@ async def cambiarPerfil(objetoCambiarPassword: claseCambiarPassword, user: dict 
 
 @router.post("/registro")
 async def registro(input_usuario: UserInDB):
-    print('Entrando a registro')
+    # print('Entrando a registro')
     ahora = datetime.now()
     ahora = ahora.strftime("%Y-%m-%d %H:%M:%S")
     # mensaje = f'Usuario es {str(user)}, password vieja es {objetoCambiarPassword.passwordVieja} y password nueva es {objetoCambiarPassword.password}'
@@ -218,7 +218,7 @@ async def registro(input_usuario: UserInDB):
     query = f"""INSERT INTO DJANGO.php.usuarios (nombre, password, usuario, id_rol, idTienda, estatus)
         VALUES ('{nombre_completo}', '{input_usuario.password}', '{input_usuario.usuario}', {input_usuario.id_rol}, {input_usuario.tienda}, 'revisión')"""
     try:
-        print(f'query desde registro en login.py: {query}')
+        # print(f'query desde registro en login.py: {query}')
         cursor.execute(query)
         cnxn.commit()
     except pyodbc.Error as e:

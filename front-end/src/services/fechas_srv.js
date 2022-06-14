@@ -78,9 +78,9 @@ class fechas_srv {
     }
     diaActualOUltimoDelMes(anio = false, mes = false) {
         const hoy = new Date()
-        console.log(`HOY: ${hoy}`)
+        // console.log(`HOY: ${hoy}`)
         if (anio === hoy.getFullYear() && mes === hoy.getMonth()) {
-            console.log(`Día del mes de hoy: ${hoy.getDate()}`)
+            // console.log(`Día del mes de hoy: ${hoy.getDate()}`)
             return hoy.getDate()
         } else {
             return new Date(anio, mes + 1, 0).getDate()
@@ -129,9 +129,9 @@ class fechas_srv {
         }
     }
     noUTC(fecha) {
-        console.log("entramos a fechas_srv -> noUtc")
+        // console.log("entramos a fechas_srv -> noUtc")
         const offset = fecha.getTimezoneOffset()
-        console.log(`Offset: ${offset}`)
+        // console.log(`Offset: ${offset}`)
         return new Date(fecha.getTime() - (offset * 60000))
         // return fecha
     }

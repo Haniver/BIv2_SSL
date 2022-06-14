@@ -15,11 +15,11 @@ const CatalogoArticulos = () => {
 
     const seccion = 'CatalogoArticulos'
 
-    useEffect(() => {
-        console.log(`grupoDeptos = ${grupoDeptos}`)
-        console.log(`deptoAgrupado = ${deptoAgrupado}`)
-        console.log(`subDeptoAgrupado = ${subDeptoAgrupado}`)
-    }, [grupoDeptos, deptoAgrupado, subDeptoAgrupado])
+    // useEffect(() => {
+    //     console.log(`grupoDeptos = ${grupoDeptos}`)
+    //     console.log(`deptoAgrupado = ${deptoAgrupado}`)
+    //     console.log(`subDeptoAgrupado = ${subDeptoAgrupado}`)
+    // }, [grupoDeptos, deptoAgrupado, subDeptoAgrupado])
     
 
   return (

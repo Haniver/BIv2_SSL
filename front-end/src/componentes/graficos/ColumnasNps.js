@@ -54,7 +54,7 @@ const ColumnasNps = ({ titulo, yLabel, seccion, formato, fechas, region, zona, t
 
     useEffect(async () => {
         dispatchLoader({tipo: 'llamarAPI'})
-        console.log(`Periodo desde ColumnasNps = ${periodo}`)
+        // console.log(`Periodo desde ColumnasNps = ${periodo}`)
         const titulo_enviar = (tituloAPI) ? tituloAPI : titulo // Como la API usa el título de la gráfica para regresar su valor, había un problema cuando ese título es variable, como cuando incluye la fecha actual. Entonces, si desde la vista le mandas el prop tituloAPI, es ese el que se usa para la API. Si lo omites, se usa la variable titulo como estaba pensado originalmente
         const res = await axios({
           method: 'post',
@@ -84,8 +84,8 @@ const ColumnasNps = ({ titulo, yLabel, seccion, formato, fechas, region, zona, t
                 })
             })
             setSeries(series_tmp)
-            console.log('Series desde ColumnasNps:')
-            console.log(JSON.stringify(series_tmp))
+            // console.log('Series desde ColumnasNps:')
+            // console.log(JSON.stringify(series_tmp))
         } else {
             setCategorias([])
             setSeries([])

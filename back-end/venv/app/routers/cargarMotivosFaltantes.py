@@ -43,7 +43,7 @@ async def cargar_motivos_faltantes():
 @router.post("/updateMotivosFaltantes")
 async def update_motivos_faltantes(producto: Producto):
     query = f"""update fs set fs.id_respuesta={str(producto.motivo)} from DWH.report.faltante_sku fs where fecha='{producto.fecha}' and store_num = {str(producto.tienda)} and sku={str(producto.sku)}"""
-    print("Query desde updateMotivosFaltantes: " + query)
+    # print("Query desde updateMotivosFaltantes: " + query)
     cnxn = conexion_sql('DWH')
     try:
         cnxn.cursor().execute(query)
@@ -56,9 +56,9 @@ async def update_motivos_faltantes(producto: Producto):
 async def update_motivos_faltantes(usuarioParaActualizar: UsuarioParaActualizar, user: dict = Depends(get_current_active_user)):
     if tienePermiso(user.id_rol, 'AltaUsuarios'):
         query = f"""update us set us.estatus='{str(usuarioParaActualizar.estatus)}' from DJANGO.php.usuarios us where usuario='{usuarioParaActualizar.email}'"""
-        print("Query desde updateEstatusUsuario: " + query)
+        # print("Query desde updateEstatusUsuario: " + query)
         cnxn = conexion_sql('DJANGO')
-        print(f"Query desde updateEstatusUsuario en cargarMotivosFaltantes: {query}")
+        # print(f"Query desde updateEstatusUsuario en cargarMotivosFaltantes: {query}")
         try:
             cnxn.cursor().execute(query)
             cnxn.commit()

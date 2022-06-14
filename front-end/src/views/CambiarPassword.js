@@ -49,7 +49,7 @@ const CambiarPassword = () => {
   const handleSave = (event) => {
     event.preventDefault()
     if (!isStrongPassword(password1, {minLength: 10, minLowercase: 1, minUppercase: 1, minNumbers: 1, minSymbols: 0, minreturnScore: false})) {
-        console.log(`La contaseña es ${password1}`)
+        // console.log(`La contaseña es ${password1}`)
         setMensaje({
             texto: 'Tu contraseña debe tener por lo menos 10 caracteres que incluyan letras mayúsculas, minúsculas y números.',
             visible: true,

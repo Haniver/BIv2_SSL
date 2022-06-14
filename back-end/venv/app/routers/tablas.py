@@ -786,7 +786,7 @@ class Tablas():
         elif self.filtros.agrupador == 'dia':
             periodo = {'dia': {'$dayOfMonth': '$fecha'}, 'mes': {'$month': '$fecha'}, 'anio': {'$year':'$fecha'}}
         else:
-            print("No jaló, porque el agrupador es "+ self.filtros.agrupador)
+            # print("No jaló, porque el agrupador es "+ self.filtros.agrupador)
         pipeline_periodos = deepcopy(pipeline)
         pipeline_periodos.extend([
             {'$group':{
@@ -1513,7 +1513,7 @@ class Tablas():
                     hayResultados = 'no'
             else:
                 hayResultados = 'no'
-        print(f"Query desde tabla {self.titulo} en pedidoPerfecto: {str(pipeline)}")
+        # print(f"Query desde tabla {self.titulo} en pedidoPerfecto: {str(pipeline)}")
         return {'hayResultados':hayResultados, 'pipeline': pipeline, 'columns':columns, 'data':data}
         # Return para debugging:
         # return {'hayResultados':'no', 'pipeline': [], 'columns':[], 'data':[]}

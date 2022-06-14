@@ -109,7 +109,7 @@ class ColumnasBasicas():
                 pipeline += f" and ct.region ='{self.filtros.region}' "
             pipeline += f" group by nd.calificacion, {agrupador_select} order by calificacion"
 
-            print("query desde columnas básicas nps ahorita: "+pipeline)
+            # print("query desde columnas básicas nps ahorita: "+pipeline)
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)

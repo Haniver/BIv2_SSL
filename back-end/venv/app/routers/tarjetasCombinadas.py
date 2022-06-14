@@ -84,7 +84,7 @@ class TarjetasCombinadas():
                 query += f""" and cd.idDepto = {self.filtros.depto} """
         query += " group by dt.anio order by dt.anio "
 
-        print(f"Query para {self.titulo}:\n{query}")
+        # print(f"Query para {self.titulo}:\n{query}")
         cnxn = conexion_sql('DWH')
         cursor = cnxn.cursor().execute(query)
         arreglo = crear_diccionario(cursor)
@@ -212,7 +212,7 @@ class TarjetasCombinadas():
             else:
                 hayResultados = "no"
 
-        print(f'Respuesta desde TarjetasCombinadas -> {self.titulo}: {res}')
+        # print(f'Respuesta desde TarjetasCombinadas -> {self.titulo}: {res}')
         return {'hayResultados':hayResultados, 'pipeline':pipeline, 'res':res}
         # return {'hayResultados':'no', 'pipeline':'', 'res':''}
 

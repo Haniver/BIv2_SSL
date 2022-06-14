@@ -22,9 +22,9 @@ const Nps = () => {
 
     const seccion = 'Nps'
 
-    useEffect(() => {
-      console.log(`Categoría NPS: ${nps}`)
-    }, [nps])
+    // useEffect(() => {
+    //   console.log(`Categoría NPS: ${nps}`)
+    // }, [nps])
     
 
   return (
