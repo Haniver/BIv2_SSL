@@ -1129,7 +1129,7 @@ class Tablas():
         pipeline = []
         data = []
         columns = []
-        if self.titulo == '50 Tiendas con % Pedido Perfecto más bajo':
+        if self.titulo == 'Tiendas por % Pedido Perfecto más bajo':
             if self.filtros.periodo != {}:
                 collection = conexion_mongo('report').report_pedidoPerfecto
                 if self.filtros.region != '' and self.filtros.region != "False":

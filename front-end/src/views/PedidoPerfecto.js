@@ -21,8 +21,8 @@ const PedidoPerfecto = () => {
     const [labelTienda, setLabelTienda] = useState(false)
     const [quitarBusqueda, setQuitarBusqueda] = useState(false)
     const [quitarPaginacion, setQuitarPaginacion] = useState(false)
-    const [sufijoTituloTabla, setSufijoTituloTabla] = useState('')
-    const [prefijoTituloTabla, setPrefijoTituloTabla] = useState('')
+    // const [sufijoTituloTabla, setSufijoTituloTabla] = useState('')
+    // const [prefijoTituloTabla, setPrefijoTituloTabla] = useState('')
 
     const seccion = 'PedidoPerfecto'
 
@@ -31,8 +31,8 @@ const PedidoPerfecto = () => {
       if (!tienda) {
         setQuitarBusqueda(false)
         setQuitarPaginacion(false)
-        setPrefijoTituloTabla('50 tiendas con ')
-        setSufijoTituloTabla(' más bajo')
+        // setPrefijoTituloTabla('50 tiendas con ')
+        // setSufijoTituloTabla(' más bajo')
       } else {
         setQuitarBusqueda(true)
         setQuitarPaginacion(true)
@@ -91,7 +91,7 @@ const PedidoPerfecto = () => {
       </Row>}
       <Row className='match-height'>
         <Col sm='12'>
-          <Tabla tituloAPI='50 Tiendas con % Pedido Perfecto más bajo' titulo={`${prefijoTituloTabla}% Pedido Perfecto${sufijoTituloTabla}`} fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} setSibling={setSibling} quitarBusqueda={quitarBusqueda} quitarPaginacion={quitarPaginacion} />
+          <Tabla titulo='Tiendas por % Pedido Perfecto más bajo' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} setSibling={setSibling} quitarBusqueda={quitarBusqueda} quitarPaginacion={quitarPaginacion} />
         </Col>
       </Row>
       {tienda !== undefined && tienda !== '' && <Row className='match-height'>
