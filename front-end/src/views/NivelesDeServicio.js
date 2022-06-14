@@ -3,6 +3,7 @@ import { Row, Col, Card, CardBody } from 'reactstrap'
 import Filtro from '../componentes/auxiliares/Filtro'
 import fechas_srv from '../services/fechas_srv'
 import ColumnasApiladas from '../componentes/graficos/ColumnasApiladas'
+import Pie from '../componentes/graficos/Pie'
 
 const NivelesDeServicio = () => {
   const [fechas, setFechas] = useState({fecha_ini: fechas_srv.primeroDelMesVencido(), fecha_fin: fechas_srv.actualVencida()})
@@ -32,6 +33,14 @@ const NivelesDeServicio = () => {
         </Col>
         <Col xl='6' sm='12'>
           <ColumnasApiladas titulo='Pedidos Cancelados por Área' seccion={seccion} formato='entero' yLabel='Pedidos' fechas={fechas} region={region} zona={zona} tienda={tienda} categoria={categoria} tipoEntrega={tipoEntrega} />
+        </Col>
+      </Row>}
+      {tienda !== '' && tienda !== false && tienda !== undefined && <Row className='match-height'>
+        <Col xl='6' sm='12'>
+          <Pie titulo='Estatus de Entrega y No Entrega por Área' formato='entero' seccion={seccion} yLabel='Pedidos' fechas={fechas} region={region} zona={zona} tienda={tienda} categoria={categoria} tipoEntrega={tipoEntrega} />
+        </Col>
+        <Col xl='6' sm='12'>
+          <Pie titulo='Pedidos Cancelados por Área' formato='entero' seccion={seccion} yLabel='Pedidos' fechas={fechas} region={region} zona={zona} tienda={tienda} categoria={categoria} tipoEntrega={tipoEntrega} />
         </Col>
       </Row>}
       <Row className='match-height'>
