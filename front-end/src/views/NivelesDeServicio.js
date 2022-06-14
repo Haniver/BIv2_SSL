@@ -5,7 +5,7 @@ import fechas_srv from '../services/fechas_srv'
 import ColumnasApiladas from '../componentes/graficos/ColumnasApiladas'
 import Pie from '../componentes/graficos/Pie'
 import Tabla from '../componentes/tablas/Tabla'
-import userService from '../services/user.service'
+// import userService from '../services/user.service'
 
 const NivelesDeServicio = () => {
   const [fechas, setFechas] = useState({fecha_ini: fechas_srv.primeroDelMesVencido(), fecha_fin: fechas_srv.actualVencida()})
@@ -24,11 +24,11 @@ const NivelesDeServicio = () => {
 
   return (
     <Fragment>
-      {userService.getNivel() <= 3 && <Row className='match-height'>
+      {/* {userService.getNivel() <= 3 && <Row className='match-height'>
         <Col sm='12'>
           <h2 className='centrado'>{userService.getLugarNombre()}</h2>
         </Col>
-      </Row>}
+      </Row>} */}
       <Row className='match-height'>
         <Col sm='12'>
           <Filtro fechas={fechas} region={region} zona={zona} tienda={tienda} categoria={categoria} tipoEntrega={tipoEntrega} setFechas={setFechas} setRegion={setRegion} setZona={setZona} setTienda={setTienda} setCategoria={setCategoria} setTipoEntrega={setTipoEntrega} />

@@ -1951,8 +1951,8 @@ class EjesMultiples():
                 detractoresYPasivos = []
                 for row in arreglo:
                     categories.append(row['descripcion'])
-                    promotores.append(round((float(row['F2'])/100), 4))
-                    detractoresYPasivos.append(round((float(row['F1'])/100), 4))
+                    promotores.append(round((float(row['F2'])/100), 4)) if row['F2'] else promotores.append(0)
+                    detractoresYPasivos.append(round((float(row['F1'])/100), 4)) if row['F1'] else detractoresYPasivos.append(0)
 
                 series = [
                     {

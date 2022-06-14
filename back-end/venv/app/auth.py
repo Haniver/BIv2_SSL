@@ -76,7 +76,7 @@ def buscar_usuario_en_bd(usuario):
     region = resultados[0]['region']
     zona = resultados[0]['zona']
     if nivel == 1:
-        rol = "Vista a nivel Tienda: " + resultados[0]['tiendaNombre']
+        rol = "Vista de Tienda: " + resultados[0]['tiendaNombre']
     elif nivel == 2:
         rol = "Vista a nivel Zona: " + resultados[0]['zonaNombre']
     elif nivel == 3:

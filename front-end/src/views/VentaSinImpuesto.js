@@ -6,7 +6,7 @@ import fechas_srv from '../services/fechas_srv'
 import EjesMultiples from '../componentes/graficos/EjesMultiples'
 import Tabla from '../componentes/tablas/Tabla'
 import tarjetasCombinadas from '../services/tarjetasCombinadas'
-import userService from '../services/user.service'
+// import userService from '../services/user.service'
 
 import {
   DollarSign,
@@ -81,11 +81,11 @@ const VentaSinImpuesto = () => {
 
   return (
     <>
-      {userService.getNivel() <= 3 && <Row className='match-height'>
+      {/* {userService.getNivel() <= 3 && <Row className='match-height'>
         <Col sm='12'>
           <h2 className='centrado'>{userService.getLugarNombre()}</h2>
         </Col>
-      </Row>}
+      </Row>} */}
       <Row className='match-height'>
         <Col sm='12'>
           <Filtro anio={anio} mes={mes} fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} setAnio={setAnio} setMes={setMes} setFechas={setFechas} setRegion={setRegion} setZona={setZona} setTienda={setTienda} setCanal={setCanal} setDepto={setDepto} setSubDepto={setSubDepto} />

@@ -3,7 +3,7 @@ import { Row, Col } from 'reactstrap'
 import fechas_srv from '../services/fechas_srv'
 import Tabla from '../componentes/tablas/Tabla'
 import Filtro from '../componentes/auxiliares/Filtro'
-import userService from '../services/user.service'
+// import userService from '../services/user.service'
 
 const PedidoDiario = () => {
     const [fechas, setFechas] = useState({fecha_ini: fechas_srv.primeroDelMesVencido(), fecha_fin: fechas_srv.actualVencida()})
@@ -18,11 +18,11 @@ const PedidoDiario = () => {
 
   return (
     <>
-      {userService.getNivel() <= 3 && <Row className='match-height'>
+      {/* {userService.getNivel() <= 3 && <Row className='match-height'>
         <Col sm='12'>
           <h2 className='centrado'>{userService.getLugarNombre()}</h2>
         </Col>
-      </Row>}
+      </Row>} */}
       <Row className='match-height'>
         <Col sm='12'>
           <Filtro botonEnviar={botonEnviar} setBotonEnviar={setBotonEnviar} fechas={fechas} estatus={estatus} region={region} zona={zona} tienda={tienda} tipoEntrega3={tipoEntrega3} setFechas={setFechas} setEstatus={setEstatus} setRegion={setRegion} setZona={setZona} setTienda={setTienda} setTipoEntrega3={setTipoEntrega3} />

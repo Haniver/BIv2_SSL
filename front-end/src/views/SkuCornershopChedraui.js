@@ -3,7 +3,7 @@ import { Row, Col } from 'reactstrap'
 import fechas_srv from '../services/fechas_srv'
 import Tabla from '../componentes/tablas/Tabla'
 import Filtro from '../componentes/auxiliares/Filtro'
-import userService from '../services/user.service'
+// import userService from '../services/user.service'
 
 const SkuCornershopChedraui = () => {
     const [fechas, setFechas] = useState({
@@ -35,11 +35,11 @@ const SkuCornershopChedraui = () => {
 
   return (
     <>
-      {userService.getNivel() <= 3 && <Row className='match-height'>
+      {/* {userService.getNivel() <= 3 && <Row className='match-height'>
         <Col sm='12'>
           <h2 className='centrado'>{userService.getLugarNombre()}</h2>
         </Col>
-      </Row>}
+      </Row>} */}
       <Row className='match-height'>
         <Col sm='12'>
           <Filtro botonEnviar={botonEnviar} rango_max_dias={15} fechas={fechas} region={region} zona={zona} tienda={tienda} canal2={canal2} depto={depto} subDepto={subDepto} e3={e3} setFechas={setFechas} setRegion={setRegion} setZona={setZona} setTienda={setTienda} setCanal2={setCanal2} setDepto={setDepto} setSubDepto={setSubDepto} setE3={setE3} setBotonEnviar={setBotonEnviar} />

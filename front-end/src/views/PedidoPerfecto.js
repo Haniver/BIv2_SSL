@@ -7,7 +7,7 @@ import EjesMultiples from '../componentes/graficos/EjesMultiples'
 import Tabla from '../componentes/tablas/Tabla'
 import ColumnasApiladas from '../componentes/graficos/ColumnasApiladas'
 import BarrasApiladas from '../componentes/graficos/BarrasApiladas'
-import userService from '../services/user.service'
+// import userService from '../services/user.service'
 
 const PedidoPerfecto = () => {
     
@@ -36,19 +36,19 @@ const PedidoPerfecto = () => {
       } else {
         setQuitarBusqueda(true)
         setQuitarPaginacion(true)
-        setPrefijoTituloTabla('')
-        setSufijoTituloTabla('')
+        // setPrefijoTituloTabla('')
+        // setSufijoTituloTabla('')
       }
     }, [tienda])
     
 
   return (
     <>
-      {userService.getNivel() <= 3 && <Row className='match-height'>
+      {/* {userService.getNivel() <= 3 && <Row className='match-height'>
         <Col sm='12'>
           <h2 className='centrado'>{userService.getLugarNombre()}</h2>
         </Col>
-      </Row>}
+      </Row>} */}
       <Row className='match-height'>
         <Col sm='12'>
           <Filtro fechas={fechas} agrupador={agrupador} periodo={periodo} region={region} zona={zona} tienda={tienda} sibling={sibling} setFechas={setFechas} setAgrupador={setAgrupador} setPeriodo={setPeriodo} setRegion={setRegion} setZona={setZona} setTienda={setTienda} setLabelTienda={setLabelTienda} />

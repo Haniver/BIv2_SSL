@@ -7,7 +7,7 @@ import ColumnasApiladas from '../componentes/graficos/ColumnasApiladas'
 import Barras from '../componentes/graficos/Barras'
 import ColumnasBasicas from '../componentes/graficos/ColumnasBasicas'
 import EjesMultiples from '../componentes/graficos/EjesMultiples'
-import userService from '../services/user.service'
+// import userService from '../services/user.service'
 import tarjetasCombinadas from '../services/tarjetasCombinadas'
 import Tarjeta from '../componentes/auxiliares/Tarjeta'
 import Pie from '../componentes/graficos/Pie'
@@ -49,11 +49,11 @@ const FoundRate = () => {
 
     return (
     <Fragment>
-      {userService.getNivel() <= 3 && <Row className='match-height'>
+      {/* {userService.getNivel() <= 3 && <Row className='match-height'>
         <Col sm='12'>
           <h2 className='centrado'>{userService.getLugarNombre()}</h2>
         </Col>
-      </Row>}
+      </Row>} */}
       <Row className='match-height'>
         <Col sm='12'>
           <Filtro fechas={fechas} region={region} zona={zona} tienda={tienda} setFechas={setFechas} setRegion={setRegion} setZona={setZona} setTienda={setTienda} />
