@@ -76,7 +76,7 @@ const ColumnasApiladas = ({ titulo, yLabel, seccion, formato, fechas, region, zo
         if (res.data.hayResultados === 'si') {
             const series_tmp = []
             setCategorias(res.data.categorias)
-            console.log(`pipeline ${titulo}: ${JSON.stringify(res.data.pipeline)}`)
+            // console.log(`pipeline ${titulo}: ${JSON.stringify(res.data.pipeline)}`)
             res.data.series.forEach(elemento => {
                 series_tmp.push({
                     name: elemento.name,
@@ -85,8 +85,8 @@ const ColumnasApiladas = ({ titulo, yLabel, seccion, formato, fechas, region, zo
                 })
             })
             setSeries(series_tmp)
-            console.log('series:')
-            console.log(series_tmp)
+            // console.log('series:')
+            // console.log(series_tmp)
         } else {
             setCategorias([])
             setSeries([])

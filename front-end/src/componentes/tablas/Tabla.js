@@ -122,8 +122,8 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
         dispatchLoader({tipo: 'recibirDeAPI'})
         if (res.data.hayResultados === 'si') {
             const columns_tmp = res.data.columns
-            console.log('Columnas:')
-            console.log(columns_tmp)
+            // console.log('Columnas:')
+            // console.log(columns_tmp)
             const formatos = {}
             const columns = []
             columns_tmp.forEach(columna => {
@@ -188,7 +188,7 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
                         </>
                     )
                 } else if (columna.formato === 'botonProducto') {
-                    console.log(columna.formato)
+                    // console.log(columna.formato)
                     objeto_columna.cell = (d) => (
                         <Button
                             color='dark'
@@ -200,7 +200,7 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
                         </Button>
                     )
                 } else if (columna.formato === 'botonUsuario') {
-                    console.log(columna.formato)
+                    // console.log(columna.formato)
                     objeto_columna.cell = (d) => (
                         <Button
                             color='dark'
@@ -227,7 +227,7 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
                         </Button>
                     )
                 } else if (columna.formato === 'detalleAgente') {
-                    console.log("Entró a detalleAgente en Tabla.js")
+                    // console.log("Entró a detalleAgente en Tabla.js")
                     objeto_columna.cell = (d) => (
                         <Button
                             color='white'
@@ -359,7 +359,7 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
                 mensaje: 'Prueba usar otros filtros'
             }
             ])
-            console.log("Tabla sin resultados")
+            // console.log("Tabla sin resultados")
             // console.log(`Query de ${titulo}:`)
             // console.log(JSON.stringify(res.data.pipeline)) // Esto lo estás comentando para ponerlo más abajo, independiente de que haya resultados o no
         }

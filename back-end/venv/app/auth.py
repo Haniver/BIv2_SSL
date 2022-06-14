@@ -76,11 +76,13 @@ def buscar_usuario_en_bd(usuario):
     region = resultados[0]['region']
     zona = resultados[0]['zona']
     if nivel == 1:
-        lugarNombre = resultados[0]['tiendaNombre']
+        rol = "Vista a nivel Tienda: " + resultados[0]['tiendaNombre']
     elif nivel == 2:
-        lugarNombre = resultados[0]['zonaNombre']
+        rol = "Vista a nivel Zona: " + resultados[0]['zonaNombre']
+    elif nivel == 3:
+        rol = "Vista a nivel Región: " + resultados[0]['regionNombre']
     else:
-        lugarNombre = resultados[0]['regionNombre']
+        rol = 'Vista a nivel Nacional'
 
     # Obtener Vistas a las que tiene acceso el usuario
     cursor.execute(f"""select distinct v.id_vista, v.categoria, v.idReact, v.title, v.icon 
@@ -123,8 +125,8 @@ def buscar_usuario_en_bd(usuario):
     #         "title": row['title'],
     #         "icon": row['icon']
     #     })
-    rol = f'Usuario Nivel {str(nivel)}'
-    respuesta = {usuario: {'usuario': usuario, 'password': password, 'nombre': nombre, 'nivel': nivel, 'rol': rol, 'id': id, 'vistas': json.dumps(vistas), 'documentos': json.dumps(documentos), 'tienda': tienda, 'region': region, 'zona': zona, 'lugarNombre': lugarNombre}}
+    # rol = f'Usuario Nivel {str(nivel)}'
+    respuesta = {usuario: {'usuario': usuario, 'password': password, 'nombre': nombre, 'nivel': nivel, 'rol': rol, 'id': id, 'vistas': json.dumps(vistas), 'documentos': json.dumps(documentos), 'tienda': tienda, 'region': region, 'zona': zona, 'lugarNombre': rol}}
     # print(f"Respuesta desde auth.py: {str(respuesta)}")
     return respuesta
 

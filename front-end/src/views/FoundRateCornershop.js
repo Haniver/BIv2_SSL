@@ -4,6 +4,7 @@ import Filtro from '../componentes/auxiliares/Filtro'
 import fechas_srv from '../services/fechas_srv'
 import EjesMultiples from '../componentes/graficos/EjesMultiples'
 import Tabla from '../componentes/tablas/Tabla'
+import userService from '../services/user.service'
 
 const FoundRateCornershop = () => {
     
@@ -16,6 +17,11 @@ const FoundRateCornershop = () => {
 
   return (
     <>
+      {userService.getNivel() <= 3 && <Row className='match-height'>
+        <Col sm='12'>
+          <h2 className='centrado'>{userService.getLugarNombre()}</h2>
+        </Col>
+      </Row>}
       <Row className='match-height'>
         <Col sm='12'>
           <Filtro fechas={fechas} region={region} zona={zona} tienda={tienda} setFechas={setFechas} setRegion={setRegion} setZona={setZona} setTienda={setTienda} />

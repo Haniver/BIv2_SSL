@@ -38,16 +38,16 @@ const Home = () => {
   const fechas_dia = {fecha_ini: hoy, fecha_fin: hoy}
   const fechas_mes = {fecha_ini: fechas_srv.primeroDelMesSinVencer(), fecha_fin: hoy}
   const agrupador = 'dia'
-  console.log(`Hoy es:`)
-  console.log(hoy)
+  // console.log(`Hoy es:`)
+  // console.log(hoy)
 
   return (
     <Fragment>
-      {userService.getNivel() <= 3 && <Row className='match-height'>
+      {/* {userService.getNivel() <= 3 && <Row className='match-height'>
         <Col sm='12'>
           <h2 className='centrado'>{userService.getLugarNombre()}</h2>
         </Col>
-      </Row>}
+      </Row>} */}
       {tienda !== null && <Row className='match-height'>
         <Col xl='6' sm='12'>
           <ColumnasApiladas titulo='Pedidos del Día' seccion={seccion} formato='entero' yLabel='Pedidos' fechas={fechas_dia} region={region} zona={zona} tienda={tienda} />

@@ -337,8 +337,8 @@ const Filtro = (props) => {
   const handleZonaChange = async (e) => {
     if (e) {
       if (props.botonEnviar === undefined) {
-        console.log("cambiando zona desde 2 con e:")
-        console.log(e)
+        // console.log("cambiando zona desde 2 con e:")
+        // console.log(e)
         props.setZona(e.value)
       } else {
         setZona_tmp(e.value)
@@ -349,7 +349,7 @@ const Filtro = (props) => {
       setIsTiendaDisabled(false)
     } else {
       if (props.botonEnviar === undefined) {
-        console.log("cambiando zona desde 3")
+        // console.log("cambiando zona desde 3")
         props.setZona('')
       } else {
         setZona_tmp('')
@@ -675,12 +675,12 @@ const Filtro = (props) => {
       }
       if (props.botonEnviar === undefined) {
         if (comboPeriodo.length > 1 && props.fechas === undefined && (props.agrupador === 'semana')) {
-          console.log(`estás trantando de poner el periodo en el penúltimo de:`)
-          console.log(comboPeriodo)
+          // console.log(`estás trantando de poner el periodo en el penúltimo de:`)
+          // console.log(comboPeriodo)
           props.setPeriodo(nthElement(comboPeriodo, -2).value)
         } else {
-          console.log(`estás trantando de poner el periodo en el último de:`)
-          console.log(comboPeriodo)
+          // console.log(`estás trantando de poner el periodo en el último de:`)
+          // console.log(comboPeriodo)
           props.setPeriodo(nthElement(comboPeriodo, -1).value)
         }
         if (props.setPeriodoLabel !== undefined) {
@@ -711,7 +711,7 @@ const Filtro = (props) => {
       // props.setRegion(UserService.getRegion())
       handleRegionChange({value: UserService.getRegion()})
     } else if (props.zona !== undefined && UserService.getNivel() === 2) {
-      console.log("cambiando zona desde 4")
+      // console.log("cambiando zona desde 4")
       if (props.botonEnviar === undefined) {
         props.setRegion(UserService.getRegion())
       } else {
