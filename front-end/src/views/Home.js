@@ -53,7 +53,7 @@ const Home = () => {
           <ColumnasApiladas titulo='Pedidos del Día' seccion={seccion} formato='entero' yLabel='Pedidos' fechas={fechas_dia} region={region} zona={zona} tienda={tienda} />
         </Col>
         <Col xl='6' sm='12'>
-          <Pie titulo='Estatus de Entrega y No Entrega por Área' seccion={seccion} formato='entero' yLabel='Pedidos' fechas={fechas_dia} region={region} zona={zona} tienda={tienda} />
+          <Pie titulo='Estatus de Entrega y No Entrega' seccion={seccion} formato='entero' yLabel='Pedidos' fechas={fechas_dia} region={region} zona={zona} tienda={tienda} />
         </Col>
       </Row>}
       {tienda !== null && <Row className='match-height'>

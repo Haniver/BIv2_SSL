@@ -17,11 +17,6 @@ const NivelesDeServicio = () => {
 
   const seccion = 'NivelesDeServicio'
 
-  // useEffect(() => {
-  //   console.log(`categoria: ${categoria}`)
-  //   console.log(`tipoEntrega: ${tipoEntrega}`)
-  // }, [fechas, region, zona, tienda, categoria, tipoEntrega])
-
   return (
     <Fragment>
       {/* {userService.getNivel() <= 3 && <Row className='match-height'>
@@ -34,30 +29,30 @@ const NivelesDeServicio = () => {
           <Filtro fechas={fechas} region={region} zona={zona} tienda={tienda} categoria={categoria} tipoEntrega={tipoEntrega} setFechas={setFechas} setRegion={setRegion} setZona={setZona} setTienda={setTienda} setCategoria={setCategoria} setTipoEntrega={setTipoEntrega} />
         </Col>
       </Row>
-      {(tienda === '' || tienda === false || tienda === undefined) && <Row className='match-height'>
-        <Col xl='6' sm='12'>
+      <Row className='match-height'>
+        <Col xl={(tienda === '' || tienda === false || tienda === undefined) ? '6' : '12'} sm='12'>
+          <Pie titulo='Estatus de Entrega y No Entrega' formato='entero' seccion={seccion} yLabel='Pedidos' fechas={fechas} region={region} zona={zona} tienda={tienda} categoria={categoria} tipoEntrega={tipoEntrega} />
+        </Col>
+        {(tienda === '' || tienda === false || tienda === undefined) && <Col xl='6' sm='12'>
           <ColumnasApiladas titulo='Estatus de Entrega y No Entrega por Área' seccion={seccion} formato='entero' yLabel='Pedidos' fechas={fechas} region={region} zona={zona} tienda={tienda} categoria={categoria} tipoEntrega={tipoEntrega} />
+        </Col>}
+      </Row>
+      <Row className='match-height'>
+        <Col  xl={(tienda === '' || tienda === false || tienda === undefined) ? '6' : '12'} sm='12'>
+          <Pie titulo='Pedidos Cancelados' formato='entero' seccion={seccion} yLabel='Pedidos' fechas={fechas} region={region} zona={zona} tienda={tienda} categoria={categoria} tipoEntrega={tipoEntrega} />
         </Col>
-        <Col xl='6' sm='12'>
+        {(tienda === '' || tienda === false || tienda === undefined) && <Col xl='6' sm='12'>
           <ColumnasApiladas titulo='Pedidos Cancelados por Área' seccion={seccion} formato='entero' yLabel='Pedidos' fechas={fechas} region={region} zona={zona} tienda={tienda} categoria={categoria} tipoEntrega={tipoEntrega} />
-        </Col>
-      </Row>}
-      {(tienda === '' || tienda === false || tienda === undefined) && <Row className='match-height'>
-        <Col sm='12'>
+        </Col>}
+      </Row>
+      <Row className='match-height'>
+      {(tienda === '' || tienda === false || tienda === undefined) && <Col sm='12'>
           <Tabla titulo='Estatus de Entrega y No Entrega por Área' seccion={seccion} fechas={fechas} region={region} zona={zona} tienda={tienda} categoria={categoria} tipoEntrega={tipoEntrega} />
-        </Col>
-      </Row>}
+        </Col>}
+      </Row>
       {(zona === '' || zona === false || zona === undefined) && <Row className='match-height'>
         <Col sm='12'>
           <Tabla titulo='Estatus de Entrega y No Entrega por Tienda' seccion={seccion} fechas={fechas} region={region} zona={zona} tienda={tienda} categoria={categoria} tipoEntrega={tipoEntrega} />
-        </Col>
-      </Row>}
-      {tienda !== '' && tienda !== false && tienda !== undefined && <Row className='match-height'>
-        <Col xl='6' sm='12'>
-          <Pie titulo='Estatus de Entrega y No Entrega por Área' formato='entero' seccion={seccion} yLabel='Pedidos' fechas={fechas} region={region} zona={zona} tienda={tienda} categoria={categoria} tipoEntrega={tipoEntrega} />
-        </Col>
-        <Col xl='6' sm='12'>
-          <Pie titulo='Pedidos Cancelados por Área' formato='entero' seccion={seccion} yLabel='Pedidos' fechas={fechas} region={region} zona={zona} tienda={tienda} categoria={categoria} tipoEntrega={tipoEntrega} />
         </Col>
       </Row>}
       <Row className='match-height'>

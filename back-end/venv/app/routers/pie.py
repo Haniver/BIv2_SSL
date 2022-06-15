@@ -128,7 +128,7 @@ class Pie():
         else:
             filtro_lugar = False
             lugar = ''
-        if self.titulo == 'Estatus de Entrega y No Entrega por Área':
+        if self.titulo == 'Estatus de Entrega y No Entrega':
             # print("Título es Estatus de Entrega y No Entrega por Área")
             collection = conexion_mongo('report').report_pedidoAtrasado
             if filtro_lugar:
@@ -226,9 +226,29 @@ class Pie():
 
     async def NivelesDeServicio(self):
         pipeline = []
-        if self.titulo == 'Estatus de Entrega y No Entrega por Área':
+        if self.filtros.region != '' and self.filtros.region != "False":
+            filtro_lugar = True
+            if self.filtros.zona != '' and self.filtros.zona != "False":
+                if self.filtros.tienda != '' and self.filtros.tienda != "False":
+                    nivel_atrasado = 'idTienda'
+                    nivel_cancelado = 'tienda'
+                    lugar = int(self.filtros.tienda)
+                else:
+                    nivel_atrasado = 'zona'
+                    nivel_cancelado = 'zona'
+                    lugar = int(self.filtros.zona)
+            else:
+                nivel_atrasado = 'region'
+                nivel_cancelado = 'region'
+                lugar = int(self.filtros.region)
+        else:
+            filtro_lugar = False
+            lugar = ''
+
+        if self.titulo == 'Estatus de Entrega y No Entrega':
             collection = conexion_mongo('report').report_pedidoAtrasado
-            pipeline.extend([{'$unwind': '$sucursal'}, {'$match': {'sucursal.idTienda': int(self.filtros.tienda)}}])
+            if filtro_lugar:
+                pipeline.extend([{'$unwind': '$sucursal'}, {'$match': {f'sucursal.{nivel_atrasado}': lugar}}])
             pipeline.append({'$match': {'fechaEntrega': {'$gte': self.fecha_ini_a12, '$lt': self.fecha_fin_a12}}})
             if self.filtros.categoria and self.filtros.categoria != "False":
                 pipeline.append({'$match': {'tercero': self.filtros.categoria}})
@@ -253,9 +273,10 @@ class Pie():
                 hayResultados = "no"
                 res = []
 
-        if self.titulo == 'Pedidos Cancelados por Área':
+        if self.titulo == 'Pedidos Cancelados':
             collection = conexion_mongo('report').report_pedidoCancelado
-            pipeline.extend([{'$unwind': '$sucursal'}, {'$match': {'sucursal.tienda': int(self.filtros.tienda)}}])
+            if filtro_lugar:
+                pipeline.extend([{'$unwind': '$sucursal'}, {'$match': {f'sucursal.{nivel_cancelado}': lugar}}])
             pipeline.append({'$match': {'fechaUltimoCambio': {'$gte': self.fecha_ini_a12, '$lt': self.fecha_fin_a12}}})
             if self.filtros.categoria and self.filtros.categoria != "False":
                 pipeline.append({'$match': {'tercero': self.filtros.categoria}})
