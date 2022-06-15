@@ -15,7 +15,7 @@ const Nps = () => {
     const [region, setRegion] = useState(false)
     const [zona, setZona] = useState(false)
     const [tienda, setTienda] = useState(false)
-    const [agrupador, setAgrupador] = useState('dia')
+    const [agrupador, setAgrupador] = useState('semana')
     const [periodo, setPeriodo] = useState({})
     const [periodoLabel, setPeriodoLabel] = useState('')
     const [nps, setNps] = useState('')
