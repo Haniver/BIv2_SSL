@@ -81,8 +81,10 @@ def buscar_usuario_en_bd(usuario):
         rol = "Vista a nivel Zona: " + resultados[0]['zonaNombre']
     elif nivel == 3:
         rol = "Vista a nivel Región: " + resultados[0]['regionNombre']
-    else:
+    elif nivel == 4:
         rol = 'Vista a nivel Nacional'
+    else:
+        rol = 'Administrador - Vista a nivel Nacional'
 
     # Obtener Vistas a las que tiene acceso el usuario
     cursor.execute(f"""select distinct v.id_vista, v.categoria, v.idReact, v.title, v.icon 
