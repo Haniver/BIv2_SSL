@@ -47,6 +47,11 @@ const NivelesDeServicio = () => {
           <Tabla titulo='Estatus de Entrega y No Entrega por Área' seccion={seccion} fechas={fechas} region={region} zona={zona} tienda={tienda} categoria={categoria} tipoEntrega={tipoEntrega} />
         </Col>
       </Row>}
+      {(zona === '' || zona === false || zona === undefined) && <Row className='match-height'>
+        <Col sm='12'>
+          <Tabla titulo='Estatus de Entrega y No Entrega por Tienda' seccion={seccion} fechas={fechas} region={region} zona={zona} tienda={tienda} categoria={categoria} tipoEntrega={tipoEntrega} />
+        </Col>
+      </Row>}
       {tienda !== '' && tienda !== false && tienda !== undefined && <Row className='match-height'>
         <Col xl='6' sm='12'>
           <Pie titulo='Estatus de Entrega y No Entrega por Área' formato='entero' seccion={seccion} yLabel='Pedidos' fechas={fechas} region={region} zona={zona} tienda={tienda} categoria={categoria} tipoEntrega={tipoEntrega} />

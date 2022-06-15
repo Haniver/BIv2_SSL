@@ -3928,6 +3928,60 @@ class Tablas():
                 pipeline.append({'$match': {'tipoEntrega': self.filtros.tipoEntrega}})
             pipeline.append({'$project':{'xLabel':'$sucursal.'+siguiente_nivel, 'Entregado_Fuera_tiempo': {'$cond': [{'$eq':['$evaluacion','Entregado-Fuera de tiempo']}, '$pedidos', 0]}, 'Entregado_tiempo': {'$cond': [{'$eq':['$evaluacion','Entregado-A tiempo']}, '$pedidos', 0]}, 'No_entregado_Fuera_tiempo': {'$cond': [{'$eq':['$evaluacion','No entregado-Fuera de tiempo']}, '$pedidos', 0]}, 'No_entregado_tiempo': {'$cond': [{'$eq':['$evaluacion','No entregado-A tiempo']}, '$pedidos', 0]}, 'Despachado_Fuera_tiempo': {'$cond': [{'$eq':['$evaluacion','Despachado-Fuera de tiempo']}, '$pedidos', 0]}, 'Despachado_tiempo': {'$cond': [{'$eq':['$evaluacion','Despachado-A tiempo']}, '$pedidos', 0]}}})
             pipeline.append({'$group':{'_id':'$xLabel', 'Entregado_Fuera_tiempo':{'$sum':'$Entregado_Fuera_tiempo'}, 'Entregado_tiempo':{'$sum':'$Entregado_tiempo'}, 'No_entregado_Fuera_tiempo':{'$sum':'$No_entregado_Fuera_tiempo'}, 'No_entregado_tiempo':{'$sum':'$No_entregado_tiempo'}, 'Despachado_Fuera_tiempo':{'$sum':'$Despachado_Fuera_tiempo'}, 'Despachado_tiempo':{'$sum':'$Despachado_tiempo'}}})
+            pipeline.append({'$sort':{'_id':1}})
+            cursor = collection.aggregate(pipeline)
+            arreglo = await cursor.to_list(length=1000)
+            if len(arreglo) >0:
+                hayResultados = "si"
+                for row in arreglo:
+                    data.append({
+                        'Lugar': row['_id'],
+                        'Entregado_Fuera_tiempo': row['Entregado_Fuera_tiempo'],
+                        'Entregado_tiempo': row['Entregado_tiempo'],
+                        'No_entregado_Fuera_tiempo': row['No_entregado_Fuera_tiempo'],
+                        'No_entregado_tiempo': row['No_entregado_tiempo'],
+                        'Despachado_Fuera_tiempo': row['Despachado_Fuera_tiempo'],
+                        'Despachado_tiempo': row['Despachado_tiempo'],
+                    })
+                columns.extend([
+                    {'name': 'Lugar', 'selector': 'Lugar', 'formato': 'texto', 'ancho': '420px'},                                
+                    {'name': 'Entregado-Fuera de tiempo', 'selector': 'Entregado_Fuera_tiempo', 'formato': 'texto'},                                
+                    {'name': 'Entregado-A tiempo', 'selector': 'Entregado_tiempo', 'formato': 'texto'},
+                    {'name': 'No entregado-Fuera de tiempo', 'selector': 'No_entregado_Fuera_tiempo', 'formato': 'texto'},
+                    {'name': 'No entregado-A tiempo', 'selector': 'No_entregado_tiempo', 'formato': 'texto'},
+                    {'name': 'Despachado-Fuera de tiempo', 'selector': 'Despachado_Fuera_tiempo', 'formato': 'texto'},
+                    {'name': 'Despachado-A tiempo', 'selector': 'Despachado_tiempo', 'formato': 'texto'}
+                ])
+            else:
+                hayResultados = "no"
+
+        if self.titulo == 'Estatus de Entrega y No Entrega por Tienda':
+            if self.filtros.region != '' and self.filtros.region != "False":
+                filtro_lugar = True
+                if self.filtros.zona != '' and self.filtros.zona != "False":
+                    nivel = 'zona'
+                    siguiente_nivel = 'tienda'
+                    lugar = int(self.filtros.zona)
+                else:
+                    nivel = 'region'
+                    siguiente_nivel = 'zonaNombre'
+                    lugar = int(self.filtros.region)
+            else:
+                filtro_lugar = False
+                siguiente_nivel = 'regionNombre'
+                lugar = ''
+
+            collection = conexion_mongo('report').report_pedidoAtrasado
+            if filtro_lugar:
+                pipeline.extend([{'$unwind': '$sucursal'}, {'$match': {'sucursal.'+ nivel: lugar}}])
+            pipeline.append({'$match': {'fechaEntrega': {'$gte': self.fecha_ini, '$lt': self.fecha_fin}}})
+            if self.filtros.categoria and self.filtros.categoria != "False":
+                pipeline.append({'$match': {'tercero': self.filtros.categoria}})
+            if self.filtros.tipoEntrega != None and self.filtros.tipoEntrega != "False":
+                pipeline.append({'$match': {'tipoEntrega': self.filtros.tipoEntrega}})
+            pipeline.append({'$project':{'xLabel':'$sucursal.tienda', 'Entregado_Fuera_tiempo': {'$cond': [{'$eq':['$evaluacion','Entregado-Fuera de tiempo']}, '$pedidos', 0]}, 'Entregado_tiempo': {'$cond': [{'$eq':['$evaluacion','Entregado-A tiempo']}, '$pedidos', 0]}, 'No_entregado_Fuera_tiempo': {'$cond': [{'$eq':['$evaluacion','No entregado-Fuera de tiempo']}, '$pedidos', 0]}, 'No_entregado_tiempo': {'$cond': [{'$eq':['$evaluacion','No entregado-A tiempo']}, '$pedidos', 0]}, 'Despachado_Fuera_tiempo': {'$cond': [{'$eq':['$evaluacion','Despachado-Fuera de tiempo']}, '$pedidos', 0]}, 'Despachado_tiempo': {'$cond': [{'$eq':['$evaluacion','Despachado-A tiempo']}, '$pedidos', 0]}}})
+            pipeline.append({'$group':{'_id':'$xLabel', 'Entregado_Fuera_tiempo':{'$sum':'$Entregado_Fuera_tiempo'}, 'Entregado_tiempo':{'$sum':'$Entregado_tiempo'}, 'No_entregado_Fuera_tiempo':{'$sum':'$No_entregado_Fuera_tiempo'}, 'No_entregado_tiempo':{'$sum':'$No_entregado_tiempo'}, 'Despachado_Fuera_tiempo':{'$sum':'$Despachado_Fuera_tiempo'}, 'Despachado_tiempo':{'$sum':'$Despachado_tiempo'}}})
+            pipeline.append({'$sort':{'_id':1}})
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=1000)
             if len(arreglo) >0:
