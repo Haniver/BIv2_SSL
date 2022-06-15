@@ -277,26 +277,34 @@ class Tablas():
                 pipeline.append({'$match': {'sucursal.'+ nivel: self.lugar}})
             pipeline.append({'$match': {'fechaUltimoCambio': {'$gte': self.fecha_ini, '$lt': self.fecha_fin}}})
             pipeline.append({'$group':{'_id':'$sucursal.tiendaNombre', 'COMPLETO': {'$sum': '$COMPLETO'}, 'INC_SIN_STOCK': {'$sum': '$INC_SIN_STOCK'}, 'INC_SUSTITUTOS': {'$sum': '$INC_SUSTITUTOS'}, 'INCOMPLETO': {'$sum': '$INCOMPLETO'}, 'num_pedidos':{'$sum': '$n_pedido'}}})
-            pipeline.append({'$project':{'_id':0, 'lugar':'$_id', 'COMPLETO': {'$divide':['$COMPLETO', '$num_pedidos']}, 'INC_SIN_STOCK': {'$divide':['$INC_SIN_STOCK', '$num_pedidos']}, 'INC_SUSTITUTOS': {'$divide':['$INC_SUSTITUTOS', '$num_pedidos']}, 'INCOMPLETO': {'$divide':['$INCOMPLETO', '$num_pedidos']}}})
+            pipeline.append({'$project':{'_id':0, 'Lugar':'$_id', 'COMPLETO': '$COMPLETO', 'INC_SIN_STOCK': '$INC_SIN_STOCK', 'INC_SUSTITUTOS': '$INC_SUSTITUTOS', 'INCOMPLETO': '$INCOMPLETO', 'COMPLETO_porc': {'$divide':['$COMPLETO', '$num_pedidos']}, 'INC_SIN_STOCK_porc': {'$divide':['$INC_SIN_STOCK', '$num_pedidos']}, 'INC_SUSTITUTOS_porc': {'$divide':['$INC_SUSTITUTOS', '$num_pedidos']}, 'INCOMPLETO_porc': {'$divide':['$INCOMPLETO', '$num_pedidos']}}})
             pipeline.append({'$sort':{'COMPLETO':-1}})
             cursor = collection.aggregate(pipeline)
-            arreglo = await cursor.to_list(length=20)
+            arreglo = await cursor.to_list(length=5000)
             if len(arreglo) >0:
                 hayResultados = "si"
                 for dato in arreglo:
                     data.append({
-                        'lugar': dato['lugar'],
+                        'Lugar': dato['Lugar'],
                         'COMPLETO': dato['COMPLETO'],
+                        'COMPLETO_porc': dato['COMPLETO_porc'],
                         'INC_SIN_STOCK': dato['INC_SIN_STOCK'],
+                        'INC_SIN_STOCK_porc': dato['INC_SIN_STOCK_porc'],
                         'INC_SUSTITUTOS': dato['INC_SUSTITUTOS'],
-                        'INCOMPLETO': dato['INCOMPLETO']
+                        'INC_SUSTITUTOS_porc': dato['INC_SUSTITUTOS_porc'],
+                        'INCOMPLETO': dato['INCOMPLETO'],
+                        'INCOMPLETO_porc': dato['INCOMPLETO_porc']
                     })
                 columns = [
-                        {'name': 'lugar', 'selector':'lugar', 'formato':'texto', 'ancho': '350px'},
-                        {'name': 'Completo', 'selector':'COMPLETO', 'formato':'porcentaje'},
-                        {'name': 'Incompleto Sin Stock', 'selector':'INC_SIN_STOCK', 'formato':'porcentaje'},
-                        {'name': 'Incompleto Sustitutos', 'selector':'INC_SUSTITUTOS', 'formato':'porcentaje'},
-                        {'name': 'Incompleto', 'selector':'INCOMPLETO', 'formato':'porcentaje'}
+                        {'name': 'Lugar', 'selector':'Lugar', 'formato':'texto', 'ancho': '350px'},
+                        {'name': 'Cant. Completo', 'selector':'COMPLETO', 'formato':'entero'},
+                        {'name': '% Completo', 'selector':'COMPLETO_porc', 'formato':'porcentaje'},
+                        {'name': 'Cant. Incompleto Sin Stock', 'selector':'INC_SIN_STOCK', 'formato':'entero'},
+                        {'name': '% Incompleto Sin Stock', 'selector':'INC_SIN_STOCK_porc', 'formato':'porcentaje'},
+                        {'name': 'Cant. Incompleto Sustitutos', 'selector':'INC_SUSTITUTOS', 'formato':'entero'},
+                        {'name': '% Incompleto Sustitutos', 'selector':'INC_SUSTITUTOS_porc', 'formato':'porcentaje'},
+                        {'name': 'Cant. Incompleto', 'selector':'INCOMPLETO', 'formato':'entero'},
+                        {'name': '% Incompleto', 'selector':'INCOMPLETO_porc', 'formato':'porcentaje'}
                     ]
             else:
                 hayResultados = 'no'
