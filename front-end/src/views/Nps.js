@@ -87,7 +87,7 @@ const Nps = () => {
       </Row>
       <Row className='match-height'>        
         <Col sm='12'>
-          {(periodo.mes !== undefined || periodo.semana !== undefined) && <Tabla tituloAPI='Tiendas por NPS Más Bajo' titulo={`Tiendas por NPS Más Bajo 🌒 ${periodoLabel}`} fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} />}
+          {(periodo.mes !== undefined || periodo.semana !== undefined) && <Tabla tituloAPI='Detalle NPS Por Tienda' titulo={`Detalle NPS Por Tienda 🌒 ${periodoLabel}`} fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} />}
         </Col>
       </Row>
       <Row className='match-height'>
