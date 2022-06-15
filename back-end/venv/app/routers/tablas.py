@@ -1286,7 +1286,7 @@ class Tablas():
                 # print(str(pipeline))
                 # Ejecutamos el query:
                 cursor = collection.aggregate(pipeline)
-                arreglo = await cursor.to_list(length=50)
+                arreglo = await cursor.to_list(length=5000)
                 # print(str(arreglo))
                 if len(arreglo) >0:
                     hayResultados = "si"
@@ -2986,7 +2986,7 @@ class Tablas():
             else:
                 lugar_where = ""
 
-            pipeline = f"""select top 30 CONCAT(nmp.idtienda,' - ',nmp.descrip_tienda) tienda,nmp.region,nmp.zona,
+            pipeline = f"""select CONCAT(nmp.idtienda,' - ',nmp.descrip_tienda) tienda,nmp.region,nmp.zona,
             sum(case when nd.calificacion in (9,10) then 1 else 0 end) promotores,
             sum(case when nd.calificacion<=6 then 1 else 0 end) detractores,
             sum(case when nd.calificacion in (7,8) then 1 else 0 end) pasivos,
