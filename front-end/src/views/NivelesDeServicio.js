@@ -46,11 +46,11 @@ const NivelesDeServicio = () => {
         </Col>}
       </Row>
       <Row className='match-height'>
-      {(tienda === '' || tienda === false || tienda === undefined) && <Col sm='12'>
+      {(zona === '' || zona === false || zona === undefined) && <Col sm='12'>
           <Tabla titulo='Estatus de Entrega y No Entrega por Área' seccion={seccion} fechas={fechas} region={region} zona={zona} tienda={tienda} categoria={categoria} tipoEntrega={tipoEntrega} />
         </Col>}
       </Row>
-      {(zona === '' || zona === false || zona === undefined) && <Row className='match-height'>
+      {(tienda === '' || tienda === false || tienda === undefined) && <Row className='match-height'>
         <Col sm='12'>
           <Tabla titulo='Estatus de Entrega y No Entrega por Tienda' seccion={seccion} fechas={fechas} region={region} zona={zona} tienda={tienda} categoria={categoria} tipoEntrega={tipoEntrega} />
         </Col>
