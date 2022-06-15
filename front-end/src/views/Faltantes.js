@@ -34,10 +34,15 @@ const Faltantes = () => {
         </Col>
       </Row>
       <Row className='match-height'>
-        <Col sm='12' lg='6'>
+        {(zona === '' || zona === false || zona === undefined) && <Col sm='12' lg='6'>
           <Tabla titulo='Justificados por Lugar' seccion={seccion} fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} />
+        </Col>}
+        <Col sm='12' lg={(zona === '' || zona === false || zona === undefined) ? '6' : '12'}>
+          <Tabla titulo='Justificados por Tienda' seccion={seccion} fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} />
         </Col>
-        <Col sm='12' lg='6'>
+      </Row>
+      <Row className='match-height'>
+        <Col sm='12'>
           <Tabla titulo='Justificados por Departamento' seccion={seccion} quitarBusqueda={true} fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} />
         </Col>
       </Row>

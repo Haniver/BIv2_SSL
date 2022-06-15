@@ -955,7 +955,7 @@ class Tablas():
             # print(pipeline)
 
             cursor = collection.aggregate(pipeline)
-            arreglo_resultados = await cursor.to_list(length=1000)
+            arreglo_resultados = await cursor.to_list(length=10000)
             # print(str(arreglo_resultados))
             if len(arreglo_resultados) <= 0:
                 hayResultados = "no"
@@ -999,6 +999,107 @@ class Tablas():
                 # Metemos todos los datos:
                 for i in range(len(arreglo_lugares)):
                     diccionario = {nombre_siguiente_nivel: arreglo_lugares[i]}
+                    for j in range(len(arreglo_periodos)):
+                        nombre_periodo_sin_whitespace = arreglo_periodos[j].replace(" ", "_")
+                        # diccionario['periodo'+str(j)] = tabla[i][j]
+                        diccionario['Justificados_' +nombre_periodo_sin_whitespace] = tabla[i][j][0]
+                        diccionario['Sin_justificar_' +nombre_periodo_sin_whitespace] = tabla[i][j][1]
+                    data.append(diccionario)
+                # print(pipeline)
+
+        if self.titulo == 'Justificados por Tienda':
+            if self.filtro_lugar:
+                if self.nivel_lugar == 'region':
+                    siguiente_nivel = 'zonaNombre'
+                    nombre_siguiente_nivel = 'Zona'
+                else:
+                    siguiente_nivel = 'tiendaNombre'
+                    nombre_siguiente_nivel = 'Tienda'
+            else:
+                siguiente_nivel = 'regionNombre'
+                nombre_siguiente_nivel = 'Región'
+
+            # Arreglo de lugares:
+            pipeline.append({'$unwind': '$sucursal'}) # Le pones el unwind al pipeline principal de una vez porque tanto el arreglo de lugares como el principal van a llevarlo.
+            pipeline_lugares = deepcopy(pipeline)
+            pipeline_lugares.extend([
+                {'$group':{'_id': '$sucursal.tiendaNombre'}},
+                {'$sort':{'_id': 1}}
+            ])
+            cursor = collection.aggregate(pipeline_lugares)
+            arreglo_tmp = await cursor.to_list(length=10000)
+            if len(arreglo_tmp) <= 0: # Si no hay resultados, regresar pipeline a front end
+                return {'hayResultados':'no', 'pipeline': pipeline_lugares, 'columns':[], 'data':[]}
+            arreglo_lugares = []
+            for lugar in arreglo_tmp:
+                arreglo_lugares.append(lugar['_id'])
+
+            # Pipeline principal
+            pipeline.extend([
+                {'$project': {
+                    'lugar':'$sucursal.tiendaNombre',
+                    'periodo': periodo,
+                    'justificados': {'$cond': [{'$eq': ["$respuesta","Sin justificar"]}, 0, '$registro']},
+                    'sin_justificar': {'$cond': [{'$eq': ["$respuesta","Sin justificar"]}, '$registro', 0]}
+                }},
+                {'$group': {
+                    '_id': {'lugar': '$lugar', 'periodo': '$periodo'},
+                    'justificados': {'$sum': '$justificados'},
+                    'sin_justificar': {'$sum': '$sin_justificar'}
+                }},
+                {'$project':{
+                    '_id': '$_id',
+                    'porc_justificados': {'$divide': ['$justificados', {'$add': ['$justificados', '$sin_justificar']}]},
+                    'porc_sin_justificar': {'$divide': ['$sin_justificar', {'$add': ['$justificados', '$sin_justificar']}]}
+                }}
+            ])
+            # print(pipeline)
+
+            cursor = collection.aggregate(pipeline)
+            arreglo_resultados = await cursor.to_list(length=10000)
+            # print(str(arreglo_resultados))
+            if len(arreglo_resultados) <= 0:
+                hayResultados = "no"
+            
+            else:
+                hayResultados = "si"
+                # Populamos con ceros el arreglo que tiene dos dimensiones: justificaciones x periodos
+                tabla = zeros((len(arreglo_lugares), len(arreglo_periodos), 2)) # Esto no porque todos los apuntadores de la segunda dimensión apuntan al mismo arreglo
+                # Para cada resultado del query principal, ponemos en nuestro arreglo-tabla los valores que sí tengamos:
+                # print('len(arreglo_resultados) = '+str(len(arreglo_resultados)))
+                for dato in arreglo_resultados:
+                    x = arreglo_lugares.index(dato['_id']['lugar'])
+                    # print('x = '+str(x))
+                    # La posición y será el índice del arreglo de periodos que tenga el nombre de periodo del dato actual:
+                    if self.filtros.agrupador == 'mes':
+                        y = arreglo_periodos.index(mesTexto(dato['_id']['periodo']['mes'])+' '+str(dato['_id']['periodo']['anio']))
+                    elif self.filtros.agrupador == 'semana':
+                        y = arreglo_periodos.index('Sem ' + str(dato['_id']['periodo']['semana'])+' '+str(dato['_id']['periodo']['anio']))
+                    elif self.filtros.agrupador == 'dia':
+                        y = arreglo_periodos.index(str(dato['_id']['periodo']['dia'])+' '+mesTexto(dato['_id']['periodo']['mes'])+' '+str(dato['_id']['periodo']['anio']))
+                    # print('y = '+str(y))
+                    # print('tabla['+str(x)+']['+str(y)+'] = '+str(dato['cantidad']))
+                    tabla[x][y][0] = (dato['porc_justificados'])
+                    tabla[x][y][1] = (dato['porc_sin_justificar'])
+
+                # Ponemos los nombres de columna, que empiezan por la justificación:
+                columns = [
+                    {'name': 'Tienda', 'selector':'Tienda', 'formato':'texto', 'ancho': '400px'},
+                ]
+                # ...Siguen por cada nombre de periodo:
+                for nombre_periodo in arreglo_periodos:
+                    nombre_periodo_sin_whitespace = nombre_periodo.replace(" ", "_")
+                    columns.extend([
+                        {
+                            'name': 'Justificados ' + nombre_periodo, 'selector':'Justificados_' + nombre_periodo_sin_whitespace, 'formato':'porcentaje'
+                        },{
+                            'name': 'Sin justificar ' + nombre_periodo, 'selector':'Sin_justificar_' + nombre_periodo_sin_whitespace, 'formato':'porcentaje'
+                        }
+                    ])
+                # print(columns)
+                # Metemos todos los datos:
+                for i in range(len(arreglo_lugares)):
+                    diccionario = {'Tienda': arreglo_lugares[i]}
                     for j in range(len(arreglo_periodos)):
                         nombre_periodo_sin_whitespace = arreglo_periodos[j].replace(" ", "_")
                         # diccionario['periodo'+str(j)] = tabla[i][j]
