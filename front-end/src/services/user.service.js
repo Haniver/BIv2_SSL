@@ -122,6 +122,10 @@ class UserService {
     const userData = JSON.parse(localStorage.getItem('userData'))
     return userData["lugarNombre"]
   }
+  getEmail() {
+    const userData = JSON.parse(localStorage.getItem('userData'))
+    return userData["usuario"]
+  }
 }
 
 export default new UserService()

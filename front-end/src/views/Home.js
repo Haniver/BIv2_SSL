@@ -14,12 +14,14 @@ const Home = () => {
   const seccion = 'Home'
   const userData = localStorage.getItem('userData')
   const tienda_tmp = JSON.parse(userData).tienda
+  // console.log(`tienda_tmp = ${tienda_tmp}`)
   const [tiendaNombre, setTiendaNombre] = useState('')
   const [region, setRegion] = useState(false)
   const [zona, setZona] = useState(false)
   const [tienda, setTienda] = useState(false)
+  const email = userService.getEmail()
   useEffect(async () => {
-    if (tienda !== null) {
+    if (tienda_tmp !== null) {
         const tiendaNombre_tmp = await CargarFiltros.nombreTienda(tienda_tmp)
         setTiendaNombre(tiendaNombre_tmp.data.nombreTienda)
         if (userService === 3) {
@@ -41,39 +43,37 @@ const Home = () => {
   // console.log(`Hoy es:`)
   // console.log(hoy)
 
-  return (
-    <Fragment>
-      {/* {userService.getNivel() <= 3 && <Row className='match-height'>
-        <Col sm='12'>
-          <h2 className='centrado'>{userService.getLugarNombre()}</h2>
-        </Col>
-      </Row>} */}
-      {tienda !== null && <Row className='match-height'>
-        <Col xl='6' sm='12'>
-          <ColumnasApiladas titulo='Pedidos del Día' seccion={seccion} formato='entero' yLabel='Pedidos' fechas={fechas_dia} region={region} zona={zona} tienda={tienda} />
-        </Col>
-        <Col xl='6' sm='12'>
-          <Pie titulo='Estatus de Entrega y No Entrega' seccion={seccion} formato='entero' yLabel='Pedidos' fechas={fechas_dia} region={region} zona={zona} tienda={tienda} />
-        </Col>
-      </Row>}
-      {tienda !== null && <Row className='match-height'>
-        <Col sm='12'>
-          <EjesMultiples titulo='Fulfillment Rate y Found Rate' seccion={seccion} fechas={fechas_mes} region={region} zona={zona} tienda={tienda} />
-        </Col>
-      </Row>}
-      {tienda !== null && <Row className='match-height'>
-        <Col sm='12'>
-          <EjesMultiples titulo='Pedidos Perfectos' fechas={fechas_mes} region={region} zona={zona} tienda={tienda} agrupador={agrupador} seccion={seccion} />
-        </Col>
-      </Row>}
-      {tienda === null && <Row className='match-height'>
-        <Col className='d-none d-lg-flex align-items-center p-5' sm='12'>
-          <div className='w-100 d-lg-flex align-items-center justify-content-center px-5'>
-            <img className='img-fluid' src={source} alt='Login V2' />
-          </div>
-        </Col>
-      </Row>}
-    </Fragment>
-  )
+  if (tienda_tmp !== null) {
+    return (
+      <Fragment>
+        <Row className='match-height'>
+          <Col xl='6' sm='12'>
+            <ColumnasApiladas titulo='Pedidos del Día' seccion={seccion} formato='entero' yLabel='Pedidos' fechas={fechas_dia} region={region} zona={zona} tienda={tienda} />
+          </Col>
+          <Col xl='6' sm='12'>
+            <Pie titulo='Estatus de Entrega y No Entrega' seccion={seccion} formato='entero' yLabel='Pedidos' fechas={fechas_dia} region={region} zona={zona} tienda={tienda} />
+          </Col>
+        </Row>
+        <Row className='match-height'>
+          <Col sm='12'>
+            <EjesMultiples titulo='Fulfillment Rate y Found Rate' seccion={seccion} fechas={fechas_mes} region={region} zona={zona} tienda={tienda} />
+          </Col>
+        </Row>
+        <Row className='match-height'>
+          <Col sm='12'>
+            <EjesMultiples titulo='Pedidos Perfectos' fechas={fechas_mes} region={region} zona={zona} tienda={tienda} agrupador={agrupador} seccion={seccion} />
+          </Col>
+        </Row>
+      </Fragment>
+    )
+  } else {
+    return (
+      <Fragment>
+        <div className='w-100 d-lg-flex align-items-center justify-content-center px-5'>
+          <img className='img-fluid' src={source} />
+        </div>
+      </Fragment>
+    )
+  }
 }
 export default Home
