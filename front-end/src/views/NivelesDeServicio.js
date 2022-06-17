@@ -5,6 +5,7 @@ import fechas_srv from '../services/fechas_srv'
 import ColumnasApiladas from '../componentes/graficos/ColumnasApiladas'
 import Pie from '../componentes/graficos/Pie'
 import Tabla from '../componentes/tablas/Tabla'
+import cargarFiltros from '../services/cargarFiltros'
 // import userService from '../services/user.service'
 
 const NivelesDeServicio = () => {
@@ -14,8 +15,17 @@ const NivelesDeServicio = () => {
   const [tienda, setTienda] = useState(false)
   const [categoria, setCategoria] = useState(false)
   const [tipoEntrega, setTipoEntrega] = useState(false)
+  const [tiendaNombre, setTiendaNombre] = useState('')
 
   const seccion = 'NivelesDeServicio'
+  useEffect(async () => {
+    if (tienda !== '' && tienda !== undefined && tienda !== '' && tienda !== false) {
+      const nombreTienda_tmp = await cargarFiltros.nombreTienda(tienda)
+      // console.log("Nombre Tienda:")
+      // console.log(nombreTienda_tmp)
+      setTiendaNombre(nombreTienda_tmp.data.nombreTienda)
+    }
+  }, [tienda])
 
   return (
     <Fragment>
@@ -60,6 +70,11 @@ const NivelesDeServicio = () => {
           <ColumnasApiladas titulo='Estatus de Entrega y No Entrega por Día' seccion={seccion} formato='entero' yLabel='Pedidos' fechas={fechas} region={region} zona={zona} tienda={tienda} categoria={categoria} tipoEntrega={tipoEntrega} />
         </Col>
       </Row>
+      {tienda !== '' && tienda !== false && tienda !== undefined && <Row className='match-height'>
+        <Col sm='12'>
+          <Tabla titulo={`Detalle de pedidos ${tiendaNombre}`} tituloAPI='Detalle de pedidos $tienda' seccion={seccion} fechas={fechas} region={region} zona={zona} tienda={tienda} categoria={categoria} tipoEntrega={tipoEntrega} />
+        </Col>
+      </Row>}
     </Fragment>
   )
 }

@@ -498,7 +498,7 @@ class ColumnasApiladas():
                         {'$dayOfMonth': '$fecha'}
                     ]}
                 ])
-
+            print(f"Pipeline desde ColumnasApiladas -> Pedido Perfecto: {str(pipeline)}")
             # Ejecutamos el query:
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=1000)
@@ -687,7 +687,7 @@ class ColumnasApiladas():
                 ])
                 tituloElegida = str(dia_elegido) + ' ' + mesTexto(mes_elegido) + ' ' + str(anio_elegido)
                 tituloAnterior = str(dia_anterior) + ' ' + mesTexto(mes_anterior) + ' ' + str(anio_anterior)
-            # Agregamos los facets al pipeline:
+            # print(f"Pipeline desde ColumnasApiladas -> Pedido Perfecto: {str(pipeline)}")
             # Ejecutamos el query:
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=1000)

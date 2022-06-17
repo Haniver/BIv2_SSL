@@ -1,3 +1,4 @@
+from asyncio.windows_events import NULL
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.auth import get_current_active_user
@@ -4113,6 +4114,65 @@ class Tablas():
                     {'name': 'No entregado-A tiempo', 'selector': 'No_entregado_tiempo', 'formato': 'texto'},
                     {'name': 'Despachado-Fuera de tiempo', 'selector': 'Despachado_Fuera_tiempo', 'formato': 'texto'},
                     {'name': 'Despachado-A tiempo', 'selector': 'Despachado_tiempo', 'formato': 'texto'}
+                ])
+            else:
+                hayResultados = "no"
+
+        if self.titulo == 'Detalle de pedidos $tienda':
+            collection = conexion_mongo('report').report_detallePedidos
+            pipeline.append({'$match': {'idtienda': int(self.filtros.tienda)}})
+            pipeline.append({'$match': {'fechaEntregaProgramadaNS': {'$gte': self.fecha_ini, '$lt': self.fecha_fin}}})
+            if self.filtros.categoria and self.filtros.categoria != "False":
+                pipeline.append({'$match': {'tercero': self.filtros.categoria}})
+            if self.filtros.tipoEntrega != None and self.filtros.tipoEntrega != "False":
+                pipeline.append({'$match': {'tipoEntrega': self.filtros.tipoEntrega}})
+            # pipeline.append({'$project':{'xLabel':'$sucursal.tienda', 'Entregado_Fuera_tiempo': {'$cond': [{'$eq':['$evaluacion','Entregado-Fuera de tiempo']}, '$pedidos', 0]}, 'Entregado_tiempo': {'$cond': [{'$eq':['$evaluacion','Entregado-A tiempo']}, '$pedidos', 0]}, 'No_entregado_Fuera_tiempo': {'$cond': [{'$eq':['$evaluacion','No entregado-Fuera de tiempo']}, '$pedidos', 0]}, 'No_entregado_tiempo': {'$cond': [{'$eq':['$evaluacion','No entregado-A tiempo']}, '$pedidos', 0]}, 'Despachado_Fuera_tiempo': {'$cond': [{'$eq':['$evaluacion','Despachado-Fuera de tiempo']}, '$pedidos', 0]}, 'Despachado_tiempo': {'$cond': [{'$eq':['$evaluacion','Despachado-A tiempo']}, '$pedidos', 0]}}})
+            pipeline.append({'$project':{
+                'nPedido':'$nPedido', 
+                'ultimoCambio': {'$dateToString': {'format': '%d/%m/%Y %H:%M:%S', 'date': '$ultimoCambio'}}, 
+                'nConsigna': '$nConsigna', 
+                'metodoEntrega': '$metodoEntrega', 
+                'descrip_paymentmode': '$descrip_paymentmode', 
+                'fechaCreacion': {'$dateToString': {'format': '%d/%m/%Y %H:%M:%S', 'date': '$fechaCreacion'}}, 
+                'timeslot_from': {'$dateToString': {'format': '%d/%m/%Y %H:%M:%S', 'date': '$timeslot_from'}}, 
+                'timeslot_to': {'$dateToString': {'format': '%d/%m/%Y %H:%M:%S', 'date': '$timeslot_to'}}, 
+                'Minutos_tarde': '$Minutos_tarde', 
+                'fechaEntregaProgramadaNS': {'$dateToString': {'format': '%d/%m/%Y %H:%M:%S', 'date': '$fechaEntregaProgramadaNS'}}
+            }})
+            pipeline.append({'$sort':{'nPedido':1}})
+            print(f'Pipeline desde Tablas -> NivelesDeServicio -> Detalle de pedidos $tienda: {str(pipeline)}')
+            cursor = collection.aggregate(pipeline)
+            arreglo = await cursor.to_list(length=10000)
+            if len(arreglo) >0:
+                hayResultados = "si"
+                for row in arreglo:
+                    minutos_tarde = str(row['Minutos_tarde']) if 'Minutos_tarde' in row and row['Minutos_tarde'] is not None else '0'
+                    timeslot_from = row['timeslot_from'] if 'timeslot_from' in row and row['timeslot_from'] is not None else '--'
+                    timeslot_to = row['timeslot_to'] if 'timeslot_to' in row and row['timeslot_to'] is not None else '--'
+                    print(f"timeslot_from es {str(timeslot_from)}")
+                    data.append({
+                        'ultimoCambio': row['ultimoCambio'],
+                        'nPedido': row['nPedido'],
+                        'nConsigna': row['nConsigna'],
+                        'descrip_paymentmode': row['descrip_paymentmode'],
+                        'metodoEntrega': row['metodoEntrega'],
+                        'fechaCreacion': row['fechaCreacion'],
+                        'timeslot_from': timeslot_from,
+                        'timeslot_to': timeslot_to,
+                        'Minutos_tarde': minutos_tarde,
+                        'fechaEntregaProgramadaNS': row['fechaEntregaProgramadaNS']
+                    })
+                columns.extend([
+                    {'name': 'Último Cambio', 'selector': 'ultimoCambio', 'formato': 'texto', 'ancho': '180px'},                                
+                    {'name': 'No. de Orden', 'selector': 'nPedido', 'formato': 'texto'},                                
+                    {'name': 'No. de Consigna', 'selector': 'nConsigna', 'formato': 'texto'},
+                    {'name': 'Método de Entrega', 'selector': 'metodoEntrega', 'formato': 'texto', 'ancho': '160px'},
+                    {'name': 'Método de Pago', 'selector': 'descrip_paymentmode', 'formato': 'texto', 'ancho': '180px'},
+                    {'name': 'Fecha Creación', 'selector': 'fechaCreacion', 'formato': 'texto', 'ancho': '180px'},
+                    {'name': 'Timeslot Incio', 'selector': 'timeslot_from', 'formato': 'texto', 'ancho': '180px'},
+                    {'name': 'Timeslot Fin', 'selector': 'timeslot_to', 'formato': 'texto', 'ancho': '180px'},
+                    {'name': 'Minutos Tarde', 'selector': 'Minutos_tarde', 'formato': 'texto'},
+                    {'name': 'Fecha Entrega', 'selector': 'fechaEntregaProgramadaNS', 'formato': 'texto', 'ancho': '180px'}
                 ])
             else:
                 hayResultados = "no"
