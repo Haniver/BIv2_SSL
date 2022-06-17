@@ -4154,6 +4154,7 @@ class Tablas():
                     timeslot_to = row['timeslot_to'] if 'timeslot_to' in row and row['timeslot_to'] is not None else '--'
                     fechaDespacho = row['fechaDespacho'] if 'fechaDespacho' in row and row['fechaDespacho'] is not None else '--'
                     fechaEntrega = row['fechaEntrega'] if 'fechaEntrega' in row and row['fechaEntrega'] is not None else '--'
+                    evaluacion = row['evaluacion'] if 'evaluacion' in row and row['evaluacion'] is not None else '--'
                     print(f"timeslot_from es {str(timeslot_from)}")
                     data.append({
                         'ultimoCambio': row['ultimoCambio'],
@@ -4168,7 +4169,7 @@ class Tablas():
                         'fechaEntrega': fechaEntrega,
                         'fechaDespacho': fechaDespacho,
                         'estatusConsigna': row['estatusConsigna'],
-                        'evaluacion': row['evaluacion']
+                        'evaluacion': evaluacion
                     })
                 columns.extend([
                     {'name': 'Último Cambio', 'selector': 'ultimoCambio', 'formato': 'texto', 'ancho': '180px'},                                
