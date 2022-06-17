@@ -4138,9 +4138,9 @@ class Tablas():
                 'timeslot_to': {'$dateToString': {'format': '%d/%m/%Y %H:%M:%S', 'date': '$timeslot_to'}}, 
                 'Minutos_tarde': '$Minutos_tarde', 
                 'fechaEntrega': {'$dateToString': {'format': '%d/%m/%Y %H:%M:%S', 'date': '$fechaEntrega'}},
-                'evaluacion': '$evaluacion', 
                 'fechaDespacho': {'$dateToString': {'format': '%d/%m/%Y %H:%M:%S', 'date': '$fechaDespacho'}},
-                'estatusConsigna': '$estatusConsigna'
+                'estatusConsigna': '$estatusConsigna',
+                'evaluacion': '$evaluacion'
             }})
             pipeline.append({'$sort':{'nPedido':1}})
             print(f'Pipeline desde Tablas -> NivelesDeServicio -> Detalle de pedidos $tienda: {str(pipeline)}')
@@ -4166,9 +4166,9 @@ class Tablas():
                         'timeslot_to': timeslot_to,
                         'Minutos_tarde': minutos_tarde,
                         'fechaEntrega': fechaEntrega,
-                        'evaluacion': row['evaluacion'],
                         'fechaDespacho': fechaDespacho,
-                        'estatusConsigna': row['estatusConsigna']
+                        'estatusConsigna': row['estatusConsigna'],
+                        'evaluacion': row['evaluacion']
                     })
                 columns.extend([
                     {'name': 'Último Cambio', 'selector': 'ultimoCambio', 'formato': 'texto', 'ancho': '180px'},                                
@@ -4181,9 +4181,9 @@ class Tablas():
                     {'name': 'Timeslot Fin', 'selector': 'timeslot_to', 'formato': 'texto', 'ancho': '180px'},
                     {'name': 'Minutos Tarde', 'selector': 'Minutos_tarde', 'formato': 'texto'},
                     {'name': 'Fecha Entrega', 'selector': 'fechaEntrega', 'formato': 'texto', 'ancho': '180px'},
-                    {'name': 'Evaluación', 'selector': 'evaluacion', 'formato': 'texto', 'ancho': '190px'},
                     {'name': 'Fecha Despacho', 'selector': 'fechaDespacho', 'formato': 'texto', 'ancho': '180px'},
-                    {'name': 'Estaus Consigna', 'selector': 'estatusConsigna', 'formato': 'texto', 'ancho': '180px'}
+                    {'name': 'Estaus Consigna', 'selector': 'estatusConsigna', 'formato': 'texto', 'ancho': '180px'},
+                    {'name': 'Evaluación', 'selector': 'evaluacion', 'formato': 'texto', 'ancho': '190px'}
                 ])
             else:
                 hayResultados = "no"
