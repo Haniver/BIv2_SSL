@@ -4122,6 +4122,7 @@ class Tablas():
             collection = conexion_mongo('report').report_detallePedidos
             pipeline.append({'$match': {'idtienda': int(self.filtros.tienda)}})
             pipeline.append({'$match': {'fechaEntregaProgramadaNS': {'$gte': self.fecha_ini, '$lt': self.fecha_fin}}})
+            pipeline.append({'$match': {'estatusConsigna': {'$not': {'$eq': 'Canceled'}}}})
             if self.filtros.categoria and self.filtros.categoria != "False":
                 pipeline.append({'$match': {'tercero': self.filtros.categoria}})
             if self.filtros.tipoEntrega != None and self.filtros.tipoEntrega != "False":
