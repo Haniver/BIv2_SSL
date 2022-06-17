@@ -4137,7 +4137,10 @@ class Tablas():
                 'timeslot_from': {'$dateToString': {'format': '%d/%m/%Y %H:%M:%S', 'date': '$timeslot_from'}}, 
                 'timeslot_to': {'$dateToString': {'format': '%d/%m/%Y %H:%M:%S', 'date': '$timeslot_to'}}, 
                 'Minutos_tarde': '$Minutos_tarde', 
-                'fechaEntregaProgramadaNS': {'$dateToString': {'format': '%d/%m/%Y %H:%M:%S', 'date': '$fechaEntregaProgramadaNS'}}
+                'fechaEntrega': {'$dateToString': {'format': '%d/%m/%Y %H:%M:%S', 'date': '$fechaEntrega'}},
+                'evaluacion': '$evaluacion', 
+                'fechaDespacho': {'$dateToString': {'format': '%d/%m/%Y %H:%M:%S', 'date': '$fechaDespacho'}},
+                'estatusConsigna': '$estatusConsigna'
             }})
             pipeline.append({'$sort':{'nPedido':1}})
             print(f'Pipeline desde Tablas -> NivelesDeServicio -> Detalle de pedidos $tienda: {str(pipeline)}')
@@ -4149,6 +4152,8 @@ class Tablas():
                     minutos_tarde = str(row['Minutos_tarde']) if 'Minutos_tarde' in row and row['Minutos_tarde'] is not None else '0'
                     timeslot_from = row['timeslot_from'] if 'timeslot_from' in row and row['timeslot_from'] is not None else '--'
                     timeslot_to = row['timeslot_to'] if 'timeslot_to' in row and row['timeslot_to'] is not None else '--'
+                    fechaDespacho = row['fechaDespacho'] if 'fechaDespacho' in row and row['fechaDespacho'] is not None else '--'
+                    fechaEntrega = row['fechaEntrega'] if 'fechaEntrega' in row and row['fechaEntrega'] is not None else '--'
                     print(f"timeslot_from es {str(timeslot_from)}")
                     data.append({
                         'ultimoCambio': row['ultimoCambio'],
@@ -4160,7 +4165,10 @@ class Tablas():
                         'timeslot_from': timeslot_from,
                         'timeslot_to': timeslot_to,
                         'Minutos_tarde': minutos_tarde,
-                        'fechaEntregaProgramadaNS': row['fechaEntregaProgramadaNS']
+                        'fechaEntrega': fechaEntrega,
+                        'evaluacion': row['evaluacion'],
+                        'fechaDespacho': fechaDespacho,
+                        'estatusConsigna': row['estatusConsigna']
                     })
                 columns.extend([
                     {'name': 'Último Cambio', 'selector': 'ultimoCambio', 'formato': 'texto', 'ancho': '180px'},                                
@@ -4172,7 +4180,10 @@ class Tablas():
                     {'name': 'Timeslot Incio', 'selector': 'timeslot_from', 'formato': 'texto', 'ancho': '180px'},
                     {'name': 'Timeslot Fin', 'selector': 'timeslot_to', 'formato': 'texto', 'ancho': '180px'},
                     {'name': 'Minutos Tarde', 'selector': 'Minutos_tarde', 'formato': 'texto'},
-                    {'name': 'Fecha Entrega', 'selector': 'fechaEntregaProgramadaNS', 'formato': 'texto', 'ancho': '180px'}
+                    {'name': 'Fecha Entrega', 'selector': 'fechaEntrega', 'formato': 'texto', 'ancho': '180px'},
+                    {'name': 'Evaluación', 'selector': 'evaluacion', 'formato': 'texto', 'ancho': '190px'},
+                    {'name': 'Fecha Despacho', 'selector': 'fechaDespacho', 'formato': 'texto', 'ancho': '180px'},
+                    {'name': 'Estaus Consigna', 'selector': 'estatusConsigna', 'formato': 'texto', 'ancho': '180px'}
                 ])
             else:
                 hayResultados = "no"
