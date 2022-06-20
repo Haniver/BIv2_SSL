@@ -73,11 +73,11 @@ const VentaSinImpuesto = () => {
     setTarjetasCombinadasMesAlDia(resMesAlDia)
   }, [fechas, region, zona, tienda, canal, depto, subDepto])
 
-  // useEffect(() => {
-  //   console.log(`region: ${region}`)
-  //   console.log(`zona: ${zona}`)
-  //   console.log(`tienda: ${tienda}`)
-  // }, [region, zona, tienda])
+  useEffect(() => {
+    console.log(`fecha_fin: ${fechas.fecha_fin}`)
+    console.log(`mesTexto: ${fechas_srv.mesTexto(mes)}`)
+
+  }, [fechas])
 
   return (
     <>
@@ -96,10 +96,10 @@ const VentaSinImpuesto = () => {
           <Tarjeta icono={<DollarSign size={21} />} formato='moneda' titulo={`Venta ${anio}`} tituloAPI='Venta $anio' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} resAPI={tarjetasCombinadasAnio} />
         </Col>
         <Col>
-          <Tarjeta icono={<Calendar size={21} />} formato='moneda' titulo={`Venta ${anio - 1} al ${fechas_srv.ultimoDiaVencidoDelMesReal(anio, fechas_srv.ultimoMesVencidoReal())} de ${fechas_srv.mesTexto(fechas_srv.ultimoMesVencidoReal())}`} tituloAPI='Venta $anioPasado al $dia de $mes' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} resAPI={tarjetasCombinadasAnio} />
+          <Tarjeta icono={<Calendar size={21} />} formato='moneda' titulo={`Venta ${anio - 1} al ${fechas_srv.ultimoDiaVencidoDelMesReal(anio, mes)} de ${fechas_srv.mesTexto(mes)}`} tituloAPI='Venta $anioPasado al $dia de $mes' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} resAPI={tarjetasCombinadasAnio} />
         </Col>
         {(canal === 1 || canal === 35 || canal === 36) && <Col>
-          <Tarjeta icono={<Target size={21} />} formato='moneda' titulo={`Objetivo ${anio - 1} al ${fechas_srv.ultimoDiaVencidoDelMesReal(anio, fechas_srv.ultimoMesVencidoReal())} de ${fechas_srv.mesTexto(fechas_srv.ultimoMesVencidoReal())}`} tituloAPI='Objetivo $anioActual al $dia de $mes' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto}  resAPI={tarjetasCombinadasAnio} />
+          <Tarjeta icono={<Target size={21} />} formato='moneda' titulo={`Objetivo ${anio - 1} al ${fechas_srv.ultimoDiaVencidoDelMesReal(anio, mes)} de ${fechas_srv.mesTexto(mes)}`} tituloAPI='Objetivo $anioActual al $dia de $mes' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto}  resAPI={tarjetasCombinadasAnio} />
         </Col>}
         <Col>
           <Tarjeta icono={<Divide size={21} />} colorPositivo formato='porcentaje' titulo={`Variación ${anio} vs. ${anio - 1}`} tituloAPI='Variación $anioActual vs. $anioAnterior' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} resAPI={tarjetasCombinadasAnio} />
@@ -129,22 +129,22 @@ const VentaSinImpuesto = () => {
           </Row>
           <Row className='match-height'>
             <Col>
-              <Tarjeta icono={<Target size={21} />} formato='moneda' titulo={`Objetivo del 1 al ${dia} ${fechas_srv.mesTexto(mes)} ${anio}`} tituloAPI='Objetivo 1 al $dia $mes $anio' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} resAPI={tarjetasCombinadasMesAlDia} />
+              <Tarjeta icono={<Target size={21} />} formato='moneda' titulo={`Objetivo del 1 al ${fechas_srv.ultimoDiaVencidoDelMesReal(anio, mes)} de ${fechas_srv.mesTexto(mes)} ${anio}`} tituloAPI='Objetivo 1 al $dia $mes $anio' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} resAPI={tarjetasCombinadasMesAlDia} />
             </Col>
             <Col>
-              <Tarjeta icono={<Navigation2 size={21} />} colorPositivo formato='porcentaje' titulo={`Objetivo Vs. Venta al ${dia} ${fechas_srv.mesTexto(mes)} ${anio}`} tituloAPI='Objetivo Vs. Venta al $dia $mes $anio' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} resAPI={tarjetasCombinadasMesAlDia} />
+              <Tarjeta icono={<Navigation2 size={21} />} colorPositivo formato='porcentaje' titulo={`Objetivo Vs. Venta al ${fechas_srv.ultimoDiaVencidoDelMesReal(anio, mes)} de ${fechas_srv.mesTexto(mes)} ${anio}`} tituloAPI='Objetivo Vs. Venta al $dia $mes $anio' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} resAPI={tarjetasCombinadasMesAlDia} />
             </Col>
             <Col>
-              <Tarjeta icono={<Calendar size={21} />} formato='moneda' titulo={`Venta del 1 al ${dia} ${fechas_srv.mesTexto(mes)} ${anio - 1}`} tituloAPI='Venta 1 al $dia $mes $anioAnterior' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} resAPI={tarjetasCombinadasMesAlDia} />
+              <Tarjeta icono={<Calendar size={21} />} formato='moneda' titulo={`Venta del 1 al ${fechas_srv.ultimoDiaVencidoDelMesReal(anio, mes)} de ${fechas_srv.mesTexto(mes)} ${anio - 1}`} tituloAPI='Venta 1 al $dia $mes $anioAnterior' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} resAPI={tarjetasCombinadasMesAlDia} />
             </Col>
             <Col>
-              <Tarjeta icono={<DivideCircle size={21} />} colorPositivo formato='porcentaje' titulo={`Venta ${anio - 1} Vs. ${anio} al ${dia} ${fechas_srv.mesTexto(mes)}`} tituloAPI='Venta $anioAnterior Vs. $anioActual al $dia $mes' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} resAPI={tarjetasCombinadasMesAlDia} />
+              <Tarjeta icono={<DivideCircle size={21} />} colorPositivo formato='porcentaje' titulo={`Venta ${anio - 1} Vs. ${anio} al ${fechas_srv.ultimoDiaVencidoDelMesReal(anio, mes)} de ${fechas_srv.mesTexto(mes)}`} tituloAPI='Venta $anioAnterior Vs. $anioActual al $dia $mes' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} resAPI={tarjetasCombinadasMesAlDia} />
             </Col>
           </Row>
         </Col>
       </Row>
         <Col>
-           <Tarjeta icono={<DollarSign size={21} />} formato='moneda' titulo={`Venta del 1 al ${dia} ${fechas_srv.mesTexto(mes)} ${anio}`} tituloAPI='Venta 1 al $dia $mes $anioActual' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} resAPI={tarjetasCombinadasMesAlDia} />
+           <Tarjeta icono={<DollarSign size={21} />} formato='moneda' titulo={`Venta del 1 al ${fechas_srv.ultimoDiaVencidoDelMesReal(anio, mes)} de ${fechas_srv.mesTexto(mes)} ${anio}`} tituloAPI='Venta 1 al $dia $mes $anioActual' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} resAPI={tarjetasCombinadasMesAlDia} />
         </Col>
       <Row className='match-height'>
         <Col sm='12'>

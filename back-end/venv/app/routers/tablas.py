@@ -4156,7 +4156,7 @@ class Tablas():
                     fechaDespacho = row['fechaDespacho'] if 'fechaDespacho' in row and row['fechaDespacho'] is not None else '--'
                     fechaEntrega = row['fechaEntrega'] if 'fechaEntrega' in row and row['fechaEntrega'] is not None else '--'
                     evaluacion = row['evaluacion'] if 'evaluacion' in row and row['evaluacion'] is not None else '--'
-                    print(f"timeslot_from es {str(timeslot_from)}")
+                    # print(f"timeslot_from es {str(timeslot_from)}")
                     data.append({
                         'ultimoCambio': row['ultimoCambio'],
                         'nPedido': row['nPedido'],
