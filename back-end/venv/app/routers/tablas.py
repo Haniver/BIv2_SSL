@@ -447,6 +447,8 @@ class Tablas():
                 pipeline.append({'$match': {'sucursal.'+ nivel: self.lugar}})
             if self.filtros.tipoEntrega != None and self.filtros.tipoEntrega != "False":
                 pipeline.append({'$match': {'metodoEntrega': self.filtros.tipoEntrega}})
+            if self.filtros.origen != None and self.filtros.origen != "False":
+                pipeline.append({'$match': {'origen': self.filtros.origen}})
             pipeline.append({'$match': {'estatus': 'pendientes'}})
             pipeline.append({'$match': {'prioridad': {'$in': ['2 DIAS','ANTERIORES']}}})
             pipeline.append({'$group': {'_id': {'region': '$sucursal.regionNombre', 'zona': '$sucursal.zonaNombre', 'tienda': '$sucursal.tiendaNombre'}, 'pedidos': {'$sum': 1}, 'fechaEntrega': {'$min':'$fechaEntrega'}}})
@@ -480,6 +482,8 @@ class Tablas():
             pipeline.append({'$match': {'sucursal.idTienda': self.lugar}})
             if self.filtros.tipoEntrega != None and self.filtros.tipoEntrega != "False":
                 pipeline.append({'$match': {'metodoEntrega': self.filtros.tipoEntrega}})
+            if self.filtros.origen != None and self.filtros.origen != "False":
+                pipeline.append({'$match': {'origen': self.filtros.origen}})
             pipeline.extend([{'$project': {
                 'Tienda': '$sucursal.tiendaNombre',
                 'NumOrden': '$pedido',
@@ -535,6 +539,8 @@ class Tablas():
                 )
             if self.filtros.tipoEntrega != None and self.filtros.tipoEntrega != "False":
                 pipeline.append({'$match': {'metodoEntrega': self.filtros.tipoEntrega}})
+            if self.filtros.origen != None and self.filtros.origen != "False":
+                pipeline.append({'$match': {'origen': self.filtros.origen}})
             pipeline.extend([{'$project': {
                 'fechaEntrega': {'$dateToString': {'format': '%d/%m/%Y', 'date': '$fechaEntrega'}},
                 'regionNombre': '$sucursal.regionNombre',
@@ -628,6 +634,8 @@ class Tablas():
                 )
             if self.filtros.tipoEntrega != None and self.filtros.tipoEntrega != "False":
                 pipeline.append({'$match': {'metodoEntrega': self.filtros.tipoEntrega}})
+            if self.filtros.origen != None and self.filtros.origen != "False":
+                pipeline.append({'$match': {'origen': self.filtros.origen}})
             pipeline.extend([{'$project': {
                 'fechaOrdenar': '$fechaEntrega',
                 'fechaEntrega': {'$dateToString': {'format': '%d/%m/%Y', 'date': '$fechaEntrega'}},

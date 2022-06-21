@@ -31,3 +31,4 @@ class Filtro(BaseModel):
     deptoAgrupado: Optional[str]
     subDeptoAgrupado: Optional[str]
     fromSibling: Optional[str]
+    origen: Optional[str]

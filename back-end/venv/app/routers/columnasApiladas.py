@@ -302,6 +302,8 @@ class ColumnasApiladas():
             pipeline.append({'$match': {'sucursal.'+ nivel: lugar}})
         if self.filtros.tipoEntrega != None and self.filtros.tipoEntrega != "False":
                 pipeline.append({'$match': {'metodoEntrega': self.filtros.tipoEntrega}})
+        if self.filtros.origen != None and self.filtros.origen != "False":
+                pipeline.append({'$match': {'origen': self.filtros.origen}})
 
         if self.titulo == 'Estatus Pedidos por Área':
             pipeline.append({'$match': {'estatus': 'pendientes'}})
@@ -498,7 +500,7 @@ class ColumnasApiladas():
                         {'$dayOfMonth': '$fecha'}
                     ]}
                 ])
-            print(f"Pipeline desde ColumnasApiladas -> Pedido Perfecto: {str(pipeline)}")
+
             # Ejecutamos el query:
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=1000)

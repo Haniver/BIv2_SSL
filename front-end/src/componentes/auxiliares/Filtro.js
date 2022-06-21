@@ -153,6 +153,8 @@ const Filtro = (props) => {
     {label: 'Chedraui', value: 'Chedraui'}
   ]
 
+  const comboOrigen = [{label: 'Hybris', value: 'Hybris'}]
+
   const comboE3 = [
     {label: '0', value: '0'},
     {label: '1', value: '1'},
@@ -236,6 +238,7 @@ const Filtro = (props) => {
   const [subDeptoAgrupadoValue, setSubDeptoAgrupadoValue] = useState({value:'', label:''})
   const [canalValue, setCanalValue] = useState({value:'', label:''})
   const [canal2Value, setCanal2Value] = useState({value:'', label:''})
+  const [origenValue, setOrigenValue] = useState({value:'', label:''})
   const [e3Value, setE3Value] = useState({value:'', label:''})
   const [anioValue, setAnioValue] = useState(comboAnio[0])
   const [anioValueRFM, setAnioValueRFM] = useState(comboAnioRFM[0])
@@ -290,6 +293,7 @@ const Filtro = (props) => {
       const [Formato_tmp, setFormato_tmp] = useState(props.formato)
       const [Canal_tmp, setCanal_tmp] = useState(props.canal)
       const [Canal2_tmp, setCanal2_tmp] = useState(props.canal2)
+      const [Origen_tmp, setOrigen_tmp] = useState(props.origen)
       const [E3_tmp, setE3_tmp] = useState(props.e3)
       const [Proveedor_tmp, setProveedor_tmp] = useState(props.proveedor)
       const [Categoria_tmp, setCategoria_tmp] = useState(props.categoria)
@@ -989,6 +993,35 @@ const Filtro = (props) => {
                     props.setCanal2('')
                   } else {
                     setCanal2_tmp('')
+                  }
+                }
+              }}
+            />
+          </Col>}
+          {props.origen !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
+            <Label>🛈 Origen</Label>
+            <Select
+              theme={selectThemeColors}
+              value={origenValue}
+              className='react-select'
+              classNamePrefix='select'
+              name='filtroOrigen'
+              options={comboOrigen}
+              isClearable={true}
+              onChange={e => {
+                if (e) {
+                  setOrigenValue({label: e.label, value: e.value})
+                  if (props.botonEnviar === undefined) {
+                    props.setOrigen(e.value)
+                  } else {
+                    setOrigen_tmp(e.value)
+                  }
+                } else {
+                  setOrigenValue({label: '', value: ''})
+                  if (props.botonEnviar === undefined) {
+                    props.setOrigen('')
+                  } else {
+                    setOrigen_tmp('')
                   }
                 }
               }}
