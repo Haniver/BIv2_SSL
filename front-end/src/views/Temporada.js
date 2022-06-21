@@ -22,6 +22,7 @@ const Temporada = () => {
     const [subDepto, setSubDepto] = useState('')
     const [clase, setClase] = useState('')
     const [subClase, setSubClase] = useState('')
+    const [fuenteDataStudio, setFuenteDataStudio] = useState('')
     // console.log(`Fecha y hora actual: ${new Date()}`)
 
     useEffect(() => {
@@ -36,9 +37,13 @@ const Temporada = () => {
       setSubClase('')
     }, [clase])
 
-    // useEffect(() => {
-    //   console.log(fechas)
-    // }, [fechas])
+    useEffect(() => {
+      if (fechas.fecha_fin.getFullYear() <= 2022 && fechas.fecha_fin.getMonth() <= 4) {
+        setFuenteDataStudio("https://datastudio.google.com/embed/reporting/f39d3f71-6d94-4827-8a79-77f470d3ce67/page/K02eC")
+      } else {
+        setFuenteDataStudio("https://datastudio.google.com/embed/reporting/ccd588c9-6f90-4f72-b878-8f6c7233cde3/page/K02eC")
+      }
+    }, [fechas])
 
     const seccion = 'Temporada'
 
@@ -122,7 +127,7 @@ const Temporada = () => {
         <Col sm='12'>
           <Card>
               <CardBody>
-              <iframe src="https://datastudio.google.com/embed/reporting/f39d3f71-6d94-4827-8a79-77f470d3ce67/page/K02eC" allowFullScreen frameBorder={0} width='100%' height='500px'></iframe>
+              <iframe src={fuenteDataStudio} allowFullScreen frameBorder={0} width='100%' height='500px'></iframe>
               </CardBody>
           </Card>
         </Col>
