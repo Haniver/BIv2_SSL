@@ -10,3 +10,19 @@ NOTE:
 PLACE HERE YOUR OWN SCSS CODES AND IF NEEDED, OVERRIDE THE STYLES FROM THE OTHER STYLESHEETS.
 WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BETTER LIKE THIS.  */
 /*# sourceMappingURL=style.css.map */
+
+.contextMenu {
+	font-size: 14px;
+	background-color: #fff;
+	border-radius: 2px;
+	padding: 5px 0 5px 0;
+	width: 150px;
+	height: auto;
+	margin: 0;
+  /* use absolute positioning  */
+	position: absolute;
+	list-style: none;
+	box-shadow: 0 0 20px 0 #ccc;
+	opacity: 1;
+	transition: opacity 0.5s linear;
+  }

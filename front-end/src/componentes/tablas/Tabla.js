@@ -8,7 +8,7 @@ import { Card, CardBody, Input, Button } from 'reactstrap'
 import { Link } from 'react-router-dom'
 import DataTable from 'react-data-table-component'
 import LoadingGif from '../auxiliares/LoadingGif'
-import Label from 'reactstrap/lib/Label'
+import { ContextMenu, MenuItem, ContextMenuTrigger, SubMenu } from "react-contextmenu"
 
 // Búsqueda
 const FilterComponent = ({ filterText, onFilter, onClear }) => (
@@ -28,7 +28,7 @@ const FilterComponent = ({ filterText, onFilter, onClear }) => (
     </>
 )
 
-const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quitarPaginacion, fechas, region, zona, tienda, proveedor, tipoEntrega, depto, subDepto, mes, canal, agrupador, periodo, reload, setProducto, setUsuario, tipoEntrega2, tipoEntrega3, detalle, estatus, formato, sku, e3, canal2, opcionesPaginacion = [5, 10, 15], setSibling, botonEnviar, mesRFM, anioRFM, fromSibling, origen}) => {
+const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quitarPaginacion, fechas, region, zona, tienda, proveedor, tipoEntrega, depto, subDepto, mes, canal, agrupador, periodo, reload, setProducto, setUsuario, tipoEntrega2, tipoEntrega3, detalle, estatus, formato, sku, e3, canal2, opcionesPaginacion = [5, 10, 15], setSibling, botonEnviar, mesRFM, anioRFM, fromSibling, origen, filtroDesdeTabla}) => {
     const tituloEnviar = (tituloAPI !== undefined) ? tituloAPI : titulo
     // Skins
     const [skin, setSkin] = useSkin()
@@ -79,12 +79,6 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
             setColorTexto(colorTextoLight)
         }
     }, [skin])
-
-    // Para debugging
-    // useEffect(() => {
-    //     // Aquí también cambiar los colores dependiendo del skin, según líneas 18-19
-    //     console.log(`tipoEntrega desde Tabla: ${tipoEntrega}`)
-    // }, [tipoEntrega])
 
     // Traer datos de API
     useEffect(async () => {
@@ -413,6 +407,12 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
     const Export = ({ onExport }) => <Button color='primary' onClick={e => onExport(e.target.value)}>Exportar a Excel</Button>
     const actionsMemo = <Export onExport={() => downloadCSV(data)} />
 
+    // Acción de menú contextual
+    function handleClick () {
+        console.log("Picado un elemento del menú...")
+    }
+            
+    
     //Búsqueda
     const filteredItems = data.filter(item => {
         for (const [key, value] of Object.entries(item)) {
@@ -507,31 +507,79 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
             }
         }
     }
-        
-    return (
-        <Card>
-            <CardBody>
-                {estadoLoader.contador === 0 && <DataTable
-                    title={titulo}
-                    columns={columns}
-                    data={filteredItems}
-                    // data={data}
-                    actions={(quitarExportar) ? false : actionsMemo}
-                    // Paginación
-                    paginationResetDefaultPage={resetPaginationToggle} // optionally, a hook to reset pagination to page 1
-                    subHeader
-                    subHeaderComponent={subHeaderComponentMemo}
-                    onColumnOrderChange={cols => console.log(cols)}
-                    paginationComponentOptions={paginationComponentOptions}
-                    pagination={!quitarPaginacion} paginationRowsPerPageOptions={opcionesPaginacion}
-                    paginationPerPage={opcionesPaginacion[0]}
-                    customStyles={customStyles}
-                    highlightOnHover
-                />}
-                {estadoLoader.contador !== 0 && <LoadingGif />}
-            </CardBody>
-        </Card>
-    )
+
+    if (filtroDesdeTabla) {
+        return (
+            <Card>
+                <CardBody>
+                    {/* {estadoLoader.contador === 0 && buildContextMenuJSX() && <> */}
+                    {estadoLoader.contador === 0 && <>
+                    <ContextMenuTrigger id={`context-${titulo}`} holdToDisplay={1000}>
+                        <DataTable
+                            title={titulo}
+                            columns={columns}
+                            data={filteredItems}
+                            // data={data}
+                            actions={(quitarExportar) ? false : actionsMemo}
+                            // Paginación
+                            paginationResetDefaultPage={resetPaginationToggle} // optionally, a hook to reset pagination to page 1
+                            subHeader
+                            subHeaderComponent={subHeaderComponentMemo}
+                            onColumnOrderChange={cols => console.log(cols)}
+                            paginationComponentOptions={paginationComponentOptions}
+                            pagination={!quitarPaginacion} paginationRowsPerPageOptions={opcionesPaginacion}
+                            paginationPerPage={opcionesPaginacion[0]}
+                            customStyles={customStyles}
+                            highlightOnHover
+                        />
+                    </ContextMenuTrigger>
+                    <ContextMenu id={`context-${titulo}`}>
+                        <SubMenu title={'Área'}>
+                            <MenuItem onClick={handleClick} data={{ item: 'item 1' }}>Región</MenuItem>
+                            <MenuItem onClick={handleClick} data={{ item: 'item 2' }}>Zona</MenuItem>
+                            <MenuItem onClick={handleClick} data={{ item: 'item 3' }}>Tienda</MenuItem>
+                        </SubMenu>
+                        <SubMenu title={'Producto'}>
+                            <MenuItem onClick={handleClick} data={{ item: 'item 4' }}>Departamento</MenuItem>
+                            <MenuItem onClick={handleClick} data={{ item: 'item 5' }}>Subdepartamento</MenuItem>
+                            <MenuItem onClick={handleClick} data={{ item: 'item 6' }}>Tienda</MenuItem>
+                            <MenuItem onClick={handleClick} data={{ item: 'item 5' }}>SKU</MenuItem>
+                        </SubMenu>
+                    </ContextMenu>
+                    </>
+                    }
+                    {estadoLoader.contador !== 0 && <LoadingGif />}
+                </CardBody>
+            </Card>
+        )
+    } else {
+        return (
+            <Card>
+                <CardBody>
+                    {/* {estadoLoader.contador === 0 && buildContextMenuJSX() && <> */}
+                    {estadoLoader.contador === 0 && <DataTable
+                        title={titulo}
+                        columns={columns}
+                        data={filteredItems}
+                        // data={data}
+                        actions={(quitarExportar) ? false : actionsMemo}
+                        // Paginación
+                        paginationResetDefaultPage={resetPaginationToggle} // optionally, a hook to reset pagination to page 1
+                        subHeader
+                        subHeaderComponent={subHeaderComponentMemo}
+                        onColumnOrderChange={cols => console.log(cols)}
+                        paginationComponentOptions={paginationComponentOptions}
+                        pagination={!quitarPaginacion} paginationRowsPerPageOptions={opcionesPaginacion}
+                        paginationPerPage={opcionesPaginacion[0]}
+                        customStyles={customStyles}
+                        highlightOnHover
+                    />
+                    }
+                    {estadoLoader.contador !== 0 && <LoadingGif />}
+                </CardBody>
+            </Card>
+        )
+    }
 }
 
 export default Tabla
