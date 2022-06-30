@@ -64,8 +64,16 @@ class UserService {
     })
   }
 
-  roles() {
-    return axios.get(`${CustomUrls.ApiUrl()}roles/`)
+  // roles() {
+  //   return axios.get(`${CustomUrls.ApiUrl()}roles/`)
+  // }
+
+  areas() {
+    return axios.get(`${CustomUrls.ApiUrl()}areas/`)
+  }
+
+  async todasLasTiendas() {
+    return axios.get(`${CustomUrls.ApiUrl()}todasLasTiendas/`)
   }
 
   registro(apellidoM, apellidoP, usuario, nombre, password, id_rol, tienda) {

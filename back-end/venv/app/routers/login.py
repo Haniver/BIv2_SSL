@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from app.auth import get_current_active_user, authenticate_user, buscar_usuario_en_bd, create_access_token, TokenData, claseCambiarPassword, User, Token, UserInDB
 from app.servicios.conectar_sql import conexion_sql, crear_diccionario
+from app.servicios.conectar_mongo import conexion_mongo
 from app.servicios.enviarEmail import enviarEmail
 from app.servicios import urls
 from datetime import datetime, timedelta, date, time
@@ -77,17 +78,42 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
-@router.get("/roles")
-async def roles():
+# @router.get("/roles")
+# async def roles():
+#     respuesta = []
+#     cnxn = conexion_sql('DJANGO')
+#     cursor = cnxn.cursor()
+#     cursor.execute("select * from DJANGO.php.rol r")
+#     rows = cursor.fetchall()
+#     for row in rows:
+#         respuesta.append({'value': row.id, 'label': row.rol})
+#     # print(f'Respuesta desde roles en login.py: {str(respuesta)}')
+#     return respuesta
+
+@router.get("/areas")
+async def areas():
     respuesta = []
     cnxn = conexion_sql('DJANGO')
     cursor = cnxn.cursor()
-    cursor.execute("select * from DJANGO.php.rol r")
+    cursor.execute("select * from DJANGO.php.areas a")
     rows = cursor.fetchall()
     for row in rows:
-        respuesta.append({'value': row.id, 'label': row.rol})
-    # print(f'Respuesta desde roles en login.py: {str(respuesta)}')
+        respuesta.append({'value': row.id, 'label': row.nombre})
+    # print(f'Respuesta desde areas en login.py: {str(respuesta)}')
     return respuesta
+
+@router.get("/todasLasTiendas")
+async def todasLasTiendas():
+    respuesta = []
+    collection = conexion_mongo('report').catTienda
+    pipeline = [
+        {'$match': {'TIENDA_NOMBRE': {'$ne': 'N/A'}}},
+        {'$group': {'_id': {'label': '$TIENDA_NOMBRE', 'value': '$TIENDA'}}},
+        {'$project': {'_id': 0, 'label':'$_id.label', 'value':'$_id.value'}},
+        {'$sort': {'label': 1}}
+    ]
+    cursor = collection.aggregate(pipeline)
+    return await cursor.to_list(length=None)
 
 @router.post("/recuperarPassword")
 async def recuperarPassword(tokenData: TokenData):

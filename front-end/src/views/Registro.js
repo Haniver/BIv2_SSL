@@ -185,45 +185,50 @@ const Registro = () => {
     setApellidoM(valor)
   }
   
-  // Roles
-  const [comboRoles, setComboRoles] = useState({label: '', value: ''})
+  // Areas
+  const [comboAreas, setComboAreas] = useState({label: '', value: ''})
   useEffect(async () => {
-    const tmp = await userService.roles()
-    // console.log('comboRoles:')
+    const tmp = await userService.areas()
+    // console.log('comboAreas:')
     // console.log(tmp.data)
-    setComboRoles(tmp.data)
+    setComboAreas(tmp.data)
   }, [])
-  const [rol, setRol] = useState('')
-  const [msgRol, setMsgRol] = useState({texto: '', visible: false, color: 'info'})
-  const [validadoRol, setValidadoRol] = useState(false)
-  const validarRol = (valor) => {
+  const [area, setArea] = useState('')
+  const [msgArea, setMsgArea] = useState({texto: '', visible: false, color: 'info'})
+  const [validadoArea, setValidadoArea] = useState(false)
+  const validarArea = (valor) => {
     setMsgEnviar({
       visible: false
     })
     if (valor !== '') {
-      setMsgRol({
+      setMsgArea({
           texto: `✔`,
           visible: true,
           color: 'success'
       })
-      setValidadoRol(true)
+      setValidadoArea(true)
     } else {
-      setValidadoRol(false)
+      setValidadoArea(false)
     }
-    setRol(valor)
+    setArea(valor)
   }
   
-  // Tienda
-  const [region, setRegion] = useState('')
-  const [zona, setZona] = useState('')
+  // Tiendas
+  const [comboTiendas, setComboTiendas] = useState({label: '', value: ''})
+  useEffect(async () => {
+    const tmp = await userService.todasLasTiendas()
+    console.log('comboTiendas:')
+    console.log(tmp.data)
+    setComboTiendas(tmp.data)
+  }, [])
   const [tienda, setTienda] = useState('')
   const [msgTienda, setMsgTienda] = useState({texto: '', visible: false, color: 'info'})
   const [validadoTienda, setValidadoTienda] = useState(false)
-  useEffect(() => {
+  const validarTienda = (valor) => {
     setMsgEnviar({
       visible: false
     })
-    if (tienda !== '') {
+    if (valor !== '') {
       setMsgTienda({
           texto: `✔`,
           visible: true,
@@ -233,7 +238,30 @@ const Registro = () => {
     } else {
       setValidadoTienda(false)
     }
-  }, [tienda])
+    setTienda(valor)
+  }
+  
+  // // Tienda
+  // const [region, setRegion] = useState('')
+  // const [zona, setZona] = useState('')
+  // const [tienda, setTienda] = useState('')
+  // const [msgTienda, setMsgTienda] = useState({texto: '', visible: false, color: 'info'})
+  // const [validadoTienda, setValidadoTienda] = useState(false)
+  // useEffect(() => {
+  //   setMsgEnviar({
+  //     visible: false
+  //   })
+  //   if (tienda !== '') {
+  //     setMsgTienda({
+  //         texto: `✔`,
+  //         visible: true,
+  //         color: 'success'
+  //     })
+  //     setValidadoTienda(true)
+  //   } else {
+  //     setValidadoTienda(false)
+  //   }
+  // }, [tienda])
   
   // Validar formulario completo
   const handleRegistro = async (e) => {
@@ -246,7 +274,7 @@ const Registro = () => {
     //     color: 'danger'
     //   })
     // }
-    if (!(validadoApellidoM && validadoApellidoP && validadoEmail && validadoNombre && validadoPassword && validadoRol && validadoTienda)) {
+    if (!(validadoApellidoM && validadoApellidoP && validadoEmail && validadoNombre && validadoPassword && validadoArea && validadoTienda)) {
         setMsgEnviar({
             texto: `Por favor llena todos los campos y verifica que no tengan errores`,
             visible: true,
@@ -254,7 +282,7 @@ const Registro = () => {
         })
     } else {
       // Enviar
-      const resp_registro = await userService.registro(apellidoM, apellidoP, email, nombre, password1, rol, tienda)
+      const resp_registro = await userService.registro(apellidoM, apellidoP, email, nombre, password1, area, tienda)
       const color_exito = (resp_registro.data.exito) ? 'success' : 'danger'
       setMsgEnviar({
         texto: resp_registro.data.mensaje,
@@ -341,24 +369,43 @@ const Registro = () => {
             </FormGroup>
             <FormGroup>
                 <div className='d-flex justify-content-between'>
-                <Label className='form-label' for='rol'>
-                    Rol
+                <Label className='form-label' for='area'>
+                    Área
                 </Label>
                 </div>
                 <Select
                   theme={selectThemeColors}
                   className='react-select'
                   classNamePrefix='select'
-                  name='rol'
-                  options={comboRoles}
+                  name='area'
+                  options={comboAreas}
                   // isClearable={true}
                   onChange={e => {
-                    validarRol(e.value)
+                    validarArea(e.value)
                   }}
                 />
-                {msgRol.visible && <Alert color={msgRol.color}>{msgRol.texto} </Alert>}
+                {msgArea.visible && <Alert color={msgArea.color}>{msgArea.texto} </Alert>}
             </FormGroup>
             <FormGroup>
+                <div className='d-flex justify-content-between'>
+                <Label className='form-label' for='tienda'>
+                    Tienda
+                </Label>
+                </div>
+                <Select
+                  theme={selectThemeColors}
+                  className='react-select'
+                  classNamePrefix='select'
+                  name='tienda'
+                  options={comboTiendas}
+                  // isClearable={true}
+                  onChange={e => {
+                    validarTienda(e.value)
+                  }}
+                />
+                {msgTienda.visible && <Alert color={msgTienda.color}>{msgTienda.texto} </Alert>}
+            </FormGroup>
+            {/* <FormGroup>
                 <Label className='form-label' for='login-email'>
                   Tienda
                 </Label>
@@ -367,7 +414,7 @@ const Registro = () => {
               <Button.Ripple color='primary' type='submit' block>
                 Solicitar Registro
               </Button.Ripple>
-              {msgEnviar.visible && <Alert color={msgEnviar.color}>{msgEnviar.texto} </Alert>}
+              {msgEnviar.visible && <Alert color={msgEnviar.color}>{msgEnviar.texto} </Alert>} */}
             </Form>
           </Col>
         </Col>

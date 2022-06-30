@@ -12,6 +12,12 @@ import UserService from '../../services/user.service'
 import { Users } from 'react-feather'
 
 const Filtro = (props) => {
+  const userData = JSON.parse(localStorage.getItem('userData'))
+  if (userData === null || userData === undefined || userData === false) {
+    return (
+      <p>No se encontró data de usuario</p>
+    )
+  }
   // Contar cuántos filtros se van a mostrar en el layout en Bootstrap
   let numElementos = 0
   let bootstrap = {}
