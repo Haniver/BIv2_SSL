@@ -13,11 +13,11 @@ import { Users } from 'react-feather'
 
 const Filtro = (props) => {
   const userData = JSON.parse(localStorage.getItem('userData'))
-  if (userData === null || userData === undefined || userData === false) {
-    return (
-      <p>No se encontró data de usuario</p>
-    )
-  }
+  // if (userData === null || userData === undefined || userData === false) {
+  //   return (
+  //     <p>No se encontró data de usuario</p>
+  //   )
+  // }
   // Contar cuántos filtros se van a mostrar en el layout en Bootstrap
   let numElementos = 0
   let bootstrap = {}
@@ -714,7 +714,8 @@ const Filtro = (props) => {
 
   useEffect(async () => {
     // Llenar región, zona y tienda dependiendo del nivel del usuario
-    if (props.region !== undefined && UserService.getNivel() >= 4) {
+    // La región te la puedo mostrar en dos escenarios: ya accediste al BI y tienes nivel 4 o 5, o te estás registrando y no tienes userData
+    if (props.region !== undefined && (userData === null || userData === undefined || userData === false || UserService.getNivel() >= 4)) {
       const comboRegion_temp = await CargarFiltros.cargarRegion()
       setComboRegion(comboRegion_temp)
     } else if (props.region !== undefined && UserService.getNivel() === 3) {
@@ -790,9 +791,9 @@ const Filtro = (props) => {
   // Layout
   return (
     <Card>
-      <CardHeader>
+      {userData !== null && userData !== undefined && userData !== false && <CardHeader>
         <CardTitle tag='h4'>Filtros</CardTitle>
-      </CardHeader>
+      </CardHeader>}
 
       <CardBody>
         <Row>
@@ -1033,7 +1034,7 @@ const Filtro = (props) => {
               }}
             />
           </Col>}
-          {props.region !== undefined && UserService.getNivel() >= 4 && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
+          {props.region !== undefined  && (userData === null || userData === undefined || userData === false || UserService.getNivel() >= 4) && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
             <Label>🗺 Región</Label>
             <Select
               theme={selectThemeColors}
@@ -1046,7 +1047,7 @@ const Filtro = (props) => {
               onChange={handleRegionChange}
             />
           </Col>}
-          {props.zona !== undefined && UserService.getNivel() >= 3  && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
+          {props.zona !== undefined  && (userData === null || userData === undefined || userData === false || UserService.getNivel() >= 3)  && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
             <Label>🗻 Zona</Label>
             <Select
               theme={selectThemeColors}
@@ -1059,7 +1060,7 @@ const Filtro = (props) => {
               value={zonaValue}
             />
           </Col>}
-          {props.tienda !== undefined && UserService.getNivel() >= 2 && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
+          {props.tienda !== undefined && (userData === null || userData === undefined || userData === false || UserService.getNivel() >= 2) && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
             <Label>🏬 Tienda</Label>
             <Select
               theme={selectThemeColors}

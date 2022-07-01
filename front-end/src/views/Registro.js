@@ -193,10 +193,11 @@ const Registro = () => {
     // console.log(tmp.data)
     setComboAreas(tmp.data)
   }, [])
-  const [area, setArea] = useState('')
+  const [area, setArea] = useState([])
   const [msgArea, setMsgArea] = useState({texto: '', visible: false, color: 'info'})
   const [validadoArea, setValidadoArea] = useState(false)
   const validarArea = (valor) => {
+    console.log(`El valor que se va a insertar es: ${valor}`)
     setMsgEnviar({
       visible: false
     })
@@ -210,48 +211,29 @@ const Registro = () => {
     } else {
       setValidadoArea(false)
     }
-    setArea(valor)
+    setArea([...area, valor])
   }
+  useEffect(() => {
+    console.log("Áreas:")
+    console.log(area)
+  }, [area])
   
   // Tiendas
-  const [comboTiendas, setComboTiendas] = useState({label: '', value: ''})
-  useEffect(async () => {
-    const tmp = await userService.todasLasTiendas()
-    console.log('comboTiendas:')
-    console.log(tmp.data)
-    setComboTiendas(tmp.data)
-  }, [])
-  const [tienda, setTienda] = useState('')
-  const [msgTienda, setMsgTienda] = useState({texto: '', visible: false, color: 'info'})
-  const [validadoTienda, setValidadoTienda] = useState(false)
-  const validarTienda = (valor) => {
-    setMsgEnviar({
-      visible: false
-    })
-    if (valor !== '') {
-      setMsgTienda({
-          texto: `✔`,
-          visible: true,
-          color: 'success'
-      })
-      setValidadoTienda(true)
-    } else {
-      setValidadoTienda(false)
-    }
-    setTienda(valor)
-  }
-  
-  // // Tienda
-  // const [region, setRegion] = useState('')
-  // const [zona, setZona] = useState('')
+  // const [comboTiendas, setComboTiendas] = useState({label: '', value: ''})
+  // useEffect(async () => {
+  //   const tmp = await userService.todasLasTiendas()
+  //   console.log('comboTiendas:')
+  //   console.log(tmp.data)
+  //   setComboTiendas(tmp.data)
+  // }, [])
   // const [tienda, setTienda] = useState('')
   // const [msgTienda, setMsgTienda] = useState({texto: '', visible: false, color: 'info'})
   // const [validadoTienda, setValidadoTienda] = useState(false)
-  // useEffect(() => {
+  // const validarTienda = (valor) => {
   //   setMsgEnviar({
   //     visible: false
   //   })
-  //   if (tienda !== '') {
+  //   if (valor !== '') {
   //     setMsgTienda({
   //         texto: `✔`,
   //         visible: true,
@@ -261,7 +243,30 @@ const Registro = () => {
   //   } else {
   //     setValidadoTienda(false)
   //   }
-  // }, [tienda])
+  //   setTienda(valor)
+  // }
+  
+  // Tienda
+  const [region, setRegion] = useState('')
+  const [zona, setZona] = useState('')
+  const [tienda, setTienda] = useState('')
+  const [msgTienda, setMsgTienda] = useState({texto: '', visible: false, color: 'info'})
+  const [validadoTienda, setValidadoTienda] = useState(false)
+  useEffect(() => {
+    setMsgEnviar({
+      visible: false
+    })
+    if (tienda !== '') {
+      setMsgTienda({
+          texto: `✔`,
+          visible: true,
+          color: 'success'
+      })
+      setValidadoTienda(true)
+    } else {
+      setValidadoTienda(false)
+    }
+  }, [tienda])
   
   // Validar formulario completo
   const handleRegistro = async (e) => {
@@ -370,16 +375,17 @@ const Registro = () => {
             <FormGroup>
                 <div className='d-flex justify-content-between'>
                 <Label className='form-label' for='area'>
-                    Área
+                    Área(s)
                 </Label>
                 </div>
                 <Select
                   theme={selectThemeColors}
-                  className='react-select'
-                  classNamePrefix='select'
+                  isMulti
+                  className="basic-multi-select"
+                  classNamePrefix="select"
                   name='area'
                   options={comboAreas}
-                  // isClearable={true}
+                  isClearable={true}
                   onChange={e => {
                     validarArea(e.value)
                   }}
@@ -387,34 +393,15 @@ const Registro = () => {
                 {msgArea.visible && <Alert color={msgArea.color}>{msgArea.texto} </Alert>}
             </FormGroup>
             <FormGroup>
-                <div className='d-flex justify-content-between'>
-                <Label className='form-label' for='tienda'>
-                    Tienda
-                </Label>
-                </div>
-                <Select
-                  theme={selectThemeColors}
-                  className='react-select'
-                  classNamePrefix='select'
-                  name='tienda'
-                  options={comboTiendas}
-                  // isClearable={true}
-                  onChange={e => {
-                    validarTienda(e.value)
-                  }}
-                />
-                {msgTienda.visible && <Alert color={msgTienda.color}>{msgTienda.texto} </Alert>}
-            </FormGroup>
-            {/* <FormGroup>
                 <Label className='form-label' for='login-email'>
-                  Tienda
+                  Tienda por Defecto
                 </Label>
                 <Filtro region={region} zona={zona} tienda={tienda} setRegion={setRegion} setZona={setZona} setTienda={setTienda} />
               </FormGroup>
               <Button.Ripple color='primary' type='submit' block>
                 Solicitar Registro
               </Button.Ripple>
-              {msgEnviar.visible && <Alert color={msgEnviar.color}>{msgEnviar.texto} </Alert>} */}
+              {msgEnviar.visible && <Alert color={msgEnviar.color}>{msgEnviar.texto} </Alert>}
             </Form>
           </Col>
         </Col>
