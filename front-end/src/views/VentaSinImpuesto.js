@@ -27,7 +27,7 @@ const VentaSinImpuesto = () => {
   const [canal, setCanal] = useState(false)
   const [depto, setDepto] = useState(false)
   const [subDepto, setSubDepto] = useState(false)
-  const [fechas, setFechas] = useState({fecha_ini: '', fecha_fin: fechas_srv.actualVencida()})
+  const [fechas, setFechas] = useState({fecha_ini: '', fecha_fin: fechas_srv.noUTC(new Date())})
   const [anio, setAnio] = useState(fechas_srv.anioActual())
   const [mes, setMes] = useState(fechas_srv.mesActual())
   const [dia, setDia] = useState(fechas_srv.diaActual())

@@ -84,7 +84,7 @@ class TarjetasCombinadas():
                 query += f""" and cd.idDepto = {self.filtros.depto} """
         query += " group by dt.anio order by dt.anio "
 
-        # print(f"Query para {self.titulo} en TarjetasCombinadas:\n{query}")
+        print(f"Query para {self.titulo} en TarjetasCombinadas:\n{query}")
         cnxn = conexion_sql('DWH')
         cursor = cnxn.cursor().execute(query)
         arreglo = crear_diccionario(cursor)
