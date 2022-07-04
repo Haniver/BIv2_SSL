@@ -76,7 +76,7 @@ class UserService {
     return axios.get(`${CustomUrls.ApiUrl()}todasLasTiendas/`)
   }
 
-  registro(apellidoM, apellidoP, usuario, nombre, password, id_rol, tienda) {
+  registro(apellidoM, apellidoP, email, nombre, password1, areas, tienda, nivel) {
     return axios({
       method: 'post',
       url: `${CustomUrls.ApiUrl()}registro`,
@@ -85,13 +85,14 @@ class UserService {
         'Content-Type':'application/json'
       },
       data: {
-        apellidoM,
-        apellidoP,
-        usuario,
-        nombre,
-        password,
-        id_rol,
-        tienda
+        apellidoM, 
+        apellidoP, 
+        usuario: email, 
+        nombre, 
+        password: password1, 
+        areas, 
+        tienda, 
+        nivel
       }
     })
   }

@@ -232,20 +232,35 @@ async def cambiarPerfil(objetoCambiarPassword: claseCambiarPassword, user: dict 
 
 @router.post("/registro")
 async def registro(input_usuario: UserInDB):
-    # print('Entrando a registro')
+    print(f'Entrando a registro con áreas = {str(input_usuario.areas)}')
     ahora = datetime.now()
     ahora = ahora.strftime("%Y-%m-%d %H:%M:%S")
-    # mensaje = f'Usuario es {str(user)}, password vieja es {objetoCambiarPassword.passwordVieja} y password nueva es {objetoCambiarPassword.password}'
-    # print(mensaje)
     nombre_completo = input_usuario.nombre + ' ' + input_usuario.apellidoP + ' ' + input_usuario.apellidoM
     cnxn = conexion_sql('DJANGO')
     cursor = cnxn.cursor()
     # Los valores posibles para estatus son revisión, bloqueado y activo
-    query = f"""INSERT INTO DJANGO.php.usuarios (nombre, password, usuario, id_rol, idTienda, estatus)
-        VALUES ('{nombre_completo}', '{input_usuario.password}', '{input_usuario.usuario}', {input_usuario.id_rol}, {input_usuario.tienda}, 'revisión')"""
+    query1 = f"""INSERT INTO DJANGO.php.usuarios (nombre, password, usuario, nivel, idTienda, estatus)
+        VALUES ('{nombre_completo}', '{input_usuario.password}', '{input_usuario.usuario}', '{input_usuario.nivel}', {input_usuario.tienda}, 'revisión')"""
+    print(f"Query1 desde login -> Registro: {query1}")
     try:
-        # print(f'query desde registro en login.py: {query}')
-        cursor.execute(query)
+        cursor.execute(query1)
+        cnxn.commit()
+    except pyodbc.Error as e:
+        return {'mensaje':'Error al intentar actualizar base de datos: '+str(e), 'exito': False}
+    query2 = f"""SELECT id 
+        from DJANGO.php.usuarios
+        where usuario = '{input_usuario.usuario}'"""
+    print(f"Query2 desde login -> Registro: {query2}")
+    cursor.execute(query2)
+    id_usuario = crear_diccionario(cursor)[0]['id']
+    query3 = f"""INSERT into DJANGO.php.usuariosAreas (id_usuario, area)
+        VALUES """
+    for i in range(len(input_usuario.areas)):
+        query3 += f" ({id_usuario}, {input_usuario.areas[i]})"
+        query3 += "," if i != len(input_usuario.areas) - 1 else ''
+    print(f"Query3 desde login -> Registro: {query3}")
+    try:
+        cursor.execute(query3)
         cnxn.commit()
     except pyodbc.Error as e:
         return {'mensaje':'Error al intentar actualizar base de datos: '+str(e), 'exito': False}

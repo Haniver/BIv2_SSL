@@ -193,15 +193,19 @@ const Registro = () => {
     // console.log(tmp.data)
     setComboAreas(tmp.data)
   }, [])
-  const [area, setArea] = useState([])
+  const [areas, setAreas] = useState([])
   const [msgArea, setMsgArea] = useState({texto: '', visible: false, color: 'info'})
   const [validadoArea, setValidadoArea] = useState(false)
-  const validarArea = (valor) => {
-    console.log(`El valor que se va a insertar es: ${valor}`)
+  const validarArea = (evento) => {
+    // console.log(`El valor que se va a insertar es: ${valor}`)
+    const areas_tmp = []
+    evento.forEach(elemento => {
+      areas_tmp.push(elemento.value)
+    })
     setMsgEnviar({
       visible: false
     })
-    if (valor !== '') {
+    if (areas_tmp.length > 0) {
       setMsgArea({
           texto: `✔`,
           visible: true,
@@ -209,42 +213,49 @@ const Registro = () => {
       })
       setValidadoArea(true)
     } else {
-      setValidadoArea(false)
+      setMsgArea({
+        texto: `Elige por lo menos un área`,
+        visible: true,
+        color: 'danger'
+      })
+    setValidadoArea(false)
     }
-    setArea([...area, valor])
+    setAreas(areas_tmp)
   }
-  useEffect(() => {
-    console.log("Áreas:")
-    console.log(area)
-  }, [area])
   
-  // Tiendas
-  // const [comboTiendas, setComboTiendas] = useState({label: '', value: ''})
-  // useEffect(async () => {
-  //   const tmp = await userService.todasLasTiendas()
-  //   console.log('comboTiendas:')
-  //   console.log(tmp.data)
-  //   setComboTiendas(tmp.data)
-  // }, [])
-  // const [tienda, setTienda] = useState('')
-  // const [msgTienda, setMsgTienda] = useState({texto: '', visible: false, color: 'info'})
-  // const [validadoTienda, setValidadoTienda] = useState(false)
-  // const validarTienda = (valor) => {
-  //   setMsgEnviar({
-  //     visible: false
-  //   })
-  //   if (valor !== '') {
-  //     setMsgTienda({
-  //         texto: `✔`,
-  //         visible: true,
-  //         color: 'success'
-  //     })
-  //     setValidadoTienda(true)
-  //   } else {
-  //     setValidadoTienda(false)
-  //   }
-  //   setTienda(valor)
-  // }
+  // Nivel
+  const comboNivel = [
+    {label: 'Tienda', value: 1},
+    {label: 'Zona', value: 2},
+    {label: 'Región', value: 3},
+    {label: 'Nacional', value: 4},
+    {label: 'Administrador de sistema', value: 5}
+  ]
+  const [nivel, setNivel] = useState(0)
+  const [msgNivel, setMsgNivel] = useState({texto: '', visible: false, color: 'info'})
+  const [validadoNivel, setValidadoNivel] = useState(false)
+  const validarNivel = (valor) => {
+    // console.log(`El valor que se va a insertar es: ${valor}`)
+    setMsgEnviar({
+      visible: false
+    })
+    if (valor > 0) {
+      setMsgNivel({
+          texto: `✔`,
+          visible: true,
+          color: 'success'
+      })
+      setValidadoNivel(true)
+    } else {
+      setMsgNivel({
+        texto: `Por favor elige un nivel`,
+        visible: true,
+        color: 'danger'
+      })
+    setValidadoNivel(false)
+    }
+    setNivel(valor)
+  }
   
   // Tienda
   const [region, setRegion] = useState('')
@@ -271,15 +282,7 @@ const Registro = () => {
   // Validar formulario completo
   const handleRegistro = async (e) => {
     e.preventDefault()
-    // Preguntar a la API si el usuario ya está en la BD
-    // if (tienda === '' || tienda === undefined) {
-    //   setMensaje({
-    //     texto: 'Por favor elige una tienda',
-    //     visible: true,
-    //     color: 'danger'
-    //   })
-    // }
-    if (!(validadoApellidoM && validadoApellidoP && validadoEmail && validadoNombre && validadoPassword && validadoArea && validadoTienda)) {
+    if (!(validadoApellidoM && validadoApellidoP && validadoEmail && validadoNombre && validadoPassword && validadoArea && validadoTienda && validadoNivel)) {
         setMsgEnviar({
             texto: `Por favor llena todos los campos y verifica que no tengan errores`,
             visible: true,
@@ -287,7 +290,7 @@ const Registro = () => {
         })
     } else {
       // Enviar
-      const resp_registro = await userService.registro(apellidoM, apellidoP, email, nombre, password1, area, tienda)
+      const resp_registro = await userService.registro(apellidoM, apellidoP, email, nombre, password1, areas, tienda, nivel)
       const color_exito = (resp_registro.data.exito) ? 'success' : 'danger'
       setMsgEnviar({
         texto: resp_registro.data.mensaje,
@@ -387,10 +390,29 @@ const Registro = () => {
                   options={comboAreas}
                   isClearable={true}
                   onChange={e => {
-                    validarArea(e.value)
+                    validarArea(e)
                   }}
                 />
                 {msgArea.visible && <Alert color={msgArea.color}>{msgArea.texto} </Alert>}
+            </FormGroup>
+            <FormGroup>
+                <div className='d-flex justify-content-between'>
+                <Label className='form-label' for='nivel'>
+                    Nivel
+                </Label>
+                </div>
+                <Select
+                  theme={selectThemeColors}
+                  className="basic-multi-select"
+                  classNamePrefix="select"
+                  name='nivel'
+                  options={comboNivel}
+                  isClearable={true}
+                  onChange={e => {
+                    validarNivel(e.value)
+                  }}
+                />
+                {msgNivel.visible && <Alert color={msgNivel.color}>{msgNivel.texto} </Alert>}
             </FormGroup>
             <FormGroup>
                 <Label className='form-label' for='login-email'>
