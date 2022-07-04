@@ -24,7 +24,7 @@ const VentaSinImpuesto = () => {
   const [region, setRegion] = useState(false)
   const [zona, setZona] = useState(false)
   const [tienda, setTienda] = useState(false)
-  const [canal, setCanal] = useState(false)
+  const [canal, setCanal] = useState(1)
   const [depto, setDepto] = useState(false)
   const [subDepto, setSubDepto] = useState(false)
   const [fechas, setFechas] = useState({fecha_ini: '', fecha_fin: fechas_srv.noUTC(new Date())})
