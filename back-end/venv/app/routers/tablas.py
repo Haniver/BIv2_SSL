@@ -3639,11 +3639,12 @@ class Tablas():
         data = []
         columns = []
         # self.fecha_ini = datetime.strptime(self.filtros.fechas['fecha_ini'], '%Y-%m-%dT%H:%M:%S.%fZ').strftime('%Y-%m-%d')
-        pipeline = f"""SELECT us.usuario, us.nombre, r.rol, us.estatus, ct.tiendasNombre
+        pipeline = f"""SELECT us.usuario, us.nombre, us.estatus, ct.tiendasNombre, n.nombre nivel, us.id
         from DJANGO.php.usuarios us
         left join DWH.artus.catTienda ct on us.idTienda = ct.tienda
-        left join DJANGO.php.rol r on r.id = us.id_rol 
-        where us.estatus is not null and us.estatus not in ('activo')"""
+        left join DJANGO.php.niveles n on n.id = us.nivel
+        where us.estatus is not null and us.estatus not in ('activo')
+        ORDER BY us.estatus, us.usuario DESC"""
         # pipeline = f"""SELECT us.usuario, us.nombre, r.rol, ct.tienda, us.estatus
         # from DJANGO.php.usuarios us
         # left join DWH.artus.catTienda ct on us.id_rol = ct.tienda
@@ -3656,20 +3657,31 @@ class Tablas():
         if len(arreglo) > 0:
             hayResultados = "si"
             for row in arreglo:
+                query = f"""SELECT a.nombre from DJANGO.php.usuariosAreas ua
+                    left join DJANGO.php.areas a
+                    on a.id = ua.area
+                    WHERE ua.id_usuario = {row['id']}"""
+                cursor = cnxn.cursor().execute(query)
+                areas_dic = crear_diccionario(cursor)
+                areas_arr = []
+                for area in areas_dic:
+                    areas_arr.append(area['nombre'])
                 data.append({
                     'Email': row['usuario'],
                     'Nombre': row['nombre'],
-                    'Rol': row['rol'],
+                    'Areas': ', '.join(areas_arr),
+                    'Nivel': row['nivel'],
                     'Tienda': row['tiendasNombre'],
                     'Estatus': row['estatus'],
                     'Editar': 0
                 })
             columns = [
-                {'name': 'Email', 'selector':'Email', 'formato':'texto'},
-                {'name': 'Nombre', 'selector':'Nombre', 'formato':'texto'},
-                {'name': 'Rol', 'selector':'Rol', 'formato':'texto'},
-                # {'name': 'Tienda', 'selector':'Tienda', 'formato':'texto', 'ancho':'240px'},
-                {'name': 'Estatus', 'selector':'Estatus', 'formato':'texto'},
+                {'name': 'Email', 'selector':'Email', 'formato':'texto', 'ancho':'240px'},
+                {'name': 'Nombre', 'selector':'Nombre', 'formato':'texto', 'ancho':'300px'},
+                {'name': 'Áreas', 'selector':'Areas', 'formato':'texto', 'ancho':'400px'},
+                {'name': 'Nivel', 'selector':'Nivel', 'formato':'texto'},
+                {'name': 'Tienda', 'selector':'Tienda', 'formato':'texto', 'ancho':'450px'},
+                {'name': 'Estatus', 'selector':'Estatus', 'formato':'texto', 'ancho':'120px'},
                 {'name': 'Editar', 'selector':'Editar', 'formato':'botonUsuario'}
             ]
         else:
