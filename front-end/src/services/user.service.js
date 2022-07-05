@@ -50,7 +50,7 @@ class UserService {
     })
   }
 
-  yaExisteUsuario(usuario) {
+  verificarUsuario(usuario) {
     return axios({
       method: 'post',
       url: `${CustomUrls.ApiUrl()}verificarUsuario`,

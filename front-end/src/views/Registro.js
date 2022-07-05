@@ -32,16 +32,24 @@ const Registro = () => {
     setMsgEnviar({
       visible: false
     })
-    const yaExisteUsuario = await userService.yaExisteUsuario(valor)
+    const verificarUsuario = await userService.verificarUsuario(valor)
     // Si ya está, mandar error
-    if (yaExisteUsuario.data) {
-        setMsgEmail({
-            texto: `El usuario ${valor} ya está registrado`,
-            visible: true,
-            color: 'danger'
-        })
-        setVerOlvidePassword(true)
-        setValidadoEmail(false)
+    if (verificarUsuario.data === "Usuario ya estaba") {
+      setMsgEmail({
+          texto: `El usuario ${valor} ya está registrado`,
+          visible: true,
+          color: 'danger'
+      })
+      setVerOlvidePassword(true)
+      setValidadoEmail(false)
+    } else if (verificarUsuario.data === "Dominio no válido") {
+      setMsgEmail({
+          texto: `El dominio de este correo no es válido`,
+          visible: true,
+          color: 'danger'
+      })
+      setVerOlvidePassword(true)
+      setValidadoEmail(false)
     } else if (!isEmail(valor)) {
       setMsgEmail({
         texto: `Este no es un email válido`,

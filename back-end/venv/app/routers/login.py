@@ -177,14 +177,21 @@ async def cambiarPassword(objetoCambiarPassword: claseCambiarPassword):
 
 @router.post("/verificarUsuario")
 async def verificar_usuario(input: TokenData):
-    cnxn = conexion_sql()
-    cursor = cnxn.cursor()
-    query = f"SELECT usuario from DJANGO.php.usuarios WHERE usuario = '{input.usuario}'"
     cnxn = conexion_sql('DJANGO')
-    cursor = cnxn.cursor().execute(query)
-    arreglo = crear_diccionario(cursor)
-    # print(f'arreglo desde verificarUsuario en login.py: {str(arreglo)}')
-    return True if len(arreglo) > 0 else False
+    cursor = cnxn.cursor()
+    query1 = f"SELECT dominio from DJANGO.php.dominios_email"
+    cursor = cnxn.cursor().execute(query1)
+    diccionario = crear_diccionario(cursor)
+    arregloDominios = []
+    for registro in diccionario:
+        arregloDominios.append(registro['dominio'])
+    if input.usuario[input.usuario.find('@') + 1:] in arregloDominios:
+        query2 = f"SELECT usuario from DJANGO.php.usuarios WHERE usuario = '{input.usuario}'"
+        cursor = cnxn.cursor().execute(query2)
+        arreglo = crear_diccionario(cursor)
+        return "Éxito" if len(arreglo) == 0 else "Usuario ya estaba"
+    else:
+        return "Dominio no válido"
 
 ############# Endpoints Restringidos #############
 @router.get("/comprobarToken")
