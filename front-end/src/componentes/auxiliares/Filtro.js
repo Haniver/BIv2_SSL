@@ -1013,7 +1013,7 @@ const Filtro = (props) => {
             <Label>🛈 Origen</Label>
             <Select
               theme={selectThemeColors}
-              value={origenValue}
+              value={comboOrigen[0]}
               className='react-select'
               classNamePrefix='select'
               name='filtroOrigen'
