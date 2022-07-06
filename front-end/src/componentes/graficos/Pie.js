@@ -14,7 +14,8 @@ require('highcharts/modules/export-data')(Highcharts)
 
 const Pie = ({ titulo, seccion, formato, fechas, region, zona, tienda }) => {
     const [datos, setDatos] = useState([{name: 'Sin Resultados', y: 0}])
-        const [estadoLoader, dispatchLoader] = useReducer((estadoLoader, accion) => {
+    const [total, setTotal] = useState(0)
+    const [estadoLoader, dispatchLoader] = useReducer((estadoLoader, accion) => {
         switch (accion.tipo) {
           case 'llamarAPI':
             return { contador: estadoLoader.contador + 1 }
@@ -66,11 +67,21 @@ const Pie = ({ titulo, seccion, formato, fechas, region, zona, tienda }) => {
         dispatchLoader({tipo: 'recibirDeAPI'})
         const datos_tmp = res.data.res
         if (res.data.hayResultados === 'si') {
-          setDatos(datos_tmp)
+            let total_tmp = 0
+            datos_tmp.forEach(dato => {
+                total_tmp += dato.y
+            })
+            setDatos(datos_tmp)
+            setTotal(total_tmp)
         } else {
           setDatos({name: 'Sin Resultados', y: 0})
         }
       }, [fechas, region, zona, tienda])
+
+    useEffect(() => {
+        console.log("Datos:")
+        console.log(datos)
+    }, [datos])
     
     const options = {
         chart: {
@@ -158,7 +169,19 @@ const Pie = ({ titulo, seccion, formato, fechas, region, zona, tienda }) => {
         ],
         credits: {
             enabled: false
-        }
+        },
+        chart: {
+            events: {
+              render() {
+                const chart = this
+  
+                chart.renderer.label(`Total: ${total}`, 10, 100).css({
+                    fontSize: '1.2rem',
+                    color: '#272F44'
+                }).add()
+              }
+            }
+          }
     }
     return (
         <Card>
