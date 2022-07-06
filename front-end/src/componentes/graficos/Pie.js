@@ -14,7 +14,7 @@ require('highcharts/modules/export-data')(Highcharts)
 
 const Pie = ({ titulo, seccion, formato, fechas, region, zona, tienda }) => {
     const [datos, setDatos] = useState([{name: 'Sin Resultados', y: 0}])
-    const [total, setTotal] = useState(0)
+    const [total, setTotal] = useState('')
     const [estadoLoader, dispatchLoader] = useReducer((estadoLoader, accion) => {
         switch (accion.tipo) {
           case 'llamarAPI':
@@ -71,6 +71,7 @@ const Pie = ({ titulo, seccion, formato, fechas, region, zona, tienda }) => {
             datos_tmp.forEach(dato => {
                 total_tmp += dato.y
             })
+            total_tmp = total_tmp.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
             setDatos(datos_tmp)
             setTotal(total_tmp)
         } else {
@@ -176,7 +177,7 @@ const Pie = ({ titulo, seccion, formato, fechas, region, zona, tienda }) => {
                 const chart = this
   
                 chart.renderer.label(`Total: ${total}`, 10, 100).css({
-                    fontSize: '1.2rem',
+                    fontSize: '1rem',
                     color: '#272F44'
                 }).add()
               }
