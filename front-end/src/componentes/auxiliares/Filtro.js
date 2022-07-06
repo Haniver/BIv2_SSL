@@ -766,7 +766,9 @@ const Filtro = (props) => {
     if (props.canal !== undefined) {
       const comboCanal_temp = await CargarFiltros.cargarCanal()
       setComboCanal(comboCanal_temp)
-      
+    }
+    if (props.origen !== undefined) {
+      setOrigenValue(comboOrigen[0])
     }
   }, [])
 
@@ -1013,7 +1015,7 @@ const Filtro = (props) => {
             <Label>🛈 Origen</Label>
             <Select
               theme={selectThemeColors}
-              value={comboOrigen[0]}
+              value={origenValue}
               className='react-select'
               classNamePrefix='select'
               name='filtroOrigen'
