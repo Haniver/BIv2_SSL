@@ -159,7 +159,10 @@ const Filtro = (props) => {
     {label: 'Chedraui', value: 'Chedraui'}
   ]
 
-  const comboOrigen = [{label: 'Hybris', value: 'Hybris'}]
+  const comboOrigen = [
+    {label: 'Hybris', value: 'Hybris'},
+    {label: 'Vtex', value: 'Vtex'}
+  ]
 
   const comboE3 = [
     {label: '0', value: '0'},
