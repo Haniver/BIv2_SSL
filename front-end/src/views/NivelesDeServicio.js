@@ -48,6 +48,11 @@ const NivelesDeServicio = () => {
         </Col>}
       </Row>
       <Row className='match-height'>
+        <Col sm='12'>
+          <Pie titulo='Pedidos Por Tipo de Entrega' formato='entero' seccion={seccion} yLabel='Pedidos' fechas={fechas} region={region} zona={zona} tienda={tienda} categoria={categoria} tipoEntrega={tipoEntrega} />
+        </Col>
+      </Row>
+      <Row className='match-height'>
         {(tipoEntrega === '' || tipoEntrega === false || tipoEntrega === undefined) && <Col sm='12'>
           <Pie titulo='Estatus Por Tipo de Entrega' formato='entero' seccion={seccion} yLabel='Pedidos' fechas={fechas} region={region} zona={zona} tienda={tienda} categoria={categoria} tipoEntrega={tipoEntrega} />
         </Col>}

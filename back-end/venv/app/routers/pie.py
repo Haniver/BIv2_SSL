@@ -329,6 +329,31 @@ class Pie():
             filtro_lugar = False
             lugar = ''
 
+        if self.titulo == 'Pedidos Por Tipo de Entrega':
+            collection = conexion_mongo('report').report_pedidoAtrasado
+            if filtro_lugar:
+                pipeline.extend([{'$unwind': '$sucursal'}, {'$match': {f'sucursal.{nivel_atrasado}': lugar}}])
+            pipeline.append({'$match': {'fechaEntrega': {'$gte': self.fecha_ini_a12, '$lt': self.fecha_fin_a12}}})
+            if self.filtros.categoria and self.filtros.categoria != "False":
+                pipeline.append({'$match': {'tercero': self.filtros.categoria}})
+            pipeline.append({'$group':{'_id':'$tipoEntrega', 'pedidos':{'$sum':1}}})
+            # print(f"Pipeline desde pie -> Pedidos Pendientes: {str(pipeline)}")
+            cursor = collection.aggregate(pipeline)
+            arreglo = await cursor.to_list(length=1000)
+            # print(str(arreglo))
+            if len(arreglo) <= 0:
+                # print("No hubo resultados")
+                hayResultados = "no"
+                res = pipeline
+            else:
+                hayResultados = "si"
+                res = []
+                for resultado in arreglo:
+                    res.append({
+                        'name': resultado['_id'],
+                        'y': resultado['pedidos']
+                    })
+
         if self.titulo == 'Estatus de Entrega y No Entrega':
             collection = conexion_mongo('report').report_pedidoAtrasado
             if filtro_lugar:
