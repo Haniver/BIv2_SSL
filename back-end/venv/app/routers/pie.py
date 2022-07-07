@@ -357,6 +357,34 @@ class Pie():
                 hayResultados = "no"
                 res = []
 
+        if self.titulo == 'Estatus Por Tipo de Entrega':
+            collection = conexion_mongo('report').report_pedidoAtrasado
+            if filtro_lugar:
+                pipeline.extend([{'$unwind': '$sucursal'}, {'$match': {f'sucursal.{nivel_atrasado}': lugar}}])
+            pipeline.append({'$match': {'fechaEntrega': {'$gte': self.fecha_ini_a12, '$lt': self.fecha_fin_a12}}})
+            if self.filtros.categoria and self.filtros.categoria != "False":
+                pipeline.append({'$match': {'tercero': self.filtros.categoria}})
+            if self.filtros.tipoEntrega != None and self.filtros.tipoEntrega != "False":
+                pipeline.append({'$match': {'tipoEntrega': self.filtros.tipoEntrega}})
+            pipeline.append({'$project':{'Entregado_Fuera_tiempo': {'$cond': [{'$eq':['$evaluacion','Entregado-Fuera de tiempo']}, '$pedidos', 0]}, 'Entregado_tiempo': {'$cond': [{'$eq':['$evaluacion','Entregado-A tiempo']}, '$pedidos', 0]}, 'No_entregado_Fuera_tiempo': {'$cond': [{'$eq':['$evaluacion','No entregado-Fuera de tiempo']}, '$pedidos', 0]}, 'No_entregado_tiempo': {'$cond': [{'$eq':['$evaluacion','No entregado-A tiempo']}, '$pedidos', 0]}, 'Despachado_Fuera_tiempo': {'$cond': [{'$eq':['$evaluacion','Despachado-Fuera de tiempo']}, '$pedidos', 0]}, 'Despachado_tiempo': {'$cond': [{'$eq':['$evaluacion','Despachado-A tiempo']}, '$pedidos', 0]}}})
+            pipeline.append({'$group':{'_id':0, 'Entregado_Fuera_tiempo':{'$sum':'$Entregado_Fuera_tiempo'}, 'Entregado_tiempo':{'$sum':'$Entregado_tiempo'}, 'No_entregado_Fuera_tiempo':{'$sum':'$No_entregado_Fuera_tiempo'}, 'No_entregado_tiempo':{'$sum':'$No_entregado_tiempo'}, 'Despachado_Fuera_tiempo':{'$sum':'$Despachado_Fuera_tiempo'}, 'Despachado_tiempo':{'$sum':'$Despachado_tiempo'}}})
+            # print(f"Pipeline desde pie -> NivelesDeServicio -> {self.titulo}: {str(pipeline)}")
+            cursor = collection.aggregate(pipeline)
+            arreglo = await cursor.to_list(length=1000)
+            if len(arreglo) >0:
+                hayResultados = "si"
+                res = [
+                    {'name': 'Entregado Fuera de Tiempo', 'y': arreglo[0]['Entregado_Fuera_tiempo']},
+                    {'name': 'Entregado A Tiempo', 'y': arreglo[0]['Entregado_tiempo']},
+                    {'name': 'No entregado, Fuera de Tiempo', 'y': arreglo[0]['No_entregado_Fuera_tiempo']},
+                    {'name': 'No entregado, a Tiempo', 'y': arreglo[0]['No_entregado_tiempo']},
+                    {'name': 'Despachado Fuera de Tiempo', 'y': arreglo[0]['Despachado_Fuera_tiempo']},
+                    {'name': 'Despachado, a Tiempo', 'y': arreglo[0]['Despachado_tiempo']}
+                ]
+            else:
+                hayResultados = "no"
+                res = []
+
         if self.titulo == 'Pedidos Cancelados':
             collection = conexion_mongo('report').report_pedidoCancelado
             if filtro_lugar:

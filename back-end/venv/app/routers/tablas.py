@@ -4166,7 +4166,7 @@ class Tablas():
                 'evaluacion': '$evaluacion'
             }})
             pipeline.append({'$sort':{'nPedido':1}})
-            print(f'Pipeline desde Tablas -> NivelesDeServicio -> Detalle de pedidos $tienda: {str(pipeline)}')
+            # print(f'Pipeline desde Tablas -> NivelesDeServicio -> Detalle de pedidos $tienda: {str(pipeline)}')
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=10000)
             if len(arreglo) >0:
@@ -4196,7 +4196,7 @@ class Tablas():
                     })
                 columns.extend([
                     {'name': 'Último Cambio', 'selector': 'ultimoCambio', 'formato': 'texto', 'ancho': '180px'},                                
-                    {'name': 'No. de Orden', 'selector': 'nPedido', 'formato': 'entero', 'ancho': '120px'},
+                    {'name': 'No. de Orden', 'selector': 'nPedido', 'formato': 'sinComas', 'ancho': '120px'},
                     {'name': 'No. de Consigna', 'selector': 'nConsigna', 'formato': 'texto', 'ancho': '120px'},
                     {'name': 'Método de Entrega', 'selector': 'metodoEntrega', 'formato': 'texto', 'ancho': '160px'},
                     {'name': 'Método de Pago', 'selector': 'descrip_paymentmode', 'formato': 'texto', 'ancho': '180px'},
