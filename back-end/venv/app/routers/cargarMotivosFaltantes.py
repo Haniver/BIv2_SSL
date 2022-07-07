@@ -54,7 +54,7 @@ async def update_motivos_faltantes(producto: Producto):
 
 @router.post("/updateEstatusUsuario")
 async def update_motivos_faltantes(usuarioParaActualizar: UsuarioParaActualizar, user: dict = Depends(get_current_active_user)):
-    if tienePermiso(user.id_rol, 'AltaUsuarios'):
+    if tienePermiso(user.id, 'AltaUsuarios'):
         query = f"""update us set us.estatus='{str(usuarioParaActualizar.estatus)}' from DJANGO.php.usuarios us where usuario='{usuarioParaActualizar.email}'"""
         # print("Query desde updateEstatusUsuario: " + query)
         cnxn = conexion_sql('DJANGO')

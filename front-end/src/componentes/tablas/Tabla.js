@@ -28,7 +28,7 @@ const FilterComponent = ({ filterText, onFilter, onClear }) => (
     </>
 )
 
-const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quitarPaginacion, fechas, region, zona, tienda, proveedor, tipoEntrega, depto, subDepto, mes, canal, agrupador, periodo, reload, setProducto, setUsuario, tipoEntrega2, tipoEntrega3, detalle, estatus, formato, sku, e3, canal2, opcionesPaginacion = [5, 10, 15], setSibling, botonEnviar, mesRFM, anioRFM, fromSibling, origen}) => {
+const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quitarPaginacion, fechas, region, zona, tienda, proveedor, tipoEntrega, depto, subDepto, mes, canal, agrupador, periodo, reload, setProducto, setUsuario, setEstatus, tipoEntrega2, tipoEntrega3, detalle, estatus, formato, sku, e3, canal2, opcionesPaginacion = [5, 10, 15], setSibling, botonEnviar, mesRFM, anioRFM, fromSibling, origen}) => {
     const tituloEnviar = (tituloAPI !== undefined) ? tituloAPI : titulo
     // Skins
     const [skin, setSkin] = useSkin()
@@ -210,6 +210,18 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
                             }}
                         >
                             ✎
+                        </Button>
+                    )
+                } else if (columna.formato === 'botonEstatus') {
+                    // console.log(columna.formato)
+                    objeto_columna.cell = (d) => (
+                        <Button
+                            color='dark'
+                            onClick={e => {
+                                setEstatus({email: d.Email, estatus: d.Estatus})
+                            }}
+                        >
+                            Ⓔ
                         </Button>
                     )
                 } else if (columna.formato === 'sibling') {
