@@ -9,7 +9,7 @@ const PedidosPendientes = () => {
   const [region, setRegion] = useState(false)
   const [zona, setZona] = useState(false)
   const [tienda, setTienda] = useState(false)
-  const [origen, setOrigen] = useState(false)
+  const [origen, setOrigen] = useState('Hybris')
 
   const seccion = 'PedidosPendientes'
 

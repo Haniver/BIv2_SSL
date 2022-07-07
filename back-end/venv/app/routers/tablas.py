@@ -445,9 +445,9 @@ class Tablas():
             pipeline.append({'$unwind': '$sucursal'})
             if self.filtro_lugar:
                 pipeline.append({'$match': {'sucursal.'+ nivel: self.lugar}})
-            if self.filtros.tipoEntrega != None and self.filtros.tipoEntrega != "False":
+            if self.filtros.tipoEntrega != None and self.filtros.tipoEntrega != "False" and self.filtros.tipoEntrega != "":
                 pipeline.append({'$match': {'metodoEntrega': self.filtros.tipoEntrega}})
-            if self.filtros.origen != None and self.filtros.origen != "False":
+            if self.filtros.origen != None and self.filtros.origen != "False" and self.filtros.origen != "":
                 pipeline.append({'$match': {'origen': self.filtros.origen}})
             pipeline.append({'$match': {'estatus': 'pendientes'}})
             pipeline.append({'$match': {'prioridad': {'$in': ['2 DIAS','ANTERIORES']}}})

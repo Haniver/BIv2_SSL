@@ -300,9 +300,9 @@ class ColumnasApiladas():
         pipeline.append({'$unwind': '$sucursal'})
         if filtro_lugar:
             pipeline.append({'$match': {'sucursal.'+ nivel: lugar}})
-        if self.filtros.tipoEntrega != None and self.filtros.tipoEntrega != "False":
+        if self.filtros.tipoEntrega != None and self.filtros.tipoEntrega != "False" and self.filtros.tipoEntrega != "":
                 pipeline.append({'$match': {'metodoEntrega': self.filtros.tipoEntrega}})
-        if self.filtros.origen != None and self.filtros.origen != "False":
+        if self.filtros.origen != None and self.filtros.origen != "False" and self.filtros.origen != "":
                 pipeline.append({'$match': {'origen': self.filtros.origen}})
 
         if self.titulo == 'Estatus Pedidos por Área':
