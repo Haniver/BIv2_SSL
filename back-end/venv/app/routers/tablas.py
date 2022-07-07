@@ -4054,9 +4054,9 @@ class Tablas():
             if filtro_lugar:
                 pipeline.extend([{'$unwind': '$sucursal'}, {'$match': {'sucursal.'+ nivel: lugar}}])
             pipeline.append({'$match': {'fechaEntrega': {'$gte': self.fecha_ini, '$lt': self.fecha_fin}}})
-            if self.filtros.categoria and self.filtros.categoria != "False":
+            if self.filtros.categoria and self.filtros.categoria != "False" and self.filtros.categoria != "":
                 pipeline.append({'$match': {'tercero': self.filtros.categoria}})
-            if self.filtros.tipoEntrega != None and self.filtros.tipoEntrega != "False":
+            if self.filtros.tipoEntrega != None and self.filtros.tipoEntrega != "False" and self.filtros.tipoEntrega != "":
                 pipeline.append({'$match': {'tipoEntrega': self.filtros.tipoEntrega}})
             pipeline.append({'$project':{'xLabel':'$sucursal.'+siguiente_nivel, 'Entregado_Fuera_tiempo': {'$cond': [{'$eq':['$evaluacion','Entregado-Fuera de tiempo']}, '$pedidos', 0]}, 'Entregado_tiempo': {'$cond': [{'$eq':['$evaluacion','Entregado-A tiempo']}, '$pedidos', 0]}, 'No_entregado_Fuera_tiempo': {'$cond': [{'$eq':['$evaluacion','No entregado-Fuera de tiempo']}, '$pedidos', 0]}, 'No_entregado_tiempo': {'$cond': [{'$eq':['$evaluacion','No entregado-A tiempo']}, '$pedidos', 0]}, 'Despachado_Fuera_tiempo': {'$cond': [{'$eq':['$evaluacion','Despachado-Fuera de tiempo']}, '$pedidos', 0]}, 'Despachado_tiempo': {'$cond': [{'$eq':['$evaluacion','Despachado-A tiempo']}, '$pedidos', 0]}}})
             pipeline.append({'$group':{'_id':'$xLabel', 'Entregado_Fuera_tiempo':{'$sum':'$Entregado_Fuera_tiempo'}, 'Entregado_tiempo':{'$sum':'$Entregado_tiempo'}, 'No_entregado_Fuera_tiempo':{'$sum':'$No_entregado_Fuera_tiempo'}, 'No_entregado_tiempo':{'$sum':'$No_entregado_tiempo'}, 'Despachado_Fuera_tiempo':{'$sum':'$Despachado_Fuera_tiempo'}, 'Despachado_tiempo':{'$sum':'$Despachado_tiempo'}}})
@@ -4107,9 +4107,9 @@ class Tablas():
             if filtro_lugar:
                 pipeline.extend([{'$unwind': '$sucursal'}, {'$match': {'sucursal.'+ nivel: lugar}}])
             pipeline.append({'$match': {'fechaEntrega': {'$gte': self.fecha_ini, '$lt': self.fecha_fin}}})
-            if self.filtros.categoria and self.filtros.categoria != "False":
+            if self.filtros.categoria and self.filtros.categoria != "False" and self.filtros.categoria != "":
                 pipeline.append({'$match': {'tercero': self.filtros.categoria}})
-            if self.filtros.tipoEntrega != None and self.filtros.tipoEntrega != "False":
+            if self.filtros.tipoEntrega != None and self.filtros.tipoEntrega != "False" and self.filtros.tipoEntrega != "":
                 pipeline.append({'$match': {'tipoEntrega': self.filtros.tipoEntrega}})
             pipeline.append({'$project':{'xLabel':'$sucursal.tienda', 'Entregado_Fuera_tiempo': {'$cond': [{'$eq':['$evaluacion','Entregado-Fuera de tiempo']}, '$pedidos', 0]}, 'Entregado_tiempo': {'$cond': [{'$eq':['$evaluacion','Entregado-A tiempo']}, '$pedidos', 0]}, 'No_entregado_Fuera_tiempo': {'$cond': [{'$eq':['$evaluacion','No entregado-Fuera de tiempo']}, '$pedidos', 0]}, 'No_entregado_tiempo': {'$cond': [{'$eq':['$evaluacion','No entregado-A tiempo']}, '$pedidos', 0]}, 'Despachado_Fuera_tiempo': {'$cond': [{'$eq':['$evaluacion','Despachado-Fuera de tiempo']}, '$pedidos', 0]}, 'Despachado_tiempo': {'$cond': [{'$eq':['$evaluacion','Despachado-A tiempo']}, '$pedidos', 0]}}})
             pipeline.append({'$group':{'_id':'$xLabel', 'Entregado_Fuera_tiempo':{'$sum':'$Entregado_Fuera_tiempo'}, 'Entregado_tiempo':{'$sum':'$Entregado_tiempo'}, 'No_entregado_Fuera_tiempo':{'$sum':'$No_entregado_Fuera_tiempo'}, 'No_entregado_tiempo':{'$sum':'$No_entregado_tiempo'}, 'Despachado_Fuera_tiempo':{'$sum':'$Despachado_Fuera_tiempo'}, 'Despachado_tiempo':{'$sum':'$Despachado_tiempo'}}})
@@ -4145,9 +4145,9 @@ class Tablas():
             pipeline.append({'$match': {'idtienda': int(self.filtros.tienda)}})
             pipeline.append({'$match': {'fechaEntregaProgramadaNS': {'$gte': self.fecha_ini, '$lt': self.fecha_fin}}})
             pipeline.append({'$match': {'estatusConsigna': {'$not': {'$eq': 'Canceled'}}}})
-            if self.filtros.categoria and self.filtros.categoria != "False":
+            if self.filtros.categoria and self.filtros.categoria != "False" and self.filtros.categoria != "":
                 pipeline.append({'$match': {'tercero': self.filtros.categoria}})
-            if self.filtros.tipoEntrega != None and self.filtros.tipoEntrega != "False":
+            if self.filtros.tipoEntrega != None and self.filtros.tipoEntrega != "False" and self.filtros.tipoEntrega != "":
                 pipeline.append({'$match': {'tipoEntrega': self.filtros.tipoEntrega}})
             # pipeline.append({'$project':{'xLabel':'$sucursal.tienda', 'Entregado_Fuera_tiempo': {'$cond': [{'$eq':['$evaluacion','Entregado-Fuera de tiempo']}, '$pedidos', 0]}, 'Entregado_tiempo': {'$cond': [{'$eq':['$evaluacion','Entregado-A tiempo']}, '$pedidos', 0]}, 'No_entregado_Fuera_tiempo': {'$cond': [{'$eq':['$evaluacion','No entregado-Fuera de tiempo']}, '$pedidos', 0]}, 'No_entregado_tiempo': {'$cond': [{'$eq':['$evaluacion','No entregado-A tiempo']}, '$pedidos', 0]}, 'Despachado_Fuera_tiempo': {'$cond': [{'$eq':['$evaluacion','Despachado-Fuera de tiempo']}, '$pedidos', 0]}, 'Despachado_tiempo': {'$cond': [{'$eq':['$evaluacion','Despachado-A tiempo']}, '$pedidos', 0]}}})
             pipeline.append({'$project':{

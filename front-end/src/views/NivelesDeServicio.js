@@ -13,8 +13,8 @@ const NivelesDeServicio = () => {
   const [region, setRegion] = useState(false)
   const [zona, setZona] = useState(false)
   const [tienda, setTienda] = useState(false)
-  const [categoria, setCategoria] = useState(false)
-  const [tipoEntrega, setTipoEntrega] = useState(false)
+  const [categoria, setCategoria] = useState('')
+  const [tipoEntrega, setTipoEntrega] = useState('')
   const [tiendaNombre, setTiendaNombre] = useState('')
 
   const seccion = 'NivelesDeServicio'
@@ -26,6 +26,10 @@ const NivelesDeServicio = () => {
       setTiendaNombre(nombreTienda_tmp.data.nombreTienda)
     }
   }, [tienda])
+
+  useEffect(() => {
+    console.log(`Tipo de entrega: ${tipoEntrega}`)
+  }, [tipoEntrega])
 
   return (
     <Fragment>
@@ -48,13 +52,8 @@ const NivelesDeServicio = () => {
         </Col>}
       </Row>
       <Row className='match-height'>
-        <Col sm='12'>
-          <Pie titulo='Pedidos Por Tipo de Entrega' formato='entero' seccion={seccion} yLabel='Pedidos' fechas={fechas} region={region} zona={zona} tienda={tienda} categoria={categoria} tipoEntrega={tipoEntrega} />
-        </Col>
-      </Row>
-      <Row className='match-height'>
         {(tipoEntrega === '' || tipoEntrega === false || tipoEntrega === undefined) && <Col sm='12'>
-          <Pie titulo='Estatus Por Tipo de Entrega' formato='entero' seccion={seccion} yLabel='Pedidos' fechas={fechas} region={region} zona={zona} tienda={tienda} categoria={categoria} tipoEntrega={tipoEntrega} />
+        <Pie titulo='Pedidos Por Tipo de Entrega' formato='entero' seccion={seccion} yLabel='Pedidos' fechas={fechas} region={region} zona={zona} tienda={tienda} categoria={categoria} tipoEntrega={tipoEntrega} />
         </Col>}
       </Row>
       <Row className='match-height'>

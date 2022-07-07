@@ -334,7 +334,7 @@ class Pie():
             if filtro_lugar:
                 pipeline.extend([{'$unwind': '$sucursal'}, {'$match': {f'sucursal.{nivel_atrasado}': lugar}}])
             pipeline.append({'$match': {'fechaEntrega': {'$gte': self.fecha_ini_a12, '$lt': self.fecha_fin_a12}}})
-            if self.filtros.categoria and self.filtros.categoria != "False":
+            if self.filtros.categoria and self.filtros.categoria != "False" and self.filtros.categoria != "":
                 pipeline.append({'$match': {'tercero': self.filtros.categoria}})
             pipeline.append({'$group':{'_id':'$tipoEntrega', 'pedidos':{'$sum':1}}})
             # print(f"Pipeline desde pie -> Pedidos Pendientes: {str(pipeline)}")
@@ -359,9 +359,9 @@ class Pie():
             if filtro_lugar:
                 pipeline.extend([{'$unwind': '$sucursal'}, {'$match': {f'sucursal.{nivel_atrasado}': lugar}}])
             pipeline.append({'$match': {'fechaEntrega': {'$gte': self.fecha_ini_a12, '$lt': self.fecha_fin_a12}}})
-            if self.filtros.categoria and self.filtros.categoria != "False":
+            if self.filtros.categoria and self.filtros.categoria != "False" and self.filtros.categoria != "":
                 pipeline.append({'$match': {'tercero': self.filtros.categoria}})
-            if self.filtros.tipoEntrega != None and self.filtros.tipoEntrega != "False":
+            if self.filtros.tipoEntrega != None and self.filtros.tipoEntrega != "False" and self.filtros.tipoEntrega != "":
                 pipeline.append({'$match': {'tipoEntrega': self.filtros.tipoEntrega}})
             pipeline.append({'$project':{'Entregado_Fuera_tiempo': {'$cond': [{'$eq':['$evaluacion','Entregado-Fuera de tiempo']}, '$pedidos', 0]}, 'Entregado_tiempo': {'$cond': [{'$eq':['$evaluacion','Entregado-A tiempo']}, '$pedidos', 0]}, 'No_entregado_Fuera_tiempo': {'$cond': [{'$eq':['$evaluacion','No entregado-Fuera de tiempo']}, '$pedidos', 0]}, 'No_entregado_tiempo': {'$cond': [{'$eq':['$evaluacion','No entregado-A tiempo']}, '$pedidos', 0]}, 'Despachado_Fuera_tiempo': {'$cond': [{'$eq':['$evaluacion','Despachado-Fuera de tiempo']}, '$pedidos', 0]}, 'Despachado_tiempo': {'$cond': [{'$eq':['$evaluacion','Despachado-A tiempo']}, '$pedidos', 0]}}})
             pipeline.append({'$group':{'_id':0, 'Entregado_Fuera_tiempo':{'$sum':'$Entregado_Fuera_tiempo'}, 'Entregado_tiempo':{'$sum':'$Entregado_tiempo'}, 'No_entregado_Fuera_tiempo':{'$sum':'$No_entregado_Fuera_tiempo'}, 'No_entregado_tiempo':{'$sum':'$No_entregado_tiempo'}, 'Despachado_Fuera_tiempo':{'$sum':'$Despachado_Fuera_tiempo'}, 'Despachado_tiempo':{'$sum':'$Despachado_tiempo'}}})
@@ -387,9 +387,9 @@ class Pie():
             if filtro_lugar:
                 pipeline.extend([{'$unwind': '$sucursal'}, {'$match': {f'sucursal.{nivel_atrasado}': lugar}}])
             pipeline.append({'$match': {'fechaEntrega': {'$gte': self.fecha_ini_a12, '$lt': self.fecha_fin_a12}}})
-            if self.filtros.categoria and self.filtros.categoria != "False":
+            if self.filtros.categoria and self.filtros.categoria != "False" and self.filtros.categoria != "":
                 pipeline.append({'$match': {'tercero': self.filtros.categoria}})
-            if self.filtros.tipoEntrega != None and self.filtros.tipoEntrega != "False":
+            if self.filtros.tipoEntrega != None and self.filtros.tipoEntrega != "False" and self.filtros.tipoEntrega != "":
                 pipeline.append({'$match': {'tipoEntrega': self.filtros.tipoEntrega}})
             pipeline.append({'$project':{'Entregado_Fuera_tiempo': {'$cond': [{'$eq':['$evaluacion','Entregado-Fuera de tiempo']}, '$pedidos', 0]}, 'Entregado_tiempo': {'$cond': [{'$eq':['$evaluacion','Entregado-A tiempo']}, '$pedidos', 0]}, 'No_entregado_Fuera_tiempo': {'$cond': [{'$eq':['$evaluacion','No entregado-Fuera de tiempo']}, '$pedidos', 0]}, 'No_entregado_tiempo': {'$cond': [{'$eq':['$evaluacion','No entregado-A tiempo']}, '$pedidos', 0]}, 'Despachado_Fuera_tiempo': {'$cond': [{'$eq':['$evaluacion','Despachado-Fuera de tiempo']}, '$pedidos', 0]}, 'Despachado_tiempo': {'$cond': [{'$eq':['$evaluacion','Despachado-A tiempo']}, '$pedidos', 0]}}})
             pipeline.append({'$group':{'_id':0, 'Entregado_Fuera_tiempo':{'$sum':'$Entregado_Fuera_tiempo'}, 'Entregado_tiempo':{'$sum':'$Entregado_tiempo'}, 'No_entregado_Fuera_tiempo':{'$sum':'$No_entregado_Fuera_tiempo'}, 'No_entregado_tiempo':{'$sum':'$No_entregado_tiempo'}, 'Despachado_Fuera_tiempo':{'$sum':'$Despachado_Fuera_tiempo'}, 'Despachado_tiempo':{'$sum':'$Despachado_tiempo'}}})
@@ -415,9 +415,9 @@ class Pie():
             if filtro_lugar:
                 pipeline.extend([{'$unwind': '$sucursal'}, {'$match': {f'sucursal.{nivel_cancelado}': lugar}}])
             pipeline.append({'$match': {'fechaUltimoCambio': {'$gte': self.fecha_ini_a12, '$lt': self.fecha_fin_a12}}})
-            if self.filtros.categoria and self.filtros.categoria != "False":
+            if self.filtros.categoria and self.filtros.categoria != "False" and self.filtros.categoria != "":
                 pipeline.append({'$match': {'tercero': self.filtros.categoria}})
-            if self.filtros.tipoEntrega != None and self.filtros.tipoEntrega != "False":
+            if self.filtros.tipoEntrega != None and self.filtros.tipoEntrega != "False" and self.filtros.tipoEntrega != "":
                 pipeline.append({'$match': {'tipoEntrega': self.filtros.tipoEntrega}})
             pipeline.append({'$group':{'_id':0, 'cancelados': {'$sum': '$pedidoCancelado'}, 'no_cancelados': {'$sum': '$pedidoNoCancelado'}}})
             # print(f"Pipeline desde pie -> NivelesDeServicio -> {self.titulo}: {str(pipeline)}")
