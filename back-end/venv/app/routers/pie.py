@@ -163,33 +163,22 @@ class Pie():
         return {'hayResultados':hayResultados, 'res': res, 'pipeline':pipeline}
 
     async def PedidosPendientes(self):
-        categorias = []
         pipeline = []
-        series = []
-        serie1 = []
-        serie2 = []
-        serie3 = []
-        serie4 = []
-        serie5 = []
 
         if self.filtros.region != '' and self.filtros.region != "False":
             filtro_lugar = True
             if self.filtros.zona != '' and self.filtros.zona != "False":
                 if self.filtros.tienda != '' and self.filtros.tienda != "False":
                     nivel = 'idTienda'
-                    siguiente_nivel = 'tiendaNombre'
                     lugar = int(self.filtros.tienda)
                 else:
                     nivel = 'zona'
-                    siguiente_nivel = 'tiendaNombre'
                     lugar = int(self.filtros.zona)
             else:
                 nivel = 'region'
-                siguiente_nivel = 'zonaNombre'
                 lugar = int(self.filtros.region)
         else:
             filtro_lugar = False
-            siguiente_nivel = 'regionNombre'
             lugar = ''
 
         collection = conexion_mongo('report').report_pedidoPendientes
@@ -202,8 +191,9 @@ class Pie():
             pipeline.append({'$match': {'origen': self.filtros.origen}})
 
         if self.titulo == 'Estatus Pedidos':
-            pipeline.append({'$project': {'2_DIAS': {'$cond': [{'$eq':['$prioridad', '2 DIAS']}, 1, 0]}, 'HOY_ATRASADO': {'$cond': [{'$eq':['$prioridad', 'HOY ATRASADO']}, 1, 0]}, '1_DIA': {'$cond': [{'$eq':['$prioridad', '1 DIA']}, 1, 0]}, 'HOY_A_TIEMPO': {'$cond': [{'$eq':['$prioridad', 'HOY A TIEMPO']}, 1, 0]}, 'ANTERIORES': {'$cond': [{'$eq':['$prioridad', 'ANTERIORES']}, 1, 0]}}})
-            pipeline.append({'$group':{'_id':0, '2_DIAS':{'$sum':'$2_DIAS'}, 'HOY_ATRASADO':{'$sum':'$HOY_ATRASADO'}, '1_DIA':{'$sum':'$1_DIA'}, 'HOY_A_TIEMPO':{'$sum':'$HOY_A_TIEMPO'}, 'ANTERIORES':{'$sum':'$ANTERIORES'}}})
+            # pipeline.append({'$project': {'2_DIAS': {'$cond': [{'$eq':['$prioridad', '2 DIAS']}, 1, 0]}, 'HOY_ATRASADO': {'$cond': [{'$eq':['$prioridad', 'HOY ATRASADO']}, 1, 0]}, '1_DIA': {'$cond': [{'$eq':['$prioridad', '1 DIA']}, 1, 0]}, 'HOY_A_TIEMPO': {'$cond': [{'$eq':['$prioridad', 'HOY A TIEMPO']}, 1, 0]}, 'ANTERIORES': {'$cond': [{'$eq':['$prioridad', 'ANTERIORES']}, 1, 0]}}})
+            # pipeline.append({'$group':{'_id':0, '2_DIAS':{'$sum':'$2_DIAS'}, 'HOY_ATRASADO':{'$sum':'$HOY_ATRASADO'}, '1_DIA':{'$sum':'$1_DIA'}, 'HOY_A_TIEMPO':{'$sum':'$HOY_A_TIEMPO'}, 'ANTERIORES':{'$sum':'$ANTERIORES'}}})
+            pipeline.append({'$group': {'_id':'$prioridad', 'pedidos':{'$sum':1}}})
             # print(f"Pipeline desde pie -> Pedidos Pendientes: {str(pipeline)}")
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=1000)
@@ -214,15 +204,21 @@ class Pie():
                 res = pipeline
             else:
                 hayResultados = "si"
-                objeto = arreglo[0]
+                res = []
+                for resultado in arreglo:
+                    res.append({
+                        'name': resultado['_id'],
+                        'y': resultado['pedidos']
+                    })
+                # objeto = arreglo[0]
                 # print('Desde Pie Home: '+str(objeto))
-                res = [
-                    {'name': 'Hoy a tiempo', 'y': objeto['HOY_A_TIEMPO']},
-                    {'name': 'Hoy atrasado', 'y': objeto['HOY_ATRASADO']},
-                    {'name': '1 día', 'y': objeto['1_DIA']},
-                    {'name': '2 días', 'y': objeto['2_DIAS']},
-                    {'name': 'Anteriores', 'y': objeto['ANTERIORES']}
-                ]
+                # res = [
+                #     {'name': 'Hoy a tiempo', 'y': objeto['HOY_A_TIEMPO']},
+                #     {'name': 'Hoy atrasado', 'y': objeto['HOY_ATRASADO']},
+                #     {'name': '1 día', 'y': objeto['1_DIA']},
+                #     {'name': '2 días', 'y': objeto['2_DIAS']},
+                #     {'name': 'Anteriores', 'y': objeto['ANTERIORES']}
+                # ]
 
         if self.titulo == 'Pedidos Por Tipo de Entrega':
             pipeline.append({'$group':{'_id':'$metodoEntrega', 'pedidos':{'$sum':1}}})
