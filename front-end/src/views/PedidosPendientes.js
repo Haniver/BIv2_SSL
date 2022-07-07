@@ -25,7 +25,7 @@ const PedidosPendientes = () => {
         <Col xl={tipoEntrega ? '12' : '6'} sm='12'>
           <Pie titulo='Estatus Pedidos' seccion={seccion} formato='entero' yLabel='Pedidos' tipoEntrega={tipoEntrega} region={region} zona={zona} tienda={tienda} origen={origen} />
         </Col>
-        {!tipoEntrega && false && <Col xl='6' sm='12'>
+        {!tipoEntrega && <Col xl='6' sm='12'>
           <Pie titulo='Pedidos Por Tipo de Entrega' seccion={seccion} formato='entero' yLabel='Pedidos' tipoEntrega={tipoEntrega} region={region} zona={zona} tienda={tienda} origen={origen} />
         </Col>}
       </Row>

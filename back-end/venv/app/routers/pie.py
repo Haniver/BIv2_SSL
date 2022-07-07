@@ -204,7 +204,7 @@ class Pie():
         if self.titulo == 'Estatus Pedidos':
             pipeline.append({'$project': {'2_DIAS': {'$cond': [{'$eq':['$prioridad', '2 DIAS']}, 1, 0]}, 'HOY_ATRASADO': {'$cond': [{'$eq':['$prioridad', 'HOY ATRASADO']}, 1, 0]}, '1_DIA': {'$cond': [{'$eq':['$prioridad', '1 DIA']}, 1, 0]}, 'HOY_A_TIEMPO': {'$cond': [{'$eq':['$prioridad', 'HOY A TIEMPO']}, 1, 0]}, 'ANTERIORES': {'$cond': [{'$eq':['$prioridad', 'ANTERIORES']}, 1, 0]}}})
             pipeline.append({'$group':{'_id':0, '2_DIAS':{'$sum':'$2_DIAS'}, 'HOY_ATRASADO':{'$sum':'$HOY_ATRASADO'}, '1_DIA':{'$sum':'$1_DIA'}, 'HOY_A_TIEMPO':{'$sum':'$HOY_A_TIEMPO'}, 'ANTERIORES':{'$sum':'$ANTERIORES'}}})
-            print(f"Pipeline desde pie -> Pedidos Pendientes: {str(pipeline)}")
+            # print(f"Pipeline desde pie -> Pedidos Pendientes: {str(pipeline)}")
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=1000)
             # print(str(arreglo))
@@ -223,6 +223,25 @@ class Pie():
                     {'name': '2 días', 'y': objeto['2_DIAS']},
                     {'name': 'Anteriores', 'y': objeto['ANTERIORES']}
                 ]
+
+        if self.titulo == 'Pedidos Por Tipo de Entrega':
+            pipeline.append({'$group':{'_id':'$metodoEntrega', 'pedidos':{'$sum':1}}})
+            print(f"Pipeline desde pie -> Pedidos Pendientes: {str(pipeline)}")
+            cursor = collection.aggregate(pipeline)
+            arreglo = await cursor.to_list(length=1000)
+            # print(str(arreglo))
+            if len(arreglo) <= 0:
+                # print("No hubo resultados")
+                hayResultados = "no"
+                res = pipeline
+            else:
+                hayResultados = "si"
+                res = []
+                for resultado in arreglo:
+                    res.append({
+                        'name': resultado['_id'],
+                        'y': resultado['pedidos']
+                    })
         return {'hayResultados':hayResultados, 'res': res, 'pipeline':pipeline}
 
     async def FoundRate(self):
