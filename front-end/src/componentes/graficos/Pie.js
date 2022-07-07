@@ -12,7 +12,7 @@ require('highcharts/modules/data')(Highcharts)
 require('highcharts/modules/exporting')(Highcharts)
 require('highcharts/modules/export-data')(Highcharts)
 
-const Pie = ({ titulo, seccion, formato, fechas, region, zona, tienda }) => {
+const Pie = ({ titulo, seccion, formato, fechas, region, zona, tienda, tipoEntrega, origen }) => {
     const [datos, setDatos] = useState([{name: 'Sin Resultados', y: 0}])
     const [total, setTotal] = useState('')
     const [estadoLoader, dispatchLoader] = useReducer((estadoLoader, accion) => {
@@ -61,7 +61,9 @@ const Pie = ({ titulo, seccion, formato, fechas, region, zona, tienda }) => {
             fechas,            
             region,
             zona,
-            tienda
+            tienda,
+            tipoEntrega, 
+            origen
           }
         })
         dispatchLoader({tipo: 'recibirDeAPI'})
@@ -77,13 +79,24 @@ const Pie = ({ titulo, seccion, formato, fechas, region, zona, tienda }) => {
         } else {
           setDatos({name: 'Sin Resultados', y: 0})
         }
-      }, [fechas, region, zona, tienda])
+      }, [fechas, region, zona, tienda, tipoEntrega, origen])
 
-    useEffect(() => {
-        console.log("Datos:")
-        console.log(datos)
-    }, [datos])
-    
+    // Lo que sigue es para borrar y volver a crear el label de Total, según https://www.highcharts.com/forum/viewtopic.php?t=38132
+    const objectIsEmpty = (obj) => {
+        return Object.keys(obj).length === 0 && obj.constructor === Object
+    }
+
+    const addLabel = (chart) => {
+        chart.myLabel = chart.renderer.label(`Total: ${total}`, 10, 100).css({
+            fontSize: '1rem',
+            color: '#272F44'
+        }).add()
+    }
+    const removeLabel = (chart) => {
+        if (chart.myLabel && !objectIsEmpty(chart.myLabel)) {
+            chart.myLabel.destroy()
+        }
+    }
     const options = {
         chart: {
             type: 'pie',
@@ -171,15 +184,12 @@ const Pie = ({ titulo, seccion, formato, fechas, region, zona, tienda }) => {
         credits: {
             enabled: false
         },
+        // Label de Total personalizado
         chart: {
             events: {
               render() {
-                const chart = this
-  
-                chart.renderer.label(`Total: ${total}`, 10, 100).css({
-                    fontSize: '1rem',
-                    color: '#272F44'
-                }).add()
+                removeLabel(this)
+                addLabel(this)
               }
             }
           }

@@ -3,6 +3,7 @@ import { Row, Col, Card, CardBody } from 'reactstrap'
 import Filtro from '../componentes/auxiliares/Filtro'
 import Tabla from '../componentes/tablas/Tabla'
 import ColumnasApiladas from '../componentes/graficos/ColumnasApiladas'
+import Pie from '../componentes/graficos/Pie'
 
 const PedidosPendientes = () => {
   const [tipoEntrega, setTipoEntrega] = useState(false)
@@ -19,6 +20,14 @@ const PedidosPendientes = () => {
         <Col sm='12'>
           <Filtro region={region} zona={zona} tienda={tienda} tipoEntrega={tipoEntrega} origen={origen} setTipoEntrega={setTipoEntrega} setRegion={setRegion} setZona={setZona} setTienda={setTienda} setOrigen={setOrigen} />
         </Col>
+      </Row>
+      <Row className='match-height'>
+        <Col xl={tipoEntrega ? '12' : '6'} sm='12'>
+          <Pie titulo='Estatus Pedidos' seccion={seccion} formato='entero' yLabel='Pedidos' tipoEntrega={tipoEntrega} region={region} zona={zona} tienda={tienda} origen={origen} />
+        </Col>
+        {!tipoEntrega && false && <Col xl='6' sm='12'>
+          <Pie titulo='Pedidos Por Tipo de Entrega' seccion={seccion} formato='entero' yLabel='Pedidos' tipoEntrega={tipoEntrega} region={region} zona={zona} tienda={tienda} origen={origen} />
+        </Col>}
       </Row>
       <Row className='match-height'>
         <Col xl='6' sm='12'>
