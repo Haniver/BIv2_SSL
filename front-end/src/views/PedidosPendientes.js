@@ -23,7 +23,7 @@ const PedidosPendientes = () => {
       </Row>
       <Row className='match-height'>
         <Col xl={tipoEntrega ? '12' : '6'} sm='12'>
-          <Pie titulo='Estatus Pedidos' seccion={seccion} formato='entero' yLabel='Pedidos' tipoEntrega={tipoEntrega} region={region} zona={zona} tienda={tienda} origen={origen} />
+          <Pie titulo='Estatus Pedidos No Entregados' seccion={seccion} formato='entero' yLabel='Pedidos' tipoEntrega={tipoEntrega} region={region} zona={zona} tienda={tienda} origen={origen} coloresPedidosPendientes />
         </Col>
         {!tipoEntrega && <Col xl='6' sm='12'>
           <Pie titulo='Pedidos Por Tipo de Entrega' seccion={seccion} formato='entero' yLabel='Pedidos' tipoEntrega={tipoEntrega} region={region} zona={zona} tienda={tienda} origen={origen} />

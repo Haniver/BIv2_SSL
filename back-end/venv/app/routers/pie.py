@@ -190,7 +190,7 @@ class Pie():
         if self.filtros.origen != None and self.filtros.origen != "False" and self.filtros.origen != "":
             pipeline.append({'$match': {'origen': self.filtros.origen}})
 
-        if self.titulo == 'Estatus Pedidos':
+        if self.titulo == 'Estatus Pedidos No Entregados':
             # pipeline.append({'$project': {'2_DIAS': {'$cond': [{'$eq':['$prioridad', '2 DIAS']}, 1, 0]}, 'HOY_ATRASADO': {'$cond': [{'$eq':['$prioridad', 'HOY ATRASADO']}, 1, 0]}, '1_DIA': {'$cond': [{'$eq':['$prioridad', '1 DIA']}, 1, 0]}, 'HOY_A_TIEMPO': {'$cond': [{'$eq':['$prioridad', 'HOY A TIEMPO']}, 1, 0]}, 'ANTERIORES': {'$cond': [{'$eq':['$prioridad', 'ANTERIORES']}, 1, 0]}}})
             # pipeline.append({'$group':{'_id':0, '2_DIAS':{'$sum':'$2_DIAS'}, 'HOY_ATRASADO':{'$sum':'$HOY_ATRASADO'}, '1_DIA':{'$sum':'$1_DIA'}, 'HOY_A_TIEMPO':{'$sum':'$HOY_A_TIEMPO'}, 'ANTERIORES':{'$sum':'$ANTERIORES'}}})
             pipeline.append({'$group': {'_id':'$prioridad', 'pedidos':{'$sum':1}}})
@@ -204,12 +204,18 @@ class Pie():
                 res = pipeline
             else:
                 hayResultados = "si"
-                res = []
+                res = [
+                    {'name': 'HOY A TIEMPO', 'y': 0}, 
+                    {'name': 'HOY ATRASADO', 'y': 0}, 
+                    {'name': '1 DIA', 'y': 0}, 
+                    {'name': '2 DIAS', 'y': 0}, 
+                    {'name': 'ANTERIORES', 'y': 0}
+                ]
+
                 for resultado in arreglo:
-                    res.append({
-                        'name': resultado['_id'],
-                        'y': resultado['pedidos']
-                    })
+                    indice = next((index for (index, d) in enumerate(res) if d["name"] == resultado['_id']), None) # https://stackoverflow.com/questions/4391697/find-the-index-of-a-dict-within-a-list-by-matching-the-dicts-value
+                    if indice is not None:
+                        res[indice]['y'] = resultado['pedidos']
                 # objeto = arreglo[0]
                 # print('Desde Pie Home: '+str(objeto))
                 # res = [
@@ -222,7 +228,7 @@ class Pie():
 
         if self.titulo == 'Pedidos Por Tipo de Entrega':
             pipeline.append({'$group':{'_id':'$metodoEntrega', 'pedidos':{'$sum':1}}})
-            print(f"Pipeline desde pie -> Pedidos Pendientes: {str(pipeline)}")
+            # print(f"Pipeline desde pie -> Pedidos Pendientes: {str(pipeline)}")
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=1000)
             # print(str(arreglo))

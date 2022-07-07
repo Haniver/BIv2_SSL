@@ -12,7 +12,7 @@ require('highcharts/modules/data')(Highcharts)
 require('highcharts/modules/exporting')(Highcharts)
 require('highcharts/modules/export-data')(Highcharts)
 
-const Pie = ({ titulo, seccion, formato, fechas, region, zona, tienda, tipoEntrega, origen }) => {
+const Pie = ({ titulo, seccion, formato, fechas, region, zona, tienda, tipoEntrega, origen, coloresPedidosPendientes }) => {
     const [datos, setDatos] = useState([{name: 'Sin Resultados', y: 0}])
     const [total, setTotal] = useState('')
     const [estadoLoader, dispatchLoader] = useReducer((estadoLoader, accion) => {
@@ -35,6 +35,7 @@ const Pie = ({ titulo, seccion, formato, fechas, region, zona, tienda, tipoEntre
     const [colorFondo, setColorFondo] = useState(colorFondoDark)
     const [colorTexto, setColorTexto] = useState(colorTextoDark)
     const { colors } = useContext(ThemeColors)
+    const colorDeRebanadas = (coloresPedidosPendientes) ? [colors.info.main, colors.dark.main, colors.warning.main, colors.primary.main, colors.danger.main] : [colors.secondary.main, colors.primary.main, colors.dark.main, colors.warning.main, colors.info.main, colors.danger.main]
 
     // Skins
     useEffect(() => {
@@ -161,7 +162,7 @@ const Pie = ({ titulo, seccion, formato, fechas, region, zona, tienda, tipoEntre
                         }
                     }
                 },
-                colors: [colors.secondary.main, colors.primary.main, colors.dark.main, colors.warning.main, colors.info.main, colors.danger.main]
+                colors: colorDeRebanadas
             },
             series: {
                 dataLabels: {
@@ -178,7 +179,7 @@ const Pie = ({ titulo, seccion, formato, fechas, region, zona, tienda, tipoEntre
             {
                 type: 'pie',
                 name: 'Monto',
-                data: datos    
+                data: datos  
             }
         ],
         credits: {
