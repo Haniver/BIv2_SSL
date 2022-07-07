@@ -4196,8 +4196,8 @@ class Tablas():
                     })
                 columns.extend([
                     {'name': 'Último Cambio', 'selector': 'ultimoCambio', 'formato': 'texto', 'ancho': '180px'},                                
-                    {'name': 'No. de Orden', 'selector': 'nPedido', 'formato': 'texto'},                                
-                    {'name': 'No. de Consigna', 'selector': 'nConsigna', 'formato': 'texto'},
+                    {'name': 'No. de Orden', 'selector': 'nPedido', 'formato': 'entero', 'ancho': '120px'},
+                    {'name': 'No. de Consigna', 'selector': 'nConsigna', 'formato': 'texto', 'ancho': '120px'},
                     {'name': 'Método de Entrega', 'selector': 'metodoEntrega', 'formato': 'texto', 'ancho': '160px'},
                     {'name': 'Método de Pago', 'selector': 'descrip_paymentmode', 'formato': 'texto', 'ancho': '180px'},
                     {'name': 'Fecha Creación', 'selector': 'fechaCreacion', 'formato': 'texto', 'ancho': '180px'},
