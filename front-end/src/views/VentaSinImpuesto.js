@@ -21,12 +21,12 @@ import {
 
 const VentaSinImpuesto = () => {
 
-  const [region, setRegion] = useState(false)
-  const [zona, setZona] = useState(false)
-  const [tienda, setTienda] = useState(false)
+  const [region, setRegion] = useState('')
+  const [zona, setZona] = useState('')
+  const [tienda, setTienda] = useState('')
   const [canal, setCanal] = useState(1)
-  const [depto, setDepto] = useState(false)
-  const [subDepto, setSubDepto] = useState(false)
+  const [depto, setDepto] = useState('')
+  const [subDepto, setSubDepto] = useState('')
   const [fechas, setFechas] = useState({fecha_ini: '', fecha_fin: fechas_srv.noUTC(new Date())})
   const [anio, setAnio] = useState(fechas_srv.anioActual())
   const [mes, setMes] = useState(fechas_srv.mesActual())

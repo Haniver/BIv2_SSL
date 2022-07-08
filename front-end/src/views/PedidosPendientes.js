@@ -6,10 +6,10 @@ import ColumnasApiladas from '../componentes/graficos/ColumnasApiladas'
 import Pie from '../componentes/graficos/Pie'
 
 const PedidosPendientes = () => {
-  const [tipoEntrega, setTipoEntrega] = useState(false)
-  const [region, setRegion] = useState(false)
-  const [zona, setZona] = useState(false)
-  const [tienda, setTienda] = useState(false)
+  const [tipoEntrega, setTipoEntrega] = useState('')
+  const [region, setRegion] = useState('')
+  const [zona, setZona] = useState('')
+  const [tienda, setTienda] = useState('')
   const [origen, setOrigen] = useState('Hybris')
 
   const seccion = 'PedidosPendientes'

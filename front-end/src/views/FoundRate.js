@@ -22,9 +22,9 @@ import {
 
 const FoundRate = () => {
   const [fechas, setFechas] = useState({fecha_ini: fechas_srv.primeroDelMesVencido(), fecha_fin: fechas_srv.actualVencida()})
-  const [region, setRegion] = useState(false)
-  const [zona, setZona] = useState(false)
-  const [tienda, setTienda] = useState(false)
+  const [region, setRegion] = useState('')
+  const [zona, setZona] = useState('')
+  const [tienda, setTienda] = useState('')
   const [tarjetasOriginalYFinal, setTarjetasOriginalYFinal] = useState({res: {'Monto Original': '', 'Monto Final': '', '% Variación': ''}})
   const [tarjetasFoundYFulfillment, setTarjetasFoundYFulfillment] = useState({res: {'Found Rate': '', 'Fulfillment Rate': ''}})
   

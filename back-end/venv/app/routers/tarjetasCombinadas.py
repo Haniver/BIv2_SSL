@@ -181,9 +181,9 @@ class TarjetasCombinadas():
 
         elif self.titulo == 'FoundYFulfillment':
 
-            if self.filtros.region != '' and self.filtros.region != "False":
+            if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
                 filtro_lugar = True
-                if self.filtros.zona != '' and self.filtros.zona != "False":
+                if self.filtros.zona != '' and self.filtros.zona != "False" and self.filtros.zona != None:
                     nivel = 'zona'
                     siguiente_nivel = 'tiendaNombre'
                     lugar = int(self.filtros.zona)

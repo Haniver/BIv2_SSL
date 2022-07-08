@@ -40,10 +40,10 @@ class EjesMultiples():
         serie3 = []
         if self.titulo == 'Fulfillment Rate, Found Rate y Pedidos por Día':
 
-            if self.filtros.region != '' and self.filtros.region != "False":
+            if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
                 filtro_lugar = True
-                if self.filtros.zona != '' and self.filtros.zona != "False":
-                    if self.filtros.tienda != '' and self.filtros.tienda != "False":
+                if self.filtros.zona != '' and self.filtros.zona != "False" and self.filtros.zona != None:
+                    if self.filtros.tienda != '' and self.filtros.tienda != "False" and self.filtros.tienda != None:
                         nivel = 'tienda'
                         lugar = int(self.filtros.tienda)
                     else:
@@ -296,10 +296,10 @@ class EjesMultiples():
         pipeline = []
         arreglo = []
         hayResultados = 'no'
-        if self.filtros.region != '' and self.filtros.region != "False":
+        if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
             filtro_lugar = True
-            if self.filtros.zona != '' and self.filtros.zona != "False":
-                if self.filtros.tienda != '' and self.filtros.tienda != "False":
+            if self.filtros.zona != '' and self.filtros.zona != "False" and self.filtros.zona != None:
+                if self.filtros.tienda != '' and self.filtros.tienda != "False" and self.filtros.tienda != None:
                     nivel = 'idtienda'
                     lugar = int(self.filtros.tienda)
                     siguiente_lugar = 'tiendaNombre'
@@ -852,7 +852,7 @@ class EjesMultiples():
         if self.titulo == 'Evaluación Pedido Perfecto por Lugar':
             if self.filtros.periodo != {}:
                 # Desde el inicio de la clase puse el filtro por tienda, en su caso. Ahora el requerimiento es que solo para este gráfico el filtro llegue hasta zona, así que hay que hacer modificaciones:
-                if self.filtros.tienda != '' and self.filtros.tienda != "False":
+                if self.filtros.tienda != '' and self.filtros.tienda != "False" and self.filtros.tienda != None:
                     nivel = 'zona'
                     lugar = int(self.filtros.zona)
                     siguiente_lugar = 'tiendaNombre'
@@ -1296,11 +1296,11 @@ class EjesMultiples():
         pipeline = []
         arreglo = []
         hayResultados = 'no'
-        if self.filtros.region != '' and self.filtros.region != "False":
+        if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
             filtro_lugar = True
-            if self.filtros.zona != '' and self.filtros.zona != "False":
+            if self.filtros.zona != '' and self.filtros.zona != "False" and self.filtros.zona != None:
                 siguiente_nivel = 'tiendaNombre'
-                if self.filtros.tienda != '' and self.filtros.tienda != "False":
+                if self.filtros.tienda != '' and self.filtros.tienda != "False" and self.filtros.tienda != None:
                     nivel = 'tienda'
                     lugar = int(self.filtros.tienda)
                 else:
@@ -2196,10 +2196,10 @@ class EjesMultiples():
         serie1 = []
         serie2 = []
         serie3 = []
-        if self.filtros.region != '' and self.filtros.region != "False":
+        if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
             filtro_lugar = True
-            if self.filtros.zona != '' and self.filtros.zona != "False":
-                if self.filtros.tienda != '' and self.filtros.tienda != "False":
+            if self.filtros.zona != '' and self.filtros.zona != "False" and self.filtros.zona != None:
+                if self.filtros.tienda != '' and self.filtros.tienda != "False" and self.filtros.tienda != None:
                     nivel = 'tienda'
                     lugar = int(self.filtros.tienda)
                 else:

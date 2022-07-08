@@ -10,9 +10,9 @@ import cargarFiltros from '../services/cargarFiltros'
 
 const NivelesDeServicio = () => {
   const [fechas, setFechas] = useState({fecha_ini: fechas_srv.primeroDelMesVencido(), fecha_fin: fechas_srv.actualVencida()})
-  const [region, setRegion] = useState(false)
-  const [zona, setZona] = useState(false)
-  const [tienda, setTienda] = useState(false)
+  const [region, setRegion] = useState('')
+  const [zona, setZona] = useState('')
+  const [tienda, setTienda] = useState('')
   const [categoria, setCategoria] = useState('')
   const [tipoEntrega, setTipoEntrega] = useState('')
   const [tiendaNombre, setTiendaNombre] = useState('')

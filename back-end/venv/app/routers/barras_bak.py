@@ -20,9 +20,9 @@ async def barras (filtros: Filtro, titulo: str, seccion: str):
             serie1 = []
             serie2 = []
 
-            if filtros.region != '' and filtros.region != "False":
+            if filtros.region != '' and filtros.region != "False" and filtros.region != None:
                 filtro_lugar = True
-                if filtros.zona != '' and filtros.zona != "False":
+                if filtros.zona != '' and filtros.zona != "False" and filtros.zona != None:
                     nivel = 'zona'
                     siguiente_nivel = 'tiendaNombre'
                     lugar = int(filtros.zona)

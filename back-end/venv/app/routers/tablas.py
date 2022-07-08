@@ -215,9 +215,9 @@ class Tablas():
         data = []
         columns = []
         if self.titulo == 'Detalle Porcentaje Estatus por Lugar':
-            if self.filtros.region != '' and self.filtros.region != "False":
+            if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
                 self.filtro_lugar = True
-                if self.filtros.zona != '' and self.filtros.zona != "False":
+                if self.filtros.zona != '' and self.filtros.zona != "False" and self.filtros.zona != None:
                     nivel = 'zona'
                     siguiente_nivel = 'tiendaNombre'
                     self.lugar = int(self.filtros.zona)
@@ -260,9 +260,9 @@ class Tablas():
                 hayResultados = 'no'
 
         if self.titulo == 'Estatus por Tienda':
-            if self.filtros.region != '' and self.filtros.region != "False":
+            if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
                 self.filtro_lugar = True
-                if self.filtros.zona != '' and self.filtros.zona != "False":
+                if self.filtros.zona != '' and self.filtros.zona != "False" and self.filtros.zona != None:
                     nivel = 'zona'
                     self.lugar = int(self.filtros.zona)
                 else:
@@ -429,9 +429,9 @@ class Tablas():
         data = []
         columns = []
         if self.titulo == 'Tiendas con Pedidos Atrasados Mayores a 1 Día':
-            if self.filtros.region != '' and self.filtros.region != "False":
+            if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
                 self.filtro_lugar = True
-                if self.filtros.zona != '' and self.filtros.zona != "False":
+                if self.filtros.zona != '' and self.filtros.zona != "False" and self.filtros.zona != None:
                     nivel = 'zona'
                     self.lugar = int(self.filtros.zona)
                 else:
@@ -480,9 +480,9 @@ class Tablas():
             collection = conexion_mongo('report').report_pedidoPendientes
             pipeline.append({'$unwind': '$sucursal'})
             pipeline.append({'$match': {'sucursal.idTienda': self.lugar}})
-            if self.filtros.tipoEntrega != None and self.filtros.tipoEntrega != "False":
+            if self.filtros.tipoEntrega != None and self.filtros.tipoEntrega != "False" and self.filtros.tipoEntrega != "":
                 pipeline.append({'$match': {'metodoEntrega': self.filtros.tipoEntrega}})
-            if self.filtros.origen != None and self.filtros.origen != "False":
+            if self.filtros.origen != None and self.filtros.origen != "False" and self.filtros.origen != "":
                 pipeline.append({'$match': {'origen': self.filtros.origen}})
             pipeline.extend([{'$project': {
                 'Tienda': '$sucursal.tiendaNombre',
@@ -516,10 +516,10 @@ class Tablas():
                     {'name': 'Fecha', 'selector':'FechaEntrega', 'formato':'texto', 'ancho': '110px'}
                 ]
         if self.titulo == 'Pedidos No Entregados o No Cancelados':
-            if self.filtros.region != '' and self.filtros.region != "False":
+            if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
                 self.filtro_lugar = True
-                if self.filtros.zona != '' and self.filtros.zona != "False":
-                    if self.filtros.tienda != '' and self.filtros.tienda != "False":
+                if self.filtros.zona != '' and self.filtros.zona != "False" and self.filtros.zona != None:
+                    if self.filtros.tienda != '' and self.filtros.tienda != "False" and self.filtros.tienda != None:
                         nivel = 'idtienda'
                         self.lugar = int(self.filtros.tienda)
                     else:
@@ -537,9 +537,9 @@ class Tablas():
                 pipeline.append(
                     {'$match': {f'sucursal.{nivel}': self.lugar}}
                 )
-            if self.filtros.tipoEntrega != None and self.filtros.tipoEntrega != "False":
+            if self.filtros.tipoEntrega != None and self.filtros.tipoEntrega != "False" and self.filtros.tipoEntrega != "":
                 pipeline.append({'$match': {'metodoEntrega': self.filtros.tipoEntrega}})
-            if self.filtros.origen != None and self.filtros.origen != "False":
+            if self.filtros.origen != None and self.filtros.origen != "False" and self.filtros.origen != "":
                 pipeline.append({'$match': {'origen': self.filtros.origen}})
             pipeline.extend([{'$project': {
                 'fechaEntrega': {'$dateToString': {'format': '%d/%m/%Y', 'date': '$fechaEntrega'}},
@@ -611,10 +611,10 @@ class Tablas():
                     {'name': 'Suma', 'selector':'Suma', 'formato':'entero'}
                 ]
         if self.titulo == 'Pedidos No Entregados o No Cancelados Tienda $tienda':
-            if self.filtros.region != '' and self.filtros.region != "False":
+            if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
                 self.filtro_lugar = True
-                if self.filtros.zona != '' and self.filtros.zona != "False":
-                    if self.filtros.tienda != '' and self.filtros.tienda != "False":
+                if self.filtros.zona != '' and self.filtros.zona != "False" and self.filtros.zona != None:
+                    if self.filtros.tienda != '' and self.filtros.tienda != "False" and self.filtros.tienda != None:
                         nivel = 'idtienda'
                         self.lugar = int(self.filtros.tienda)
                     else:
@@ -632,9 +632,9 @@ class Tablas():
                 pipeline.append(
                     {'$match': {f'sucursal.{nivel}': self.lugar}}
                 )
-            if self.filtros.tipoEntrega != None and self.filtros.tipoEntrega != "False":
+            if self.filtros.tipoEntrega != None and self.filtros.tipoEntrega != "False" and self.filtros.tipoEntrega != "":
                 pipeline.append({'$match': {'metodoEntrega': self.filtros.tipoEntrega}})
-            if self.filtros.origen != None and self.filtros.origen != "False":
+            if self.filtros.origen != None and self.filtros.origen != "False" and self.filtros.origen != "":
                 pipeline.append({'$match': {'origen': self.filtros.origen}})
             pipeline.extend([{'$project': {
                 'fechaOrdenar': '$fechaEntrega',
@@ -1253,8 +1253,8 @@ class Tablas():
                 if self.filtros.region != '' and self.filtros.region != "False":
                     # print('Sí hay región, y es: '+self.filtros.region)
                     filtro_lugar = True
-                    if self.filtros.zona != '' and self.filtros.zona != "False":
-                        if self.filtros.tienda != '' and self.filtros.tienda != "False":
+                    if self.filtros.zona != '' and self.filtros.zona != "False" and self.filtros.zona != None:
+                        if self.filtros.tienda != '' and self.filtros.tienda != "False" and self.filtros.tienda != None:
                             nivel = 'idtienda'
                             lugar = int(self.filtros.tienda)
                         else:
@@ -1758,12 +1758,12 @@ class Tablas():
             zona_query = 'Todas'
             tienda_query = 'Todas'
             detalle = 'Día' if self.filtros.detalle == 'dia' else '$timeslot'
-            if self.filtros.region != '' and self.filtros.region != "False":
+            if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
                 self.filtro_lugar = True
                 zona_query = '$zonaNombre'
-                if self.filtros.zona != '' and self.filtros.zona != "False":
+                if self.filtros.zona != '' and self.filtros.zona != "False" and self.filtros.zona != None:
                     tienda_query = '$tiendaNombre'
-                    if self.filtros.tienda != '' and self.filtros.tienda != "False":
+                    if self.filtros.tienda != '' and self.filtros.tienda != "False" and self.filtros.tienda != None:
                         nivel = 'idtienda'
                         self.lugar = int(self.filtros.tienda)
                     else:
@@ -1934,12 +1934,12 @@ class Tablas():
         if self.titulo == 'Pedido Diario':
             zona_query = 'Todas'
             tienda_query = 'Todas'
-            if self.filtros.region != '' and self.filtros.region != "False":
+            if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
                 self.filtro_lugar = True
                 zona_query = '$zonaNombre'
-                if self.filtros.zona != '' and self.filtros.zona != "False":
+                if self.filtros.zona != '' and self.filtros.zona != "False" and self.filtros.zona != None:
                     tienda_query = '$tiendaNombre'
-                    if self.filtros.tienda != '' and self.filtros.tienda != "False":
+                    if self.filtros.tienda != '' and self.filtros.tienda != "False" and self.filtros.tienda != None:
                         nivel = 'tienda'
                         self.lugar = int(self.filtros.tienda)
                     else:
@@ -1978,11 +1978,11 @@ class Tablas():
                     '$unwind': '$sucursal'
                 }
             ]
-            if self.filtros.tipoEntrega3 != '' and self.filtros.tipoEntrega3 != "False":
+            if self.filtros.tipoEntrega3 != '' and self.filtros.tipoEntrega3 != "False" and self.filtros.tipoEntrega3 != None:
                 pipeline.append(
                     {'$match': {'metodoEntrega': self.filtros.tipoEntrega3}}
                 )
-            if self.filtros.estatus != '' and self.filtros.estatus != "False":
+            if self.filtros.estatus != '' and self.filtros.estatus != "False" and self.filtros.estatus != None:
                 pipeline.append(
                     {'$match': {'estatus': self.filtros.estatus}}
                 )
@@ -2081,10 +2081,10 @@ class Tablas():
         pipeline = []
         data = []
         columns = []
-        if self.filtros.region != '' and self.filtros.region != "False":
+        if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
             self.filtro_lugar = True
-            if self.filtros.zona != '' and self.filtros.zona != "False":
-                if self.filtros.tienda != '' and self.filtros.tienda != "False":
+            if self.filtros.zona != '' and self.filtros.zona != "False" and self.filtros.zona != None:
+                if self.filtros.tienda != '' and self.filtros.tienda != "False" and self.filtros.tienda != None:
                     nivel = 'idtienda'
                     self.lugar = int(self.filtros.tienda)
                 else:
@@ -2246,10 +2246,10 @@ class Tablas():
         pipeline = []
         data = []
         columns = []
-        if self.filtros.region != '' and self.filtros.region != "False":
+        if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
             self.filtro_lugar = True
-            if self.filtros.zona != '' and self.filtros.zona != "False":
-                if self.filtros.tienda != '' and self.filtros.tienda != "False":
+            if self.filtros.zona != '' and self.filtros.zona != "False" and self.filtros.zona != None:
+                if self.filtros.tienda != '' and self.filtros.tienda != "False" and self.filtros.tienda != None:
                     nivel = 'idTienda'
                     self.lugar = int(self.filtros.tienda)
                 else:
@@ -2261,7 +2261,7 @@ class Tablas():
         else:
             self.filtro_lugar = False
             self.lugar = ''
-        if self.filtros.formato != '' and self.filtros.formato != "False":
+        if self.filtros.formato != '' and self.filtros.formato != "False" and self.filtros.formato != None:
             filtro_formato = True
         else:
             filtro_formato = False
@@ -2394,10 +2394,10 @@ class Tablas():
         pipeline = []
         data = []
         columns = []
-        if self.filtros.region != '' and self.filtros.region != "False":
+        if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
             self.filtro_lugar = True
-            if self.filtros.zona != '' and self.filtros.zona != "False":
-                if self.filtros.tienda != '' and self.filtros.tienda != "False":
+            if self.filtros.zona != '' and self.filtros.zona != "False" and self.filtros.zona != None:
+                if self.filtros.tienda != '' and self.filtros.tienda != "False" and self.filtros.tienda != None:
                     nivel = 'tienda'
                     self.lugar = int(self.filtros.tienda)
                 else:
@@ -2409,7 +2409,7 @@ class Tablas():
         else:
             self.filtro_lugar = False
             self.lugar = ''
-        filtro_sku = True if self.filtros.sku != '' and self.filtros.sku != "False" else False
+        filtro_sku = True if self.filtros.sku != '' and self.filtros.sku != "False" and self.filtros.sku != None else False
         pipeline = [
             {'$unwind': '$sucursal'},
             {'$match': {
@@ -2511,10 +2511,10 @@ class Tablas():
         pipeline = []
         data = []
         columns = []
-        if self.filtros.region != '' and self.filtros.region != "False":
+        if self.filtros.region != '' and self.filtros.region != "False"and self.filtros.region != None:
             self.filtro_lugar = True
-            if self.filtros.zona != '' and self.filtros.zona != "False":
-                if self.filtros.tienda != '' and self.filtros.tienda != "False":
+            if self.filtros.zona != '' and self.filtros.zona != "False"and self.filtros.zona != None:
+                if self.filtros.tienda != '' and self.filtros.tienda != "False" and self.filtros.tienda != None:
                     nivel = 'idtienda'
                     self.lugar = int(self.filtros.tienda)
                 else:
@@ -2526,9 +2526,9 @@ class Tablas():
         else:
             self.filtro_lugar = False
             self.lugar = ''
-        if self.filtros.depto != '' and self.filtros.depto != "False":
+        if self.filtros.depto != '' and self.filtros.depto != "False" and self.filtros.depto != None:
             filtro_producto = True
-            if self.filtros.subDepto != '' and self.filtros.subDepto != "False":
+            if self.filtros.subDepto != '' and self.filtros.subDepto != "False" and self.filtros.subDepto != None:
                 nivel_producto = 'subDepto'
                 detalle_producto = int(self.filtros.subDepto)
             else:
@@ -2536,8 +2536,8 @@ class Tablas():
                 detalle_producto = int(self.filtros.depto)
         else:
             filtro_producto = False
-        filtro_canal2 = True if self.filtros.canal2 != '' and self.filtros.canal2 != "False" else False
-        filtro_e3 = True if self.filtros.e3 != '' and self.filtros.e3 != "False" else False
+        filtro_canal2 = True if self.filtros.canal2 != '' and self.filtros.canal2 != "False" and self.filtros.canal2 != None else False
+        filtro_e3 = True if self.filtros.e3 != '' and self.filtros.e3 != "False" and self.filtros.e3 != None else False
         pipeline = [
             {'$unwind': '$sucursal'},
             {'$unwind': '$articulo'},
@@ -2646,10 +2646,10 @@ class Tablas():
         pipeline = []
         data = []
         columns = []
-        if self.filtros.region != '' and self.filtros.region != "False":
+        if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
             self.filtro_lugar = True
-            if self.filtros.zona != '' and self.filtros.zona != "False":
-                if self.filtros.tienda != '' and self.filtros.tienda != "False":
+            if self.filtros.zona != '' and self.filtros.zona != "False" and self.filtros.zona != None:
+                if self.filtros.tienda != '' and self.filtros.tienda != "False" and self.filtros.tienda != None:
                     nivel = 'idtienda'
                     self.lugar = int(self.filtros.tienda)
                 else:
@@ -3259,10 +3259,10 @@ class Tablas():
     async def ComparativoVentaXCanal(self):
         data = []
         columns = []
-        if self.filtros.region != '' and self.filtros.region != "False":
+        if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
             self.filtro_lugar = True
-            if self.filtros.zona != '' and self.filtros.zona != "False":
-                if self.filtros.tienda != '' and self.filtros.tienda != "False":
+            if self.filtros.zona != '' and self.filtros.zona != "False" and self.filtros.zona != None:
+                if self.filtros.tienda != '' and self.filtros.tienda != "False" and self.filtros.tienda != None:
                     nivel = 'idTienda'
                     self.lugar = int(self.filtros.tienda)
                 else:
@@ -4035,9 +4035,9 @@ class Tablas():
         columns = []
         data = []
         if self.titulo == 'Estatus de Entrega y No Entrega por Área':
-            if self.filtros.region != '' and self.filtros.region != "False":
+            if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
                 filtro_lugar = True
-                if self.filtros.zona != '' and self.filtros.zona != "False":
+                if self.filtros.zona != '' and self.filtros.zona != "False" and self.filtros.zona != None:
                     nivel = 'zona'
                     siguiente_nivel = 'tienda'
                     lugar = int(self.filtros.zona)
@@ -4054,9 +4054,9 @@ class Tablas():
             if filtro_lugar:
                 pipeline.extend([{'$unwind': '$sucursal'}, {'$match': {'sucursal.'+ nivel: lugar}}])
             pipeline.append({'$match': {'fechaEntrega': {'$gte': self.fecha_ini, '$lt': self.fecha_fin}}})
-            if self.filtros.categoria and self.filtros.categoria != "False" and self.filtros.categoria != "":
+            if self.filtros.categoria and self.filtros.categoria != "False" and self.filtros.categoria != "" and self.filtros.categoria != None:
                 pipeline.append({'$match': {'tercero': self.filtros.categoria}})
-            if self.filtros.tipoEntrega != None and self.filtros.tipoEntrega != "False" and self.filtros.tipoEntrega != "":
+            if self.filtros.tipoEntrega != None and self.filtros.tipoEntrega != "False" and self.filtros.tipoEntrega != "" and self.filtros.tipoEntrega != None:
                 pipeline.append({'$match': {'tipoEntrega': self.filtros.tipoEntrega}})
             pipeline.append({'$project':{'xLabel':'$sucursal.'+siguiente_nivel, 'Entregado_Fuera_tiempo': {'$cond': [{'$eq':['$evaluacion','Entregado-Fuera de tiempo']}, '$pedidos', 0]}, 'Entregado_tiempo': {'$cond': [{'$eq':['$evaluacion','Entregado-A tiempo']}, '$pedidos', 0]}, 'No_entregado_Fuera_tiempo': {'$cond': [{'$eq':['$evaluacion','No entregado-Fuera de tiempo']}, '$pedidos', 0]}, 'No_entregado_tiempo': {'$cond': [{'$eq':['$evaluacion','No entregado-A tiempo']}, '$pedidos', 0]}, 'Despachado_Fuera_tiempo': {'$cond': [{'$eq':['$evaluacion','Despachado-Fuera de tiempo']}, '$pedidos', 0]}, 'Despachado_tiempo': {'$cond': [{'$eq':['$evaluacion','Despachado-A tiempo']}, '$pedidos', 0]}}})
             pipeline.append({'$group':{'_id':'$xLabel', 'Entregado_Fuera_tiempo':{'$sum':'$Entregado_Fuera_tiempo'}, 'Entregado_tiempo':{'$sum':'$Entregado_tiempo'}, 'No_entregado_Fuera_tiempo':{'$sum':'$No_entregado_Fuera_tiempo'}, 'No_entregado_tiempo':{'$sum':'$No_entregado_tiempo'}, 'Despachado_Fuera_tiempo':{'$sum':'$Despachado_Fuera_tiempo'}, 'Despachado_tiempo':{'$sum':'$Despachado_tiempo'}}})
@@ -4088,9 +4088,9 @@ class Tablas():
                 hayResultados = "no"
 
         if self.titulo == 'Estatus de Entrega y No Entrega por Tienda':
-            if self.filtros.region != '' and self.filtros.region != "False":
+            if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
                 filtro_lugar = True
-                if self.filtros.zona != '' and self.filtros.zona != "False":
+                if self.filtros.zona != '' and self.filtros.zona != "False" and self.filtros.zona != None:
                     nivel = 'zona'
                     siguiente_nivel = 'tienda'
                     lugar = int(self.filtros.zona)
@@ -4107,9 +4107,9 @@ class Tablas():
             if filtro_lugar:
                 pipeline.extend([{'$unwind': '$sucursal'}, {'$match': {'sucursal.'+ nivel: lugar}}])
             pipeline.append({'$match': {'fechaEntrega': {'$gte': self.fecha_ini, '$lt': self.fecha_fin}}})
-            if self.filtros.categoria and self.filtros.categoria != "False" and self.filtros.categoria != "":
+            if self.filtros.categoria and self.filtros.categoria != "False" and self.filtros.categoria != "" and self.filtros.categoria != None:
                 pipeline.append({'$match': {'tercero': self.filtros.categoria}})
-            if self.filtros.tipoEntrega != None and self.filtros.tipoEntrega != "False" and self.filtros.tipoEntrega != "":
+            if self.filtros.tipoEntrega != None and self.filtros.tipoEntrega != "False" and self.filtros.tipoEntrega != "" and self.filtros.tipoEntrega != None:
                 pipeline.append({'$match': {'tipoEntrega': self.filtros.tipoEntrega}})
             pipeline.append({'$project':{'xLabel':'$sucursal.tienda', 'Entregado_Fuera_tiempo': {'$cond': [{'$eq':['$evaluacion','Entregado-Fuera de tiempo']}, '$pedidos', 0]}, 'Entregado_tiempo': {'$cond': [{'$eq':['$evaluacion','Entregado-A tiempo']}, '$pedidos', 0]}, 'No_entregado_Fuera_tiempo': {'$cond': [{'$eq':['$evaluacion','No entregado-Fuera de tiempo']}, '$pedidos', 0]}, 'No_entregado_tiempo': {'$cond': [{'$eq':['$evaluacion','No entregado-A tiempo']}, '$pedidos', 0]}, 'Despachado_Fuera_tiempo': {'$cond': [{'$eq':['$evaluacion','Despachado-Fuera de tiempo']}, '$pedidos', 0]}, 'Despachado_tiempo': {'$cond': [{'$eq':['$evaluacion','Despachado-A tiempo']}, '$pedidos', 0]}}})
             pipeline.append({'$group':{'_id':'$xLabel', 'Entregado_Fuera_tiempo':{'$sum':'$Entregado_Fuera_tiempo'}, 'Entregado_tiempo':{'$sum':'$Entregado_tiempo'}, 'No_entregado_Fuera_tiempo':{'$sum':'$No_entregado_Fuera_tiempo'}, 'No_entregado_tiempo':{'$sum':'$No_entregado_tiempo'}, 'Despachado_Fuera_tiempo':{'$sum':'$Despachado_Fuera_tiempo'}, 'Despachado_tiempo':{'$sum':'$Despachado_tiempo'}}})
@@ -4145,9 +4145,9 @@ class Tablas():
             pipeline.append({'$match': {'idtienda': int(self.filtros.tienda)}})
             pipeline.append({'$match': {'fechaEntregaProgramadaNS': {'$gte': self.fecha_ini, '$lt': self.fecha_fin}}})
             pipeline.append({'$match': {'estatusConsigna': {'$not': {'$eq': 'Canceled'}}}})
-            if self.filtros.categoria and self.filtros.categoria != "False" and self.filtros.categoria != "":
+            if self.filtros.categoria and self.filtros.categoria != "False" and self.filtros.categoria != "" and self.filtros.categoria != None:
                 pipeline.append({'$match': {'tercero': self.filtros.categoria}})
-            if self.filtros.tipoEntrega != None and self.filtros.tipoEntrega != "False" and self.filtros.tipoEntrega != "":
+            if self.filtros.tipoEntrega != None and self.filtros.tipoEntrega != "False" and self.filtros.tipoEntrega != "" and self.filtros.tipoEntrega != None:
                 pipeline.append({'$match': {'tipoEntrega': self.filtros.tipoEntrega}})
             # pipeline.append({'$project':{'xLabel':'$sucursal.tienda', 'Entregado_Fuera_tiempo': {'$cond': [{'$eq':['$evaluacion','Entregado-Fuera de tiempo']}, '$pedidos', 0]}, 'Entregado_tiempo': {'$cond': [{'$eq':['$evaluacion','Entregado-A tiempo']}, '$pedidos', 0]}, 'No_entregado_Fuera_tiempo': {'$cond': [{'$eq':['$evaluacion','No entregado-Fuera de tiempo']}, '$pedidos', 0]}, 'No_entregado_tiempo': {'$cond': [{'$eq':['$evaluacion','No entregado-A tiempo']}, '$pedidos', 0]}, 'Despachado_Fuera_tiempo': {'$cond': [{'$eq':['$evaluacion','Despachado-Fuera de tiempo']}, '$pedidos', 0]}, 'Despachado_tiempo': {'$cond': [{'$eq':['$evaluacion','Despachado-A tiempo']}, '$pedidos', 0]}}})
             pipeline.append({'$project':{

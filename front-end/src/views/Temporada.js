@@ -17,7 +17,7 @@ import {
 const Temporada = () => {
     
     const [fechas, setFechas] = useState({fecha_ini: fechas_srv.primeroDelMesSinVencer(), fecha_fin: fechas_srv.noUTC(new Date())})
-    const [canal, setCanal] = useState(false)
+    const [canal, setCanal] = useState('')
     const [depto, setDepto] = useState('')
     const [subDepto, setSubDepto] = useState('')
     const [clase, setClase] = useState('')
