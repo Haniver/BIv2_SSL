@@ -15,9 +15,9 @@ import {
 
 const VentaOmnicanalTab2 = () => {
   const [fechas, setFechas] = useState({fecha_ini: fechas_srv.primeroDelMesVencido(), fecha_fin: fechas_srv.actualVencida()})
-  const [proveedor, setProveedor] = useState(false)
+  const [proveedor, setProveedor] = useState(0)
 
-  const seccion = 'VentaOmnicanal2'
+  const seccion = 'VentaOmnicanal'
     // Para debugging
 //   useEffect(() => {
 //     console.log(`fecha_ini: ${fecha_ini}`)

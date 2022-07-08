@@ -89,21 +89,9 @@ class Tablas():
                         'monto_total_venta': dato['monto_total_venta'],
                         'ticket_promedio': dato['ticket_promedio']
                         })
-        return {'hayResultados':hayResultados, 'pipeline': pipeline, 'columns':columns, 'data':data}
-        # Return para debugging:
-        # return {'hayResultados':'no', 'pipeline': [], 'columns':[], 'data':[]}
-
-
-    async def VentaOmnicanal2(self):
-        pipeline = []
-        data = []
-        columns = []
-        collection = conexion_mongo('report').report_mktProveedores
-        if self.filtro_lugar:
-            pipeline.extend([{'$unwind': '$sucursal'}, {'$match': {'sucursal.'+ self.nivel_lugar: self.lugar}}])
-        pipeline.extend([{'$match': {'fecha': {'$gte': self.fecha_ini, '$lt': self.fecha_fin}}}])
 
         if self.titulo == 'Venta Top 200 Proveedores':
+            collection = conexion_mongo('report').report_mktProveedores
             pipeline.extend([
                 {'$unwind': '$articulo'},
                 {'$group': {'_id': {'id': '$articulo.proveedor', 'nombre': '$articulo.proveedorNombre'}, 'monto': {'$sum': '$vtaSinImp'}}},
@@ -111,6 +99,7 @@ class Tablas():
                 {'$sort': {'monto': -1}},
                 { '$limit': 200 }
             ])
+            print(f"Pipeline desde Tablas -> Venta Top 200 Proveedores: {str(pipeline)}")
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=1000)
             if len(arreglo) <= 0:
@@ -135,6 +124,7 @@ class Tablas():
                     lugar += 1
 
         if self.titulo == 'Top 1,000 SKU':
+            collection = conexion_mongo('report').report_mktProveedores
             pipeline.append({'$unwind': '$articulo'})
             if self.filtros.proveedor != 0 and self.filtros.proveedor != 1 and self.filtros.proveedor != None:
                 pipeline.append({'$match': {'articulo.proveedor': self.filtros.proveedor}})
@@ -178,6 +168,7 @@ class Tablas():
                     lugar += 1
 
         if self.titulo == 'Venta por día':
+            collection = conexion_mongo('report').report_mktProveedores
             pipeline.append({'$unwind': '$articulo'})
             if self.filtros.proveedor != 0 and self.filtros.proveedor != 1 and self.filtros.proveedor != None:
                 pipeline.append({'$match': {'articulo.proveedor': self.filtros.proveedor}})
@@ -205,6 +196,7 @@ class Tablas():
                         'monto': dato['monto'],
                         'ticket_promedio': dato['ticket_promedio']
                     })
+        # print(f"Se va a regresar pipeline desde Tablas -> VentaOmnicanal2: {str(pipeline)}")
         return {'hayResultados':hayResultados, 'pipeline': pipeline, 'columns':columns, 'data':data}
         # Return para debugging:
         # return {'hayResultados':'no', 'pipeline': [], 'columns':[], 'data':[]}
