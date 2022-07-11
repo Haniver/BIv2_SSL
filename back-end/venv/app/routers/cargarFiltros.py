@@ -203,6 +203,20 @@ async def nombre_tienda(tienda: int, user: dict = Depends(get_current_active_use
     res = {'nombreTienda': arreglo[0]['Tiendas_nombre']}
     return res
 
+@router.get("/numeroTienda")
+async def numero_tienda(nombreTienda: str, user: dict = Depends(get_current_active_user)):
+    collection = conexion_mongo('report').catTienda
+    pipeline = [
+        {'$match': {
+            'Tiendas_nombre': nombreTienda
+        }}
+    ]
+    cursor = collection.aggregate(pipeline)
+    arreglo = await cursor.to_list(length=None)
+    # print(str(arreglo))
+    res = {'numeroTienda': arreglo[0]['TIENDA']}
+    return res
+
 @router.get("/cargarDeptoAgrupado")
 async def cargar_depto_agrupado(grupoDeptos: str, user: dict = Depends(get_current_active_user)):
     query = f"""select distinct departamento 

@@ -1,10 +1,16 @@
-import { Alert, Card, CardBody, CardHeader, CardTitle, Button, Row, Col, Label } from "reactstrap"
 import { selectThemeColors } from '@utils'
 import { useEffect, useState } from 'react'
-import Select from 'react-select'
 import axios from 'axios'
 import authHeader from '@src/services/auth.header'
 import CustomUrls from "../../services/customUrls"
+import { Row, Col, CardTitle, Card, CardHeader, CardBody, CardText, Form, FormGroup, Label, Input, CustomInput, Button, Alert } from 'reactstrap'
+import Select from 'react-select'
+import '@styles/base/pages/page-auth.scss'
+import Logo from '@src/assets/images/logo/logo.svg'
+import Filtro from './Filtro'
+import { isStrongPassword, isAlpha, isEmail } from "validator"
+import userService from '../../services/user.service'
+import cargarFiltros from '../../services/cargarFiltros'
 
 const UpdateUsuario = ({usuario, setUsuario, reloadTabla, setReloadTabla}) => {
 

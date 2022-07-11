@@ -206,7 +206,7 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
                         <Button
                             color='dark'
                             onClick={e => {
-                                setUsuario({email: d.Email, estatus: d.Estatus})
+                                setUsuario({email: d.Email, estatus: d.Estatus, nombre: d.Nombre, areas: d.Areas, nivel: d.Nivel, tienda: d.Tienda})
                             }}
                         >
                             ✎

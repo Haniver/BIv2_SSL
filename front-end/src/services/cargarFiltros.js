@@ -120,6 +120,14 @@ class CargarFiltros {
         })
     }
 
+    numeroTienda(nombreTienda) {
+        return axios({
+            method: 'get',
+            url: `${CustomUrls.ApiUrl()}filtros/numeroTienda?nombreTienda=${nombreTienda}`,
+            headers: authHeader()
+        })
+    }
+
     cargarDeptoAgrupado = async (grupoDeptos) => {
         return axios({
             method: 'get',
