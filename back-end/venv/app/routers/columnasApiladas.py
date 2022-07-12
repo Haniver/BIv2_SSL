@@ -107,7 +107,7 @@ class ColumnasApiladas():
                 pipeline.append({'$match': {'sucursal.'+ nivel: lugar}})
             pipeline.append({'$match': {'fechaUltimoCambio': {'$gte': self.fecha_ini_a12, '$lt': self.fecha_fin_a12}}})
             if self.filtros.categoria and self.filtros.categoria != "False" and self.filtros.categoria != "" and self.filtros.categoria != None:
-                pipeline.append({'$match': {'tercero': self.filtros.categoria}})
+                pipeline.append({'$match': {'categoria': self.filtros.categoria}})
             if self.filtros.tipoEntrega != None and self.filtros.tipoEntrega != "False" and self.filtros.tipoEntrega != "" and self.filtros.tipoEntrega != None:
                 pipeline.append({'$match': {'tipoEntrega': self.filtros.tipoEntrega}})
             pipeline.append({'$group':{'_id':'$sucursal.'+siguiente_nivel, 'cancelados': {'$sum': '$pedidoCancelado'}, 'no_cancelados': {'$sum': '$pedidoNoCancelado'}}})

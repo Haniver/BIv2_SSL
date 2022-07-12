@@ -416,7 +416,7 @@ class Pie():
                 pipeline.extend([{'$unwind': '$sucursal'}, {'$match': {f'sucursal.{nivel_cancelado}': lugar}}])
             pipeline.append({'$match': {'fechaUltimoCambio': {'$gte': self.fecha_ini_a12, '$lt': self.fecha_fin_a12}}})
             if self.filtros.categoria != None and self.filtros.categoria != "False" and self.filtros.categoria != "":
-                pipeline.append({'$match': {'tercero': self.filtros.categoria}})
+                pipeline.append({'$match': {'categoria': self.filtros.categoria}})
             if self.filtros.tipoEntrega != None and self.filtros.tipoEntrega != "False" and self.filtros.tipoEntrega != "":
                 pipeline.append({'$match': {'tipoEntrega': self.filtros.tipoEntrega}})
             pipeline.append({'$group':{'_id':0, 'cancelados': {'$sum': '$pedidoCancelado'}, 'no_cancelados': {'$sum': '$pedidoNoCancelado'}}})

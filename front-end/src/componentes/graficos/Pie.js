@@ -12,7 +12,7 @@ require('highcharts/modules/data')(Highcharts)
 require('highcharts/modules/exporting')(Highcharts)
 require('highcharts/modules/export-data')(Highcharts)
 
-const Pie = ({ titulo, seccion, formato, fechas, region, zona, tienda, tipoEntrega, origen, coloresPedidosPendientes }) => {
+const Pie = ({ titulo, seccion, formato, fechas, region, zona, tienda, tipoEntrega, origen, coloresPedidosPendientes, categoria }) => {
     const [datos, setDatos] = useState([{name: 'Sin Resultados', y: 0}])
     const [total, setTotal] = useState('')
     const [estadoLoader, dispatchLoader] = useReducer((estadoLoader, accion) => {
@@ -64,7 +64,8 @@ const Pie = ({ titulo, seccion, formato, fechas, region, zona, tienda, tipoEntre
             zona,
             tienda,
             tipoEntrega, 
-            origen
+            origen,
+            categoria
           }
         })
         dispatchLoader({tipo: 'recibirDeAPI'})
@@ -80,7 +81,7 @@ const Pie = ({ titulo, seccion, formato, fechas, region, zona, tienda, tipoEntre
         } else {
           setDatos({name: 'Sin Resultados', y: 0})
         }
-      }, [fechas, region, zona, tienda, tipoEntrega, origen])
+      }, [fechas, region, zona, tienda, tipoEntrega, origen, categoria])
 
     // Lo que sigue es para borrar y volver a crear el label de Total, según https://www.highcharts.com/forum/viewtopic.php?t=38132
     const objectIsEmpty = (obj) => {
