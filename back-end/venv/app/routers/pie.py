@@ -336,7 +336,7 @@ class Pie():
             pipeline.append({'$match': {'fechaEntrega': {'$gte': self.fecha_ini_a12, '$lt': self.fecha_fin_a12}}})
             if self.filtros.categoria != None and self.filtros.categoria != "False" and self.filtros.categoria != "":
                 pipeline.append({'$match': {'tercero': self.filtros.categoria}})
-            pipeline.append({'$group':{'_id':'$tipoEntrega', 'pedidos':{'$sum':1}}})
+            pipeline.append({'$group':{'_id':'$tipoEntrega', 'pedidos':{'$sum':'$pedidos'}}})
             # print(f"Pipeline desde pie -> Pedidos Pendientes: {str(pipeline)}")
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=1000)
