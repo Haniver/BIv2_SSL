@@ -120,12 +120,23 @@ class CargarFiltros {
         })
     }
 
-    numeroTienda(nombreTienda) {
+    getRegionYZona(idTienda) {
         return axios({
             method: 'get',
-            url: `${CustomUrls.ApiUrl()}filtros/numeroTienda?nombreTienda=${nombreTienda}`,
+            url: `${CustomUrls.ApiUrl()}filtros/getRegionYZona?idTienda=${idTienda}`,
             headers: authHeader()
         })
+    }
+    numeroTienda(nombreTienda) {
+        if (nombreTienda !== '') {
+            return axios({
+                method: 'get',
+                url: `${CustomUrls.ApiUrl()}filtros/numeroTienda?nombreTienda=${nombreTienda}`,
+                headers: authHeader()
+            })
+        } else {
+            return ''
+        }
     }
 
     cargarDeptoAgrupado = async (grupoDeptos) => {

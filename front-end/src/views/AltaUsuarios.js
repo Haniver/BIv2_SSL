@@ -7,6 +7,7 @@ import UpdateUsuario from '../componentes/auxiliares/UpdateUsuario'
 import UpdateUsuario2 from '../componentes/auxiliares/UpdateUsuario2'
 
 const AltaUsuarios = () => {
+  console.log("entró a AltaUsuarios")
     const [estatus, setEstatus] = useState({email: '', estatus: ''})
     const [usuario, setUsuario] = useState({email: '', estatus: ''})
     const [reloadTabla, setReloadTabla] = useState(0)

@@ -211,10 +211,26 @@ async def numero_tienda(nombreTienda: str, user: dict = Depends(get_current_acti
             'Tiendas_nombre': nombreTienda
         }}
     ]
+    # print(f"pipeline desde CargarFiltros -> numeroTienda: {pipeline}")
     cursor = collection.aggregate(pipeline)
     arreglo = await cursor.to_list(length=None)
     # print(str(arreglo))
     res = {'numeroTienda': arreglo[0]['TIENDA']}
+    return res
+
+@router.get("/getRegionYZona")
+async def get_region_y_zona(idTienda: int, user: dict = Depends(get_current_active_user)):
+    collection = conexion_mongo('report').catTienda
+    pipeline = [
+        {'$match': {
+            'TIENDA': idTienda
+        }}
+    ]
+    # print(f"pipeline desde CargarFiltros -> getRegionYZona: {pipeline}")
+    cursor = collection.aggregate(pipeline)
+    arreglo = await cursor.to_list(length=None)
+    # print(str(arreglo))
+    res = {'region': arreglo[0]['REGION'], 'zona': arreglo[0]['ZONA']}
     return res
 
 @router.get("/cargarDeptoAgrupado")

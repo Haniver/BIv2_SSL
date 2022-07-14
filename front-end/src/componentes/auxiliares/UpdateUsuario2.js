@@ -7,15 +7,15 @@ import { Row, Col, Card, CardHeader, CardBody, CardTitle, CardText, Form, FormGr
 import Select from 'react-select'
 import '@styles/base/pages/page-auth.scss'
 import Logo from '@src/assets/images/logo/logo.svg'
-import Filtro from './Filtro'
 import { isStrongPassword, isAlpha, isEmail } from "validator"
 import userService from '../../services/user.service'
 import cargarFiltros from '../../services/cargarFiltros'
+import Filtro from './Filtro'
 
 const UpdateUsuario2 = ({usuario, setUsuario, reloadTabla, setReloadTabla}) => {
 
-    console.log("Usuario:")
-    console.log(usuario)
+    // console.log("Usuario:")
+    // console.log(usuario)
     const [errorVisible, setErrorVisible] = useState(false)
     
     // Estatus
@@ -25,11 +25,11 @@ const UpdateUsuario2 = ({usuario, setUsuario, reloadTabla, setReloadTabla}) => {
         {label: 'bloqueado', value: 'bloqueado'},
         {label: 'rechazado', value: 'rechazado'}
     ]
-    const [estatusValue, setEstatusValue] = useState({label: usuario.estatus, value: usuario.estatus})
+    const [estatusValue, setEstatusValue] = useState({})
 
     const [msgEnviar, setMsgEnviar] = useState({texto: '', visible: false, color: 'info'})
     // Validar email
-    const [email, setEmail] = useState(usuario.email)
+    const [email, setEmail] = useState('')
     const [msgEmail, setMsgEmail] = useState({texto: '', visible: false, color: 'info'})
     const [validadoEmail, setValidadoEmail] = useState(false)
     const validarEmail = async (valor) => {
@@ -44,7 +44,6 @@ const UpdateUsuario2 = ({usuario, setUsuario, reloadTabla, setReloadTabla}) => {
             visible: true,
             color: 'danger'
         })
-        setVerOlvidePassword(true)
         setValidadoEmail(false)
         } else if (verificarUsuario.data === "Dominio no válido") {
         setMsgEmail({
@@ -52,7 +51,6 @@ const UpdateUsuario2 = ({usuario, setUsuario, reloadTabla, setReloadTabla}) => {
             visible: true,
             color: 'danger'
         })
-        setVerOlvidePassword(true)
         setValidadoEmail(false)
         } else if (!isEmail(valor)) {
         setMsgEmail({
@@ -60,7 +58,6 @@ const UpdateUsuario2 = ({usuario, setUsuario, reloadTabla, setReloadTabla}) => {
             visible: true,
             color: 'danger'
         })
-        setVerOlvidePassword(true)
         setValidadoEmail(false)
         } else {
             setMsgEmail({
@@ -68,21 +65,20 @@ const UpdateUsuario2 = ({usuario, setUsuario, reloadTabla, setReloadTabla}) => {
                 visible: true,
                 color: 'success'
             })
-            setVerOlvidePassword(false)
             setValidadoEmail(true)
         }
         setEmail(valor)
     }
 
     // Validar nombre
-    const [nombre, setNombre] = useState(usuario.nombre)
+    const [nombre, setNombre] = useState('')
     const [msgNombre, setMsgNombre] = useState({texto: '', visible: false, color: 'info'})
     const [validadoNombre, setValidadoNombre] = useState(false)
     const validarNombre = (valor) => {
         setMsgEnviar({
         visible: false
         })
-        if (!isAlpha(valor, 'es-ES', ' ')) {
+        if (!isAlpha(valor, 'es-ES', {ignore: '\s'})) {
             setMsgNombre({
                 texto: 'Este no es un nombre válido en español',
                 visible: true,
@@ -109,8 +105,8 @@ const UpdateUsuario2 = ({usuario, setUsuario, reloadTabla, setReloadTabla}) => {
         // console.log(tmp.data)
         setComboAreas(tmp.data)
         const arr_areas_txt = usuario.areas.split(", ")
-        console.log("arr_areas_txt:")
-        console.log(arr_areas_txt)
+        // console.log("arr_areas_txt:")
+        // console.log(arr_areas_txt)
         const arr_areas_obj = []
         arr_areas_txt.forEach((area_txt) => {
         const value = tmp.data.findIndex(object => {
@@ -122,7 +118,7 @@ const UpdateUsuario2 = ({usuario, setUsuario, reloadTabla, setReloadTabla}) => {
         })
         })
         setAreas(arr_areas_obj)
-    }, [])
+    }, [usuario])
     const [msgArea, setMsgArea] = useState({texto: '', visible: false, color: 'info'})
     const [validadoArea, setValidadoArea] = useState(false)
     const validarArea = (evento) => {
@@ -160,7 +156,8 @@ const UpdateUsuario2 = ({usuario, setUsuario, reloadTabla, setReloadTabla}) => {
         {label: 'Nacional', value: 4},
         {label: 'Administrador de sistema', value: 5}
     ]
-    const [nivel, setNivel] = useState(comboNivel[usuario.nivel + 1])
+    const [nivel, setNivel] = useState({})
+    const [opcionNivel, setOpcionNivel] = useState({})
     const [msgNivel, setMsgNivel] = useState({texto: '', visible: false, color: 'info'})
     const [validadoNivel, setValidadoNivel] = useState(false)
     const validarNivel = (valor) => {
@@ -189,7 +186,14 @@ const UpdateUsuario2 = ({usuario, setUsuario, reloadTabla, setReloadTabla}) => {
     // Tienda
     const [region, setRegion] = useState('')
     const [zona, setZona] = useState('')
-    const [tienda, setTienda] = useState(cargarFiltros.numeroTienda(usuario.tienda))
+    const [tienda, setTienda] = useState('')
+    useEffect(async () => {
+        const idTienda = await cargarFiltros.numeroTienda(usuario.tienda)
+        const regionYZona = await cargarFiltros.getRegionYZona(idTienda.data.numeroTienda)
+        setRegion(regionYZona.data.region)
+        setZona(regionYZona.data.zona)
+        setTienda(idTienda.data.numeroTienda)
+    }, [usuario])
     const [msgTienda, setMsgTienda] = useState({texto: '', visible: false, color: 'info'})
     const [validadoTienda, setValidadoTienda] = useState(false)
     // const indice = .findIndex(object => {
@@ -199,6 +203,17 @@ const UpdateUsuario2 = ({usuario, setUsuario, reloadTabla, setReloadTabla}) => {
     //     value,
     //     label: usuario.tienda
     // })
+
+    // Cargar la tienda, que se obtiene de forma asíncrona a partir de los props
+    useEffect(async () => {
+        // console.log("Usuario.tienda:")
+        // console.log(usuario.tienda)
+        const numeroTienda_tmp = await cargarFiltros.numeroTienda(usuario.tienda)
+        // console.log("numero tienda:")
+        // console.log(numeroTienda_tmp.data.numeroTienda)
+        setTienda(numeroTienda_tmp.data.numeroTienda)
+    }, [usuario])
+
     useEffect(() => {
         setMsgEnviar({
         visible: false
@@ -209,7 +224,6 @@ const UpdateUsuario2 = ({usuario, setUsuario, reloadTabla, setReloadTabla}) => {
             visible: true,
             color: 'success'
         })
-
 
         setValidadoTienda(true)
         } else {
@@ -241,10 +255,22 @@ const UpdateUsuario2 = ({usuario, setUsuario, reloadTabla, setReloadTabla}) => {
         })
         }
     }
+
+    // Cargar todo de nuevo cuando cambia el usuario
+    useEffect(() => {
+        setEstatusValue({label: usuario.estatus, value: usuario.estatus})
+        setEmail(usuario.email)
+        setNombre(usuario.nombre)
+        const indiceNivel = comboNivel.findIndex(object => {
+            return object.label === usuario.nivel
+        })
+        setNivel(comboNivel[indiceNivel].value)
+        setOpcionNivel(comboNivel[indiceNivel])
+        }, [usuario])
     
     
     return (
-        <Card>
+        tienda !== undefined && tienda !== '' && <Card>
             <CardHeader>
                 <CardTitle tag='h2' className='font-weight-bold mb-1'>
                 Registro
@@ -310,6 +336,7 @@ const UpdateUsuario2 = ({usuario, setUsuario, reloadTabla, setReloadTabla}) => {
                     classNamePrefix="select"
                     name='nivel'
                     options={comboNivel}
+                    value={opcionNivel}
                     isClearable={true}
                     onChange={e => {
                         validarNivel(e.value)
@@ -317,12 +344,12 @@ const UpdateUsuario2 = ({usuario, setUsuario, reloadTabla, setReloadTabla}) => {
                     />
                     {msgNivel.visible && <Alert color={msgNivel.color}>{msgNivel.texto} </Alert>}
                 </FormGroup>
-                <FormGroup>
+                {region !== undefined && Number.isInteger(region) && zona !== undefined && Number.isInteger(zona) && tienda !== undefined && Number.isInteger(tienda) && <FormGroup>
                     <Label className='form-label' for='login-email'>
                     Tienda por Defecto
                     </Label>
-                    <Filtro region={region} zona={zona} tienda={tienda} setRegion={setRegion} setZona={setZona} setTienda={setTienda} />
-                </FormGroup>
+                    <Filtro tiendaDefault region={region} zona={zona} tienda={tienda} setRegion={setRegion} setZona={setZona} setTienda={setTienda} />
+                </FormGroup>}
                 <FormGroup>
                 <Label>Cambiar estatus</Label>
                 <Select

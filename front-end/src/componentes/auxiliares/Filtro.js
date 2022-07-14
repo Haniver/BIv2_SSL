@@ -55,6 +55,9 @@ const Filtro = (props) => {
   if (props.mismoMes !== undefined) {
     numElementos -= 1
   }
+  if (props.tiendaDefault !== undefined) {
+    numElementos -= 1
+  }
   // Dividimos entre dos el número de elementos porque por cada filtro hay un getter y un setter, entonces se duplican los props
   numElementos = Math.round(numElementos / 2)
 
@@ -239,6 +242,7 @@ const Filtro = (props) => {
   const [isSubDeptoDisabled, setIsSubDeptoDisabled] = useState(true)
   const [isSubDeptoAgrupadoDisabled, setIsSubDeptoAgrupadoDisabled] = useState(true)
   const [isDeptoAgrupadoDisabled, setIsDeptoAgrupadoDisabled] = useState(true)
+  const [regionValue, setRegionValue] = useState({value:'', label:''})
   const [zonaValue, setZonaValue] = useState({value:'', label:''})
   // Hooks para valores internos de Filtro
   const [tiendaValue, setTiendaValue] = useState({value:'', label:''})
@@ -311,6 +315,7 @@ const Filtro = (props) => {
   // Funciones para rellenar combos dependiendo de los valores de otros combos
   const handleRegionChange = async (e) => {
     if (e) {
+      setRegionValue({label: e.label, value: e.value})
       if (props.botonEnviar === undefined) {
         props.setRegion(e.value)
       } else {
@@ -322,6 +327,7 @@ const Filtro = (props) => {
       setIsZonaDisabled(false)
       
     } else {
+      setRegionValue({value:'', label:''})
       setComboZona([{value:'', label:''}])
       if (props.botonEnviar === undefined) {
         props.setRegion('')
@@ -716,61 +722,101 @@ const Filtro = (props) => {
   // Rellenado inicial de combos variables
 
   useEffect(async () => {
-    // Llenar región, zona y tienda dependiendo del nivel del usuario
-    // La región te la puedo mostrar en dos escenarios: ya accediste al BI y tienes nivel 4 o 5, o te estás registrando y no tienes userData
-    if (props.region !== undefined && (userData === null || userData === undefined || userData === false || UserService.getNivel() >= 4)) {
-      const comboRegion_temp = await CargarFiltros.cargarRegion()
-      setComboRegion(comboRegion_temp)
-    } else if (props.region !== undefined && UserService.getNivel() === 3) {
-      // props.setRegion(UserService.getRegion())
-      handleRegionChange({value: UserService.getRegion()})
-    } else if (props.zona !== undefined && UserService.getNivel() === 2) {
-      // console.log("cambiando zona desde 4")
-      if (props.botonEnviar === undefined) {
-        props.setRegion(UserService.getRegion())
-      } else {
-        setRegion_tmp(UserService.getRegion())
+    if (props.tiendaDefault === undefined || !props.tiendaDefault) {
+      // Llenar región, zona y tienda dependiendo del nivel del usuario
+      if (props.region !== undefined && (userData === null || userData === undefined || userData === false || UserService.getNivel() >= 4)) { // La región te la puedo mostrar en dos escenarios: ya accediste al BI y tienes nivel 4 o 5, o te estás registrando y no tienes userData
+        const comboRegion_temp = await CargarFiltros.cargarRegion()
+        setComboRegion(comboRegion_temp)
+      } else if (props.region !== undefined && UserService.getNivel() === 3) {
+        // props.setRegion(UserService.getRegion())
+        handleRegionChange({value: UserService.getRegion()})
+      } else if (props.zona !== undefined && UserService.getNivel() === 2) {
+        // console.log("cambiando zona desde 4")
+        if (props.botonEnviar === undefined) {
+          props.setRegion(UserService.getRegion())
+        } else {
+          setRegion_tmp(UserService.getRegion())
+        }
+        // props.setZona(UserService.getZona())
+        handleZonaChange({value: UserService.getZona()})
+      } else if (props.tienda !== undefined && UserService.getNivel() === 1) {
+        if (props.botonEnviar === undefined)  {
+          props.setRegion(UserService.getRegion())
+          props.setZona(UserService.getZona())
+          props.setTienda(UserService.getTienda())
+        } else {
+          setRegion_tmp(UserService.getRegion())
+          setZona_tmp(UserService.getZona())
+          setTienda_tmp(UserService.getTienda())
+        }
+        if (props.setLabelTienda !== undefined) {
+          props.setLabelTienda(UserService.getLugarNombre())
+        }
       }
-      // props.setZona(UserService.getZona())
-      handleZonaChange({value: UserService.getZona()})
-    } else if (props.tienda !== undefined && UserService.getNivel() === 1) {
-      if (props.botonEnviar === undefined)  {
-        props.setRegion(UserService.getRegion())
-        props.setZona(UserService.getZona())
-        props.setTienda(UserService.getTienda())
-      } else {
-        setRegion_tmp(UserService.getRegion())
-        setZona_tmp(UserService.getZona())
-        setTienda_tmp(UserService.getTienda())
+      if (props.proveedor !== undefined) {
+        const comboProveedor_temp = await CargarFiltros.cargarProveedor()
+        setComboProveedor(comboProveedor_temp)
       }
-      if (props.setLabelTienda !== undefined) {
-        props.setLabelTienda(UserService.getLugarNombre())
+      if (props.depto !== undefined) {
+        const comboDepto_temp = await CargarFiltros.cargarDepto()
+        setComboDepto(comboDepto_temp)
       }
-    }
-    if (props.proveedor !== undefined) {
-      const comboProveedor_temp = await CargarFiltros.cargarProveedor()
-      setComboProveedor(comboProveedor_temp)
-    }
-    if (props.depto !== undefined) {
-      const comboDepto_temp = await CargarFiltros.cargarDepto()
-      setComboDepto(comboDepto_temp)
-    }
-    if (props.formato !== undefined) {
-      const comboFormato_temp = await CargarFiltros.cargarFormato()
-      setComboFormato(comboFormato_temp)
-    }
-    if (props.nps !== undefined) {
-      const comboNps_temp = await CargarFiltros.cargarNps()
-      setComboNps(comboNps_temp)
-    }
-    if (props.canal !== undefined) {
-      const comboCanal_temp = await CargarFiltros.cargarCanal()
-      setComboCanal(comboCanal_temp)
-    }
-    if (props.origen !== undefined) {
-      setOrigenValue(comboOrigen[0])
+      if (props.formato !== undefined) {
+        const comboFormato_temp = await CargarFiltros.cargarFormato()
+        setComboFormato(comboFormato_temp)
+      }
+      if (props.nps !== undefined) {
+        const comboNps_temp = await CargarFiltros.cargarNps()
+        setComboNps(comboNps_temp)
+      }
+      if (props.canal !== undefined) {
+        const comboCanal_temp = await CargarFiltros.cargarCanal()
+        setComboCanal(comboCanal_temp)
+      }
+      if (props.origen !== undefined) {
+        setOrigenValue(comboOrigen[0])
+      }
     }
   }, [])
+
+  // Esto es solo para cuando se usa el filtro en el Alta de Usuarios
+  useEffect(async () => {
+    if (props.tiendaDefault !== undefined && props.tiendaDefault) {
+      console.log(`(region, zona, tienda) = (${props.region}, ${props.zona}, ${props.tienda})`)
+      // Rellenar región del usuario 
+      const comboRegion_temp = await CargarFiltros.cargarRegion()
+      setComboRegion(comboRegion_temp)
+      const idx_regionNombre = comboRegion_temp.findIndex(object => {
+        return object.value === props.region
+      })
+      if (idx_regionNombre >= 0) {
+        const regionNombre = comboRegion_temp[idx_regionNombre].label
+        setRegionValue({label: regionNombre, value: props.region})
+      }
+      // Rellenar zona del usuario 
+      setIsZonaDisabled(false)
+      const comboZona_temp = await CargarFiltros.cargarZona(props.region)
+      setComboZona(comboZona_temp)
+      const idx_zonaNombre = comboZona_temp.findIndex(object => {
+        return object.value === props.zona
+      })
+      if (idx_zonaNombre >= 0) {
+        const zonaNombre = comboZona_temp[idx_zonaNombre].label
+        setZonaValue({label: zonaNombre, value: props.zona})
+      }
+      // Rellenar Tienda del usuario 
+      setIsTiendaDisabled(false)
+      const comboTienda_temp = await CargarFiltros.cargarTienda(props.zona)
+      setComboTienda(comboTienda_temp)
+      const idx_tiendaNombre = comboTienda_temp.findIndex(object => {
+        return object.value === props.tienda
+      })
+      if (idx_tiendaNombre >= 0) {
+        const tiendaNombre = comboTienda_temp[idx_tiendaNombre].label
+        setTiendaValue({label: tiendaNombre, value: props.tienda})
+      }
+    }
+  }, [props.region, props.zona, props.tienda])
 
   // Poner valor inicial para canal
   useEffect(() => {
@@ -1050,6 +1096,7 @@ const Filtro = (props) => {
               options={comboRegion}
               id='region'
               isClearable
+              value={regionValue}
               onChange={handleRegionChange}
             />
           </Col>}

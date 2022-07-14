@@ -242,12 +242,13 @@ async def registro(input_usuario: UserInDB):
     print(f'Entrando a registro con áreas = {str(input_usuario.areas)}')
     ahora = datetime.now()
     ahora = ahora.strftime("%Y-%m-%d %H:%M:%S")
-    nombre_completo = input_usuario.nombre + ' ' + input_usuario.apellidoP + ' ' + input_usuario.apellidoM
+    nombre_completo = input_usuario.nombre + ' ' + input_usuario.apellidoP + ' ' + input_usuario.apellidoM if input_usuario.apellidoP != '' and input_usuario.apellidoM != '' else input_usuario.nombre
     cnxn = conexion_sql('DJANGO')
     cursor = cnxn.cursor()
+    estatus = input_usuario.estatus if input_usuario.estatus != '' else 'revisión'
     # Los valores posibles para estatus son revisión, bloqueado y activo
     query1 = f"""INSERT INTO DJANGO.php.usuarios (nombre, password, usuario, nivel, idTienda, estatus)
-        VALUES ('{nombre_completo}', '{input_usuario.password}', '{input_usuario.usuario}', '{input_usuario.nivel}', {input_usuario.tienda}, 'revisión')"""
+        VALUES ('{nombre_completo}', '{input_usuario.password}', '{input_usuario.usuario}', '{input_usuario.nivel}', {input_usuario.tienda}, {estatus})"""
     print(f"Query1 desde login -> Registro: {query1}")
     try:
         cursor.execute(query1)

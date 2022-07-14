@@ -45,6 +45,7 @@ class User(BaseModel):
     zona: Optional[int]
     lugarNombre: Optional[str]
     areas: Optional[list]
+    estatus: Optional[str]
 
 class UserInDB(User):
     password: str
