@@ -38,7 +38,7 @@ class EjesMultiplesApilados():
         diferencia = []
         arrFromSibling = []
         hayCanal = False if self.filtros.canal == False or self.filtros.canal == 'False' or self.filtros.canal == '' else True
-        if self.titulo == 'Pedidos Levantados Hoy (con impuesto)':
+        if self.titulo == 'Pedidos Levantados Hoy (con impuesto - todos los canales)':
             categories.append(0)
             pedidosEntregados = [0]
             pedidosHoyATiempo = [0]

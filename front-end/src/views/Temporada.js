@@ -17,7 +17,7 @@ import {
 const Temporada = () => {
     
     const [fechas, setFechas] = useState({fecha_ini: fechas_srv.primeroDelMesSinVencer(), fecha_fin: fechas_srv.noUTC(new Date())})
-    const [canal, setCanal] = useState('')
+    const [canal, setCanal] = useState(1)
     const [depto, setDepto] = useState('')
     const [subDepto, setSubDepto] = useState('')
     const [clase, setClase] = useState('')
@@ -25,6 +25,9 @@ const Temporada = () => {
     const [fuenteDataStudio, setFuenteDataStudio] = useState('')
     // console.log(`Fecha y hora actual: ${new Date()}`)
 
+    useEffect(() => {
+      console.log(`canal=${canal}`)
+    }, [canal])
     useEffect(() => {
       setSubDepto('')
     }, [depto])
@@ -70,7 +73,7 @@ const Temporada = () => {
       </Row>
       <Row className='match-height'>
         <Col sm='12'>
-            <EjesMultiplesApilados seccion={seccion} titulo='Pedidos Levantados Hoy (con impuesto)' fechas={fechas} />
+            <EjesMultiplesApilados seccion={seccion} titulo='Pedidos Levantados Hoy (con impuesto - todos los canales)' fechas={fechas} />
         </Col>
       </Row>
       <Row className='match-height'>
