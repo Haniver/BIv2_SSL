@@ -161,7 +161,7 @@ const UpdateUsuario = ({usuario, setUsuario, reloadTabla, setReloadTabla}) => {
         {label: 'Zona', value: 2},
         {label: 'Región', value: 3},
         {label: 'Nacional', value: 4},
-        {label: 'Administrador de sistema', value: 5}
+        {label: 'Admin', value: 5}
     ]
     const [nivel, setNivel] = useState({})
     const [opcionNivel, setOpcionNivel] = useState({})

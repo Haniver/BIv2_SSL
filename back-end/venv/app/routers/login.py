@@ -322,8 +322,8 @@ async def update_usuario(input_usuario: UserInDB):
     except pyodbc.Error as e:
         return {'mensaje':'Error al intentar actualizar base de datos (q3): '+str(e), 'exito': False}
     if input_usuario.estatus == 'rechazado':
-        enviarEmail('Rechazamos su solicitud de registro', input_usuario.usuario, f"Lo sentimos, su solicitud de registro al BI Omnicanal fue rechazada. A continuación la razón:\n {input_usuario.razonRechazo}\n Puede comunicarse al área de BI para más información.")
+        enviarEmail('Rechazamos su solicitud de registro', input_usuario.usuario, f"Lo sentimos, su solicitud de registro al BI Omnicanal fue rechazada. A continuación la razón:<br /> {input_usuario.razonRechazo}<br /> Puede comunicarse al área de BI para más información:<br /><a href='mailto:didiaz@chedraui.com.mx'")
     elif input_usuario.estatus == 'activo':
-        enviarEmail('Registro exitoso', input_usuario.usuario, f"Revisamos su solicitud de registro al BI Omnicanal con esta cuenta de correo y fue aprobada. Ya puede ingresar al sistema.")
+        enviarEmail('Registro exitoso', input_usuario.usuario, f"Revisamos su solicitud de registro al BI Omnicanal con esta cuenta de correo y fue aprobada. Ya puede ingresar al sistema dando clic <a href='http://20.36.170.122:3001/'>aquí</a>.")
     return {'mensaje':f'Se ha actualizado correctamente la información. Si el estatus fue cambiado a "rechazado" o "activo", le llegará un correo al usuario en breve.', 'exito': True}
     # return {'mensaje': mensaje}

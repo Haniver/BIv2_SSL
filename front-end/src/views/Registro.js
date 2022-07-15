@@ -232,8 +232,7 @@ const Registro = () => {
     {label: 'Tienda', value: 1},
     {label: 'Zona', value: 2},
     {label: 'Región', value: 3},
-    {label: 'Nacional', value: 4},
-    {label: 'Administrador de sistema', value: 5}
+    {label: 'Nacional', value: 4}
   ]
   const [nivel, setNivel] = useState(0)
   const [msgNivel, setMsgNivel] = useState({texto: '', visible: false, color: 'info'})
