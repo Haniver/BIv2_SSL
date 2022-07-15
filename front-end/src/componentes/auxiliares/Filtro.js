@@ -55,7 +55,7 @@ const Filtro = (props) => {
   if (props.mismoMes !== undefined) {
     numElementos -= 1
   }
-  if (props.tiendaDefault !== undefined) {
+  if (props.usuario !== undefined) {
     numElementos -= 1
   }
   // Dividimos entre dos el número de elementos porque por cada filtro hay un getter y un setter, entonces se duplican los props
@@ -781,8 +781,8 @@ const Filtro = (props) => {
 
   // Esto es solo para cuando se usa el filtro en el Alta de Usuarios
   useEffect(async () => {
-    if (props.tiendaDefault !== undefined && props.tiendaDefault) {
-      console.log(`(region, zona, tienda) = (${props.region}, ${props.zona}, ${props.tienda})`)
+    if (props.usuario !== undefined) {
+      // console.log(`(region, zona, tienda) = (${props.region}, ${props.zona}, ${props.tienda})`)
       // Rellenar región del usuario 
       const comboRegion_temp = await CargarFiltros.cargarRegion()
       setComboRegion(comboRegion_temp)
@@ -816,7 +816,7 @@ const Filtro = (props) => {
         setTiendaValue({label: tiendaNombre, value: props.tienda})
       }
     }
-  }, [props.region, props.zona, props.tienda])
+  }, [props.usuario])
 
   // Poner valor inicial para canal
   useEffect(() => {
@@ -843,7 +843,7 @@ const Filtro = (props) => {
   // Layout
   return (
     <Card>
-      {userData !== null && userData !== undefined && userData !== false && <CardHeader>
+      {userData !== null && userData !== undefined && userData !== false && (props.usuario === null || props.usuario === undefined || props.usuario === false) && <CardHeader>
         <CardTitle tag='h4'>Filtros</CardTitle>
       </CardHeader>}
 

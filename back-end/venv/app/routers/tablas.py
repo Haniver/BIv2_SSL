@@ -3675,7 +3675,6 @@ class Tablas():
                 {'name': 'Nivel', 'selector':'Nivel', 'formato':'texto'},
                 {'name': 'Tienda', 'selector':'Tienda', 'formato':'texto', 'ancho':'450px'},
                 {'name': 'Estatus', 'selector':'Estatus', 'formato':'texto', 'ancho':'120px'},
-                {'name': 'Cambiar Estatus', 'selector':'CambiarEstatus', 'formato':'botonEstatus'},
                 {'name': 'Editar', 'selector':'Editar', 'formato':'botonUsuario'}
             ]
         else:

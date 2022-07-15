@@ -76,7 +76,7 @@ class UserService {
     return axios.get(`${CustomUrls.ApiUrl()}todasLasTiendas/`)
   }
 
-  registro(apellidoM, apellidoP, email, nombre, password1, areas, tienda, nivel, estatus = '') {
+  registro(apellidoM, apellidoP, email, nombre, password1, areas, tienda, nivel) {
     return axios({
       method: 'post',
       url: `${CustomUrls.ApiUrl()}registro`,
@@ -92,8 +92,7 @@ class UserService {
         password: password1, 
         areas, 
         tienda, 
-        nivel,
-        estatus
+        nivel
       }
     })
   }
@@ -136,6 +135,39 @@ class UserService {
     const userData = JSON.parse(localStorage.getItem('userData'))
     return userData["usuario"]
   }
+  async getIdFromEmail(email) {
+    return axios({
+      method: 'get',
+      url: `${CustomUrls.ApiUrl()}getIdFromEmail?email=${email}`,
+      headers: authHeader()
+    })
+    .then(resp => {
+      return resp.data
+      // console.log(resp)
+    })
+  }
+  updateUsuario (email, nombre, areas, tienda, nivel, estatus, razonRechazo, id) {
+    return axios({
+      method: 'post',
+      url: `${CustomUrls.ApiUrl()}updateUsuario`,
+      headers: {
+        accept:'application/json',
+        'Content-Type':'application/json'
+      },
+      data: {
+        usuario: email, 
+        nombre, 
+        areas, 
+        tienda, 
+        nivel, 
+        estatus, 
+        razonRechazo,
+        id,
+        password: ''
+      }
+    })
+  }
+
 }
 
 export default new UserService()

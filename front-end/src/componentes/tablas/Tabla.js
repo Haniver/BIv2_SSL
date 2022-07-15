@@ -212,18 +212,6 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
                             ✎
                         </Button>
                     )
-                } else if (columna.formato === 'botonEstatus') {
-                    // console.log(columna.formato)
-                    objeto_columna.cell = (d) => (
-                        <Button
-                            color='dark'
-                            onClick={e => {
-                                setEstatus({email: d.Email, estatus: d.Estatus})
-                            }}
-                        >
-                            Ⓔ
-                        </Button>
-                    )
                 } else if (columna.formato === 'sibling') {
                     objeto_columna.cell = (d) => (
                         <Button

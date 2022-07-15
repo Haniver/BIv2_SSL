@@ -115,6 +115,14 @@ async def todasLasTiendas():
     cursor = collection.aggregate(pipeline)
     return await cursor.to_list(length=None)
 
+@router.get("/getIdFromEmail")
+async def get_id_from_email(email: str, current_user: User = Depends(get_current_active_user)):
+    cnxn = conexion_sql()
+    cursor = cnxn.cursor()
+    cursor.execute("select id from DJANGO.php.usuarios where usuario = '"+email+"'")
+    row = cursor.fetchone()
+    return row.id
+
 @router.post("/recuperarPassword")
 async def recuperarPassword(tokenData: TokenData):
     cnxn = conexion_sql()
@@ -239,16 +247,15 @@ async def cambiarPerfil(objetoCambiarPassword: claseCambiarPassword, user: dict 
 
 @router.post("/registro")
 async def registro(input_usuario: UserInDB):
-    print(f'Entrando a registro con áreas = {str(input_usuario.areas)}')
+    # print(f'Entrando a registro con áreas = {str(input_usuario.areas)}')
     ahora = datetime.now()
     ahora = ahora.strftime("%Y-%m-%d %H:%M:%S")
-    nombre_completo = input_usuario.nombre + ' ' + input_usuario.apellidoP + ' ' + input_usuario.apellidoM if input_usuario.apellidoP != '' and input_usuario.apellidoM != '' else input_usuario.nombre
+    nombre_completo = input_usuario.nombre + ' ' + input_usuario.apellidoP + ' ' + input_usuario.apellidoM
     cnxn = conexion_sql('DJANGO')
     cursor = cnxn.cursor()
-    estatus = input_usuario.estatus if input_usuario.estatus != '' else 'revisión'
     # Los valores posibles para estatus son revisión, bloqueado y activo
     query1 = f"""INSERT INTO DJANGO.php.usuarios (nombre, password, usuario, nivel, idTienda, estatus)
-        VALUES ('{nombre_completo}', '{input_usuario.password}', '{input_usuario.usuario}', '{input_usuario.nivel}', {input_usuario.tienda}, {estatus})"""
+        VALUES ('{nombre_completo}', '{input_usuario.password}', '{input_usuario.usuario}', '{input_usuario.nivel}', {input_usuario.tienda}, 'revisión')"""
     print(f"Query1 desde login -> Registro: {query1}")
     try:
         cursor.execute(query1)
@@ -273,4 +280,50 @@ async def registro(input_usuario: UserInDB):
     except pyodbc.Error as e:
         return {'mensaje':'Error al intentar actualizar base de datos: '+str(e), 'exito': False}
     return {'mensaje':f'Su solicitud de creación de usuario ha sido enviada. En breve recibirá respuesta al correo que registró.', 'exito': True}
+    # return {'mensaje': mensaje}
+
+@router.post("/updateUsuario")
+async def update_usuario(input_usuario: UserInDB):
+    print(f'Entrando a updateUsuario con áreas = {str(input_usuario.areas)}')
+    ahora = datetime.now()
+    ahora = ahora.strftime("%Y-%m-%d %H:%M:%S")
+    cnxn = conexion_sql('DJANGO')
+    cursor = cnxn.cursor()
+    query1 = f"""UPDATE DJANGO.php.usuarios
+    SET nombre = '{input_usuario.nombre}',
+        usuario = '{input_usuario.usuario}',
+        nivel = {input_usuario.nivel},
+        idTienda = {input_usuario.tienda}, 
+        estatus = '{input_usuario.estatus}', 
+        razonRechazo = '{input_usuario.razonRechazo}'
+    WHERE id = {input_usuario.id}"""
+    print(f"Query1 desde login -> Registro: {query1}")
+    try:
+        cursor.execute(query1)
+        cnxn.commit()
+    except pyodbc.Error as e:
+        return {'mensaje':'Error al intentar actualizar base de datos (q1): '+str(e), 'exito': False}
+    query2 = f"""DELETE FROM DJANGO.php.usuariosAreas
+        WHERE id_usuario = {input_usuario.id}"""
+    print(f"Query2 desde login -> Registro: {query2}")
+    try:
+        cursor.execute(query2)
+    except pyodbc.Error as e:
+        return {'mensaje':'Error al intentar actualizar base de datos (q2): '+str(e), 'exito': False}
+    query3 = f"""INSERT into DJANGO.php.usuariosAreas (id_usuario, area)
+        VALUES """
+    for i in range(len(input_usuario.areas)):
+        query3 += f" ({input_usuario.id}, {input_usuario.areas[i]})"
+        query3 += "," if i != len(input_usuario.areas) - 1 else ''
+    print(f"Query3 desde login -> Registro: {query3}")
+    try:
+        cursor.execute(query3)
+        cnxn.commit()
+    except pyodbc.Error as e:
+        return {'mensaje':'Error al intentar actualizar base de datos (q3): '+str(e), 'exito': False}
+    if input_usuario.estatus == 'rechazado':
+        enviarEmail('Rechazamos su solicitud de registro', input_usuario.usuario, f"Lo sentimos, su solicitud de registro al BI Omnicanal fue rechazada. A continuación la razón:\n {input_usuario.razonRechazo}\n Puede comunicarse al área de BI para más información.")
+    elif input_usuario.estatus == 'activo':
+        enviarEmail('Registro exitoso', input_usuario.usuario, f"Revisamos su solicitud de registro al BI Omnicanal con esta cuenta de correo y fue aprobada. Ya puede ingresar al sistema.")
+    return {'mensaje':f'Se ha actualizado correctamente la información. Si el estatus fue cambiado a "rechazado" o "activo", le llegará un correo al usuario en breve.', 'exito': True}
     # return {'mensaje': mensaje}
