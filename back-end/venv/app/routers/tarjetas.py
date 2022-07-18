@@ -515,6 +515,21 @@ class Tarjetas():
                 hayResultados = "si"
                 res = arreglo[0]['porc_part']
 
+        if self.titulo == 'Ticket Promedio (sin impuesto)':
+            query = f"""select sum(nTicket) pedidos, sum(ventaSinImpuestos) venta
+            from DWH.artus.ventaDiariaHora vdh
+            where fecha = {hoyInt}
+            and idCanal {'not in (0' if not hayCanal else 'in ('+str(self.filtros.canal)})
+            """
+            # print(f"query desde tarjetas.py -> Temporada -> % Participación Venta Hoy: {str(query)}")
+            cnxn = conexion_sql('DWH')
+            cursor = cnxn.cursor().execute(query)
+            arreglo = crear_diccionario(cursor)
+            # print(f"arreglo desde ejesMultiplesApilados: {str(arreglo)}")
+            if len(arreglo) > 0:
+                hayResultados = "si"
+                res = arreglo[0]['venta']/arreglo[0]['pedidos']
+
         return {'hayResultados':hayResultados, 'res': res, 'pipeline': query, 'tituloMod': tituloMod}
 
 @router.post("/{seccion}")

@@ -10,7 +10,8 @@ import {
     DollarSign,
     Box,
     Calendar,
-    Percent
+    Percent,
+    FileText
   } from 'react-feather'
   
 
@@ -69,6 +70,9 @@ const Temporada = () => {
         </Col>
         <Col>
             <Tarjeta icono={<Percent size={21} />} seccion={seccion} formato='porcentaje' titulo='% Participación Venta Hoy' canal={canal} />
+        </Col>
+        <Col>
+            <Tarjeta icono={<FileText size={21} />} seccion={seccion} formato='moneda' titulo='Ticket Promedio (sin impuesto)' canal={canal} />
         </Col>
       </Row>
       <Row className='match-height'>
