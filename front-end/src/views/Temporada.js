@@ -72,7 +72,7 @@ const Temporada = () => {
             <Tarjeta icono={<Percent size={21} />} seccion={seccion} formato='porcentaje' titulo='% Participación Venta Hoy' canal={canal} />
         </Col>
         <Col>
-            <Tarjeta icono={<FileText size={21} />} seccion={seccion} formato='moneda' titulo='Ticket Promedio (sin impuesto)' canal={canal} />
+            <Tarjeta icono={<FileText size={21} />} seccion={seccion} formato='moneda' titulo='Ticket Promedio (sin imp)' canal={canal} />
         </Col>
       </Row>
       <Row className='match-height'>

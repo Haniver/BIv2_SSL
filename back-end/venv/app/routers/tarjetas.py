@@ -515,7 +515,7 @@ class Tarjetas():
                 hayResultados = "si"
                 res = arreglo[0]['porc_part']
 
-        if self.titulo == 'Ticket Promedio (sin impuesto)':
+        if self.titulo == 'Ticket Promedio (sin imp)':
             query = f"""select sum(nTicket) pedidos, sum(ventaSinImpuestos) venta
             from DWH.artus.ventaDiariaHora vdh
             where fecha = {hoyInt}
