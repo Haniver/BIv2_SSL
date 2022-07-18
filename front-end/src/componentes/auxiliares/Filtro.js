@@ -774,7 +774,7 @@ const Filtro = (props) => {
         setComboCanal(comboCanal_temp)
       }
       if (props.origen !== undefined) {
-        setOrigenValue(comboOrigen[0])
+        setOrigenValue(comboOrigen[1])
       }
     }
   }, [])

@@ -10,7 +10,7 @@ const PedidosPendientes = () => {
   const [region, setRegion] = useState('')
   const [zona, setZona] = useState('')
   const [tienda, setTienda] = useState('')
-  const [origen, setOrigen] = useState('Hybris')
+  const [origen, setOrigen] = useState('Vtex')
 
   const seccion = 'PedidosPendientes'
 
