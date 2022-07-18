@@ -11,7 +11,8 @@ import {
     Box,
     Calendar,
     Percent,
-    FileText
+    FileText,
+    Package
   } from 'react-feather'
   
 
@@ -63,7 +64,7 @@ const Temporada = () => {
             <Tarjeta icono={<DollarSign size={21} />} seccion={seccion} formato='moneda' titulo='Venta Última Hora' />
         </Col>
         <Col>
-            <Tarjeta icono={<Box size={21} />} seccion={seccion} formato='entero' titulo='Pedidos Última Hora' />
+            <Tarjeta icono={<Package size={21} />} seccion={seccion} formato='entero' titulo='Pedidos Última Hora' />
         </Col>
          <Col>
             <Tarjeta icono={<DollarSign size={21} />} seccion={seccion} formato='moneda' titulo='Venta Hoy' canal={canal} />
@@ -73,6 +74,9 @@ const Temporada = () => {
         </Col>
         <Col>
             <Tarjeta icono={<FileText size={21} />} seccion={seccion} formato='moneda' titulo='Ticket Promedio (sin imp)' canal={canal} />
+        </Col>
+        <Col>
+            <Tarjeta icono={<Box size={21} />} seccion={seccion} formato='entero' titulo='Artículos Promedio' canal={canal} />
         </Col>
       </Row>
       <Row className='match-height'>
