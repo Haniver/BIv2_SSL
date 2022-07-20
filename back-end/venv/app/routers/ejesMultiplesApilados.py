@@ -50,6 +50,7 @@ class EjesMultiplesApilados():
             group by hora, estatus
             order by hora, estatus
             """
+            print(f"Query desde EjesMultiplesApilados -> Temporada: {query}")
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(query)
             arreglo = crear_diccionario(cursor)
@@ -58,21 +59,23 @@ class EjesMultiplesApilados():
                 hayResultados = "si"
                 # Los elementos están ordenados por hora y luego por estatus. Por cada hora hay varios estatus, así que las horas se repiten.
                 for elemento in arreglo:
-                    # Si es una hora nueva,
-                    if int(elemento['hora']) > categories[-1]:
+                    # Si es una hora nueva, se crea el espacio en los arreglos de pedidos. Pero si los resultados del quiery se brincan una hora, hay que hacerlo dos veces
+                    iteraciones = int(elemento['hora']) - len(pedidosEntregados) + 1
+                    for i in range(iteraciones):
                         # Agregamos al arreglo ticketPromedio la venta de la hora pasada entre la suma de todos los pedidos para esa hora
                         if (pedidosEntregados[-1] + pedidosHoyATiempo[-1] + pedidosHoyAtrasados[-1]) > 0:
                             ticketPromedio.append(venta[-1] / float(pedidosEntregados[-1] + pedidosHoyATiempo[-1] + pedidosHoyAtrasados[-1]))
                         else:
                             ticketPromedio.append(0)
-                        # Agregamos la nueva hora a las categorías
-                        categories.append(int(elemento['hora']))
+                        # Agregamos la nueva hora a las categorías. Si se brincó algunas horas, las metemos con este algoritmo
+                        categories.append(int(elemento['hora']) - iteraciones + i + 1)
                         # Inicializamos a 0 los pedidos y la venta para esa hora
                         pedidosEntregados.append(0)
                         pedidosHoyATiempo.append(0)
                         pedidosHoyAtrasados.append(0)
                         venta.append(0.0)
                     if elemento['estatus'] == 'Entregado':
+                        print(f"desde EjesMultiplesApilados - pedidosEntregados: {str(pedidosEntregados)} y elemento['hora']: {elemento['hora']}")
                         pedidosEntregados[int(elemento['hora'])] += int(elemento['pedidos'])
                     elif elemento['estatus'] == 'Hoy a tiempo':
                         pedidosHoyATiempo[int(elemento['hora'])] += int(elemento['pedidos'])
