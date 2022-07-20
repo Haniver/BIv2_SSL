@@ -61,7 +61,7 @@ const Temporada = () => {
         </Col>
       </Row>
       <Row className='match-height'>
-            <TarjetaEnFila icono={<DollarSign size={21} />} seccion={seccion} formato='moneda' titulo='Indicadores' cols={{ xl: '3', sm: '6' }}/>
+            <TarjetaEnFila icono={<DollarSign size={21} />} seccion={seccion} formato='moneda' titulo='Indicadores' cols={{ xl: '4', sm: '6' }}/>
       </Row>
       {/* <Row className='match-height'>
             <Tarjeta icono={<DollarSign size={21} />} seccion={seccion} formato='moneda' titulo='Venta Última Hora' />
