@@ -3932,7 +3932,7 @@ class Tablas():
         --- se agrega el filtro del nivel que quieren consultar
         group by {agrupador} ---se cambia el agrupador
         order by {'c.' if self.titulo == 'Detalle Formatos para SubClase $subClase' else 'b.'}{campoB}"""
-        print(f"query desde tablas->Temporada->{self.titulo}: {str(pipeline)}")
+        # print(f"query desde tablas->Temporada->{self.titulo}: {str(pipeline)}")
         cnxn = conexion_sql('DWH')
         cursor = cnxn.cursor().execute(pipeline)
         arreglo = crear_diccionario(cursor)

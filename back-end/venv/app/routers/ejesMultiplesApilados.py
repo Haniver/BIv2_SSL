@@ -50,7 +50,7 @@ class EjesMultiplesApilados():
             group by hora, estatus
             order by hora, estatus
             """
-            print(f"Query desde EjesMultiplesApilados -> Temporada: {query}")
+            # print(f"Query desde EjesMultiplesApilados -> Temporada: {query}")
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(query)
             arreglo = crear_diccionario(cursor)
@@ -75,7 +75,7 @@ class EjesMultiplesApilados():
                         pedidosHoyAtrasados.append(0)
                         venta.append(0.0)
                     if elemento['estatus'] == 'Entregado':
-                        print(f"desde EjesMultiplesApilados - pedidosEntregados: {str(pedidosEntregados)} y elemento['hora']: {elemento['hora']}")
+                        # print(f"desde EjesMultiplesApilados - pedidosEntregados: {str(pedidosEntregados)} y elemento['hora']: {elemento['hora']}")
                         pedidosEntregados[int(elemento['hora'])] += int(elemento['pedidos'])
                     elif elemento['estatus'] == 'Hoy a tiempo':
                         pedidosHoyATiempo[int(elemento['hora'])] += int(elemento['pedidos'])

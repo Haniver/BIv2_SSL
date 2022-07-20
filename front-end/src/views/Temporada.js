@@ -1,6 +1,7 @@
 import { Fragment, useState, useEffect } from 'react'
 import { Row, Col, Card, CardBody } from 'reactstrap'
 import Filtro from '../componentes/auxiliares/Filtro'
+import TarjetaEnFila from '../componentes/auxiliares/TarjetaEnFila'
 import Tarjeta from '../componentes/auxiliares/Tarjeta'
 import fechas_srv from '../services/fechas_srv'
 import EjesMultiples from '../componentes/graficos/EjesMultiples'
@@ -60,25 +61,16 @@ const Temporada = () => {
         </Col>
       </Row>
       <Row className='match-height'>
-        <Col>
-            <Tarjeta icono={<DollarSign size={21} />} seccion={seccion} formato='moneda' titulo='Venta Última Hora' />
-        </Col>
-        <Col>
-            <Tarjeta icono={<Package size={21} />} seccion={seccion} formato='entero' titulo='Pedidos Última Hora' />
-        </Col>
-         <Col>
-            <Tarjeta icono={<DollarSign size={21} />} seccion={seccion} formato='moneda' titulo='Venta Hoy' canal={canal} />
-        </Col>
-        <Col>
-            <Tarjeta icono={<Percent size={21} />} seccion={seccion} formato='porcentaje' titulo='% Participación Venta Hoy' canal={canal} />
-        </Col>
-        <Col>
-            <Tarjeta icono={<FileText size={21} />} seccion={seccion} formato='moneda' titulo='Ticket Promedio (sin imp)' canal={canal} />
-        </Col>
-        <Col>
-            <Tarjeta icono={<Box size={21} />} seccion={seccion} formato='entero' titulo='Artículos Promedio' canal={canal} />
-        </Col>
+            <TarjetaEnFila icono={<DollarSign size={21} />} seccion={seccion} formato='moneda' titulo='Indicadores' cols={{ xl: '3', sm: '6' }}/>
       </Row>
+      {/* <Row className='match-height'>
+            <Tarjeta icono={<DollarSign size={21} />} seccion={seccion} formato='moneda' titulo='Venta Última Hora' />
+            <Tarjeta icono={<Package size={21} />} seccion={seccion} formato='entero' titulo='Pedidos Última Hora' />
+            <Tarjeta icono={<DollarSign size={21} />} seccion={seccion} formato='moneda' titulo='Venta Hoy' canal={canal} />
+            <Tarjeta icono={<Percent size={21} />} seccion={seccion} formato='porcentaje' titulo='% Participación Venta Hoy' canal={canal} />
+            <Tarjeta icono={<FileText size={21} />} seccion={seccion} formato='moneda' titulo='Ticket Promedio (sin imp)' canal={canal} />
+            <Tarjeta icono={<Box size={21} />} seccion={seccion} formato='entero' titulo='Artículos Promedio' canal={canal} />
+      </Row> */}
       <Row className='match-height'>
         <Col sm='12'>
             <EjesMultiplesApilados seccion={seccion} titulo='Pedidos Levantados Hoy (con impuesto - todos los canales)' fechas={fechas} />
