@@ -3887,20 +3887,20 @@ class Tablas():
         -- para canal cc.tipo <>0 reemplazar por cc.tipo = 1 o 35,36,38
         select {agrupador}, ---se cambia el agrupador
         sum(case when dt2.fecha = convert(date,GETDATE()) and {'a.idTipo <> 0' if not hayCanal else 'a.idTipo = '+self.filtros.canal} then vtaSinImp else 0 end) DiaActual_AnioActual,
-        sum(case when dt2.fecha = convert(date,DATEADD(yy,-1,GETDATE())) and {'a.idTipo <> 0' if not hayCanal else 'a.idTipo = '+self.filtros.canal} and a.hora < DATEPART( hh,GETDATE()) then vtaSinImp else 0 end) DiaActual_AnioAnterior,
-        sum(case when dt.fecha = convert(date,GETDATE()) and {'a.idTipo <> 0' if not hayCanal else 'a.idTipo = '+self.filtros.canal} and a.hora < DATEPART( hh,GETDATE()) then vtaSinImp else 0 end) DiaComparable_AnioAnterior,
-        case when sum(case when dt2.fecha = convert(date,GETDATE()) and a.idTipo = 0 and a.hora < DATEPART( hh,GETDATE()) then vtaSinImp else 0 end) = 0 then 0 else
-        sum(case when dt2.fecha = convert(date,GETDATE()) and {'a.idTipo <> 0' if not hayCanal else 'a.idTipo = '+self.filtros.canal} and a.hora < DATEPART( hh,GETDATE()) then vtaSinImp else 0 end) /
-        sum(case when dt2.fecha = convert(date,GETDATE()) and a.idTipo = 0 and a.hora < DATEPART( hh,GETDATE()) then vtaSinImp else 0 end) end porc_part_dia_actual,
-        case when sum(case when dt.fecha = convert(date,GETDATE()) and a.idTipo = 0 and a.hora < DATEPART( hh,GETDATE()) then vtaSinImp else 0 end) = 0 then 0 else
-        sum(case when dt.fecha = convert(date,GETDATE()) and {'a.idTipo <> 0' if not hayCanal else 'a.idTipo = '+self.filtros.canal} and a.hora < DATEPART( hh,GETDATE()) then vtaSinImp else 0 end) /
-        sum(case when dt.fecha = convert(date,GETDATE()) and a.idTipo = 0 and a.hora < DATEPART( hh,GETDATE()) then vtaSinImp else 0 end) end DiaComparable_AnioAnteriorTF,
-        case when sum(case when dt2.fecha = convert(date,GETDATE()) and a.idTipo = 0 and a.hora < DATEPART( hh,GETDATE()) then vtaSinImp else 0 end)= 0 then 0 else
-        (sum(case when dt2.fecha = convert(date,GETDATE()) and {'a.idTipo <> 0' if not hayCanal else 'a.idTipo = '+self.filtros.canal} and a.hora < DATEPART( hh,GETDATE()) then vtaSinImp else 0 end) /
-        sum(case when dt2.fecha = convert(date,GETDATE()) and a.idTipo = 0 and a.hora < DATEPART( hh,GETDATE()) then vtaSinImp else 0 end)) end -
-        case when sum(case when dt2.fecha = convert(date,DATEADD(yy,-1,GETDATE())) and a.idTipo = 0 and a.hora < DATEPART( hh,GETDATE()) then vtaSinImp else 0 end)=0 then 0 ELSE
-        (sum(case when dt2.fecha = convert(date,DATEADD(yy,-1,GETDATE())) and {'a.idTipo <> 0' if not hayCanal else 'a.idTipo = '+self.filtros.canal} and a.hora < DATEPART( hh,GETDATE()) then vtaSinImp else 0 end) /
-        sum(case when dt2.fecha = convert(date,DATEADD(yy,-1,GETDATE())) and a.idTipo = 0 and a.hora < DATEPART( hh,GETDATE()) then vtaSinImp else 0 end)) end porcParDiff,
+        sum(case when dt2.fecha = convert(date,DATEADD(yy,-1,GETDATE())) and {'a.idTipo <> 0' if not hayCanal else 'a.idTipo = '+self.filtros.canal} and a.hora < DATEPART( hh,GETDATE()) - 1 then vtaSinImp else 0 end) DiaActual_AnioAnterior,
+        sum(case when dt.fecha = convert(date,GETDATE()) and {'a.idTipo <> 0' if not hayCanal else 'a.idTipo = '+self.filtros.canal} and a.hora < DATEPART( hh,GETDATE()) - 1 then vtaSinImp else 0 end) DiaComparable_AnioAnterior,
+        case when sum(case when dt2.fecha = convert(date,GETDATE()) and a.idTipo = 0 and a.hora < DATEPART( hh,GETDATE()) - 1 then vtaSinImp else 0 end) = 0 then 0 else
+        sum(case when dt2.fecha = convert(date,GETDATE()) and {'a.idTipo <> 0' if not hayCanal else 'a.idTipo = '+self.filtros.canal} and a.hora < DATEPART( hh,GETDATE()) - 1 then vtaSinImp else 0 end) /
+        sum(case when dt2.fecha = convert(date,GETDATE()) and a.idTipo = 0 and a.hora < DATEPART( hh,GETDATE()) - 1 then vtaSinImp else 0 end) end porc_part_dia_actual,
+        case when sum(case when dt.fecha = convert(date,GETDATE()) and a.idTipo = 0 and a.hora < DATEPART( hh,GETDATE()) - 1 then vtaSinImp else 0 end) = 0 then 0 else
+        sum(case when dt.fecha = convert(date,GETDATE()) and {'a.idTipo <> 0' if not hayCanal else 'a.idTipo = '+self.filtros.canal} and a.hora < DATEPART( hh,GETDATE()) - 1 then vtaSinImp else 0 end) /
+        sum(case when dt.fecha = convert(date,GETDATE()) and a.idTipo = 0 and a.hora < DATEPART( hh,GETDATE()) - 1 then vtaSinImp else 0 end) end DiaComparable_AnioAnteriorTF,
+        case when sum(case when dt2.fecha = convert(date,GETDATE()) and a.idTipo = 0 and a.hora < DATEPART( hh,GETDATE()) - 1 then vtaSinImp else 0 end)= 0 then 0 else
+        (sum(case when dt2.fecha = convert(date,GETDATE()) and {'a.idTipo <> 0' if not hayCanal else 'a.idTipo = '+self.filtros.canal} and a.hora < DATEPART( hh,GETDATE()) - 1 then vtaSinImp else 0 end) /
+        sum(case when dt2.fecha = convert(date,GETDATE()) and a.idTipo = 0 and a.hora < DATEPART( hh,GETDATE()) - 1 then vtaSinImp else 0 end)) end -
+        case when sum(case when dt2.fecha = convert(date,DATEADD(yy,-1,GETDATE())) and a.idTipo = 0 and a.hora < DATEPART( hh,GETDATE()) - 1 then vtaSinImp else 0 end)=0 then 0 ELSE
+        (sum(case when dt2.fecha = convert(date,DATEADD(yy,-1,GETDATE())) and {'a.idTipo <> 0' if not hayCanal else 'a.idTipo = '+self.filtros.canal} and a.hora < DATEPART( hh,GETDATE()) - 1 then vtaSinImp else 0 end) /
+        sum(case when dt2.fecha = convert(date,DATEADD(yy,-1,GETDATE())) and a.idTipo = 0 and a.hora < DATEPART( hh,GETDATE()) - 1 then vtaSinImp else 0 end)) end porcParDiff,
         max(case when dt2.fecha =convert(date,GETDATE()) then co.Objetivo end) objetivo,
         sum(case when dt2.fecha = convert(date,GETDATE()-1) and {'a.idTipo <> 0' if not hayCanal else 'a.idTipo = '+self.filtros.canal} then vtaSinImp else 0 end) DiaVencidoAnioActual,
         sum(case when dt2.fecha = convert(date,DATEADD(yy,-1,GETDATE()-1)) and {'a.idTipo <> 0' if not hayCanal else 'a.idTipo = '+self.filtros.canal} then vtaSinImp else 0 end) DiaVencidoAnioAnterior,
@@ -3914,7 +3914,7 @@ class Tablas():
         case when sum(case when dt2.fecha = convert(date,DATEADD(yy,-1,GETDATE()-1)) and a.idTipo = 0 then vtaSinImp else 0 end)=0 then 0 else
         (sum(case when dt2.fecha = convert(date,DATEADD(yy,-1,GETDATE()-1)) and {'a.idTipo <> 0' if not hayCanal else 'a.idTipo = '+self.filtros.canal} then vtaSinImp else 0 end) /
         sum(case when dt2.fecha = convert(date,DATEADD(yy,-1,GETDATE()-1)) and a.idTipo = 0 then vtaSinImp else 0 end)) end porcParDiffVencido,
-        max(case when dt2.fecha = convert(date,GETDATE()) and a.hora < DATEPART( hh,GETDATE()) then hora end) hora
+        max(case when dt2.fecha = convert(date,GETDATE()) and a.hora < DATEPART( hh,GETDATE()) - 1 then hora end) hora
         from DWH.artus.ventaDiarioHoraSubClase a
         left join DWH.dbo.dim_tiempo dt on a.fecha =dt.fechaComparacion
         left join DWH.dbo.dim_tiempo dt2 on a.fecha =dt2.id_fecha
@@ -3932,7 +3932,7 @@ class Tablas():
         --- se agrega el filtro del nivel que quieren consultar
         group by {agrupador} ---se cambia el agrupador
         order by {'c.' if self.titulo == 'Detalle Formatos para SubClase $subClase' else 'b.'}{campoB}"""
-        # print(f"query desde tablas->Temporada->{self.titulo}: {str(pipeline)}")
+        print(f"query desde tablas->Temporada->{self.titulo}: {str(pipeline)}")
         cnxn = conexion_sql('DWH')
         cursor = cnxn.cursor().execute(pipeline)
         arreglo = crear_diccionario(cursor)
