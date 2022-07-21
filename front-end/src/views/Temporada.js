@@ -28,9 +28,9 @@ const Temporada = () => {
     const [fuenteDataStudio, setFuenteDataStudio] = useState('')
     // console.log(`Fecha y hora actual: ${new Date()}`)
 
-    useEffect(() => {
-      console.log(`canal=${canal}`)
-    }, [canal])
+    // useEffect(() => {
+    //   console.log(`canal=${canal}`)
+    // }, [canal])
     useEffect(() => {
       setSubDepto('')
     }, [depto])
@@ -61,7 +61,9 @@ const Temporada = () => {
         </Col>
       </Row>
       <Row className='match-height'>
-            <TarjetaEnFila icono={<DollarSign size={21} />} seccion={seccion} formato='moneda' titulo='Indicadores' cols={{ xl: '4', sm: '6' }}/>
+        <Col sm='12'>
+          <TarjetaEnFila icono={<DollarSign size={21} />} seccion={seccion} formato='moneda' titulo='Indicadores' cols={{ xl: '4', sm: '6' }}/>
+        </Col>
       </Row>
       {/* <Row className='match-height'>
             <Tarjeta icono={<DollarSign size={21} />} seccion={seccion} formato='moneda' titulo='Venta Última Hora' />

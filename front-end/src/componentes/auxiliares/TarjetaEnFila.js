@@ -140,35 +140,31 @@ const TarjetaEnFila = ({ cols, icono, titulo, tituloAPI, seccion, className, for
       const margin = index === 2 ? 'sm' : colMargin[0]
       return (
         <Col
-          key={index}
-          {...cols}
-          className={classnames({
-            [`mb-2 mb-${margin}-0`]: index !== data.length - 1
-          })}
-        >
-          <div className='d-flex align-items-center'>
-            <Avatar icon={item.icon} className='avatar p-50 m-0 mb-1 bg-light-primary' />
-            <div className='my-auto'>
-              <h4 className='fw-bolder mb-0'>{item.valor}</h4>
-              <CardText className='font-small-3 mb-0'>{item.titulo}</CardText>
-            </div>
+        key={index}
+        {...cols}
+        className={classnames({
+          [`mb-2 mb-${margin}-0`]: index !== data.length - 1
+        })}
+      >
+        <div className='d-flex align-items-center'>
+          <Avatar icon={item.icon} className='avatar p-50 m-0 mb-1 bg-light-primary mr-1' />
+          <div className='my-auto'>
+            <h4 className='fw-bolder mb-0'>{item.valor}</h4>
+            <CardText className='font-small-3 mb-0'>{item.titulo}</CardText>
           </div>
-        </Col>
+        </div>
+      </Col>
       )
     })
   }
 
   return (
-    <Card className='card-statistics'>
-    {estadoLoader.contador === 0 && resAPI !== 'cargando' && <>
-      <CardHeader>
-        <CardTitle tag='h4'>{titulo_enviar}</CardTitle>
-      </CardHeader>
-      <CardBody className='statistics-body'>
-        <Row>{renderData()}</Row>
-      </CardBody>
-    </>}
+    <Card>
+      <CardBody className={className}>
+    {estadoLoader.contador === 0 && resAPI !== 'cargando' && 
+        <Row>{renderData()}</Row>}
     {(estadoLoader.contador !== 0 || resAPI === 'cargando') && <LoadingGif />}
+      </CardBody>
     </Card>
   )
 }
