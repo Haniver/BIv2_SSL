@@ -14,7 +14,14 @@ import {
   DollarSign,
   FileText,
   Percent,
-  Package
+  Package,
+  Calendar,
+  Target,
+  Divide,
+  DivideCircle,
+  FastForward,
+  Navigation2,
+  PieChart
 } from 'react-feather'
 
 // ** Custom Components
@@ -47,29 +54,36 @@ const TarjetaEnFila = ({ cols, icono, titulo, tituloAPI, seccion, className, for
     DollarSign,
     FileText,
     Percent,
-    Package
+    Package,
+    Calendar,
+    Target,
+    Divide,
+    DivideCircle,
+    FastForward,
+    Navigation2,
+    PieChart
   }
   const [data, setData] = useState([
     {
-      title: '230k',
+      valor: '230k',
       titulo: 'Sales',
       color: 'light-primary',
       icon: <TrendingUp size={18} />
     },
     {
-      title: '8.549k',
+      valor: '8.549k',
       titulo: 'Customers',
       color: 'light-info',
       icon: <User size={18} />
     },
     {
-      title: '1.423k',
+      valor: '1.423k',
       titulo: 'Products',
       color: 'light-danger',
       icon: <Box size={18} />
     },
     {
-      title: '$9745',
+      valor: '$9745',
       titulo: 'Revenue',
       color: 'light-success',
       icon: <DollarSign size={18} />

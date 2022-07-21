@@ -62,7 +62,7 @@ const Temporada = () => {
       </Row>
       <Row className='match-height'>
         <Col sm='12'>
-          <TarjetaEnFila icono={<DollarSign size={21} />} seccion={seccion} formato='moneda' titulo='Indicadores' cols={{ xl: '4', sm: '6' }}/>
+          <TarjetaEnFila seccion={seccion} formato='moneda' titulo='Indicadores' cols={{ xl: '4', sm: '6' }}/>
         </Col>
       </Row>
       {/* <Row className='match-height'>

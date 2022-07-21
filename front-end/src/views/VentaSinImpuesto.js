@@ -6,6 +6,7 @@ import fechas_srv from '../services/fechas_srv'
 import EjesMultiples from '../componentes/graficos/EjesMultiples'
 import Tabla from '../componentes/tablas/Tabla'
 import tarjetasCombinadas from '../services/tarjetasCombinadas'
+import TarjetaEnFila from '../componentes/auxiliares/TarjetaEnFila'
 // import userService from '../services/user.service'
 
 import {
@@ -38,39 +39,39 @@ const VentaSinImpuesto = () => {
   const seccion = 'VentaSinImpuesto'
 
   useEffect(async () => {
-    setTarjetasCombinadasAnio('cargando')
-    setTarjetasCombinadasMes('cargando')
-    setTarjetasCombinadasMesAlDia('cargando')
-    const resAnio = await tarjetasCombinadas(seccion, 'Anio', {
-        fechas, 
-        region, 
-        zona, 
-        tienda, 
-        canal, 
-        depto, 
-        subDepto
-    })
-    setTarjetasCombinadasAnio(resAnio)
-    const resMes = await tarjetasCombinadas(seccion, 'Mes', {
-        fechas, 
-        region, 
-        zona, 
-        tienda, 
-        canal, 
-        depto, 
-        subDepto
-    })
-    setTarjetasCombinadasMes(resMes)
-    const resMesAlDia = await tarjetasCombinadas(seccion, 'MesAlDia', {
-        fechas, 
-        region, 
-        zona, 
-        tienda, 
-        canal, 
-        depto, 
-        subDepto
-    })
-    setTarjetasCombinadasMesAlDia(resMesAlDia)
+    // setTarjetasCombinadasAnio('cargando')
+    // setTarjetasCombinadasMes('cargando')
+    // setTarjetasCombinadasMesAlDia('cargando')
+    // const resAnio = await tarjetasCombinadas(seccion, 'Anio', {
+    //     fechas, 
+    //     region, 
+    //     zona, 
+    //     tienda, 
+    //     canal, 
+    //     depto, 
+    //     subDepto
+    // })
+    // setTarjetasCombinadasAnio(resAnio)
+    // const resMes = await tarjetasCombinadas(seccion, 'Mes', {
+    //     fechas, 
+    //     region, 
+    //     zona, 
+    //     tienda, 
+    //     canal, 
+    //     depto, 
+    //     subDepto
+    // })
+    // setTarjetasCombinadasMes(resMes)
+    // const resMesAlDia = await tarjetasCombinadas(seccion, 'MesAlDia', {
+    //     fechas, 
+    //     region, 
+    //     zona, 
+    //     tienda, 
+    //     canal, 
+    //     depto, 
+    //     subDepto
+    // })
+    // setTarjetasCombinadasMesAlDia(resMesAlDia)
   }, [fechas, region, zona, tienda, canal, depto, subDepto])
 
   useEffect(() => {
@@ -92,6 +93,11 @@ const VentaSinImpuesto = () => {
         </Col>
       </Row>
       <Row className='match-height'>
+        <Col sm='12'>
+          <TarjetaEnFila seccion={seccion} formato='moneda' titulo='Indicadores' cols={{ xl: '4', sm: '6' }} fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto}/>
+        </Col>
+      </Row>
+      {/* <Row className='match-height'>
         <Col>
           <Tarjeta icono={<DollarSign size={21} />} formato='moneda' titulo={`Venta ${anio}`} tituloAPI='Venta $anio' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} resAPI={tarjetasCombinadasAnio} />
         </Col>
@@ -145,7 +151,7 @@ const VentaSinImpuesto = () => {
       </Row>
         <Col>
            <Tarjeta icono={<DollarSign size={21} />} formato='moneda' titulo={`Venta del 1 al ${fechas_srv.ultimoDiaVencidoDelMesReal(anio, mes)} de ${fechas_srv.mesTexto(mes)} ${anio}`} tituloAPI='Venta 1 al $dia $mes $anioActual' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} resAPI={tarjetasCombinadasMesAlDia} />
-        </Col>
+        </Col> */}
       <Row className='match-height'>
         <Col sm='12'>
           <EjesMultiples titulo={`Venta anual por mes: ${anio} vs. ${anio - 1} y Objetivo`} tituloAPI='Venta anual por mes: $anioActual vs. $anioAnterior y Objetivo' formato='moneda' yLabel='Pesos' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} seccion={seccion} />
