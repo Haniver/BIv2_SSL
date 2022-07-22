@@ -7,7 +7,7 @@ from app.servicios.Filtro import Filtro
 from datetime import date, datetime, timedelta
 from calendar import monthrange
 from app.servicios.permisos import tienePermiso
-from app.servicios.formatoFechas import mesTexto
+from app.servicios.formatoFechas import mesTexto, ultimoDiaVencidoDelMesReal
 
 router = APIRouter(
     prefix="/tarjetasEnFila",
@@ -26,6 +26,7 @@ class TarjetasEnFila():
             self.mesElegido = datetime.strptime(filtros.fechas['fecha_fin'], '%Y-%m-%dT%H:%M:%S.%fZ').month
             self.diaElegido = datetime.strptime(filtros.fechas['fecha_fin'], '%Y-%m-%dT%H:%M:%S.%fZ').day
             self.mesTexto = mesTexto(self.mesElegido)
+            self.diaVencido = ultimoDiaVencidoDelMesReal(self.anioElegido, self.mesElegido)
 
             self.anioElegido_inicio = datetime(self.anioElegido, 1, 1).strftime('%Y%m%d')
             self.anioElegido_fin = datetime(self.anioElegido, self.mesElegido, self.diaElegido).strftime('%Y%m%d')
@@ -277,91 +278,91 @@ class TarjetasEnFila():
         print(f'Respuesta desde TarjetasCombinadas que realmente son tarjetasEnFila: {res_tmp}')
         res = [
             {
-                'titulo': 'Venta $anio',
+                'titulo': f'Venta {self.anioElegido}',
                 'valor': res_tmp['Venta $anio'],
                 'icon': 'DollarSign',
                 'formato': 'moneda'
             },
             {
-                'titulo': 'Venta $anioPasado al $dia de $mes',
+                'titulo': f'Venta {self.anioElegido - 1} al {self.diaVencido} de {self.mesTexto}',
                 'valor': res_tmp['Venta $anioPasado al $dia de $mes'],
                 'icon': 'Calendar',
                 'formato': 'moneda'
             },
             {
-                'titulo': 'Objetivo $anioActual al $dia de $mes',
+                'titulo': f'Objetivo {self.anioElegido} al {self.diaVencido} de {self.mesTexto}',
                 'valor': res_tmp['Objetivo $anioActual al $dia de $mes'],
                 'icon': 'Target',
                 'formato': 'moneda'
             },
             {
-                'titulo': 'Variación $anioActual vs. $anioAnterior',
+                'titulo': f'Variación {self.anioElegido} vs. {self.anioElegido - 1}',
                 'valor': res_tmp['Variación $anioActual vs. $anioAnterior'],
                 'icon': 'Divide',
                 'formato': 'porcentaje'
             },
             {
-                'titulo': 'Variación Objetivo $anioActual',
+                'titulo': f'Variación Objetivo {self.anioElegido}',
                 'valor': res_tmp['Variación Objetivo $anioActual'],
                 'icon': 'DivideCircle',
                 'formato': 'porcentaje'
             },
             {
-                'titulo': 'Venta $mes $anio',
+                'titulo': f'Venta {self.mesTexto} {self.anioElegido}',
                 'valor': res_tmp['Venta $mes $anio'],
                 'icon': 'DollarSign',
                 'formato': 'moneda'
             },
             {
-                'titulo': 'Objetivo $mes $anio',
+                'titulo': f'Objetivo {self.mesTexto} {self.anioElegido}',
                 'valor': res_tmp['Objetivo $mes $anio'],
                 'icon': 'Target',
                 'formato': 'moneda'
             },
             {
-                'titulo': 'Proyección $mes $anio',
+                'titulo': f'Proyección {self.mesTexto} {self.anioElegido}',
                 'valor': res_tmp['Proyección $mes $anio'],
                 'icon': 'FastForward',
                 'formato': 'moneda'
             },
             {
-                'titulo': 'Avance $mes $anio',
+                'titulo': f'Avance {self.mesTexto} {self.anioElegido}',
                 'valor': res_tmp['Avance $mes $anio'],
                 'icon': 'Navigation2',
                 'formato': 'porcentaje'
             },
             {
-                'titulo': 'Alcance $mes $anio',
+                'titulo': f'Alcance {self.mesTexto} {self.anioElegido}',
                 'valor': res_tmp['Alcance $mes $anio'],
                 'icon': 'PieChart',
                 'formato': 'porcentaje'
             },
             {
-                'titulo': 'Venta 1 al $dia $mes $anioActual',
+                'titulo': f'Venta 1 al {self.diaVencido} {self.mesTexto} {self.anioElegido}',
                 'valor': res_tmp['Venta 1 al $dia $mes $anioActual'],
                 'icon': 'DollarSign',
                 'formato': 'moneda'
             },
             {
-                'titulo': 'Objetivo 1 al $dia $mes $anio',
+                'titulo': f'Objetivo 1 al {self.diaVencido} {self.mesTexto} {self.anioElegido}',
                 'valor': res_tmp['Objetivo 1 al $dia $mes $anio'],
                 'icon': 'Target',
                 'formato': 'moneda'
             },
             {
-                'titulo': 'Objetivo Vs. Venta al $dia $mes $anio',
+                'titulo': f'Objetivo Vs. Venta al {self.diaVencido} {self.mesTexto} {self.anioElegido}',
                 'valor': res_tmp['Objetivo Vs. Venta al $dia $mes $anio'],
                 'icon': 'Navigation2',
                 'formato': 'porcentaje'
             },
             {
-                'titulo': 'Venta 1 al $dia $mes $anioAnterior',
+                'titulo': f'Venta 1 al {self.diaVencido} {self.mesTexto} {self.anioElegido - 1}',
                 'valor': res_tmp['Venta 1 al $dia $mes $anioAnterior'],
                 'icon': 'Calendar',
                 'formato': 'moneda'
             },
             {
-                'titulo': 'Venta $anioAnterior Vs. $anioActual al $dia $mes',
+                'titulo': f'Venta {self.anioElegido - 1} Vs. {self.anioElegido} al {self.diaVencido} {self.mesTexto}',
                 'valor': res_tmp['Venta $anioAnterior Vs. $anioActual al $dia $mes'],
                 'icon': 'DivideCircle',
                 'formato': 'porcentaje'

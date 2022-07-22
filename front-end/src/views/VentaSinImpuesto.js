@@ -36,6 +36,8 @@ const VentaSinImpuesto = () => {
   const [tarjetasCombinadasAnio, setTarjetasCombinadasAnio] = useState('cargando')
   const [tarjetasCombinadasMesAlDia, setTarjetasCombinadasMesAlDia] = useState('cargando')
 
+  console.log(`fechas_srv.ultimoDiaVencidoDelMesReal(anio, mes): ${fechas_srv.ultimoDiaVencidoDelMesReal(anio, mes)}`)
+
   const seccion = 'VentaSinImpuesto'
 
   useEffect(async () => {
