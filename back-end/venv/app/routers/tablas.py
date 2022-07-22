@@ -538,10 +538,18 @@ class Tablas():
                 'regionNombre': '$sucursal.regionNombre',
                 'zonaNombre': '$sucursal.zonaNombre',
                 'tiendaNombre': '$sucursal.tiendaNombre',
-                'Delivering': {'$cond': [{'$eq': ["$estatus","Delivering"]}, 1, 0]},
-                'PickPack': {'$cond': [{'$eq': ["$estatus","Pick Pack"]}, 1, 0]},
-                'Ready': {'$cond': [{'$eq': ["$estatus","Ready"]}, 1, 0]},
-                'ReadyForPickUp': {'$cond': [{'$eq': ["$estatus","Ready for Pick Up"]}, 1, 0]}
+                'Entregado': {'$cond': [{'$eq': ["$estatus","Entregado"]}, 1, 0]},
+                'PagoPendiente': {'$cond': [{'$eq': ["$estatus","Pago pendiente"]}, 1, 0]},
+                'PendienteDeAuditoria': {'$cond': [{'$eq': ["$estatus","Pendiente de auditoría"]}, 1, 0]},
+                'PickeadoPorFacturar': {'$cond': [{'$eq': ["$estatus","Pickeado por facturar"]}, 1, 0]},
+                'EnPicking': {'$cond': [{'$eq': ["$estatus","En picking"]}, 1, 0]},
+                'ListoParaRetirar': {'$cond': [{'$eq': ["$estatus","Listo para retirar"]}, 1, 0]},
+                'ListoParaEnviar': {'$cond': [{'$eq': ["$estatus","Listo para enviar"]}, 1, 0]},
+                'PendientePicking': {'$cond': [{'$eq': ["$estatus","Pendiente picking"]}, 1, 0]},
+                'AuditoríaRechazada': {'$cond': [{'$eq': ["$estatus","Auditoría rechazada"]}, 1, 0]},
+                'Despachado': {'$cond': [{'$eq': ["$estatus","Despachado"]}, 1, 0]},
+                'AReprogramarEntrega': {'$cond': [{'$eq': ["$estatus","A reprogramar entrega"]}, 1, 0]},
+                'S/D': {'$cond': [{'$eq': ["$estatus","S/D"]}, 1, 0]},
                 }},
                 {'$group': {
                     '_id': {
@@ -550,10 +558,18 @@ class Tablas():
                         'zonaNombre': '$zonaNombre',
                         'tiendaNombre': '$tiendaNombre',
                     },
-                    'Delivering': {'$sum': '$Delivering'},
-                    'PickPack': {'$sum': '$PickPack'},
-                    'Ready': {'$sum': '$Ready'},
-                    'ReadyForPickUp': {'$sum': '$ReadyForPickUp'}
+                    'Entregado': {'$sum': '$Entregado'},
+                    'PagoPendiente': {'$sum': '$PagoPendiente'},
+                    'PendienteDeAuditoria': {'$sum': '$PendienteDeAuditoria'},
+                    'PickeadoPorFacturar': {'$sum': '$PickeadoPorFacturar'},
+                    'EnPicking': {'$sum': '$EnPicking'},
+                    'ListoParaRetirar': {'$sum': '$ListoParaRetirar'},
+                    'ListoParaEnviar': {'$sum': '$ListoParaEnviar'},
+                    'PendientePicking': {'$sum': '$PendientePicking'},
+                    'AuditoríaRechazada': {'$sum': '$AuditoríaRechazada'},
+                    'Despachado': {'$sum': '$Despachado'},
+                    'AReprogramarEntrega': {'$sum': '$AReprogramarEntrega'},
+                    'S/D': {'$sum': '$S/D'}
                 }},
                 {'$project': {
                     'fechaEntrega': '$_id.fechaEntrega',
@@ -565,10 +581,18 @@ class Tablas():
                     'regionNombre': '$_id.regionNombre',
                     'zonaNombre': '$_id.zonaNombre',
                     'tiendaNombre': '$_id.tiendaNombre',
-                    'Delivering': {'$sum': '$Delivering'},
-                    'PickPack': {'$sum': '$PickPack'},
-                    'Ready': {'$sum': '$Ready'},
-                    'ReadyForPickUp': {'$sum': '$ReadyForPickUp'}
+                    'Entregado': {'$sum': '$Entregado'},
+                    'PagoPendiente': {'$sum': '$PagoPendiente'},
+                    'PendienteDeAuditoria': {'$sum': '$PendienteDeAuditoria'},
+                    'PickeadoPorFacturar': {'$sum': '$PickeadoPorFacturar'},
+                    'EnPicking': {'$sum': '$EnPicking'},
+                    'ListoParaRetirar': {'$sum': '$ListoParaRetirar'},
+                    'ListoParaEnviar': {'$sum': '$ListoParaEnviar'},
+                    'PendientePicking': {'$sum': '$PendientePicking'},
+                    'AuditoríaRechazada': {'$sum': '$AuditoríaRechazada'},
+                    'Despachado': {'$sum': '$Despachado'},
+                    'AReprogramarEntrega': {'$sum': '$AReprogramarEntrega'},
+                    'S/D': {'$sum': '$S/D'}
                 }},
                 {'$sort': {'fechaOrdenar': 1, 'regionNombre': 1, 'zonaNombre': 1, 'tiendaNombre': 1}}
             ])
@@ -583,11 +607,19 @@ class Tablas():
                         'regionNombre': dato['_id']['regionNombre'],
                         'zonaNombre': dato['_id']['zonaNombre'],
                         'tiendaNombre': dato['_id']['tiendaNombre'],
-                        'Delivering': dato['Delivering'],
-                        'PickPack': dato['PickPack'],
-                        'Ready': dato['Ready'],
-                        'ReadyForPickUp': dato['ReadyForPickUp'],
-                        'Suma': int(dato['Delivering']) + int(dato['PickPack']) + int(dato['Ready']) + int(dato['ReadyForPickUp'])
+                        'Entregado': dato['Entregado'],
+                        'PagoPendiente': dato['PagoPendiente'],
+                        'PendienteDeAuditoria': dato['PendienteDeAuditoria'],
+                        'PickeadoPorFacturar': dato['PickeadoPorFacturar'],
+                        'EnPicking': dato['EnPicking'],
+                        'ListoParaRetirar': dato['ListoParaRetirar'],
+                        'ListoParaEnviar': dato['ListoParaEnviar'],
+                        'PendientePicking': dato['PendientePicking'],
+                        'AuditoríaRechazada': dato['AuditoríaRechazada'],
+                        'Despachado': dato['Despachado'],
+                        'AReprogramarEntrega': dato['AReprogramarEntrega'],
+                        'S/D': dato['S/D'],
+                        'Total': int(dato['Entregado']) + int(dato['PagoPendiente']) + int(dato['PendienteDeAuditoria']) + int(dato['PickeadoPorFacturar'] + int(dato['EnPicking']) + int(dato['ListoParaRetirar']) + int(dato['ListoParaEnviar']) + int(dato['PendientePicking']) + int(dato['AuditoríaRechazada']) + int(dato['Despachado']) + int(dato['AReprogramarEntrega']) + int(dato['S/D']))
                     })
             else:
                 hayResultados = 'no'
@@ -596,11 +628,19 @@ class Tablas():
                     {'name': 'Región', 'selector':'regionNombre', 'formato':'texto', 'ancho': '240px'},
                     {'name': 'Zona', 'selector':'zonaNombre', 'formato':'texto', 'ancho': '240px'},
                     {'name': 'Tienda', 'selector':'tiendaNombre', 'formato':'texto', 'ancho': '360px'},
-                    {'name': 'Delivering', 'selector':'Delivering', 'formato':'entero'},
-                    {'name': 'Pick Pack', 'selector':'PickPack', 'formato':'entero', 'ancho': '110px'},
-                    {'name': 'Ready', 'selector':'Ready', 'formato':'entero'},
-                    {'name': 'Ready for Pick Up', 'selector':'ReadyForPickUp', 'formato':'entero'},
-                    {'name': 'Suma', 'selector':'Suma', 'formato':'entero'}
+                    {'name': 'Entregado', 'selector':'Entregado', 'formato':'entero'},
+                    {'name': 'Pago Pendiente', 'selector':'PagoPendiente', 'formato':'entero', 'ancho': '110px'},
+                    {'name': 'Pendiente de Auditoría', 'selector':'PendienteDeAuditoria', 'formato':'entero'},
+                    {'name': 'Pickeado por Facturar', 'selector':'PickeadoPorFacturar', 'formato':'entero'},
+                    {'name': 'En Picking', 'selector':'EnPicking', 'formato':'entero'},
+                    {'name': 'Listo Para Retirar', 'selector':'ListoParaRetirar', 'formato':'entero'},
+                    {'name': 'Listo Para Enviar', 'selector':'ListoParaEnviar', 'formato':'entero'},
+                    {'name': 'Pendiente picking', 'selector':'PendientePicking', 'formato':'entero'},
+                    {'name': 'Auditoría Rechazada', 'selector':'AuditoríaRechazada', 'formato':'entero'},
+                    {'name': 'Despachado', 'selector':'Despachado', 'formato':'entero'},
+                    {'name': 'A Reprogramar Entrega', 'selector':'AReprogramarEntrega', 'formato':'entero'},
+                    {'name': 'S/D', 'selector':'S/D', 'formato':'entero'},
+                    {'name': 'Total', 'selector':'Total', 'formato':'entero'}
                 ]
         if self.titulo == 'Pedidos No Entregados o No Cancelados Tienda $tienda':
             if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
