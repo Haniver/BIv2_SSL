@@ -738,113 +738,115 @@ class Tablas():
 
         hoy = datetime.now()
 
-        if self.filtros.depto != '' and self.filtros.depto != "False" and self.filtros.depto != None:
-            query_filtro_depto = f" and cd.idDepto = {self.filtros.depto} "
-            campo_depto = 'subDeptoDescrip'
-            titulo_nivel_producto = 'Sub Departamento'
-        else:
-            query_filtro_depto = ''
-            campo_depto = 'deptoDescrip'
-            titulo_nivel_producto = 'Departamento'
-        pipeline = f"""select cd.{campo_depto} '{titulo_nivel_producto}',
-            sum(case when anio={anioElegido-1} and dt.fecha < convert(date,DATEADD(yy,-1,(GETDATE()))) then ventaSinImpuestos else 0 end) AAnterior,
-            sum(case when anio={anioElegido} then ventaSinImpuestos else 0 end) AActual,
-            sum(case when anio={anioElegido} then objetivo else 0 end) objetivo,
-            sum(case when anio=2022 and dt.fecha <= '{fechaElegida}' then objetivo else 0 end) objetivoDia
-            from DWH.artus.ventaDiaria vd
-            left join DWH.dbo.dim_tiempo dt on vd.fecha=dt.id_fecha
-            left join DWH.artus.cat_departamento cd on vd.subDepto=cd.idSubDepto
-            left join DWH.artus.catTienda ct on vd.idTienda =ct.tienda
-            left join DWH.artus.catCanal cc on vd.idCanal =cc.idCanal
-            where dt.anio in ({anioElegido-1},{anioElegido}) and cc.tipo in ({canal}) and dt.num_mes in({mesElegido}) {query_filtro_depto} """
-        if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
-            if self.filtros.zona != '' and self.filtros.zona != "False" and self.filtros.zona != None:
-                if self.filtros.tienda != '' and self.filtros.tienda != "False" and self.filtros.tienda != None:
-                    pipeline += f""" and ct.tienda = {self.filtros.tienda} """
-                else:
-                    pipeline += f""" and ct.zona = {self.filtros.zona} """
+        if self.titulo == 'Venta sin impuesto por Departamento o Sub Departamento':
+
+            if self.filtros.depto != '' and self.filtros.depto != "False" and self.filtros.depto != None:
+                query_filtro_depto = f" and cd.idDepto = {self.filtros.depto} "
+                campo_depto = 'subDeptoDescrip'
+                titulo_nivel_producto = 'Sub Departamento'
             else:
-                pipeline += f""" and ct.region = {self.filtros.region} """
-        pipeline += f" group by cd.{campo_depto} "
-
-        # print(f'Query desde VentaSinImpuesto en tablas: {pipeline}')
-        cnxn = conexion_sql('DWH')
-        cursor = cnxn.cursor().execute(pipeline)
-        arreglo = crear_diccionario(cursor)
-
-        if len(arreglo) > 0:
-            hayResultados = "si"
-            for i in range(len(arreglo)):
-                # if self.filtros.canal == '1':
-                objetivo = arreglo[i]['objetivo']
-                objetivoDia = arreglo[i]['objetivoDia']
-                # print(f'objetivoDia = {str(objetivoDia)}')
-                alcance = (arreglo[i]['AActual']/objetivo) - 1 if objetivo else '--'
-                alcanceDia = (arreglo[i]['AActual']/objetivoDia) - 1 if objetivoDia else '--'
-                # else:
-                #     alcance = '--'
-                #     objetivo = '--'
-                #     alcanceDia = '--'
-                #     objetivoDia = '--'
-                vsaa = (arreglo[i]['AActual'] / arreglo[i]['AAnterior']) - 1 if arreglo[i]['AAnterior'] != 0 else '--'
-                data.append({
-                    'depto': arreglo[i][titulo_nivel_producto],
-                    'objetivo': objetivo,
-                    'venta': arreglo[i]['AActual'],
-                    'alcance': alcance,
-                    'venta_anterior': arreglo[i]['AAnterior'],
-                    'vsaa': vsaa,
-                    'objetivoDia': objetivoDia,
-                    'alcanceDia': alcanceDia,
-                })
-            columns = [
-                {'name': titulo_nivel_producto, 'selector':'depto', 'formato':'texto', 'ancho': '220px'},
-                {'name': 'Objetivo '+mesTexto(mesElegido), 'selector':'objetivo', 'formato':'moneda'},
-                {'name': 'Venta '+mesTexto(mesElegido)+' '+str(anioElegido), 'selector':'venta', 'formato':'moneda'},
-                {'name': 'Alcance al Objetivo '+mesTexto(mesElegido), 'selector':'alcance', 'formato':'porcentaje'},
-                {'name': 'Venta '+str(diaElegido)+' '+mesTexto(mesElegido)+' '+str(anioElegido - 1), 'selector':'venta_anterior', 'formato':'moneda'},
-                {'name': 'Vs. '+str(anioElegido-1), 'selector':'vsaa', 'formato':'porcentaje'},
-                {'name': 'Objetivo al '+str(diaElegido)+' de '+mesTexto(mesElegido)+' '+str(anioElegido), 'selector':'objetivoDia', 'formato':'moneda'},
-                {'name': 'Alcance al Objetivo '+str(diaElegido)+' de '+mesTexto(mesElegido), 'selector':'alcanceDia', 'formato':'porcentaje'},
-            ]
-        else:
-            hayResultados = 'no'
-
-        if self.titulo == 'Venta mensual por lugar: $anioActual vs. $anioAnterior y Objetivo':
-            # print('self.filtros.canal = '+self.filtros.canal)
-            mod_titulo_serie = f"{mesTexto(mesElegido)} "
-
-            if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
-                if self.filtros.zona != '' and self.filtros.zona != "False" and self.filtros.zona != None:
-                    filtro_lugar = f" and ct.zona = {self.filtros.zona} "
-                    campo_siguiente_lugar = 'tiendaNombre'
-                else:
-                    filtro_lugar = f" and ct.region = {self.filtros.region} "
-                    campo_siguiente_lugar = 'zonaNombre'
-            else:
-                filtro_lugar = ''
-                campo_siguiente_lugar = 'regionNombre'
-
-            pipeline = f"""select ct.{campo_siguiente_lugar} lugar,
-                sum(case when anio={anioElegido-1} then ventaSinImpuestos else 0 end) AAnterior,
+                query_filtro_depto = ''
+                campo_depto = 'deptoDescrip'
+                titulo_nivel_producto = 'Departamento'
+            pipeline = f"""select cd.{campo_depto} '{titulo_nivel_producto}',
+                sum(case when anio={anioElegido-1} and dt.fecha < convert(date,DATEADD(yy,-1,(GETDATE()))) then ventaSinImpuestos else 0 end) AAnterior,
                 sum(case when anio={anioElegido} then ventaSinImpuestos else 0 end) AActual,
-                sum(case when anio={anioElegido} then objetivo else 0 end) objetivo
+                sum(case when anio={anioElegido} then objetivo else 0 end) objetivo,
+                sum(case when anio=2022 and dt.fecha <= '{fechaElegida}' then objetivo else 0 end) objetivoDia
                 from DWH.artus.ventaDiaria vd
                 left join DWH.dbo.dim_tiempo dt on vd.fecha=dt.id_fecha
+                left join DWH.artus.cat_departamento cd on vd.subDepto=cd.idSubDepto
                 left join DWH.artus.catTienda ct on vd.idTienda =ct.tienda
                 left join DWH.artus.catCanal cc on vd.idCanal =cc.idCanal
-                left join DWH.artus.cat_departamento cd on vd.subDepto = cd.idSubDepto
-                where dt.anio in ({anioElegido},{anioElegido-1})
-                and dt.abrev_mes='{mesTexto(mesElegido)}'
-                and cc.tipo in ({canal}) {filtro_lugar} """
+                where dt.anio in ({anioElegido-1},{anioElegido}) and cc.tipo in ({canal}) and dt.num_mes in({mesElegido}) {query_filtro_depto} """
+            if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
+                if self.filtros.zona != '' and self.filtros.zona != "False" and self.filtros.zona != None:
+                    if self.filtros.tienda != '' and self.filtros.tienda != "False" and self.filtros.tienda != None:
+                        pipeline += f""" and ct.tienda = {self.filtros.tienda} """
+                    else:
+                        pipeline += f""" and ct.zona = {self.filtros.zona} """
+                else:
+                    pipeline += f""" and ct.region = {self.filtros.region} """
+            pipeline += f" group by cd.{campo_depto} "
+
+            # print(f'Query desde VentaSinImpuesto en tablas: {pipeline}')
+            cnxn = conexion_sql('DWH')
+            cursor = cnxn.cursor().execute(pipeline)
+            arreglo = crear_diccionario(cursor)
+
+            if len(arreglo) > 0:
+                hayResultados = "si"
+                for i in range(len(arreglo)):
+                    # if self.filtros.canal == '1':
+                    objetivo = arreglo[i]['objetivo']
+                    objetivoDia = arreglo[i]['objetivoDia']
+                    # print(f'objetivoDia = {str(objetivoDia)}')
+                    alcance = (arreglo[i]['AActual']/objetivo) - 1 if objetivo else '--'
+                    alcanceDia = (arreglo[i]['AActual']/objetivoDia) - 1 if objetivoDia else '--'
+                    # else:
+                    #     alcance = '--'
+                    #     objetivo = '--'
+                    #     alcanceDia = '--'
+                    #     objetivoDia = '--'
+                    vsaa = (arreglo[i]['AActual'] / arreglo[i]['AAnterior']) - 1 if arreglo[i]['AAnterior'] != 0 else '--'
+                    data.append({
+                        'depto': arreglo[i][titulo_nivel_producto],
+                        'objetivo': objetivo,
+                        'venta': arreglo[i]['AActual'],
+                        'alcance': alcance,
+                        'venta_anterior': arreglo[i]['AAnterior'],
+                        'vsaa': vsaa,
+                        'objetivoDia': objetivoDia,
+                        'alcanceDia': alcanceDia,
+                    })
+                columns = [
+                    {'name': titulo_nivel_producto, 'selector':'depto', 'formato':'texto', 'ancho': '220px'},
+                    {'name': 'Objetivo '+mesTexto(mesElegido), 'selector':'objetivo', 'formato':'moneda'},
+                    {'name': 'Venta '+mesTexto(mesElegido)+' '+str(anioElegido), 'selector':'venta', 'formato':'moneda'},
+                    {'name': 'Alcance al Objetivo '+mesTexto(mesElegido), 'selector':'alcance', 'formato':'porcentaje'},
+                    {'name': 'Venta '+str(diaElegido)+' '+mesTexto(mesElegido)+' '+str(anioElegido - 1), 'selector':'venta_anterior', 'formato':'moneda'},
+                    {'name': 'Vs. '+str(anioElegido-1), 'selector':'vsaa', 'formato':'porcentaje'},
+                    {'name': 'Objetivo al '+str(diaElegido)+' de '+mesTexto(mesElegido)+' '+str(anioElegido), 'selector':'objetivoDia', 'formato':'moneda'},
+                    {'name': 'Alcance al Objetivo '+str(diaElegido)+' de '+mesTexto(mesElegido), 'selector':'alcanceDia', 'formato':'porcentaje'},
+                ]
+            else:
+                hayResultados = 'no'
+
+        if self.titulo == 'Venta anual por mes: $anioActual vs. $anioAnterior y Objetivo':
+            mod_titulo_serie = ''
+            serie1 = []
+            serie2 = []
+            serie3 = []
+            serie4 = []
+            serie5 = []
+            
+
+            pipeline = f"""select dt.abrev_mes categoria,
+            sum(case when anio={anioElegido-1} then ventaSinImpuestos else 0 end) AAnterior,
+            sum(case when anio={anioElegido} then ventaSinImpuestos else 0 end) AActual,
+            sum(case when anio={anioElegido} then objetivo else 0 end) objetivo
+            from DWH.artus.ventaDiaria vd
+            left join DWH.dbo.dim_tiempo dt on vd.fecha=dt.id_fecha
+            left join DWH.artus.catTienda ct on vd.idTienda =ct.tienda
+            left join DWH.artus.catCanal cc on vd.idCanal =cc.idCanal
+            left join DWH.artus.cat_departamento cd on vd.subDepto = cd.idSubDepto
+            where dt.anio in ({anioElegido},{anioElegido-1})
+            and cc.tipo in ({canal}) """
+            if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
+                if self.filtros.zona != '' and self.filtros.zona != "False" and self.filtros.zona != None:
+                    if self.filtros.tienda != '' and self.filtros.tienda != "False" and self.filtros.tienda != None:
+                        pipeline += f""" and ct.tienda = {self.filtros.tienda} """
+                    else:
+                        pipeline += f""" and ct.zona = {self.filtros.zona} """
+                else:
+                    pipeline += f""" and ct.region = {self.filtros.region} """
             if self.filtros.depto != '' and self.filtros.depto != "False" and self.filtros.depto != None:
                 if self.filtros.subDepto != '' and self.filtros.subDepto != "False" and self.filtros.subDepto != None:
                     pipeline += f""" and cd.idSubDepto = {self.filtros.subDepto} """
                 else:
                     pipeline += f""" and cd.idDepto = {self.filtros.depto} """
-            pipeline += f" group by ct.{campo_siguiente_lugar} "
-            print(f"Query desde Tabla -> Venta  Mensual Por Lugar: {pipeline}")
-
+            pipeline += " group by dt.abrev_mes,dt.num_mes order by dt.num_mes "
+            # print(f"Query desde Venta anual por mes: $anioActual vs. $anioAnterior y Objetivo: {pipeline}")
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)
@@ -854,7 +856,7 @@ class Tablas():
                 for fila in arreglo:
                     print(f"fila: {fila}")
                     objeto = {
-                        'Lugar': fila['lugar'],
+                        'Mes': fila['categoria'],
                         'VentaAnioAnterior': round((fila['AAnterior']), 2),
                         'VentaAnioActual': round((fila['AActual']), 2),
                         'VarActual': round(((fila['AActual'] / fila['AAnterior'])-1), 4)
@@ -870,7 +872,7 @@ class Tablas():
                         objeto['varObjetivo'] = 0
                     data.append(objeto)
                 columns = [
-                    {'name': 'Lugar', 'selector':'Lugar', 'formato': 'texto'},
+                    {'name': 'Mes', 'selector':'Mes', 'formato': 'texto'},
                     {'name': 'Venta '+mod_titulo_serie+str(anioElegido - 1), 'selector':'VentaAnioAnterior', 'formato': 'moneda'},
                     {'name': 'Venta '+mod_titulo_serie+str(anioElegido), 'selector':'VentaAnioActual', 'formato': 'moneda'},
                     {'name': 'Var Actual', 'selector':'VarActual', 'formato': 'porcentaje'},
@@ -879,6 +881,7 @@ class Tablas():
                 ]
             else:
                 hayResultados = "no"
+
         return {'hayResultados':hayResultados, 'pipeline': pipeline, 'columns':columns, 'data':data}
         # Return para debugging:
         # return {'hayResultados':'no', 'pipeline': [], 'columns':[], 'data':[]}

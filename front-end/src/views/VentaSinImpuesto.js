@@ -36,11 +36,11 @@ const VentaSinImpuesto = () => {
   const [tarjetasCombinadasAnio, setTarjetasCombinadasAnio] = useState('cargando')
   const [tarjetasCombinadasMesAlDia, setTarjetasCombinadasMesAlDia] = useState('cargando')
 
-  console.log(`fechas_srv.ultimoDiaVencidoDelMesReal(anio, mes): ${fechas_srv.ultimoDiaVencidoDelMesReal(anio, mes)}`)
+  // console.log(`fechas_srv.ultimoDiaVencidoDelMesReal(anio, mes): ${fechas_srv.ultimoDiaVencidoDelMesReal(anio, mes)}`)
 
   const seccion = 'VentaSinImpuesto'
 
-  useEffect(async () => {
+  // useEffect(async () => {
     // setTarjetasCombinadasAnio('cargando')
     // setTarjetasCombinadasMes('cargando')
     // setTarjetasCombinadasMesAlDia('cargando')
@@ -74,13 +74,13 @@ const VentaSinImpuesto = () => {
     //     subDepto
     // })
     // setTarjetasCombinadasMesAlDia(resMesAlDia)
-  }, [fechas, region, zona, tienda, canal, depto, subDepto])
+  // }, [fechas, region, zona, tienda, canal, depto, subDepto])
 
-  useEffect(() => {
-    console.log(`fecha_fin: ${fechas.fecha_fin}`)
-    console.log(`mesTexto: ${fechas_srv.mesTexto(mes)}`)
+  // useEffect(() => {
+  //   console.log(`fecha_fin: ${fechas.fecha_fin}`)
+  //   console.log(`mesTexto: ${fechas_srv.mesTexto(mes)}`)
 
-  }, [fechas])
+  // }, [fechas])
 
   return (
     <>
@@ -159,6 +159,11 @@ const VentaSinImpuesto = () => {
           <EjesMultiples titulo={`Venta anual por mes: ${anio} vs. ${anio - 1} y Objetivo`} tituloAPI='Venta anual por mes: $anioActual vs. $anioAnterior y Objetivo' formato='moneda' yLabel='Pesos' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} seccion={seccion} />
         </Col>
       </Row>
+      {(tienda === false || tienda === '') && <Row className='match-height'>
+        <Col sm='12'>
+          <Tabla titulo={`Venta anual por mes: ${anio} vs. ${anio - 1} y Objetivo`} tituloAPI='Venta anual por mes: $anioActual vs. $anioAnterior y Objetivo' formato='moneda' yLabel='Pesos' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} mes={mes} seccion={seccion} />
+        </Col>
+      </Row>}
       <Row className='match-height'>
         <Col sm='12'>
           <EjesMultiples titulo={`Venta mensual por día: ${anio} vs. ${anio - 1} y Objetivo`} tituloAPI='Venta mensual por día: $anioActual vs. $anioAnterior y Objetivo' formato='moneda' yLabel='Pesos' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} mes={mes} seccion={seccion} />
@@ -172,11 +177,6 @@ const VentaSinImpuesto = () => {
       {(tienda === false || tienda === '') && <Row className='match-height'>
         <Col sm='12'>
           <EjesMultiples titulo={`Venta mensual por lugar: ${anio} vs. ${anio - 1} y Objetivo`} tituloAPI='Venta mensual por lugar: $anioActual vs. $anioAnterior y Objetivo' formato='moneda' yLabel='Pesos' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} mes={mes} seccion={seccion} />
-        </Col>
-      </Row>}
-      {(tienda === false || tienda === '') && <Row className='match-height'>
-        <Col sm='12'>
-          <Tabla titulo={`Venta mensual por lugar: ${anio} vs. ${anio - 1} y Objetivo`} tituloAPI='Venta mensual por lugar: $anioActual vs. $anioAnterior y Objetivo' formato='moneda' yLabel='Pesos' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} mes={mes} seccion={seccion} />
         </Col>
       </Row>}
       <Row className='match-height'>
