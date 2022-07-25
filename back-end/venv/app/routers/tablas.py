@@ -2961,15 +2961,17 @@ class Tablas():
             # fecha_fin = datetime.strptime(self.filtros.fechas['fecha_fin'], '%Y-%m-%dT%H:%M:%S.%fZ')
             self.fecha_ini = self.filtros.fechas['fecha_ini'][0:10]
             fecha_fin = self.filtros.fechas['fecha_fin'][0:10]
+            esMes = False
             if self.filtros.agrupador == 'dia':
                 rango = "nmp.fecha"
             elif self.filtros.agrupador == "semana":
                 rango = "n_sem_D_S"
             elif self.filtros.agrupador == "mes":
-                rango = "abrev_mes"
+                rango = "dt.abrev_mes"
+                esMes = True
             else:
                 rango = "anio"
-            pipeline = f"""SELECT COUNT(1) as cantidad, nd.calificacion, {rango} as rango
+            pipeline = f"""SELECT COUNT(1) as cantidad, nd.calificacion, {rango} as rango {', (dt.anio * 100 + dt.num_mes) as mesNum' if esMes else ''}
             from DWH.limesurvey.nps_mail_pedido nmp
             left join DWH.limesurvey.nps_detalle nd on nmp.id_encuesta =nd.id_encuesta and nmp.nEncuesta=nd.nEncuesta
             left join DWH.artus.catTienda ct on nmp.idTienda =ct.tienda"""
@@ -2982,11 +2984,10 @@ class Tablas():
                 pipeline += f" and ct.zona='{self.filtros.zona}' "
             elif self.filtros.region != '' and self.filtros.region != None and self.filtros.region != 'False':
                 pipeline += f" and ct.region ='{self.filtros.region}' "
-            pipeline += f" group by nd.calificacion, {rango} order by {rango}"
+            pipeline += f" group by nd.calificacion, {rango} {', (dt.anio * 100 + dt.num_mes)' if esMes else ''} order by {rango if not esMes else '(dt.anio * 100 + dt.num_mes) '}"
 
-            # print("query desde tabla nps: "+pipeline)
+            print('Query Evaluación NPS por Día desde Tabla: '+str(pipeline))
             cnxn = conexion_sql('DWH')
-            # print('Evaluación NPS por Día desde Tabla: '+str(pipeline))
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)
 
