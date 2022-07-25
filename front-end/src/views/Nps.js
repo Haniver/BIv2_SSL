@@ -22,9 +22,9 @@ const Nps = () => {
 
     const seccion = 'Nps'
 
-    // useEffect(() => {
-    //   console.log(`Categoría NPS: ${nps}`)
-    // }, [nps])
+    useEffect(() => {
+      console.log(`fecha_fin: ${fechas.fecha_fin}`)
+    }, [fechas])
     
 
   return (
