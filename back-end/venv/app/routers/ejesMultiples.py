@@ -348,7 +348,7 @@ class EjesMultiples():
                 else:
                     pipeline += f""" and cd.idDepto = {self.filtros.depto} """
             pipeline += f" group by ct.{campo_siguiente_lugar} "
-            print(f"Query desde EjesMultiples -> Venta  Mensual Por Lugar: {pipeline}")
+            # print(f"Query desde EjesMultiples -> Venta  Mensual Por Lugar: {pipeline}")
 
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)

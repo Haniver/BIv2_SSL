@@ -275,7 +275,7 @@ class TarjetasEnFila():
                 res_tmp['Objetivo Vs. Venta al $dia $mes $anio'] = float (ventaDiaActual)/float(objetivoDia) - 1 if objetivoDia != 0 else '--' #Check
                 res_tmp['Venta 1 al $dia $mes $anioAnterior'] = ventaDiaAnterior #Check
                 res_tmp['Venta $anioAnterior Vs. $anioActual al $dia $mes'] = (ventaDiaActual/ventaDiaAnterior) - 1 if ventaDiaAnterior != 0 else '--'
-        print(f'Respuesta desde TarjetasCombinadas que realmente son tarjetasEnFila: {res_tmp}')
+        # print(f'Respuesta desde TarjetasCombinadas que realmente son tarjetasEnFila: {res_tmp}')
         res = [
             {
                 'titulo': f'Venta {self.anioElegido}',
