@@ -252,6 +252,7 @@ class EjesMultiples():
                 else:
                     pipeline += f""" and cd.idDepto = {self.filtros.depto} """
             pipeline += f" group by ct.{campo_siguiente_lugar} "
+            print(f"Query desde EjesMultiples -> Venta  Mensual Por Lugar: {pipeline}")
 
         cnxn = conexion_sql('DWH')
         cursor = cnxn.cursor().execute(pipeline)
@@ -263,26 +264,24 @@ class EjesMultiples():
                 categories.append(arreglo[i]['categoria'])
                 serie1.append(round((arreglo[i]['AAnterior']), 2))
                 serie2.append(round((arreglo[i]['AActual']), 2))
-                if arreglo[i]['AAnterior'] != 0:
-                # if i != 0:
-                    serie4.append(round(((arreglo[i]['AActual'] / arreglo[i]['AAnterior'])-1), 4))
-                else:
-                    serie4.append(0)
+                # if arreglo[i]['AAnterior'] != 0:
+                # # if i != 0:
+                #     serie4.append(round(((arreglo[i]['AActual'] / arreglo[i]['AAnterior'])-1), 4))
+                # else:
+                #     serie4.append(0)
                 # if self.filtros.canal == '1' or self.filtros.canal == '35' or self.filtros.canal == '36':
                 serie3.append(round((arreglo[i]['objetivo']), 2))
-                if arreglo[i]['objetivo'] != 0:
-                    serie5.append(round(((arreglo[i]['AActual'] / arreglo[i]['objetivo'])-1), 4))
-                else:
-                    serie5.append(0)
+                # if arreglo[i]['objetivo'] != 0:
+                #     serie5.append(round(((arreglo[i]['AActual'] / arreglo[i]['objetivo'])-1), 4))
+                # else:
+                #     serie5.append(0)
             series.extend([
                 {'name': 'Venta '+mod_titulo_serie+str(anioElegido - 1), 'data':serie1, 'type': 'column', 'formato_tooltip':'moneda', 'color':'dark'},
                 {'name': 'Venta '+mod_titulo_serie+str(anioElegido), 'data':serie2, 'type': 'column', 'formato_tooltip':'moneda', 'color':'primary'}
             ])
-            # if self.filtros.canal == '1' or self.filtros.canal == '35' or self.filtros.canal == '36':
             series.append({'name': 'Objetivo '+mod_titulo_serie+str(anioElegido), 'data':serie3, 'type': 'column', 'formato_tooltip':'moneda', 'color':'secondary'})
-            series.append({'name': '% Var Actual', 'data':serie4, 'type': 'spline', 'formato_tooltip':'porcentaje', 'color':'dark'})
-            # if self.filtros.canal == '1' or self.filtros.canal == '35' or self.filtros.canal == '36':
-            series.append({'name': '% Var Objetivo', 'data':serie5, 'type': 'spline', 'formato_tooltip':'porcentaje', 'color':'danger'})
+            # series.append({'name': '% Var Actual', 'data':serie4, 'type': 'spline', 'formato_tooltip':'porcentaje', 'color':'dark'})
+            # series.append({'name': '% Var Objetivo', 'data':serie5, 'type': 'spline', 'formato_tooltip':'porcentaje', 'color':'danger'})
         else:
             hayResultados = "no"
             categories = []
