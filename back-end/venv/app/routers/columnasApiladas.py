@@ -360,7 +360,7 @@ class ColumnasApiladas():
             pipeline.append({'$sort': {'_id.fecha_interna': 1}})
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=1000)
-            # print(pipeline)
+            # print(f"Query desde columnasApiladas -> Estatus pedidos por fecha: {pipeline}")
             if len(arreglo) >0:
                 hayResultados = "si"
                 for row in arreglo:

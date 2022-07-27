@@ -445,6 +445,7 @@ class Tablas():
             pipeline.append({'$match': {'prioridad': {'$in': ['2 DIAS','ANTERIORES']}}})
             pipeline.append({'$group': {'_id': {'region': '$sucursal.regionNombre', 'zona': '$sucursal.zonaNombre', 'tienda': '$sucursal.tiendaNombre'}, 'pedidos': {'$sum': 1}, 'fechaEntrega': {'$min':'$fechaEntrega'}}})
             pipeline.append({'$sort': {'pedidos': -1}})
+            # print(f"Pipeline desde Tablas -> Tiendas con Pedidos Atrasados Mayores a 1 Día: {str(pipeline)}")
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=1000)
             data = []
@@ -2214,8 +2215,7 @@ class Tablas():
             pipeline.append(
                 {'$match': {'sucursal.'+nivel: self.lugar}}
             )
-        # caminos = ['R1', 'R1A', 'R1B', 'R1C', 'R1D', 'R1E', 'R1F', 'R1G', 'R1H', 'R1I', 'R1J', 'R2', 'R2A', 'R2B', 'R2C', 'R2D', 'R2E', 'R2F', 'R2G', 'R2H', 'R2I', 'R3', 'R3A', 'R3B', 'R3C', 'R3D', 'R3E', 'R3F', 'R3G', 'R4', 'R4A', 'R4B', 'R4C', 'R4D', 'R4E', 'R4F', 'R5', 'R5A', 'R5B', 'R5C', 'R5D', 'R5E', 'R5F', 'R5G', 'R5H', 'R6', 'R6A', 'R6B', 'R6C', 'R6D', 'R6E', 'R6F', 'R6G', 'R7', 'R7A', 'R7B', 'R7C', 'R7D', 'R7E', 'R7F', 'R7G', 'R7H', 'R7I', 'R8', 'R8A', 'R8B', 'R8C', 'R8D', 'R8E', 'R8F', 'R8G', 'R8H', 'R8I', 'R9', 'R9A', 'R9B', 'R9C', 'R9D', 'R9E', 'R9F', 'R10']
-        caminos = []
+        caminos = ['R1', 'R1A', 'R1B', 'R1C', 'R1D', 'R1E', 'R1F', 'R1G', 'R1H', 'R1I', 'R1J', 'R2', 'R2A', 'R2B', 'R2C', 'R2D', 'R2E', 'R2F', 'R2G', 'R2H', 'R2I', 'R3', 'R3A', 'R3B', 'R3C', 'R3D', 'R3E', 'R3F', 'R3G', 'R4', 'R4A', 'R4B', 'R4C', 'R4D', 'R4E', 'R4F', 'R5', 'R5A', 'R5B', 'R5C', 'R5D', 'R5E', 'R5F', 'R5G', 'R5H', 'R6', 'R6A', 'R6B', 'R6C', 'R6D', 'R6E', 'R6F', 'R6G', 'R7', 'R7A', 'R7B', 'R7C', 'R7D', 'R7E', 'R7F', 'R7G', 'R7H', 'R7I', 'R8', 'R8A', 'R8B', 'R8C', 'R8D', 'R8E', 'R8F', 'R8G', 'R8H', 'R8I', 'R9', 'R9A', 'R9B', 'R9C', 'R9D', 'R9E', 'R9F', 'R10']
         pipeline.append({
             '$project': {
                 'TipoCliente': '$TipoCliente',
@@ -2243,9 +2243,12 @@ class Tablas():
                 'id_encuesta': '$id_encuesta'
             }
         })
+        # print(f"pipeline[-1]['$project'] desde tablas -> NPSDetalle: {str(pipeline[-1]['$project'])}")
         for camino in caminos:
+            # print(f"'$' + camino desde tablas -> NPSDetalle: {'$' + camino}")
             pipeline[-1]['$project'][camino] = '$' + camino
-        # print(str(pipeline))
+            # print(f"pipeline[-1]['$project'][camino] desde tablas -> NPSDetalle: {str(pipeline[-1]['$project'][camino])}")
+        print(f"pipeline desde tablas -> NPSDetalle: {str(pipeline)}")
         # Ejecutamos el query:
         collection = conexion_mongo('report').report_pedidoDetalleNPS
         cursor = collection.aggregate(pipeline)
@@ -2275,10 +2278,9 @@ class Tablas():
                 {'name': 'NPS', 'selector':'NPS', 'formato':'texto', 'ancho': '200px'},
                 {'name': 'Tipo Pedido', 'selector':'TipoPedido', 'formato':'texto', 'ancho': '200px'},
                 {'name': 'No Imputable a Tienda', 'selector':'NoImputableTienda', 'formato':'texto', 'ancho': '200px'}
-                # A esto falta agregarle los caminos
             ]
             for camino in caminos:
-                columns.append({'name': camino, 'selector':camino, 'formato':'texto'})
+                columns.append({'name': camino, 'selector':camino, 'formato':'texto', 'ancho': '350px'})
             columns.extend([
                 {'name': 'Comentario', 'selector':'comentario', 'formato':'texto', 'ancho': '1000px'},
                 {'name': 'Fecha de Envío', 'selector':'FechaEnvio', 'formato':'texto', 'ancho': '150px'},
@@ -2337,7 +2339,8 @@ class Tablas():
                 }
                 for camino in caminos:
                     camino_tmp = row[camino] if camino in row else '--'
-                    data_i['camino'] = camino_tmp
+                    data_i[camino] = camino_tmp
+                    # print(f"Camino: {camino}")
                 data.append(data_i)
             # print("Columns desde tablas: "+str(columns))
             # print("Data desde tablas: "+str(data))
