@@ -1685,7 +1685,7 @@ class Tablas():
                         {'name': 'Fecha de Despacho', 'selector':'FechaDespacho', 'formato':'texto'},
                         {'name': 'Evaluación', 'selector':'Evaluacion', 'formato':'texto', 'ancho': '240px'},
                         {'name': 'Cancelados', 'selector':'Cancelados', 'formato':'texto', 'ancho': '150px'},
-                        {'name': 'Quejas', 'selector':'Quejas', 'formato':'texto'},
+                        {'name': 'Quejas', 'selector':'Quejas', 'formato':'texto', 'ancho': '250px'},
                         {'name': 'Entregados', 'selector':'Entregados', 'formato':'texto', 'ancho': '150px'},
                         {'name': 'Incidencias NPS', 'selector':'IncidentesNPS', 'formato':'texto'},
                         {'name': 'Perfectos', 'selector':'Perfectos', 'formato':'texto'},

@@ -28,7 +28,7 @@ const PedidoPerfecto = () => {
 
 
     useEffect(() => {
-      console.log(`Ahora tienda es la ${tienda}`)
+      // console.log(`Ahora tienda es la ${tienda}`)
       if (!tienda) {
         setQuitarBusqueda(false)
         setQuitarPaginacion(false)
@@ -51,20 +51,20 @@ const PedidoPerfecto = () => {
           }
         })
       }
-      console.log(`Sibling:`)
-      console.log(sibling)
+      // console.log(`Sibling:`)
+      // console.log(sibling)
     }, [tienda])
     
     useEffect(() => {
       if (sibling) {
-        console.log(`Poniendo labelTienda en ${sibling.tienda.label}`)
+        // console.log(`Poniendo labelTienda en ${sibling.tienda.label}`)
         setLabelTienda(sibling.tienda.label)
       }
     }, [sibling])
 
-    useEffect(() => {
-      console.log(`labelTienda: ${labelTienda}`)
-    }, [labelTienda])
+    // useEffect(() => {
+    //   console.log(`labelTienda: ${labelTienda}`)
+    // }, [labelTienda])
 
   return (
     <>
