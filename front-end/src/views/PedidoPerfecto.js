@@ -28,19 +28,43 @@ const PedidoPerfecto = () => {
 
 
     useEffect(() => {
+      console.log(`Ahora tienda es la ${tienda}`)
       if (!tienda) {
         setQuitarBusqueda(false)
         setQuitarPaginacion(false)
+        setSibling(false)
         // setPrefijoTituloTabla('50 tiendas con ')
         // setSufijoTituloTabla(' más bajo')
       } else {
         setQuitarBusqueda(true)
         setQuitarPaginacion(true)
-        // setPrefijoTituloTabla('')
-        // setSufijoTituloTabla('')
+        setSibling({
+          region: {
+            value: region
+          },
+          zona: {
+            value: zona
+          },
+          tienda: {
+            value: tienda,
+            label: labelTienda
+          }
+        })
       }
+      console.log(`Sibling:`)
+      console.log(sibling)
     }, [tienda])
     
+    useEffect(() => {
+      if (sibling) {
+        console.log(`Poniendo labelTienda en ${sibling.tienda.label}`)
+        setLabelTienda(sibling.tienda.label)
+      }
+    }, [sibling])
+
+    useEffect(() => {
+      console.log(`labelTienda: ${labelTienda}`)
+    }, [labelTienda])
 
   return (
     <>
@@ -94,9 +118,9 @@ const PedidoPerfecto = () => {
           <Tabla titulo='Tiendas por % Pedido Perfecto más bajo' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} setSibling={setSibling} quitarBusqueda={quitarBusqueda} quitarPaginacion={quitarPaginacion} />
         </Col>
       </Row>
-      {tienda !== undefined && tienda !== '' && <Row className='match-height'>
+      {sibling && <Row className='match-height'>
         <Col sm='12'>
-          <Tabla tituloAPI='$Tienda' titulo={labelTienda} fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} />
+          <Tabla tituloAPI='$Tienda' titulo={labelTienda} fechas={fechas} region={sibling.region.value} zona={sibling.zona.value} tienda={sibling.tienda.value} agrupador={agrupador} periodo={periodo} seccion={seccion} />
         </Col>
       </Row>}
     </>
