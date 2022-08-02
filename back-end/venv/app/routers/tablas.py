@@ -855,12 +855,14 @@ class Tablas():
             if len(arreglo) > 0:
                 hayResultados = "si"
                 for fila in arreglo:
-                    print(f"fila: {fila}")
+                    # print(f"fila: {fila}")
+                    varActual = round(((fila['AActual'] / fila['AAnterior'])-1), 4) if fila['AAnterior'] != 0 else '--'
+                    varObjetivo = (round(((fila['AActual'] / fila['objetivo'])-1), 4)) if fila['objetivo'] != 0 else '--'
                     objeto = {
                         'Mes': fila['categoria'],
                         'VentaAnioAnterior': round((fila['AAnterior']), 2),
                         'VentaAnioActual': round((fila['AActual']), 2),
-                        'VarActual': round(((fila['AActual'] / fila['AAnterior'])-1), 4)
+                        'VarActual': varActual
 
                     }
                     if self.filtros.canal == '1' or self.filtros.canal == '35' or self.filtros.canal == '36':
@@ -868,7 +870,7 @@ class Tablas():
                     else:
                         objeto['Objetivo'] = 0
                     if fila['objetivo'] != 0:
-                        objeto['varObjetivo'] = (round(((fila['AActual'] / fila['objetivo'])-1), 4))
+                        objeto['varObjetivo'] = varObjetivo
                     else:
                         objeto['varObjetivo'] = 0
                     data.append(objeto)
