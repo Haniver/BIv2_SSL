@@ -245,6 +245,10 @@ class TarjetasEnFila():
                 venta_pasado = 0
                 venta_actual = arreglo[0]['venta']
                 objetivo = arreglo[0]['objetivo']
+            else:
+                venta_pasado = 0
+                venta_actual = 0
+                objetivo = 0
             dias_en_mes = monthrange(self.anioElegido, self.mesElegido)[1]
             proyeccion_actual = dias_en_mes*venta_actual/self.diaElegido
             avance_actual = venta_actual/objetivo if objetivo != 0 else '--'
@@ -266,9 +270,13 @@ class TarjetasEnFila():
                     objetivoDia = arreglo[1]['objetivoDia']
                     ventaDiaActual = arreglo[1]['ventaDia']
                     ventaDiaAnterior = arreglo[0]['ventaDia']
-                else:
+                elif len(arreglo) == 1:
                     objetivoDia = arreglo[0]['objetivoDia']
                     ventaDiaActual = arreglo[0]['ventaDia']
+                    ventaDiaAnterior = 0
+                else:
+                    objetivoDia = 0
+                    ventaDiaActual = 0
                     ventaDiaAnterior = 0
                 res_tmp['Venta 1 al $dia $mes $anioActual'] = ventaDiaActual #Check
                 res_tmp['Objetivo 1 al $dia $mes $anio'] = objetivoDia #Check
