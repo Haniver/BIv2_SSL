@@ -255,6 +255,14 @@ const Routes = [
       publicRoute: false
       // menuCollapsed: false
     }
+  },
+  {
+    path: '/consolidadoCostos',
+    component: lazy(() => import('../../views/ConsolidadoCostos')),
+    meta: {
+      publicRoute: false
+      // menuCollapsed: false
+    }
   }
 ]
 

@@ -179,6 +179,12 @@ const Filtro = (props) => {
     // {label: `${fechas_srv.anioActual() - 2}`, value: fechas_srv.anioActual() - 2}
   ]
 
+  const comboAnioOpcional = [
+    {label: `${fechas_srv.anioActual()}`, value: fechas_srv.anioActual()}
+    // {label: `${fechas_srv.anioActual() - 1}`, value: fechas_srv.anioActual() - 1},
+    // {label: `${fechas_srv.anioActual() - 2}`, value: fechas_srv.anioActual() - 2}
+  ]
+
   const comboAnioRFM = [
     {label: `${fechas_srv.anioActual()}`, value: fechas_srv.anioActual()},
     {label: `${fechas_srv.anioActual() - 1}`, value: fechas_srv.anioActual() - 1}
@@ -188,6 +194,11 @@ const Filtro = (props) => {
   const comboMes = []
   for (let i = 0; i < 12; i++) {
     comboMes.push({label: `${fechas_srv.mesTexto(i, true)}`, value: i})
+  }
+
+  const comboMesOpcional = []
+  for (let i = 0; i < 12; i++) {
+    comboMes.push({label: '', value: ''})
   }
 
   const comboMesRFM = []
@@ -218,6 +229,12 @@ const Filtro = (props) => {
     {label: 'Entregado', value: 'Entregado'},
     {label: 'No Entregado', value: 'No Entregado'},
     {label: 'Cancelado', value: 'Cancelado'}
+  ]
+
+  const comboMetodoEnvio = [
+    {label: 'Zubale', value: 'Zubale'},
+    {label: 'Recursos Propios', value: 'No es Zubale'},
+    {label: 'Rec. Propios/Logística', value: 'Logística'}
   ]
 
   // Hooks para mensajes
@@ -254,8 +271,10 @@ const Filtro = (props) => {
   const [origenValue, setOrigenValue] = useState({value:'', label:''})
   const [e3Value, setE3Value] = useState({value:'', label:''})
   const [anioValue, setAnioValue] = useState(comboAnio[0])
+  const [anioOpcionalValue, setAnioOpcionalValue] = useState(comboAnioOpcional[0])
   const [anioValueRFM, setAnioValueRFM] = useState(comboAnioRFM[0])
   const [mesValue, setMesValue] = useState(comboMes[fechas_srv.mesActual()])
+  const [mesOpcionalValue, setMesOpcionalValue] = useState()
   const [mesValueRFM, setMesValueRFM] = useState(comboMesRFM[fechas_srv.mesActual()])
   const [agrupadorValue, setAgrupadorValue] = useState(comboAgrupador[comboAgrupador.findIndex(x => x.value === props.agrupador)])
   const [grupoDeptosValue, setGrupoDeptosValue] = useState(comboGrupoDeptos[comboGrupoDeptos.findIndex(x => x.value === props.grupoDeptos)])
@@ -303,6 +322,7 @@ const Filtro = (props) => {
       const [TipoEntrega2_tmp, setTipoEntrega2_tmp] = useState(props.tipoEntrega2)
       const [TipoEntrega3_tmp, setTipoEntrega3_tmp] = useState(props.tipoEntrega3)
       const [Estatus_tmp, setEstatus_tmp] = useState(props.estatus)
+      const [MetodoEnvio_tmp, setMetodoEnvio_tmp] = useState(props.metodoEnvio)
       const [Formato_tmp, setFormato_tmp] = useState(props.formato)
       const [Canal_tmp, setCanal_tmp] = useState(props.canal)
       const [Canal2_tmp, setCanal2_tmp] = useState(props.canal2)
@@ -311,7 +331,9 @@ const Filtro = (props) => {
       const [Proveedor_tmp, setProveedor_tmp] = useState(props.proveedor)
       const [Categoria_tmp, setCategoria_tmp] = useState(props.categoria)
       const [Anio_tmp, setAnio_tmp] = useState(props.anio)
+      const [AnioOpcional_tmp, setAnioOpcional_tmp] = useState(props.anioOpcional)
       const [Mes_tmp, setMes_tmp] = useState(props.mes)
+      const [MesOpcional_tmp, setMesOpcional_tmp] = useState(props.mesOpcional)
   // Funciones para rellenar combos dependiendo de los valores de otros combos
   const handleRegionChange = async (e) => {
     if (e) {
@@ -871,7 +893,7 @@ const Filtro = (props) => {
             </FormGroup>
           </Col>}
           { /* Si existe props.anio y props.mes, fecha_fin se usa pero no se muestra */
-            props.fechas !== undefined && props.fechas.fecha_fin !== '' && props.anio === undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
+            props.fechas !== undefined && props.fechas.fecha_fin !== '' && props.mes === undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
             <FormGroup>
               <Label for='fecha_fin'>📆 Fecha Final</Label>
               <Flatpickr className="form-control" value={props.fechas.fecha_fin} onChange={(e) => cambiaFecha_fin(e[0])}  id="fecha_fin" options={{ dateFormat: "Y-m-d" }} />
@@ -965,6 +987,31 @@ const Filtro = (props) => {
                     props.setEstatus('')
                   } else {
                     setEstatus_tmp('')
+                  }
+                }
+              }}
+            />
+          </Col>}
+          {props.metodoEnvio !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
+            <Label>📫 Método de Envio</Label>
+            <Select
+              theme={selectThemeColors}
+              className='react-select'
+              classNamePrefix='select'
+              options={comboMetodoEnvio}
+              isClearable={true}
+              onChange={(e) => {
+                if (e) {
+                  if (props.botonEnviar === undefined) {
+                    props.setMetodoEnvio(e.value)
+                  } else {
+                    setMetodoEnvio_tmp(e.value)
+                  }
+                } else {
+                  if (props.botonEnviar === undefined) {
+                    props.setMetodoEnvio('')
+                  } else {
+                    setMetodoEnvio_tmp('')
                   }
                 }
               }}
@@ -1326,6 +1373,26 @@ const Filtro = (props) => {
               }}
             />
           </Col>}
+          {props.anioOpcional !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
+            <Label>🌞 Año</Label>
+            <Select
+              theme={selectThemeColors}
+              value={anioOpcionalValue}
+              className='react-select'
+              classNamePrefix='select'
+              name='filtroAnio'
+              options={comboAnioOpcional}
+              isClearable={true}
+              onChange={e => {
+                setAnioOpcionalValue({label: e.label, value: e.value})
+                if (props.botonEnviar === undefined) {
+                  props.setAnioOpcional(e.value)
+                } else {
+                  setAnioOpcional_tmp(e.value)
+                }
+              }}
+            />
+          </Col>}
           {props.mes !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
             <Label>🌜 Mes</Label>
             <Select
@@ -1348,6 +1415,26 @@ const Filtro = (props) => {
                 } else {
                   setFechas_tmp({fecha_ini: Fechas_tmp.fecha_ini, fecha_fin: new Date(`${anioValue.value}-${mes}-${fechas_srv.ultimoDiaVencidoDelMesReal(anioValue.value, e.value)}`)})
                 }
+              }}
+            />
+          </Col>}
+          {props.mesOpcional !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
+            <Label>🌜 Mes</Label>
+            <Select
+              theme={selectThemeColors}
+              value={mesValue}
+              className='react-select'
+              classNamePrefix='select'
+              options={comboMes}
+              isClearable={true}
+              onChange={e => {
+                setMesOpcionalValue({label: e.label, value: e.value})
+                if (props.botonEnviar === undefined) {
+                  props.setMesOpcional(e.value)
+                } else {
+                  setMesOpcional_tmp(e.value)
+                }
+                const mes = (e.value < 10) ? `0${e.value + 1}` : `${e.value + 1}`
               }}
             />
           </Col>}
