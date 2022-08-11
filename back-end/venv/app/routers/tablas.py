@@ -4361,14 +4361,23 @@ class Tablas():
         arreglo = crear_diccionario(cursor)
         if len(arreglo) > 0:
             hayResultados = "si"
+            totRH = totEnvio = totCombustible = totPPickedUp = totPEnviados = totPZubale = totEstimadoZubale  = totConsumosInternos = totGND = totMattoTransp = totTotalGasto = 0
+            data = [{}]
             for row in arreglo:
+                # wawa ponle que cambie "no es zubale" y el otro por lo que tienes en el filtro
+                if row['TiendaEnLinea'] == "No es Zubale":
+                    metodoEnvio = 'Recursos Propios'
+                elif row['TiendaEnLinea'] == "Logística":
+                    metodoEnvio = 'Rec. Propios/Logística'
+                else:
+                    metodoEnvio = 'Zubale'
                 data.append({
                     'Region': row['regionNombre'],
                     'Zona': row['zonaNombre'],
                     'Tienda': row['tiendaNombre'],
-                    'Anio': str(row['Anio']),
+                    'Anio': str(int(row['Anio'])),
                     'Mes': row['descrip_mes'],
-                    'MetodoEnvio': row['TiendaEnLinea'],
+                    'MetodoEnvio': metodoEnvio,
                     'RH': row['RH'],
                     'Envio': row['Envio'],
                     'Combustible': row['Combustible'],
@@ -4382,26 +4391,56 @@ class Tablas():
                     'TotalGasto': row['TotalGasto'],
                     'TotalGtosXPedido': row['TotalGtosXPedido']
                 })
-                columns = [
-                    {'name': 'Región', 'selector':'Region', 'formato':'texto', 'ancho': '200px'},
-                    {'name': 'Zona', 'selector':'Zona', 'formato':'texto', 'ancho': '200px'},
-                    {'name': 'Tienda', 'selector':'Tienda', 'formato':'texto', 'ancho': '400px'},
-                    {'name': 'Año', 'selector':'Anio', 'formato':'entero'},
-                    {'name': 'Mes', 'selector':'Mes', 'formato':'texto'},
-                    {'name': 'Método de Envío', 'selector':'MetodoEnvio', 'formato':'texto'},
-                    {'name': 'Cto Recursos Humanos', 'selector':'RH', 'formato':'moneda'},
-                    {'name': 'Cto Envío', 'selector':'Envio', 'formato':'moneda'},
-                    {'name': 'Combustible', 'selector':'Combustible', 'formato':'moneda'},
-                    {'name': 'Pedidos Recogidos en Tienda', 'selector':'pPickedUp', 'formato':'entero'},
-                    {'name': 'Pedidos Enviados', 'selector':'pEnviados', 'formato':'entero'},
-                    {'name': 'Pedidos Zubale', 'selector':'pZubale', 'formato':'entero'},
-                    {'name': 'Estimado Zubale', 'selector':'EstimadoZubale', 'formato':'moneda'},
-                    {'name': 'Consumos Internos', 'selector':'ConsumosInternos', 'formato':'moneda'},
-                    {'name': 'GND', 'selector':'GND', 'formato':'moneda'},
-                    {'name': 'Mantenimiento Transporte', 'selector':'MattoTransp', 'formato':'moneda'},
-                    {'name': 'Gastos Totales', 'selector':'TotalGasto', 'formato':'moneda'},
-                    {'name': 'Gasto Total por Pedido', 'selector':'TotalGtosXPedido', 'formato':'moneda'}
-                ]
+                totRH += float(row['RH'])
+                totEnvio += float(row['Envio'])
+                totCombustible += float(row['Combustible'])
+                totPPickedUp += float(row['pPickedUp'])
+                totPEnviados += float(row['pEnviados'])
+                totPZubale += float(row['pZubale'])
+                totEstimadoZubale += float(float(row['pZubale']) * 113.3)
+                totConsumosInternos += float(row['ConsumosInternos'])
+                totGND += float(row['GND'])
+                totMattoTransp += float(row['MattoTransp'])
+                totTotalGasto += float(row['TotalGasto'])
+            data[0] = {
+                'Region': '',
+                'Zona': '',
+                'Tienda': '',
+                'Anio': '',
+                'Mes': '',
+                'MetodoEnvio': 'Total:',
+                'RH': totRH,
+                'Envio': totEnvio,
+                'Combustible': totCombustible,
+                'pPickedUp': totPPickedUp,
+                'pEnviados': totPEnviados,
+                'pZubale': totPZubale,
+                'EstimadoZubale': totEstimadoZubale,
+                'ConsumosInternos': totConsumosInternos,
+                'GND': totGND,
+                'MattoTransp': totMattoTransp,
+                'TotalGasto': totTotalGasto,
+            }
+            columns = [
+                {'name': 'Región', 'selector':'Region', 'formato':'texto', 'ancho': '200px'},
+                {'name': 'Zona', 'selector':'Zona', 'formato':'texto', 'ancho': '200px'},
+                {'name': 'Tienda', 'selector':'Tienda', 'formato':'texto', 'ancho': '400px'},
+                {'name': 'Año', 'selector':'Anio', 'formato':'texto'},
+                {'name': 'Mes', 'selector':'Mes', 'formato':'texto'},
+                {'name': 'Método de Envío', 'selector':'MetodoEnvio', 'formato':'texto', 'ancho': '200px'},
+                {'name': 'Cto Recursos Humanos', 'selector':'RH', 'formato':'moneda', 'ancho': '130px'},
+                {'name': 'Cto Envío', 'selector':'Envio', 'formato':'moneda', 'ancho': '130px'},
+                {'name': 'Combustible', 'selector':'Combustible', 'formato':'moneda', 'ancho': '130px'},
+                {'name': 'Pedidos Recogidos en Tienda', 'selector':'pPickedUp', 'formato':'entero', 'ancho': '130px'},
+                {'name': 'Pedidos Enviados', 'selector':'pEnviados', 'formato':'entero', 'ancho': '130px'},
+                {'name': 'Pedidos Zubale', 'selector':'pZubale', 'formato':'entero', 'ancho': '130px'},
+                {'name': 'Estimado Zubale', 'selector':'EstimadoZubale', 'formato':'moneda', 'ancho': '130px'},
+                {'name': 'Consumos Internos', 'selector':'ConsumosInternos', 'formato':'moneda', 'ancho': '130px'},
+                {'name': 'GND', 'selector':'GND', 'formato':'moneda', 'ancho': '130px'},
+                {'name': 'Mantenimiento Transporte', 'selector':'MattoTransp', 'formato':'moneda', 'ancho': '130px'},
+                {'name': 'Gastos Totales', 'selector':'TotalGasto', 'formato':'moneda', 'ancho': '130px'},
+                {'name': 'Gasto Total por Pedido', 'selector':'TotalGtosXPedido', 'formato':'moneda', 'ancho': '130px'}
+            ]
 
         return {'hayResultados':hayResultados, 'pipeline': pipeline, 'columns':columns, 'data':data}
 
