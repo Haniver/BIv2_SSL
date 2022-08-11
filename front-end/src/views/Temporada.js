@@ -65,14 +65,6 @@ const Temporada = () => {
           <TarjetaEnFila seccion={seccion} formato='moneda' titulo='Indicadores' cols={{ xl: '4', sm: '6' }}/>
         </Col>
       </Row>
-      {/* <Row className='match-height'>
-            <Tarjeta icono={<DollarSign size={21} />} seccion={seccion} formato='moneda' titulo='Venta Última Hora' />
-            <Tarjeta icono={<Package size={21} />} seccion={seccion} formato='entero' titulo='Pedidos Última Hora' />
-            <Tarjeta icono={<DollarSign size={21} />} seccion={seccion} formato='moneda' titulo='Venta Hoy' canal={canal} />
-            <Tarjeta icono={<Percent size={21} />} seccion={seccion} formato='porcentaje' titulo='% Participación Venta Hoy' canal={canal} />
-            <Tarjeta icono={<FileText size={21} />} seccion={seccion} formato='moneda' titulo='Ticket Promedio (sin imp)' canal={canal} />
-            <Tarjeta icono={<Box size={21} />} seccion={seccion} formato='entero' titulo='Artículos Promedio' canal={canal} />
-      </Row> */}
       <Row className='match-height'>
         <Col sm='12'>
             <EjesMultiplesApilados seccion={seccion} titulo='Pedidos Levantados Hoy (con impuesto - todos los canales)' fechas={fechas} />
@@ -91,6 +83,11 @@ const Temporada = () => {
       <Row className='match-height'>
         <Col sm='12'>
             <EjesMultiplesApilados splineLabelsEnabled seccion={seccion} titulo='Venta por Región' fechas={fechas} canal={canal} />
+        </Col>
+      </Row>
+      <Row className='match-height'>
+        <Col sm='12'>
+            <Tabla seccion={seccion} titulo='Venta por Tienda' fechas={fechas} canal={canal} />
         </Col>
       </Row>
       <Row className='match-height'>
