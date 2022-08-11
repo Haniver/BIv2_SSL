@@ -361,9 +361,6 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
                         fila_a_insertar[key] = true
                     }
                 }
-                if (fila_a_insertar.esTotal) {
-                    console.log("esta fila es un total")
-                }
                 data.push(fila_a_insertar)
             })
             setColumns(columns)

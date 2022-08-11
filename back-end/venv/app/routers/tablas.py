@@ -885,6 +885,83 @@ class Tablas():
             else:
                 hayResultados = "no"
 
+        if self.titulo == 'Venta anual por tienda: $anioActual vs. $anioAnterior y Objetivo':
+            mod_titulo_serie = ''
+            serie1 = []
+            serie2 = []
+            serie3 = []
+            serie4 = []
+            serie5 = []
+            
+
+            pipeline = f"""select vd.idTienda, ct.regionNombre, ct.zonaNombre, ct.tiendaNombre,
+            sum(case when anio={anioElegido-1} then ventaSinImpuestos else 0 end) AAnterior,
+            sum(case when anio={anioElegido} then ventaSinImpuestos else 0 end) AActual,
+            sum(case when anio={anioElegido} then objetivo else 0 end) objetivo
+            from DWH.artus.ventaDiaria vd
+            left join DWH.dbo.dim_tiempo dt on vd.fecha=dt.id_fecha
+            left join DWH.artus.catTienda ct on vd.idTienda =ct.tienda
+            left join DWH.artus.catCanal cc on vd.idCanal =cc.idCanal
+            left join DWH.artus.cat_departamento cd on vd.subDepto = cd.idSubDepto
+            where dt.anio in ({anioElegido},{anioElegido-1})
+            and cc.tipo in ({canal}) """
+            if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
+                if self.filtros.zona != '' and self.filtros.zona != "False" and self.filtros.zona != None:
+                    if self.filtros.tienda != '' and self.filtros.tienda != "False" and self.filtros.tienda != None:
+                        pipeline += f""" and ct.tienda = {self.filtros.tienda} """
+                    else:
+                        pipeline += f""" and ct.zona = {self.filtros.zona} """
+                else:
+                    pipeline += f""" and ct.region = {self.filtros.region} """
+            if self.filtros.depto != '' and self.filtros.depto != "False" and self.filtros.depto != None:
+                if self.filtros.subDepto != '' and self.filtros.subDepto != "False" and self.filtros.subDepto != None:
+                    pipeline += f""" and cd.idSubDepto = {self.filtros.subDepto} """
+                else:
+                    pipeline += f""" and cd.idDepto = {self.filtros.depto} """
+            pipeline += """ group by ct.regionNombre, ct.zonaNombre, ct.tiendaNombre, vd.idTienda 
+            order by ct.regionNombre, ct.zonaNombre, ct.tiendaNombre, vd.idTienda """
+            print(f"Query desde Venta anual por tienda: $anioActual vs. $anioAnterior y Objetivo: {pipeline}")
+            cnxn = conexion_sql('DWH')
+            cursor = cnxn.cursor().execute(pipeline)
+            arreglo = crear_diccionario(cursor)
+
+            if len(arreglo) > 0:
+                hayResultados = "si"
+                for fila in arreglo:
+                    # print(f"fila: {fila}")
+                    varActual = round(((fila['AActual'] / fila['AAnterior'])-1), 4) if fila['AAnterior'] != 0 else '--'
+                    varObjetivo = (round(((fila['AActual'] / fila['objetivo'])-1), 4)) if fila['objetivo'] != 0 else '--'
+                    objeto = {
+                        'Region': fila['regionNombre'],
+                        'Zona': fila['zonaNombre'],
+                        'Tienda': fila['tiendaNombre'],
+                        'VentaAnioAnterior': round((fila['AAnterior']), 2),
+                        'VentaAnioActual': round((fila['AActual']), 2),
+                        'VarActual': varActual
+
+                    }
+                    if self.filtros.canal == '1' or self.filtros.canal == '35' or self.filtros.canal == '36':
+                        objeto['Objetivo'] = (round((fila['objetivo']), 2))
+                    else:
+                        objeto['Objetivo'] = 0
+                    if fila['objetivo'] != 0:
+                        objeto['varObjetivo'] = varObjetivo
+                    else:
+                        objeto['varObjetivo'] = 0
+                    data.append(objeto)
+                columns = [
+                    {'name': 'Región', 'selector':'Region', 'formato': 'texto', 'ancho': '210px'},
+                    {'name': 'Zona', 'selector':'Zona', 'formato': 'texto', 'ancho': '210px'},
+                    {'name': 'Tienda', 'selector':'Tienda', 'formato': 'texto', 'ancho': '390px'},
+                    {'name': 'Venta '+mod_titulo_serie+str(anioElegido - 1), 'selector':'VentaAnioAnterior', 'formato': 'moneda', 'ancho': '130px'},
+                    {'name': 'Venta '+mod_titulo_serie+str(anioElegido), 'selector':'VentaAnioActual', 'formato': 'moneda', 'ancho': '130px'},
+                    {'name': 'Var Actual', 'selector':'VarActual', 'formato': 'porcentaje'},
+                    {'name': 'Objetivo', 'selector':'Objetivo', 'formato': 'moneda'},
+                    {'name': 'Var Objetivo', 'selector':'varObjetivo', 'formato': 'porcentaje'}
+                ]
+            else:
+                hayResultados = "no"
+
         return {'hayResultados':hayResultados, 'pipeline': pipeline, 'columns':columns, 'data':data}
         # Return para debugging:
         # return {'hayResultados':'no', 'pipeline': [], 'columns':[], 'data':[]}
