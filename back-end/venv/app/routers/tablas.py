@@ -4325,6 +4325,86 @@ class Tablas():
         # print(f"Data desde Tablas -> Temporada: {str(data)}")
         return {'hayResultados':hayResultados, 'pipeline': pipeline, 'columns':columns, 'data':data}
 
+    async def ConsolidadoCostos(self):
+        anio = self.filtros.anio
+        mes = self.filtros.mes
+        data = []
+        series = []
+        hayResultados = 'no'
+        queryMetodoEnvio = f"and cf.TiendaEnLinea = '{self.filtros.metodoEnvio}'" if self.filtros.metodoEnvio != '' and self.filtros.metodoEnvio != "False" and self.filtros.metodoEnvio != None else ''
+        queryAnio = f"and cf.Anio = {self.filtros.anio}" if self.filtros.anio != 0 and self.filtros.anio != None else ''
+        if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
+            if self.filtros.zona != '' and self.filtros.zona != "False" and self.filtros.zona != None:
+                if self.filtros.tienda != '' and self.filtros.tienda != "False" and self.filtros.tienda != None:
+                    queryLugar = f""" and ct.tienda = {self.filtros.tienda} """
+                else:
+                    queryLugar = f""" and ct.zona = {self.filtros.zona} """
+            else:
+                queryLugar = f""" and ct.region = {self.filtros.region} """
+        else:
+            queryLugar = ''
+        queryMes = f"and cf.Mes = {self.filtros.mes}" if self.filtros.mes != 0 and self.filtros.mes != None else ''
+        if self.titulo == 'Tabla General':
+            pipeline = f"""select * from dwh.report.consolidadoFinanzas cf 
+                left join DWH.artus.catTienda ct on cf.Cebe = ct.tienda 
+                left join DWH.dbo.dim_tiempo dt on dt.id_fecha = cf.Anio * 10000 + cf.Mes * 100 + 1
+                where Mes <= 12
+                {queryMetodoEnvio}
+                {queryAnio}
+                {queryMes}
+                {queryLugar}
+                order by cf.Mes, cf.Cebe
+                """
+        print(f"query desde tablas->ConsolidadoCostos->{self.titulo}: {str(pipeline)}")
+        cnxn = conexion_sql('DWH')
+        cursor = cnxn.cursor().execute(pipeline)
+        arreglo = crear_diccionario(cursor)
+        if len(arreglo) > 0:
+            hayResultados = "si"
+            for row in arreglo:
+                data.append({
+                    'Region': row['regionNombre'],
+                    'Zona': row['zonaNombre'],
+                    'Tienda': row['tiendaNombre'],
+                    'Anio': str(row['Anio']),
+                    'Mes': row['descrip_mes'],
+                    'MetodoEnvio': row['TiendaEnLinea'],
+                    'RH': row['RH'],
+                    'Envio': row['Envio'],
+                    'Combustible': row['Combustible'],
+                    'pPickedUp': row['pPickedUp'],
+                    'pEnviados': row['pEnviados'],
+                    'pZubale': row['pZubale'],
+                    'EstimadoZubale': float(row['pZubale']) * 113.3,
+                    'ConsumosInternos': row['ConsumosInternos'],
+                    'GND': row['GND'],
+                    'MattoTransp': row['MattoTransp'],
+                    'TotalGasto': row['TotalGasto'],
+                    'TotalGtosXPedido': row['TotalGtosXPedido']
+                })
+                columns = [
+                    {'name': 'Región', 'selector':'Region', 'formato':'texto', 'ancho': '200px'},
+                    {'name': 'Zona', 'selector':'Zona', 'formato':'texto', 'ancho': '200px'},
+                    {'name': 'Tienda', 'selector':'Tienda', 'formato':'texto', 'ancho': '400px'},
+                    {'name': 'Año', 'selector':'Anio', 'formato':'entero'},
+                    {'name': 'Mes', 'selector':'Mes', 'formato':'texto'},
+                    {'name': 'Método de Envío', 'selector':'MetodoEnvio', 'formato':'texto'},
+                    {'name': 'Cto Recursos Humanos', 'selector':'RH', 'formato':'moneda'},
+                    {'name': 'Cto Envío', 'selector':'Envio', 'formato':'moneda'},
+                    {'name': 'Combustible', 'selector':'Combustible', 'formato':'moneda'},
+                    {'name': 'Pedidos Recogidos en Tienda', 'selector':'pPickedUp', 'formato':'entero'},
+                    {'name': 'Pedidos Enviados', 'selector':'pEnviados', 'formato':'entero'},
+                    {'name': 'Pedidos Zubale', 'selector':'pZubale', 'formato':'entero'},
+                    {'name': 'Estimado Zubale', 'selector':'EstimadoZubale', 'formato':'moneda'},
+                    {'name': 'Consumos Internos', 'selector':'ConsumosInternos', 'formato':'moneda'},
+                    {'name': 'GND', 'selector':'GND', 'formato':'moneda'},
+                    {'name': 'Mantenimiento Transporte', 'selector':'MattoTransp', 'formato':'moneda'},
+                    {'name': 'Gastos Totales', 'selector':'TotalGasto', 'formato':'moneda'},
+                    {'name': 'Gasto Total por Pedido', 'selector':'TotalGtosXPedido', 'formato':'moneda'}
+                ]
+
+        return {'hayResultados':hayResultados, 'pipeline': pipeline, 'columns':columns, 'data':data}
+
 @router.post("/{seccion}")
 async def tablas (filtros: Filtro, titulo: str, seccion: str, user: dict = Depends(get_current_active_user)):
     if tienePermiso(user.id, seccion):

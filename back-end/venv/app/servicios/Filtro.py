@@ -27,6 +27,7 @@ class Filtro(BaseModel):
     nps: Optional[str]
     mesRFM: Optional[int]
     anioRFM: Optional[int]
+    anio: Optional[int]
     grupoDeptos: Optional[str]
     deptoAgrupado: Optional[str]
     subDeptoAgrupado: Optional[str]

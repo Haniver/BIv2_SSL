@@ -25,7 +25,7 @@ class EjesMultiples():
 
         if self.filtros.fechas != None:
             self.fecha_ini_a12 = datetime.combine(datetime.strptime(self.filtros.fechas['fecha_ini'], '%Y-%m-%dT%H:%M:%S.%fZ'), datetime.min.time()) if self.filtros.fechas['fecha_ini'] != None and self.filtros.fechas['fecha_ini'] != '' else None
-            self.fecha_fin_a12 = datetime.combine(datetime.strptime(self.filtros.fechas['fecha_fin'], '%Y-%m-%dT%H:%M:%S.%fZ'), datetime.min.time()) + timedelta(days=1) - timedelta(seconds=1) if self.filtros.fechas['fecha_fin'] != None and self.filtros.fechas['fecha_fin'] != '' else None
+            self.fecha_fin_a12 = datetime.combine(datetime.strptime(self.filtros.fechas['fecha_fin'], '%Y-%m-%dT%H:%M:%S.%fZ'), datetime.min.time()) + timedelta(days=1) if self.filtros.fechas['fecha_fin'] != None and self.filtros.fechas['fecha_fin'] != '' else None
             # print(f"self.filtros.fechas['fecha_fin']: {str(self.filtros.fechas['fecha_fin'])}")
             # print(f"self.fecha_fin_a12: {str(self.fecha_fin_a12)}")
 
@@ -2621,6 +2621,82 @@ class EjesMultiples():
             else:
                 hayResultados = 'no'
 
+        return  {'hayResultados':hayResultados,'categories':categories, 'series':series, 'pipeline': pipeline, 'lenArreglo':len(arreglo)}
+
+    async def ConsolidadoCostos(self):
+        anio = self.filtros.anio
+        mes = self.filtros.mes
+        categories = []
+        series = []
+        pipeline = []
+        arreglo = []
+        hayResultados = 'no'
+        queryMetodoEnvio = f"and TiendaEnLinea = '{self.filtros.metodoEnvio}'" if self.filtros.metodoEnvio != '' and self.filtros.metodoEnvio != "False" and self.filtros.metodoEnvio != None else ''
+        queryAnio = f"and Anio = {self.filtros.anio}" if self.filtros.anio != '' and self.filtros.anio != "False" and self.filtros.anio != None else ''
+        queryMes = f"and Mes = {self.filtros.mes}" if self.filtros.mes != '' and self.filtros.mes != "False" and self.filtros.mes != None else ''
+        if self.titulo == 'Costo por Método de envío':
+            mod_titulo_serie = ''
+            serie1 = []
+            serie2 = []
+            serie3 = []
+            serie4 = []
+            serie5 = []
+            
+
+            pipeline = f"""select * from dwh.report.consolidadoFinanzas 
+            where Mes <= 12
+            {queryMetodoEnvio}
+            {queryAnio}
+            {queryMes}
+            {queryLugar}
+            """
+            if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
+                if self.filtros.zona != '' and self.filtros.zona != "False" and self.filtros.zona != None:
+                    if self.filtros.tienda != '' and self.filtros.tienda != "False" and self.filtros.tienda != None:
+                        pipeline += f""" and ct.tienda = {self.filtros.tienda} """
+                    else:
+                        pipeline += f""" and ct.zona = {self.filtros.zona} """
+                else:
+                    pipeline += f""" and ct.region = {self.filtros.region} """
+            if self.filtros.depto != '' and self.filtros.depto != "False" and self.filtros.depto != None:
+                if self.filtros.subDepto != '' and self.filtros.subDepto != "False" and self.filtros.subDepto != None:
+                    pipeline += f""" and cd.idSubDepto = {self.filtros.subDepto} """
+                else:
+                    pipeline += f""" and cd.idDepto = {self.filtros.depto} """
+            pipeline += " group by dt.abrev_mes,dt.num_mes order by dt.num_mes "
+            # print(f"Query desde Venta anual por mes: $anioActual vs. $anioAnterior y Objetivo: {pipeline}")
+            cnxn = conexion_sql('DWH')
+            cursor = cnxn.cursor().execute(pipeline)
+            arreglo = crear_diccionario(cursor)
+
+            if len(arreglo) > 0:
+                hayResultados = "si"
+                for i in range(len(arreglo)):
+                    categories.append(arreglo[i]['categoria'])
+                    serie1.append(round((arreglo[i]['AAnterior']), 2))
+                    serie2.append(round((arreglo[i]['AActual']), 2))
+                    # if arreglo[i]['AAnterior'] != 0:
+                    # # if i != 0:
+                    #     serie4.append(round(((arreglo[i]['AActual'] / arreglo[i]['AAnterior'])-1), 4))
+                    # else:
+                    #     serie4.append(0)
+                    # if self.filtros.canal == '1' or self.filtros.canal == '35' or self.filtros.canal == '36':
+                    serie3.append(round((arreglo[i]['objetivo']), 2))
+                    # if arreglo[i]['objetivo'] != 0:
+                    #     serie5.append(round(((arreglo[i]['AActual'] / arreglo[i]['objetivo'])-1), 4))
+                    # else:
+                    #     serie5.append(0)
+                series.extend([
+                    {'name': 'Venta '+mod_titulo_serie+str(anioElegido - 1), 'data':serie1, 'type': 'column', 'formato_tooltip':'moneda', 'color':'dark'},
+                    {'name': 'Venta '+mod_titulo_serie+str(anioElegido), 'data':serie2, 'type': 'column', 'formato_tooltip':'moneda', 'color':'primary'}
+                ])
+                series.append({'name': 'Objetivo '+mod_titulo_serie+str(anioElegido), 'data':serie3, 'type': 'column', 'formato_tooltip':'moneda', 'color':'secondary'})
+                # series.append({'name': '% Var Actual', 'data':serie4, 'type': 'spline', 'formato_tooltip':'porcentaje', 'color':'dark'})
+                # series.append({'name': '% Var Objetivo', 'data':serie5, 'type': 'spline', 'formato_tooltip':'porcentaje', 'color':'danger'})
+            else:
+                hayResultados = "no"
+                categories = []
+                series = []
         return  {'hayResultados':hayResultados,'categories':categories, 'series':series, 'pipeline': pipeline, 'lenArreglo':len(arreglo)}
 
 @router.post("/{seccion}")

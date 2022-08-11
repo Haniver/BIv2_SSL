@@ -26,9 +26,13 @@ const VentaSinImpuesto = () => {
   const [zona, setZona] = useState('')
   const [tienda, setTienda] = useState('')
   const [metodoEnvio, setMetodoEnvio] = useState('')
-  const [fechas, setFechas] = useState({fecha_ini: '', fecha_fin: fechas_srv.noUTC(new Date())})
-  const [anio, setAnio] = useState(fechas_srv.anioActual())
-  const [mes, setMes] = useState('')
+  const [anio, setAnio] = useState(0)
+  const [mes, setMes] = useState(0)
+
+  useEffect(() => {
+    console.log(`anio: ${anio}`)
+    console.log(`mes: ${mes}`)
+  }, [anio, mes])
 
   const seccion = 'ConsolidadoCostos'
 
@@ -36,14 +40,19 @@ const VentaSinImpuesto = () => {
     <>
       <Row className='match-height'>
         <Col sm='12'>
-          <Filtro anioOpcional={anio} mesOpcional={mes} fechas={fechas} region={region} zona={zona} tienda={tienda} metodoEnvio={metodoEnvio} setAnioOpcional={setAnio} setMesOpcional={setMes} setFechas={setFechas} setRegion={setRegion} setZona={setZona} setTienda={setTienda} setMetodoEnvio={setMetodoEnvio} />
+          <Filtro anioOpcional={anio} mesOpcional={mes} region={region} zona={zona} tienda={tienda} metodoEnvio={metodoEnvio} setAnioOpcional={setAnio} setMesOpcional={setMes} setRegion={setRegion} setZona={setZona} setTienda={setTienda} setMetodoEnvio={setMetodoEnvio} />
         </Col>
       </Row>
-      {(metodoEnvio === '') && <Row className='match-height'>
+      <Row className='match-height'>
         <Col sm='12'>
-          <EjesMultiples titulo='Costo por Método de envío' formato='moneda' yLabel='Pesos' fechas={fechas} region={region} zona={zona} tienda={tienda} metodoEnvio={metodoEnvio} />
+          <Tabla titulo='Tabla General' yLabel='Pesos'seccion={seccion} mes={mes} anio={anio} region={region} zona={zona} tienda={tienda} metodoEnvio={metodoEnvio} />
         </Col>
-      </Row>}
+      </Row>
+      {/* {(metodoEnvio === '') && <Row className='match-height'>
+        <Col sm='12'>
+          <EjesMultiples titulo='Costo por Método de envío' seccion={seccion} formato='moneda' yLabel='Pesos' mes={mes} anio={anio} region={region} zona={zona} tienda={tienda} metodoEnvio={metodoEnvio} />
+        </Col>
+      </Row>} */}
       {/* {(tienda === false || tienda === '') && <Row className='match-height'>
         <Col sm='12'>
           <Tabla titulo={`Venta anual por mes: ${anio} vs. ${anio - 1} y Objetivo`} tituloAPI='Venta anual por mes: $anioActual vs. $anioAnterior y Objetivo' formato='moneda' yLabel='Pesos' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} mes={mes} seccion={seccion} />

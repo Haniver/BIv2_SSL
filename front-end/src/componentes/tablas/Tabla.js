@@ -28,7 +28,7 @@ const FilterComponent = ({ filterText, onFilter, onClear }) => (
     </>
 )
 
-const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quitarPaginacion, fechas, region, zona, tienda, proveedor, tipoEntrega, depto, subDepto, mes, canal, agrupador, periodo, reload, setProducto, setUsuario, setEstatus, tipoEntrega2, tipoEntrega3, detalle, estatus, formato, sku, e3, canal2, opcionesPaginacion = [5, 10, 15], setSibling, botonEnviar, mesRFM, anioRFM, fromSibling, origen}) => {
+const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quitarPaginacion, fechas, region, zona, tienda, proveedor, tipoEntrega, depto, subDepto, mes, canal, agrupador, periodo, reload, setProducto, setUsuario, setEstatus, tipoEntrega2, tipoEntrega3, detalle, estatus, formato, sku, e3, canal2, opcionesPaginacion = [5, 10, 15], setSibling, botonEnviar, mesRFM, anioRFM, fromSibling, origen, anio, metodoEnvio}) => {
     const tituloEnviar = (tituloAPI !== undefined) ? tituloAPI : titulo
     // Skins
     const [skin, setSkin] = useSkin()
@@ -117,7 +117,9 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
             mesRFM, 
             anioRFM,
             fromSibling,
-            origen
+            origen,
+            anio,
+            metodoEnvio
           }
         })
         dispatchLoader({tipo: 'recibirDeAPI'})
@@ -366,7 +368,7 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
         }
         // console.log(`Query de ${tituloEnviar}:`)
         // console.log(JSON.stringify(res.data.pipeline))
-    }, [fechas, region, zona, tienda, tipoEntrega, depto, subDepto, mes, canal, agrupador, periodo, reload, tipoEntrega2, tipoEntrega3, detalle, estatus, formato, sku, e3, canal2, botonEnviar, mesRFM, anioRFM, fromSibling, origen])
+    }, [fechas, region, zona, tienda, tipoEntrega, depto, subDepto, mes, canal, agrupador, periodo, reload, tipoEntrega2, tipoEntrega3, detalle, estatus, formato, sku, e3, canal2, botonEnviar, mesRFM, anioRFM, fromSibling, origen, anio, metodoEnvio])
 
     //Búsqueda
     const [filterText, setFilterText] = useState('')

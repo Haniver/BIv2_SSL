@@ -34,6 +34,9 @@ const Filtro = (props) => {
   if (props.anio !== undefined) {
     numElementos -= 4
   }
+  if (props.anioOpcional !== undefined) {
+    numElementos -= 2
+  }
   // Rango Máximo de días es un prop que no se cuenta para el layout
   if (props.rango_max_dias !== undefined) {
     numElementos -= 1
@@ -198,7 +201,7 @@ const Filtro = (props) => {
 
   const comboMesOpcional = []
   for (let i = 0; i < 12; i++) {
-    comboMes.push({label: '', value: ''})
+    comboMesOpcional.push({label: `${fechas_srv.mesTexto(i, true)}`, value: i + 1})
   }
 
   const comboMesRFM = []
@@ -271,7 +274,7 @@ const Filtro = (props) => {
   const [origenValue, setOrigenValue] = useState({value:'', label:''})
   const [e3Value, setE3Value] = useState({value:'', label:''})
   const [anioValue, setAnioValue] = useState(comboAnio[0])
-  const [anioOpcionalValue, setAnioOpcionalValue] = useState(comboAnioOpcional[0])
+  const [anioOpcionalValue, setAnioOpcionalValue] = useState()
   const [anioValueRFM, setAnioValueRFM] = useState(comboAnioRFM[0])
   const [mesValue, setMesValue] = useState(comboMes[fechas_srv.mesActual()])
   const [mesOpcionalValue, setMesOpcionalValue] = useState()
@@ -1384,11 +1387,13 @@ const Filtro = (props) => {
               options={comboAnioOpcional}
               isClearable={true}
               onChange={e => {
-                setAnioOpcionalValue({label: e.label, value: e.value})
+                const label = (e) ? e.label : ''
+                const value = (e) ? e.value : 0
+                setAnioOpcionalValue({label, value})
                 if (props.botonEnviar === undefined) {
-                  props.setAnioOpcional(e.value)
+                  props.setAnioOpcional(value)
                 } else {
-                  setAnioOpcional_tmp(e.value)
+                  setAnioOpcional_tmp(value)
                 }
               }}
             />
@@ -1422,19 +1427,21 @@ const Filtro = (props) => {
             <Label>🌜 Mes</Label>
             <Select
               theme={selectThemeColors}
-              value={mesValue}
+              value={mesOpcionalValue}
               className='react-select'
               classNamePrefix='select'
-              options={comboMes}
+              options={comboMesOpcional}
               isClearable={true}
               onChange={e => {
-                setMesOpcionalValue({label: e.label, value: e.value})
+                const label = (e) ? e.label : ''
+                const value = (e) ? e.value : 0
+                setMesOpcionalValue({label, value})
                 if (props.botonEnviar === undefined) {
-                  props.setMesOpcional(e.value)
+                  props.setMesOpcional(value)
                 } else {
-                  setMesOpcional_tmp(e.value)
+                  setMesOpcional_tmp(value)
                 }
-                const mes = (e.value < 10) ? `0${e.value + 1}` : `${e.value + 1}`
+                const mes = (value < 10) ? `0${value + 1}` : `${value + 1}`
               }}
             />
           </Col>}
