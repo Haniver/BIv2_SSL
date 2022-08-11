@@ -29,10 +29,10 @@ const VentaSinImpuesto = () => {
   const [anio, setAnio] = useState(0)
   const [mes, setMes] = useState(0)
 
-  useEffect(() => {
-    console.log(`anio: ${anio}`)
-    console.log(`mes: ${mes}`)
-  }, [anio, mes])
+//   useEffect(() => {
+//     console.log(`anio: ${anio}`)
+//     console.log(`mes: ${mes}`)
+//   }, [anio, mes])
 
   const seccion = 'ConsolidadoCostos'
 

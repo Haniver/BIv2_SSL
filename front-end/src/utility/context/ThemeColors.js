@@ -43,6 +43,10 @@ const ThemeContext = ({ children }) => {
         dark: {
           light: getHex('--dark').concat('1a'),
           main: getHex('--dark')
+        },
+        light: {
+          light: getHex('--light').concat('1a'),
+          main: getHex('--light')
         }
       }
 

@@ -2648,7 +2648,7 @@ class EjesMultiples():
             {queryMetodoEnvio}
             {queryAnio}
             {queryMes}
-            {queryLugar}
+            Agregar queryLugar
             """
             if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
                 if self.filtros.zona != '' and self.filtros.zona != "False" and self.filtros.zona != None:

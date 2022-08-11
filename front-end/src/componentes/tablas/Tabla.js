@@ -68,6 +68,20 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
         }
     ])
 
+    // Estilo de la fila cuando es un total (o sea, viene desde el back end con una propiedad esTotal = True)
+    const conditionalRowStyles = [
+        {
+          when: row => row.esTotal,
+          style: {
+            backgroundColor: colors.light.main,
+            fontWeight: 'bolder !important',
+            '&:hover': {
+              cursor: 'pointer'
+            }
+          }
+        }
+      ]
+
     // Skins
     useEffect(async () => {
         // Aquí también cambiar los colores dependiendo del skin, según líneas 18-19
@@ -306,49 +320,55 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
             // console.log(data_tmp)
             const data = []
             data_tmp.forEach(fila => {
-                const objeto_a_insertar = {}
+                const fila_a_insertar = {}
                 for (const [key, value] of Object.entries(fila)) {
                     // console.log(`Key, Value: ${key}, ${value}`)
                     if (formatos[key] === 'texto' || formatos[key] === 'url' || formatos[key] === 'sibling') {
-                        objeto_a_insertar[key] = value
+                        fila_a_insertar[key] = value
                     } else if (formatos[key] === 'entero') {
                         if (value === '--') {
-                            objeto_a_insertar[key] = '--'
+                            fila_a_insertar[key] = '--'
                         } else {
-                            objeto_a_insertar[key] = Math.round(value).toLocaleString('es-MX', {minimumFractionDigits: 0, maximumFractionDigits: 0})
+                            fila_a_insertar[key] = Math.round(value).toLocaleString('es-MX', {minimumFractionDigits: 0, maximumFractionDigits: 0})
                         }
                     } else if (formatos[key] === 'moneda') {
                         if (value === '--') {
-                            objeto_a_insertar[key] = '--'
+                            fila_a_insertar[key] = '--'
                         } else {
-                            objeto_a_insertar[key] = `$${objeto_a_insertar[key] = value.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`
+                            fila_a_insertar[key] = `$${fila_a_insertar[key] = value.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`
                         }
                     } else if (formatos[key] === 'decimales') {
                         if (value === '--') {
-                            objeto_a_insertar[key] = '--'
+                            fila_a_insertar[key] = '--'
                         } else {
-                            objeto_a_insertar[key] = value.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2})
+                            fila_a_insertar[key] = value.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2})
                         }
                     } else if (formatos[key] === 'porcentaje') {
                         if (value === '--') {
-                            objeto_a_insertar[key] = '--'
+                            fila_a_insertar[key] = '--'
                         } else {
                             const x100 = value * 100
-                            objeto_a_insertar[key] = `${x100.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2})}%`
+                            fila_a_insertar[key] = `${x100.toLocaleString('es-MX', {minimumFractionDigits: 2, maximumFractionDigits: 2})}%`
                         }
                     } else if (formatos[key] === 'sinComas') {
                         if (value === '--') {
-                            objeto_a_insertar[key] = '--'
+                            fila_a_insertar[key] = '--'
                         } else {
-                            objeto_a_insertar[key] = Math.round(value).toLocaleString('es-MX', {minimumFractionDigits: 0, maximumFractionDigits: 0}).replace(/,/g, '')
+                            fila_a_insertar[key] = Math.round(value).toLocaleString('es-MX', {minimumFractionDigits: 0, maximumFractionDigits: 0}).replace(/,/g, '')
                         }
+                    // Conservar el esTotal, en caso de existir
+                    } else if (key === 'esTotal') {
+                        fila_a_insertar[key] = true
                     }
                 }
-                // console.log(`Objeto a insertar:`)
-                // console.log(objeto_a_insertar)
-                data.push(objeto_a_insertar)
+                if (fila_a_insertar.esTotal) {
+                    console.log("esta fila es un total")
+                }
+                data.push(fila_a_insertar)
             })
             setColumns(columns)
+            // console.log("La data de la tabla es:")
+            // console.log(data)
             setData(data)
         } else {
             setColumns([
@@ -529,6 +549,8 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
                     paginationPerPage={opcionesPaginacion[0]}
                     customStyles={customStyles}
                     highlightOnHover
+                    // Algunas filas vienen con una propiedad "esTotal = true" desde el back end. Si lo tienen, usarlo para darle formato de Total a esa fila:
+                    conditionalRowStyles={conditionalRowStyles}
                 />}
                 {estadoLoader.contador !== 0 && <LoadingGif />}
             </CardBody>

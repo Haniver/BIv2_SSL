@@ -4420,6 +4420,7 @@ class Tablas():
                 'GND': totGND,
                 'MattoTransp': totMattoTransp,
                 'TotalGasto': totTotalGasto,
+                'esTotal': True
             }
             columns = [
                 {'name': 'Región', 'selector':'Region', 'formato':'texto', 'ancho': '200px'},
