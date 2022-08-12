@@ -274,7 +274,7 @@ class EjesMultiplesApilados():
                 group by ct.regionNombre
                 order by ct.regionNombre
                 """
-            # print (f"query desde ejesMultiples->Temporada -> Venta por región: {str(query)}")
+            print (f"query desde ejesMultiples->Temporada -> Venta por región: {str(query)}")
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(query)
             arreglo = crear_diccionario(cursor)

@@ -62,11 +62,6 @@ const VentaSinImpuesto = () => {
           <Tabla titulo={`Venta anual por mes: ${anio} vs. ${anio - 1} y Objetivo`} tituloAPI='Venta anual por mes: $anioActual vs. $anioAnterior y Objetivo' formato='moneda' yLabel='Pesos' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} mes={mes} seccion={seccion} />
         </Col>
       </Row>}
-      {(tienda === false || tienda === '') && <Row className='match-height'>
-        <Col sm='12'>
-          <Tabla titulo={`Venta anual por tienda: ${anio} vs. ${anio - 1} y Objetivo`} tituloAPI='Venta anual por tienda: $anioActual vs. $anioAnterior y Objetivo' formato='moneda' yLabel='Pesos' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} mes={mes} seccion={seccion} />
-        </Col>
-      </Row>}
       <Row className='match-height'>
         <Col sm='12'>
           <EjesMultiples titulo={`Venta mensual por día: ${anio} vs. ${anio - 1} y Objetivo`} tituloAPI='Venta mensual por día: $anioActual vs. $anioAnterior y Objetivo' formato='moneda' yLabel='Pesos' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} mes={mes} seccion={seccion} />
@@ -87,6 +82,11 @@ const VentaSinImpuesto = () => {
           <Tabla quitarBusqueda={true} titulo='Venta sin impuesto por Departamento o Sub Departamento' formato='moneda' yLabel='Pesos' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} mes={mes} seccion={seccion} />
         </Col>
       </Row>
+      {(tienda === false || tienda === '') && <Row className='match-height'>
+        <Col sm='12'>
+          <Tabla titulo={`Venta anual por tienda: ${anio} vs. ${anio - 1} y Objetivo`} tituloAPI='Venta anual por tienda: $anioActual vs. $anioAnterior y Objetivo' formato='moneda' yLabel='Pesos' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} mes={mes} seccion={seccion} />
+        </Col>
+      </Row>}
     </>
   )
 }

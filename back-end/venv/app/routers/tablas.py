@@ -904,6 +904,7 @@ class Tablas():
             left join DWH.artus.catCanal cc on vd.idCanal =cc.idCanal
             left join DWH.artus.cat_departamento cd on vd.subDepto = cd.idSubDepto
             where dt.anio in ({anioElegido},{anioElegido-1})
+            and dt.num_mes in({mesElegido})
             and cc.tipo in ({canal}) """
             if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
                 if self.filtros.zona != '' and self.filtros.zona != "False" and self.filtros.zona != None:
@@ -920,7 +921,7 @@ class Tablas():
                     pipeline += f""" and cd.idDepto = {self.filtros.depto} """
             pipeline += """ group by ct.regionNombre, ct.zonaNombre, ct.tiendaNombre, vd.idTienda 
             order by ct.regionNombre, ct.zonaNombre, ct.tiendaNombre, vd.idTienda """
-            print(f"Query desde Venta anual por tienda: $anioActual vs. $anioAnterior y Objetivo: {pipeline}")
+            # print(f"Query desde Venta anual por tienda: $anioActual vs. $anioAnterior y Objetivo: {pipeline}")
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)
@@ -4220,7 +4221,7 @@ class Tablas():
             else:
                 hayResultados = 'no'
                 
-        if self.titulo == 'Venta por Tienda':
+        elif self.titulo == 'Venta por Tienda':
             query = f"""select ct.regionNombre, ct.zonaNombre, ct.tiendaNombre,
                 sum(case when year(GETDATE())=year(dt2.fecha) then a.ventaSinImpuestos else 0 end) ventaActual,
                 case when sum(case when year(DATEADD(yy,-1,GETDATE()))=year(dt2.fecha) then a.ventaSinImpuestos else 0 end)=0 then 0 else round(((sum(case when year(GETDATE())=year(dt2.fecha) then a.ventaSinImpuestos else 0 end) /
@@ -4241,7 +4242,7 @@ class Tablas():
                 group by ct.regionNombre, ct.zonaNombre, ct.tiendaNombre
                 order by ct.regionNombre, ct.zonaNombre, ct.tiendaNombre
                 """
-            print (f"query desde ejesMultiples->Temporada -> Venta por tienda: {str(query)}")
+            # print (f"query desde ejesMultiples->Temporada -> Venta por tienda: {str(query)}")
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(query)
             arreglo = crear_diccionario(cursor)
@@ -4487,7 +4488,7 @@ class Tablas():
                 {queryLugar}
                 order by cf.Mes, cf.Cebe
                 """
-        print(f"query desde tablas->ConsolidadoCostos->{self.titulo}: {str(pipeline)}")
+        # print(f"query desde tablas->ConsolidadoCostos->{self.titulo}: {str(pipeline)}")
         cnxn = conexion_sql('DWH')
         cursor = cnxn.cursor().execute(pipeline)
         arreglo = crear_diccionario(cursor)
