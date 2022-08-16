@@ -339,6 +339,7 @@ const Filtro = (props) => {
       const [MesOpcional_tmp, setMesOpcional_tmp] = useState(props.mesOpcional)
   // Funciones para rellenar combos dependiendo de los valores de otros combos
   const handleRegionChange = async (e) => {
+    setIsTiendaDisabled(true)
     if (e) {
       setRegionValue({label: e.label, value: e.value})
       if (props.botonEnviar === undefined) {
@@ -346,12 +347,26 @@ const Filtro = (props) => {
       } else {
         setRegion_tmp(e.value)
       }
-      
       const comboZona_temp = await CargarFiltros.cargarZona(e.value) // Se antoja meterle profileState.region en vez de e.value, el problema es que la actualización de estado en React es asíncrona
       setComboZona(comboZona_temp)
       setIsZonaDisabled(false)
-      
+      const comboTienda_temp = await CargarFiltros.cargarTienda(e.value, undefined)
+      setComboTienda(comboTienda_temp)
     } else {
+      setTiendaValue({label: '', value: ''})
+      if (props.botonEnviar === undefined) {
+        props.setTienda('')
+      } else {
+        setTienda_tmp('')
+      }
+      setZonaValue({label: '', value: ''})
+      if (props.botonEnviar === undefined) {
+        // console.log("Poniendo zona en '' desde 1 (handleRegionChange)")
+        // console.log(e)
+        props.setZona('')
+      } else {
+        setZona_tmp('')
+      }
       setRegionValue({value:'', label:''})
       setComboZona([{value:'', label:''}])
       if (props.botonEnviar === undefined) {
@@ -360,25 +375,14 @@ const Filtro = (props) => {
         setRegion_tmp('')
       }
       setIsZonaDisabled(true)
+      const comboTienda_temp = await CargarFiltros.cargarTienda(undefined, undefined)
+      setComboTienda(comboTienda_temp)
     }
-    setZonaValue({label: '', value: ''})
-    if (props.botonEnviar === undefined) {
-      // console.log("Poniendo zona en '' desde 1 (handleRegionChange)")
-      // console.log(e)
-      props.setZona('')
-    } else {
-      setZona_tmp('')
-    }
-    setTiendaValue({label: '', value: ''})
-    if (props.botonEnviar === undefined) {
-      props.setTienda('')
-    } else {
-      setTienda_tmp('')
-    }
-    setIsTiendaDisabled(true)
+    setIsTiendaDisabled(false)
   }
 
   const handleZonaChange = async (e) => {
+    setIsTiendaDisabled(true)
     if (e) {
       if (props.botonEnviar === undefined) {
         // console.log("cambiando zona desde 2 con e:")
@@ -387,10 +391,9 @@ const Filtro = (props) => {
       } else {
         setZona_tmp(e.value)
       }
-      const comboTienda_temp = await CargarFiltros.cargarTienda(e.value)
+      const comboTienda_temp = await CargarFiltros.cargarTienda(props.region, e.value)
       setComboTienda(comboTienda_temp)
       setZonaValue({label: e.label, value: e.value})
-      setIsTiendaDisabled(false)
     } else {
       if (props.botonEnviar === undefined) {
         // console.log("cambiando zona desde 3")
@@ -399,9 +402,11 @@ const Filtro = (props) => {
         setZona_tmp('')
       }
       setZonaValue({label: '', value: ''})
-      setIsTiendaDisabled(true)
+      const comboTienda_temp = await CargarFiltros.cargarTienda(props.region, undefined)
+      setComboTienda(comboTienda_temp)
     }
     setTiendaValue({label: '', value: ''})
+    setIsTiendaDisabled(false)
     if (props.botonEnviar === undefined) {
       props.setTienda('')
     } else {
@@ -412,6 +417,17 @@ const Filtro = (props) => {
   const handleTiendaChange = async (e) => {
     setIsTiendaDisabled(false)
     if (e) {
+      const regionYZona = await CargarFiltros.getRegionYZona(e.value)
+      if (props.region === undefined || props.region === '') {
+        // console.log(`Se va a llamar handleRegionChange con region=${regionYZona.data.region.value}`)
+        await handleRegionChange(regionYZona.data.region)
+        setRegionValue({label: regionYZona.data.region.label, value: regionYZona.data.region.value})
+      }
+      if (props.zona === undefined || props.zona === '') {
+        // console.log(`Se va a llamar handleZonaChange con zona=${regionYZona.data.zona.value}`)
+        await handleZonaChange(regionYZona.data.zona)
+        setZonaValue({label: regionYZona.data.zona.label, value: regionYZona.data.zona.value})
+      }
       setTiendaValue({label: e.label, value: e.value})
       if (props.botonEnviar === undefined) {
         props.setTienda(e.value)
@@ -752,6 +768,9 @@ const Filtro = (props) => {
       if (props.region !== undefined && (userData === null || userData === undefined || userData === false || UserService.getNivel() >= 4)) { // La región te la puedo mostrar en dos escenarios: ya accediste al BI y tienes nivel 4 o 5, o te estás registrando y no tienes userData
         const comboRegion_temp = await CargarFiltros.cargarRegion()
         setComboRegion(comboRegion_temp)
+        const comboTienda_temp = await CargarFiltros.cargarTienda(undefined, undefined)
+        setComboTienda(comboTienda_temp)
+        setIsTiendaDisabled(false)
       } else if (props.region !== undefined && UserService.getNivel() === 3) {
         // props.setRegion(UserService.getRegion())
         handleRegionChange({value: UserService.getRegion()})

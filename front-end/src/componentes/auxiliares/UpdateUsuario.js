@@ -200,8 +200,8 @@ const UpdateUsuario = ({usuario, setUsuario, reloadTabla, setReloadTabla}) => {
     useEffect(async () => {
         const idTienda = await cargarFiltros.numeroTienda(usuario.tienda)
         const regionYZona = await cargarFiltros.getRegionYZona(idTienda.data.numeroTienda)
-        setRegion(regionYZona.data.region)
-        setZona(regionYZona.data.zona)
+        setRegion(regionYZona.data.region.value)
+        setZona(regionYZona.data.zona.value)
         setTienda(idTienda.data.numeroTienda)
         setTiendaVisible(true)
     }, [usuario])

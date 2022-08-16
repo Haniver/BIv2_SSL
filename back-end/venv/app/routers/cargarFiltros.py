@@ -41,15 +41,21 @@ async def cargar_zona(region: int):
     return await cursor.to_list(length=None)
 
 @router.get("/cargarTienda")
-async def cargar_tienda(zona: int):
+async def cargar_tienda(region: int, zona: int):
     collection = conexion_mongo('report').catTienda
-    pipeline = [
-        {'$match': {'ZONA': {'$eq': zona}}},
+    if region > 0:
+        if zona > 0:
+            pipeline =[{'$match': {'ZONA': {'$eq': zona}}}]
+        else:
+            pipeline =[{'$match': {'REGION': {'$eq': region}}}]
+    else:
+        pipeline =[]
+    pipeline.extend([
         {'$match': {'TIENDA_NOMBRE': {'$ne': 'N/A'}}},
         {'$group': {'_id': {'label': '$TIENDA_NOMBRE', 'value': '$TIENDA'}}},
         {'$project': {'_id': 0, 'label':'$_id.label', 'value':'$_id.value'}},
         {'$sort': {'label': 1}}
-    ]
+    ])
     cursor = collection.aggregate(pipeline)
     return await cursor.to_list(length=None)
 
@@ -230,7 +236,7 @@ async def get_region_y_zona(idTienda: int, user: dict = Depends(get_current_acti
     cursor = collection.aggregate(pipeline)
     arreglo = await cursor.to_list(length=None)
     # print(str(arreglo))
-    res = {'region': arreglo[0]['REGION'], 'zona': arreglo[0]['ZONA']}
+    res = {'region': {'value': arreglo[0]['REGION'], 'label': arreglo[0]['REGION_NOMBRE']}, 'zona': {'value': arreglo[0]['ZONA'], 'label': arreglo[0]['ZONA_NOMBRE']}}
     return res
 
 @router.get("/cargarDeptoAgrupado")

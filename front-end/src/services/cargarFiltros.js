@@ -25,10 +25,12 @@ class CargarFiltros {
         })
     }
 
-    cargarTienda = async (zona) => {
+    cargarTienda = async (region, zona) => {
+        region = (region === undefined || region === '') ? 0 : region
+        zona = (zona === undefined || zona === '') ? 0 : zona
         return axios({
             method: 'get',
-            url: `${CustomUrls.ApiUrl()}filtros/cargarTienda?zona=${zona}`
+            url: `${CustomUrls.ApiUrl()}filtros/cargarTienda?region=${region}&zona=${zona}`
         })
         .then(resp => {
             return resp.data
