@@ -930,14 +930,16 @@ class Tablas():
                 hayResultados = "si"
                 for fila in arreglo:
                     # print(f"fila: {fila}")
-                    varActual = round(((fila['AActual'] / fila['AAnterior'])-1), 4) if fila['AAnterior'] != 0 else '--'
-                    varObjetivo = (round(((fila['AActual'] / fila['objetivo'])-1), 4)) if fila['objetivo'] != 0 else '--'
+                    varActual = round(((fila['AActual'] / fila['AAnterior'])-1), 4) if fila['AAnterior'] != 0 and fila['AAnterior'] is not None and fila['AActual'] is not None else '--'
+                    varObjetivo = (round(((fila['AActual'] / fila['objetivo'])-1), 4)) if fila['objetivo'] != 0 and fila['objetivo'] is not None and fila['AActual'] is not None else '--'
+                    ventaAnioAnterior = round((fila['AAnterior']), 2) if fila['AAnterior'] is not None else '--'
+                    ventaAnioActual = round((fila['AActual']), 2) if fila['AActual'] is not None else '--'
                     objeto = {
                         'Region': fila['regionNombre'],
                         'Zona': fila['zonaNombre'],
                         'Tienda': fila['tiendaNombre'],
-                        'VentaAnioAnterior': round((fila['AAnterior']), 2),
-                        'VentaAnioActual': round((fila['AActual']), 2),
+                        'VentaAnioAnterior': ventaAnioAnterior,
+                        'VentaAnioActual': ventaAnioActual,
                         'VarActual': varActual
 
                     }
