@@ -198,11 +198,13 @@ const UpdateUsuario = ({usuario, setUsuario, reloadTabla, setReloadTabla}) => {
     const [tiendaVisible, setTiendaVisible] = useState(false)
     // Cargar la tienda, que se obtiene de forma asíncrona a partir de los props
     useEffect(async () => {
-        const idTienda = await cargarFiltros.numeroTienda(usuario.tienda)
-        const regionYZona = await cargarFiltros.getRegionYZona(idTienda.data.numeroTienda)
-        setRegion(regionYZona.data.region.value)
-        setZona(regionYZona.data.zona.value)
-        setTienda(idTienda.data.numeroTienda)
+        if (usuario.tienda) {
+            const idTienda = await cargarFiltros.numeroTienda(usuario.tienda)
+            const regionYZona = await cargarFiltros.getRegionYZona(idTienda.data.numeroTienda)
+            setRegion(regionYZona.data.region.value)
+            setZona(regionYZona.data.zona.value)
+            setTienda(idTienda.data.numeroTienda)
+        }
         setTiendaVisible(true)
     }, [usuario])
     const [msgTienda, setMsgTienda] = useState({texto: '', visible: false, color: 'info'})
@@ -307,8 +309,7 @@ const UpdateUsuario = ({usuario, setUsuario, reloadTabla, setReloadTabla}) => {
         console.log("ID del usuario:")
         console.log(id_tmp)
         setId(id_tmp)
-        }, [usuario])
-    
+    }, [usuario])
     
     return (
         tiendaVisible && <Card>

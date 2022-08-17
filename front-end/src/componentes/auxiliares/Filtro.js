@@ -825,7 +825,7 @@ const Filtro = (props) => {
 
   // Esto es solo para cuando se usa el filtro en el Alta de Usuarios
   useEffect(async () => {
-    if (props.usuario !== undefined) {
+    if (props.usuario.tienda) {
       // console.log(`(region, zona, tienda) = (${props.region}, ${props.zona}, ${props.tienda})`)
       // Rellenar región del usuario 
       const comboRegion_temp = await CargarFiltros.cargarRegion()
