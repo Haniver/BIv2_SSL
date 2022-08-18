@@ -140,55 +140,6 @@ const Registro = () => {
     setNombre(valor)
   }
   
-  // Validar apellido paterno
-  const [apellidoP, setApellidoP] = useState('')
-  const [msgApellidoP, setMsgApellidoP] = useState({texto: '', visible: false, color: 'info'})
-  const [validadoApellidoP, setValidadoApellidoP] = useState(false)
-  const validarApellidoP = (valor) => {
-    setMsgEnviar({
-      visible: false
-    })
-    if (!isAlpha(valor, 'es-ES', ' ')) {
-        setMsgApellidoP({
-            texto: 'Este no es un apellido válido en español',
-            visible: true,
-            color: 'danger'
-        })
-        setValidadoApellidoP(false)
-    } else {
-        setMsgApellidoP({
-            texto: `✔`,
-            visible: true,
-            color: 'success'
-        })
-        setValidadoApellidoP(true)
-    }
-    setApellidoP(valor)
-  }
-  
-  // Validar apellido materno
-  const [apellidoM, setApellidoM] = useState('')
-  const [msgApellidoM, setMsgApellidoM] = useState({texto: '', visible: false, color: 'info'})
-  const [validadoApellidoM, setValidadoApellidoM] = useState(false)
-  const validarApellidoM = (valor) => {
-    if (!isAlpha(valor, 'es-ES', ' ')) {
-        setMsgApellidoM({
-            texto: 'Este no es un apellido válido en español',
-            visible: true,
-            color: 'danger'
-        })
-        setValidadoApellidoM(false)
-    } else {
-        setMsgApellidoM({
-            texto: `✔`,
-            visible: true,
-            color: 'success'
-        })
-        setValidadoApellidoM(true)
-    }
-    setApellidoM(valor)
-  }
-  
   // Areas
   const [comboAreas, setComboAreas] = useState({label: '', value: ''})
   useEffect(async () => {
@@ -285,7 +236,7 @@ const Registro = () => {
   // Validar formulario completo
   const handleRegistro = async (e) => {
     e.preventDefault()
-    if (!(validadoApellidoM && validadoApellidoP && validadoEmail && validadoNombre && validadoPassword && validadoArea && validadoTienda && validadoNivel)) {
+    if (!(validadoEmail && validadoNombre && validadoPassword && validadoArea && validadoTienda && validadoNivel)) {
         setMsgEnviar({
             texto: `Por favor llena todos los campos y verifica que no tengan errores`,
             visible: true,
@@ -293,7 +244,7 @@ const Registro = () => {
         })
     } else {
       // Enviar
-      const resp_registro = await userService.registro(apellidoM, apellidoP, email, nombre, password1, areas, tienda, nivel)
+      const resp_registro = await userService.registro(email, nombre, password1, areas, tienda, nivel)
       const color_exito = (resp_registro.data.exito) ? 'success' : 'danger'
       setMsgEnviar({
         texto: resp_registro.data.mensaje,
@@ -354,29 +305,11 @@ const Registro = () => {
             <FormGroup>
                 <div className='d-flex justify-content-between'>
                 <Label className='form-label' for='nombre'>
-                    Nombre(s)
+                    Nombre Completo
                 </Label>
                 </div>
                 <Input id='nombre' onChange={e => validarNombre(e.target.value)} />
                 {msgNombre.visible && <Alert color={msgNombre.color}>{msgNombre.texto} </Alert>}
-            </FormGroup>
-            <FormGroup>
-                <div className='d-flex justify-content-between'>
-                <Label className='form-label' for='apellidoP'>
-                    Apellido Paterno
-                </Label>
-                </div>
-                <Input id='apellidoP' onChange={e => validarApellidoP(e.target.value)} />
-                {msgApellidoP.visible && <Alert color={msgApellidoP.color}>{msgApellidoP.texto} </Alert>}
-            </FormGroup>
-            <FormGroup>
-                <div className='d-flex justify-content-between'>
-                <Label className='form-label' for='apellidoM'>
-                    Apellido Materno
-                </Label>
-                </div>
-                <Input id='apellidoM' onChange={e => validarApellidoM(e.target.value)} />
-                {msgApellidoM.visible && <Alert color={msgApellidoM.color}>{msgApellidoM.texto} </Alert>}
             </FormGroup>
             <FormGroup>
                 <div className='d-flex justify-content-between'>

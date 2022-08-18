@@ -49,16 +49,34 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     cursor.execute(query)
     cnxn.commit()
     # Mandar error si el usuario no está activo
-    query = f"""SELECT estatus
+    query = f"""SELECT estatus, nombre
     from DJANGO.php.usuarios
     WHERE usuario='{user.usuario}'"""
     cursor.execute(query)
     arreglo = crear_diccionario(cursor)
     # print(f"El estatus del usuario (desde login.py) es: {arreglo[0]['estatus']}")
-    if arreglo[0]['estatus'] != 'activo':
+    if arreglo[0]['estatus'] == 'expirado':
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Nombre de usuario o contraseña incorrectos",
+            detail="Usuario Expirado",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    elif arreglo[0]['estatus'] == 'bloqueado':
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Usuario Bloqueado",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    elif arreglo[0]['estatus'] == 'rechazado':
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Usuario Rechazado",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    elif arreglo[0]['estatus'] == 'revision':
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Usuario En Revisión",
             headers={"WWW-Authenticate": "Bearer"},
         )
     # Registrar este login como el último
@@ -250,12 +268,11 @@ async def registro(input_usuario: UserInDB):
     # print(f'Entrando a registro con áreas = {str(input_usuario.areas)}')
     ahora = datetime.now()
     ahora = ahora.strftime("%Y-%m-%d %H:%M:%S")
-    nombre_completo = input_usuario.nombre + ' ' + input_usuario.apellidoP + ' ' + input_usuario.apellidoM
     cnxn = conexion_sql('DJANGO')
     cursor = cnxn.cursor()
     # Los valores posibles para estatus son revisión, bloqueado y activo
     query1 = f"""INSERT INTO DJANGO.php.usuarios (nombre, password, usuario, nivel, idTienda, estatus)
-        VALUES ('{nombre_completo}', '{input_usuario.password}', '{input_usuario.usuario}', '{input_usuario.nivel}', {input_usuario.tienda}, 'revisión')"""
+        VALUES ('{input_usuario.nombre}', '{input_usuario.password}', '{input_usuario.usuario}', '{input_usuario.nivel}', {input_usuario.tienda}, 'revisión')"""
     print(f"Query1 desde login -> Registro: {query1}")
     try:
         cursor.execute(query1)

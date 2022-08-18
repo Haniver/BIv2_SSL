@@ -37,8 +37,6 @@ class User(BaseModel):
     # vistas: Optional[list] = []
     # documentos: Optional[list] = []
     tienda: Optional[int]
-    apellidoP: Optional[str]
-    apellidoM: Optional[str]
     menu: Optional[str]
     nivel: Optional[int]
     region: Optional[int]
