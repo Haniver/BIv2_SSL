@@ -125,8 +125,7 @@ class CargarFiltros {
     getRegionYZona(idTienda) {
         return axios({
             method: 'get',
-            url: `${CustomUrls.ApiUrl()}filtros/getRegionYZona?idTienda=${idTienda}`,
-            headers: authHeader()
+            url: `${CustomUrls.ApiUrl()}filtros/getRegionYZona?idTienda=${idTienda}`
         })
     }
     numeroTienda(nombreTienda) {

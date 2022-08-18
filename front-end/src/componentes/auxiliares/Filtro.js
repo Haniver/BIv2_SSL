@@ -419,12 +419,10 @@ const Filtro = (props) => {
     if (e) {
       const regionYZona = await CargarFiltros.getRegionYZona(e.value)
       if (props.region === undefined || props.region === '') {
-        // console.log(`Se va a llamar handleRegionChange con region=${regionYZona.data.region.value}`)
         await handleRegionChange(regionYZona.data.region)
         setRegionValue({label: regionYZona.data.region.label, value: regionYZona.data.region.value})
       }
       if (props.zona === undefined || props.zona === '') {
-        // console.log(`Se va a llamar handleZonaChange con zona=${regionYZona.data.zona.value}`)
         await handleZonaChange(regionYZona.data.zona)
         setZonaValue({label: regionYZona.data.zona.label, value: regionYZona.data.zona.value})
       }
@@ -825,7 +823,7 @@ const Filtro = (props) => {
 
   // Esto es solo para cuando se usa el filtro en el Alta de Usuarios
   useEffect(async () => {
-    if (props.usuario.tienda) {
+    if (props.usuario && props.usuario.tienda) {
       // console.log(`(region, zona, tienda) = (${props.region}, ${props.zona}, ${props.tienda})`)
       // Rellenar región del usuario 
       const comboRegion_temp = await CargarFiltros.cargarRegion()

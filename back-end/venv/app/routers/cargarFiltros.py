@@ -225,7 +225,8 @@ async def numero_tienda(nombreTienda: str, user: dict = Depends(get_current_acti
     return res
 
 @router.get("/getRegionYZona")
-async def get_region_y_zona(idTienda: int, user: dict = Depends(get_current_active_user)):
+async def get_region_y_zona(idTienda: int):
+    # print("Se entró a get_region_y_zona")
     collection = conexion_mongo('report').catTienda
     pipeline = [
         {'$match': {
@@ -237,6 +238,7 @@ async def get_region_y_zona(idTienda: int, user: dict = Depends(get_current_acti
     arreglo = await cursor.to_list(length=None)
     # print(str(arreglo))
     res = {'region': {'value': arreglo[0]['REGION'], 'label': arreglo[0]['REGION_NOMBRE']}, 'zona': {'value': arreglo[0]['ZONA'], 'label': arreglo[0]['ZONA_NOMBRE']}}
+    # print("Se va a mandar respuesta desde get_region_y_zona")
     return res
 
 @router.get("/cargarDeptoAgrupado")
