@@ -8,7 +8,7 @@ import { selectThemeColors } from '@utils'
 import '@styles/base/pages/page-auth.scss'
 import Logo from '@src/assets/images/logo/logo.svg'
 import Filtro from "../componentes/auxiliares/Filtro"
-import { isStrongPassword, isAlpha, isEmail } from "validator"
+import { isStrongPassword, isEmail } from "validator"
 import userService from "../services/user.service"
 
 const Registro = () => {
@@ -29,7 +29,6 @@ const Registro = () => {
       visible: false
     })
     const verificarUsuario = await userService.verificarUsuario(valor)
-    // Si ya está, mandar error
     if (verificarUsuario.data === "Dominio no válido") {
       setMsgEmail({
           texto: `El dominio de este correo no es válido`,
@@ -114,7 +113,8 @@ const Registro = () => {
     setMsgEnviar({
       visible: false
     })
-    if (!isAlpha(valor, 'es-ES', ' ')) {
+    // if (!isAlpha(valor, {allow_spaces: true, extra_characters: ','})) {
+    if (!/^([a-zA-Z," "áéíóúäëïöüÁÉÍÓÚÄËÏÖÜ]*)$/.test(valor)) {
         setMsgNombre({
             texto: 'Este no es un nombre válido en español',
             visible: true,
