@@ -4,6 +4,7 @@ from app.auth import get_current_active_user, authenticate_user, buscar_usuario_
 from app.servicios.conectar_sql import conexion_sql, crear_diccionario
 from app.servicios.conectar_mongo import conexion_mongo
 from app.servicios.enviarEmail import enviarEmail
+from app.servicios.urls import frontendUrlHttp
 from app.servicios import urls
 from datetime import datetime, timedelta, date, time
 from dateutil.relativedelta import relativedelta
@@ -41,42 +42,36 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     # Bloquear al usuario si no se ha logueado en un mes.
     cnxn = conexion_sql('DJANGO')
     cursor = cnxn.cursor()
-    query = f"""UPDATE DJANGO.php.usuarios
-    SET estatus='expirado' 
-    WHERE usuario='{user.usuario}'
-    AND fecha_ultimo_login is not null
+    query = f"""SELECT nombre, usuario FROM DJANGO.php.usuarios
+    WHERE fecha_ultimo_login is not null
     AND fecha_ultimo_login < '{haceUnMes}'"""
     cursor.execute(query)
-    cnxn.commit()
+    arreglo = crear_diccionario(cursor)
+    if len(arreglo) > 0:
+        print("Sí hubo alguien a quien poner como expirado:")
+        query = f"""UPDATE DJANGO.php.usuarios
+        SET estatus='expirado', fecha_ultimo_login=null
+        WHERE fecha_ultimo_login is not null
+        AND fecha_ultimo_login < '{haceUnMes}'"""
+        cursor.execute(query)
+        cnxn.commit()
+        for row in arreglo:
+            print (row['nombre'])
+            cuerpo = f"<html><head></head><body><p>{row['nombre']},<p><p>Tu usuario en el BI ha expirado debido a inactividad. Si quieres recuperarlo, crea una nueva contraseña en:</p><p><a href='{frontendUrlHttp()}/recuperar'>{frontendUrlHttp()}/recuperar</a></p><span style='color:#1A2976;'>Saludos,<br />BI Omnicanal<br />Grupo Comercial Chedraui <img src='https://i.ibb.co/qyc21cy/logo-Email.png'></span></p></body></html>"
+            receivers = [row['usuario']]
+            titulo = "Tu usuario de BI Omnicanal ha expirado"
+            enviarEmail(titulo, receivers, cuerpo)    
     # Mandar error si el usuario no está activo
-    query = f"""SELECT estatus, nombre
+    query = f"""SELECT estatus
     from DJANGO.php.usuarios
     WHERE usuario='{user.usuario}'"""
     cursor.execute(query)
     arreglo = crear_diccionario(cursor)
     # print(f"El estatus del usuario (desde login.py) es: {arreglo[0]['estatus']}")
-    if arreglo[0]['estatus'] == 'expirado':
+    if arreglo[0]['estatus'] != 'activo':
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Usuario Expirado",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    elif arreglo[0]['estatus'] == 'bloqueado':
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Usuario Bloqueado",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    elif arreglo[0]['estatus'] == 'rechazado':
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Usuario Rechazado",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
-    elif arreglo[0]['estatus'] == 'revision':
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Usuario En Revisión",
+            detail="Nombre de usuario o contraseña incorrectos",
             headers={"WWW-Authenticate": "Bearer"},
         )
     # Registrar este login como el último
@@ -193,12 +188,22 @@ async def cambiarPassword(objetoCambiarPassword: claseCambiarPassword):
     ahora = ahora.strftime("%Y-%m-%d %H:%M:%S")
     cnxn = conexion_sql()
     cursor = cnxn.cursor()
-    query = "UPDATE DJANGO.php.usuarios SET password = '"+objetoCambiarPassword.password+"' WHERE token_resetear_password = '"+objetoCambiarPassword.token+"' and expiracion_trp > '"+ahora+"'"
+    query = f"UPDATE DJANGO.php.usuarios SET password = '{objetoCambiarPassword.password}' WHERE token_resetear_password = '{objetoCambiarPassword.token}' and expiracion_trp > '{ahora}'"
     try:
         cursor.execute(query)
         cnxn.commit()
     except pyodbc.Error as e:
         return {'mensaje':'Error al intentar actualizar base de datos: '+str(e)}
+    query = f"SELECT estatus FROM DJANGO.php.usuarios WHERE token_resetear_password = '{objetoCambiarPassword.token}'"
+    cursor = cnxn.cursor().execute(query)
+    diccionario = crear_diccionario(cursor)
+    if diccionario[0]['estatus'] == 'expirado':
+        query = f"UPDATE DJANGO.php.usuarios SET estatus = 'activo' WHERE token_resetear_password = '{objetoCambiarPassword.token}'"
+        try:
+            cursor.execute(query)
+            cnxn.commit()
+        except pyodbc.Error as e:
+            return {'mensaje':'Error al intentar actualizar base de datos: '+str(e)}
     return {'mensaje':'Contraseña actualizada correctamente, ya puedes acceder a tu cuenta.'}
 
 @router.post("/verificarUsuario")
@@ -212,10 +217,11 @@ async def verificar_usuario(input: TokenData):
     for registro in diccionario:
         arregloDominios.append(registro['dominio'])
     if input.usuario[input.usuario.find('@') + 1:] in arregloDominios:
-        query2 = f"SELECT usuario from DJANGO.php.usuarios WHERE usuario = '{input.usuario}'"
-        cursor = cnxn.cursor().execute(query2)
-        arreglo = crear_diccionario(cursor)
-        return "Éxito" if len(arreglo) == 0 else "Usuario ya estaba"
+        # Ya no vamos a checar que el email no exista en la BD. Solo que sea de un dominio válido
+        # query2 = f"SELECT usuario from DJANGO.php.usuarios WHERE usuario = '{input.usuario}'"
+        # cursor = cnxn.cursor().execute(query2)
+        # arreglo = crear_diccionario(cursor)
+        return "Éxito" # if len(arreglo) == 0 else "Usuario ya estaba"
     else:
         return "Dominio no válido"
 
@@ -268,11 +274,12 @@ async def registro(input_usuario: UserInDB):
     # print(f'Entrando a registro con áreas = {str(input_usuario.areas)}')
     ahora = datetime.now()
     ahora = ahora.strftime("%Y-%m-%d %H:%M:%S")
+    nombre_completo = input_usuario.nombre + ' ' + input_usuario.apellidoP + ' ' + input_usuario.apellidoM
     cnxn = conexion_sql('DJANGO')
     cursor = cnxn.cursor()
     # Los valores posibles para estatus son revisión, bloqueado y activo
     query1 = f"""INSERT INTO DJANGO.php.usuarios (nombre, password, usuario, nivel, idTienda, estatus)
-        VALUES ('{input_usuario.nombre}', '{input_usuario.password}', '{input_usuario.usuario}', '{input_usuario.nivel}', {input_usuario.tienda}, 'revisión')"""
+        VALUES ('{nombre_completo}', '{input_usuario.password}', '{input_usuario.usuario}', '{input_usuario.nivel}', {input_usuario.tienda}, 'revisión')"""
     print(f"Query1 desde login -> Registro: {query1}")
     try:
         cursor.execute(query1)
