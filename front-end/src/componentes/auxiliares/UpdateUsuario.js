@@ -7,7 +7,7 @@ import { Row, Col, Card, CardHeader, CardBody, CardTitle, CardText, Form, FormGr
 import Select from 'react-select'
 import '@styles/base/pages/page-auth.scss'
 import Logo from '@src/assets/images/logo/logo.svg'
-import { isStrongPassword, isAlpha, isEmail, isByteLength } from "validator"
+import { isEmail, isByteLength } from "validator"
 import userService from '../../services/user.service'
 import cargarFiltros from '../../services/cargarFiltros'
 import Filtro from './Filtro'
@@ -73,7 +73,8 @@ const UpdateUsuario = ({usuario, setUsuario, reloadTabla, setReloadTabla}) => {
         setMsgEnviar({
         visible: false
         })
-        if (!isAlpha(valor, 'es-ES', {ignore: '\s'})) {
+        // if (!isAlpha(valor, 'es-ES', {ignore: '\s'})) {
+        if (!/^([a-zA-Z," "À-ÿ\u00f1\u00d1]*)$/.test(valor)) {
             setMsgNombre({
                 texto: 'Este no es un nombre válido en español',
                 visible: true,

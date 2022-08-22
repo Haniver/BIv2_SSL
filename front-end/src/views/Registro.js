@@ -114,7 +114,7 @@ const Registro = () => {
       visible: false
     })
     // if (!isAlpha(valor, {allow_spaces: true, extra_characters: ','})) {
-    if (!/^([a-zA-Z," "áéíóúäëïöüÁÉÍÓÚÄËÏÖÜ]*)$/.test(valor)) {
+    if (!/^([a-zA-Z," "À-ÿ\u00f1\u00d1]*)$/.test(valor)) {
         setMsgNombre({
             texto: 'Este no es un nombre válido en español',
             visible: true,
