@@ -199,6 +199,7 @@ const UpdateUsuario = ({usuario, setUsuario, reloadTabla, setReloadTabla}) => {
     const [tiendaVisible, setTiendaVisible] = useState(false)
     // Cargar la tienda, que se obtiene de forma asíncrona a partir de los props
     useEffect(async () => {
+        setTiendaVisible(false)
         if (usuario.tienda) {
             const idTienda = await cargarFiltros.numeroTienda(usuario.tienda)
             const regionYZona = await cargarFiltros.getRegionYZona(idTienda.data.numeroTienda)
@@ -206,12 +207,14 @@ const UpdateUsuario = ({usuario, setUsuario, reloadTabla, setReloadTabla}) => {
             setZona(regionYZona.data.zona.value)
             setTienda(idTienda.data.numeroTienda)
         }
-        setTiendaVisible(true)
     }, [usuario])
     const [msgTienda, setMsgTienda] = useState({texto: '', visible: false, color: 'info'})
     const [validadoTienda, setValidadoTienda] = useState(false)
 
     useEffect(() => {
+        if (tienda) {
+            setTiendaVisible(true)
+        }
         setMsgEnviar({
         visible: false
         })
@@ -307,8 +310,8 @@ const UpdateUsuario = ({usuario, setUsuario, reloadTabla, setReloadTabla}) => {
         validarEmail(usuario.email)
         validarNombre(usuario.nombre)
         const id_tmp = await userService.getIdFromEmail(usuario.email)
-        console.log("ID del usuario:")
-        console.log(id_tmp)
+        // console.log("ID del usuario:")
+        // console.log(id_tmp)
         setId(id_tmp)
     }, [usuario])
     

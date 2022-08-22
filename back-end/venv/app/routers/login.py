@@ -274,18 +274,30 @@ async def registro(input_usuario: UserInDB):
     # print(f'Entrando a registro con áreas = {str(input_usuario.areas)}')
     ahora = datetime.now()
     ahora = ahora.strftime("%Y-%m-%d %H:%M:%S")
-    nombre_completo = input_usuario.nombre + ' ' + input_usuario.apellidoP + ' ' + input_usuario.apellidoM
     cnxn = conexion_sql('DJANGO')
     cursor = cnxn.cursor()
-    # Los valores posibles para estatus son revisión, bloqueado y activo
-    query1 = f"""INSERT INTO DJANGO.php.usuarios (nombre, password, usuario, nivel, idTienda, estatus)
-        VALUES ('{nombre_completo}', '{input_usuario.password}', '{input_usuario.usuario}', '{input_usuario.nivel}', {input_usuario.tienda}, 'revisión')"""
-    print(f"Query1 desde login -> Registro: {query1}")
-    try:
-        cursor.execute(query1)
-        cnxn.commit()
-    except pyodbc.Error as e:
-        return {'mensaje':'Error al intentar actualizar base de datos: '+str(e), 'exito': False}
+    query = f"""select usuario from DJANGO.php.usuarios where usuario = '{input_usuario.usuario}'"""
+    cursor.execute(query)
+    resultados = crear_diccionario(cursor)
+    if len(resultados) > 0:
+        query1 = f"""UPDATE DJANGO.php.usuarios
+        SET nombre = '{input_usuario.nombre}', password = '{input_usuario.password}', usuario = '{input_usuario.usuario}', nivel = {input_usuario.nivel}, idTienda = {input_usuario.tienda}, estatus = 'revisión'
+        WHERE usuario = '{input_usuario.usuario}'"""
+        try:
+            cursor.execute(query1)
+            cnxn.commit()
+        except pyodbc.Error as e:
+            return {'mensaje':'Error al intentar actualizar base de datos: '+str(e), 'exito': False}
+    else:
+        # Los valores posibles para estatus son revisión, bloqueado y activo
+        query1 = f"""INSERT INTO DJANGO.php.usuarios (nombre, password, usuario, nivel, idTienda, estatus)
+            VALUES ('{input_usuario.nombre}', '{input_usuario.password}', '{input_usuario.usuario}', {input_usuario.nivel}, {input_usuario.tienda}, 'revisión')"""
+        print(f"Query1 desde login -> Registro: {query1}")
+        try:
+            cursor.execute(query1)
+            cnxn.commit()
+        except pyodbc.Error as e:
+            return {'mensaje':'Error al intentar actualizar base de datos: '+str(e), 'exito': False}
     query2 = f"""SELECT id 
         from DJANGO.php.usuarios
         where usuario = '{input_usuario.usuario}'"""

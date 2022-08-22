@@ -12,6 +12,7 @@ import UserService from '../../services/user.service'
 import { Users } from 'react-feather'
 
 const Filtro = (props) => {
+  // console.log(`Tienda en Filtro=${props.tienda}`)
   const userData = JSON.parse(localStorage.getItem('userData'))
   // if (userData === null || userData === undefined || userData === false) {
   //   return (
@@ -761,7 +762,7 @@ const Filtro = (props) => {
   // Rellenado inicial de combos variables
 
   useEffect(async () => {
-    if (props.tiendaDefault === undefined || !props.tiendaDefault) {
+    if (props.usuario === undefined && (props.tiendaDefault === undefined || !props.tiendaDefault)) { // Esto nada más aplica cuando no hay usuario, porque si lo hay, es que estamos en Alta de Usuarios
       // Llenar región, zona y tienda dependiendo del nivel del usuario
       if (props.region !== undefined && (userData === null || userData === undefined || userData === false || UserService.getNivel() >= 4)) { // La región te la puedo mostrar en dos escenarios: ya accediste al BI y tienes nivel 4 o 5, o te estás registrando y no tienes userData
         const comboRegion_temp = await CargarFiltros.cargarRegion()
@@ -848,7 +849,7 @@ const Filtro = (props) => {
       }
       // Rellenar Tienda del usuario 
       setIsTiendaDisabled(false)
-      const comboTienda_temp = await CargarFiltros.cargarTienda(props.zona)
+      const comboTienda_temp = await CargarFiltros.cargarTienda(props.region, props.zona)
       setComboTienda(comboTienda_temp)
       const idx_tiendaNombre = comboTienda_temp.findIndex(object => {
         return object.value === props.tienda
