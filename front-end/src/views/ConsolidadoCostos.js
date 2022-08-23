@@ -5,8 +5,10 @@ import Tarjeta from '../componentes/auxiliares/Tarjeta'
 import fechas_srv from '../services/fechas_srv'
 import EjesMultiples from '../componentes/graficos/EjesMultiples'
 import Tabla from '../componentes/tablas/Tabla'
+import TablaExpandible from '../componentes/tablas/TablaExpandible'
 import tarjetasCombinadas from '../services/tarjetasCombinadas'
 import TarjetaEnFila from '../componentes/auxiliares/TarjetaEnFila'
+import Barras from '../componentes/graficos/Barras'
 // import userService from '../services/user.service'
 
 import {
@@ -45,7 +47,7 @@ const VentaSinImpuesto = () => {
       </Row>
       <Row className='match-height'>
         <Col sm='12'>
-          <Tabla titulo='Tabla General' yLabel='Pesos'seccion={seccion} mes={mes} anio={anio} region={region} zona={zona} tienda={tienda} metodoEnvio={metodoEnvio} />
+          <TablaExpandible titulo='Tabla General' yLabel='Pesos'seccion={seccion} mes={mes} anio={anio} region={region} zona={zona} tienda={tienda} metodoEnvio={metodoEnvio} />
         </Col>
       </Row>
       {/* {(metodoEnvio === '') && <Row className='match-height'>

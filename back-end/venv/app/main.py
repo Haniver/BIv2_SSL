@@ -1,6 +1,6 @@
 from fastapi import Depends, FastAPI
 from starlette.middleware.cors import CORSMiddleware
-from app.routers import barras, columnasApiladas, columnasBasicas, columnasDrilldown, ejesMultiples, cargarFiltros, pie, tablas, tarjetas, login, tarjetasCombinadas, barrasApiladas, cargarMotivosFaltantes, ColumnasNps, spiderweb, columnasSuperpuestas, burbuja3d, areaBasica, distribucion3d, sankey, columnasAgrupadasYApiladas, markdown, ejesMultiplesApilados, tarjetasEnFila
+from app.routers import barras, columnasApiladas, columnasBasicas, columnasDrilldown, ejesMultiples, cargarFiltros, pie, tablas, tarjetas, login, tarjetasCombinadas, barrasApiladas, cargarMotivosFaltantes, ColumnasNps, spiderweb, columnasSuperpuestas, burbuja3d, areaBasica, distribucion3d, sankey, columnasAgrupadasYApiladas, markdown, ejesMultiplesApilados, tarjetasEnFila, tablasExpandibles
 import app.servicios.urls as urls
 
 # app = FastAPI(dependencies=[Depends(get_query_token)])
@@ -51,6 +51,7 @@ app.include_router(columnasAgrupadasYApiladas.router)
 app.include_router(markdown.router)
 app.include_router(ejesMultiplesApilados.router)
 app.include_router(tarjetasEnFila.router)
+app.include_router(tablasExpandibles.router)
 
 @app.get("/")
 async def root():

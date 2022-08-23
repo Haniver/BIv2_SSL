@@ -53,7 +53,7 @@
     "react-contextmenu": "^2.14.0",
     "react-copy-to-clipboard": "5.0.2",
     "react-country-flag": "2.0.1",
-    "react-data-table-component": "^6.11.2",
+    "react-data-table-component": "7.5.2",
     "react-dom": "17.0.1",
     "react-draft-wysiwyg": "^1.14.7",
     "react-feather": "~2.0.3",
