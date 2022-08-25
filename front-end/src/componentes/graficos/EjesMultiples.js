@@ -20,7 +20,7 @@ require('highcharts/modules/data')(Highcharts)
 require('highcharts/modules/exporting')(Highcharts)
 require('highcharts/modules/export-data')(Highcharts)
 
-const EjesMultiples = ({ titulo, yLabel, seccion, formato, fechas, region, zona, tienda, proveedor, categoria, tipoEntrega, tituloAPI, canal, mes, depto, subDepto, agrupador, periodo, nps, anioRFM, mesRFM }) => {
+const EjesMultiples = ({ titulo, yLabel, seccion, formato, fechas, region, zona, tienda, proveedor, categoria, tipoEntrega, tituloAPI, canal, mes, depto, subDepto, agrupador, periodo, nps, anioRFM, mesRFM, anio }) => {
     const titulo_enviar = (tituloAPI) ? tituloAPI : titulo // Como la API usa el título de la gráfica para regresar su valor, había un problema cuando ese título es variable, como cuando incluye la fecha actual. Entonces, si desde la vista le mandas el prop tituloAPI, es ese el que se usa para la API. Si lo omites, se usa la variable titulo como estaba pensado originalmente
     const [estadoLoader, dispatchLoader] = useReducer((estadoLoader, accion) => {
         switch (accion.tipo) {
@@ -100,7 +100,8 @@ const EjesMultiples = ({ titulo, yLabel, seccion, formato, fechas, region, zona,
             periodo,
             nps,
             anioRFM,
-            mesRFM
+            mesRFM,
+            anio
           }
         })
         dispatchLoader({tipo: 'recibirDeAPI'})
@@ -149,7 +150,7 @@ const EjesMultiples = ({ titulo, yLabel, seccion, formato, fechas, region, zona,
             setFormato_columnas(formato_columnas_tmp)
         }
         // console.log(`Pipeline de ${titulo}: ${JSON.stringify(res.data.pipeline)}`)
-      }, [fechas, region, zona, tienda, proveedor, categoria, tipoEntrega, depto, subDepto, canal, agrupador, periodo, nps, anioRFM, mesRFM])
+      }, [fechas, region, zona, tienda, proveedor, categoria, tipoEntrega, depto, subDepto, canal, agrupador, periodo, nps, anioRFM, mesRFM, anio, mes])
 
     useEffect(() => {
         const options = {

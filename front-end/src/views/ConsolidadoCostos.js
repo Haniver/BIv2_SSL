@@ -31,10 +31,10 @@ const VentaSinImpuesto = () => {
   const [anio, setAnio] = useState(0)
   const [mes, setMes] = useState(0)
 
-//   useEffect(() => {
-//     console.log(`anio: ${anio}`)
-//     console.log(`mes: ${mes}`)
-//   }, [anio, mes])
+  useEffect(() => {
+    console.log(`anio: ${anio}`)
+    console.log(`mes: ${mes}`)
+  }, [anio, mes])
 
   const seccion = 'ConsolidadoCostos'
 
@@ -50,11 +50,11 @@ const VentaSinImpuesto = () => {
           <TablaExpandible titulo='Tabla General' yLabel='Pesos'seccion={seccion} mes={mes} anio={anio} region={region} zona={zona} tienda={tienda} metodoEnvio={metodoEnvio} />
         </Col>
       </Row>
-      {/* {(metodoEnvio === '') && <Row className='match-height'>
+      {(metodoEnvio === '') && <Row className='match-height'>
         <Col sm='12'>
           <EjesMultiples titulo='Costo por Método de envío' seccion={seccion} formato='moneda' yLabel='Pesos' mes={mes} anio={anio} region={region} zona={zona} tienda={tienda} metodoEnvio={metodoEnvio} />
         </Col>
-      </Row>} */}
+      </Row>}
       {/* {(tienda === false || tienda === '') && <Row className='match-height'>
         <Col sm='12'>
           <Tabla titulo={`Venta anual por mes: ${anio} vs. ${anio - 1} y Objetivo`} tituloAPI='Venta anual por mes: $anioActual vs. $anioAnterior y Objetivo' formato='moneda' yLabel='Pesos' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} mes={mes} seccion={seccion} />

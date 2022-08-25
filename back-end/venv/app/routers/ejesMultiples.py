@@ -2632,71 +2632,127 @@ class EjesMultiples():
         arreglo = []
         hayResultados = 'no'
         queryMetodoEnvio = f"and TiendaEnLinea = '{self.filtros.metodoEnvio}'" if self.filtros.metodoEnvio != '' and self.filtros.metodoEnvio != "False" and self.filtros.metodoEnvio != None else ''
-        queryAnio = f"and Anio = {self.filtros.anio}" if self.filtros.anio != '' and self.filtros.anio != "False" and self.filtros.anio != None else ''
-        queryMes = f"and Mes = {self.filtros.mes}" if self.filtros.mes != '' and self.filtros.mes != "False" and self.filtros.mes != None else ''
+        queryAnio = f"and Anio = {self.filtros.anio}" if self.filtros.anio != 0 else ''
+        queryMes = f"and Mes = {self.filtros.mes}" if self.filtros.mes != 0 else ''
+        if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
+            filtro_lugar = True
+            queryLugar2 = 'left join DWH.artus.catTienda ct on cf.Cebe = ct.tienda'
+            if self.filtros.zona != '' and self.filtros.zona != "False" and self.filtros.zona != None:
+                if self.filtros.tienda != '' and self.filtros.tienda != "False" and self.filtros.tienda != None:
+                    queryLugar1 = ', ct.tienda'
+                    queryLugar3 = f'and ct.tienda = {self.filtros.tienda}'
+                else:
+                    queryLugar1 = ', ct.zona'
+                    queryLugar3 = f'and ct.zona = {self.filtros.zona}'
+            else:
+                    queryLugar1 = ', ct.region'
+                    queryLugar3 = f'and ct.region = {self.filtros.region}'
+        else:
+            queryLugar1 = queryLugar2 = queryLugar3 = ''
         if self.titulo == 'Costo por Método de envío':
             mod_titulo_serie = ''
-            serie1 = []
-            serie2 = []
-            serie3 = []
-            serie4 = []
-            serie5 = []
-            
-
-            pipeline = f"""select * from dwh.report.consolidadoFinanzas 
+            propios = []
+            logistica = []
+            series = []
+            zubale = []
+            pipeline = f"""select TiendaEnLinea, SUM(RH) as RH, SUM(pRH) as pRH, SUM(Reclutamiento) as Surtido, SUM(Envio) as Envio, SUM(Combustible) as Combustible, sum(pPickedUp) as pPickedUp, SUM(pEnviados) as pEnviados, SUM(pZubale) as pZubale, SUM(PagoXDistancia) as PagoXDistancia{queryLugar1}
+            from dwh.report.consolidadoFinanzas cf
+            {queryLugar2}
             where Mes <= 12
             {queryMetodoEnvio}
             {queryAnio}
             {queryMes}
-            Agregar queryLugar
+            {queryLugar3}
+            group by TiendaEnLinea{queryLugar1}
             """
-            if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
-                if self.filtros.zona != '' and self.filtros.zona != "False" and self.filtros.zona != None:
-                    if self.filtros.tienda != '' and self.filtros.tienda != "False" and self.filtros.tienda != None:
-                        pipeline += f""" and ct.tienda = {self.filtros.tienda} """
-                    else:
-                        pipeline += f""" and ct.zona = {self.filtros.zona} """
-                else:
-                    pipeline += f""" and ct.region = {self.filtros.region} """
-            if self.filtros.depto != '' and self.filtros.depto != "False" and self.filtros.depto != None:
-                if self.filtros.subDepto != '' and self.filtros.subDepto != "False" and self.filtros.subDepto != None:
-                    pipeline += f""" and cd.idSubDepto = {self.filtros.subDepto} """
-                else:
-                    pipeline += f""" and cd.idDepto = {self.filtros.depto} """
-            pipeline += " group by dt.abrev_mes,dt.num_mes order by dt.num_mes "
-            # print(f"Query desde Venta anual por mes: $anioActual vs. $anioAnterior y Objetivo: {pipeline}")
+            print(f"Query desde EjesMultiples -> ConsolidadoCostos: {pipeline}")
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)
 
             if len(arreglo) > 0:
                 hayResultados = "si"
-                for i in range(len(arreglo)):
-                    categories.append(arreglo[i]['categoria'])
-                    serie1.append(round((arreglo[i]['AAnterior']), 2))
-                    serie2.append(round((arreglo[i]['AActual']), 2))
-                    # if arreglo[i]['AAnterior'] != 0:
-                    # # if i != 0:
-                    #     serie4.append(round(((arreglo[i]['AActual'] / arreglo[i]['AAnterior'])-1), 4))
-                    # else:
-                    #     serie4.append(0)
-                    # if self.filtros.canal == '1' or self.filtros.canal == '35' or self.filtros.canal == '36':
-                    serie3.append(round((arreglo[i]['objetivo']), 2))
-                    # if arreglo[i]['objetivo'] != 0:
-                    #     serie5.append(round(((arreglo[i]['AActual'] / arreglo[i]['objetivo'])-1), 4))
-                    # else:
-                    #     serie5.append(0)
-                series.extend([
-                    {'name': 'Venta '+mod_titulo_serie+str(anioElegido - 1), 'data':serie1, 'type': 'column', 'formato_tooltip':'moneda', 'color':'dark'},
-                    {'name': 'Venta '+mod_titulo_serie+str(anioElegido), 'data':serie2, 'type': 'column', 'formato_tooltip':'moneda', 'color':'primary'}
-                ])
-                series.append({'name': 'Objetivo '+mod_titulo_serie+str(anioElegido), 'data':serie3, 'type': 'column', 'formato_tooltip':'moneda', 'color':'secondary'})
-                # series.append({'name': '% Var Actual', 'data':serie4, 'type': 'spline', 'formato_tooltip':'porcentaje', 'color':'dark'})
-                # series.append({'name': '% Var Objetivo', 'data':serie5, 'type': 'spline', 'formato_tooltip':'porcentaje', 'color':'danger'})
+                # Vamos a hacer un arreglo de dos dimensiones, con parámetros que van a alimentar los indicadores. La primera dimensión es:
+                # 0: Rec. Propios, 1: Rec. Propios/Logisitca, 2: Zubale
+                # La segunda dimensión es:
+                # 0: RH, 1: Envio, 2: Combustible, 3: pRH(Tot Pedidos), 4: pPickedUp, 5: pEnviados, 6: Costo Picker, 7: Costo Envío, 8: End to End
+                parm = [[0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0]]
+                for row in arreglo:
+                    print("Debug 1")
+                    parm[2][0] += row['Surtido']
+                    parm[2][1] += row['PagoXDistancia']
+                    parm[2][3] += row['pZubale']
+                    parm[2][5] += row['pZubale']
+                    if row['TiendaEnLinea'] == 'Zubale' or row['TiendaEnLinea'] == 'No es Zubale':
+                        print("Debug 2")
+                        parm[0][0] += row['RH']
+                        parm[0][1] += row['Envio']
+                        parm[0][2] += row['Combustible']
+                        parm[0][3] += row['pRH']
+                        parm[0][4] += row['pPickedUp']
+                        parm[0][5] += row['pEnviados']
+                    elif row['TiendaEnLinea'] == 'Logística':
+                        print("Debug 3")
+                        parm[1][0] += row['RH']
+                        parm[1][1] += row['Envio']
+                        parm[1][2] += row['Combustible']
+                        parm[1][3] += row['pRH']
+                        parm[1][4] += row['pPickedUp']
+                        parm[1][5] += row['pEnviados']
+                print("Debug 4")
+                parm[2][8] = parm[2][0] / parm[2][5] if parm[2][5] != 0 else 0
+                parm[2][6] = parm[2][8] * 45 / 110
+                parm[2][7] = parm[2][8] - parm[2][6]
+                parm[0][6] = parm[0][0] / parm[0][3] if parm[0][3] != 0 else 0
+                parm[1][6] = parm[1][0] / parm[1][3] if parm[1][3] != 0 else 0
+                parm[0][7] = (parm[0][1] + parm[0][2]) / parm[0][5] if parm[0][5] != 0 else 0
+                parm[1][7] = (parm[1][1] + parm[1][2]) / parm[1][5] if parm[1][5] != 0 else 0
+                parm[0][8] = parm[0][6] + parm[0][7]
+                parm[1][8] = parm[1][6] + parm[1][7]
+                categories = ['Costo de Pickeo por Pedido', 'Costo Envío por Pedido', 'Costo End to End por Pedido']
+                for i in range(6,9):
+                    print("Debug 5")
+                    propios.append(parm[0][i])
+                    logistica.append(parm[1][i])
+                    zubale.append(parm[2][i])
+                print(f"propios: {str(propios)}")
+                print(f"logistica: {str(logistica)}")
+                print(f"zubale: {str(zubale)}")
+                series = [
+                    {
+                        'name': 'Recursos Propios',
+                        'data': propios, 
+                        'type': 'column',
+                        'formato_tooltip':'moneda', 
+                        'color':'primary'
+                    },
+                    {
+                        'name': 'Rec. Propios/Logística',
+                        'data': logistica, 
+                        'type': 'column',
+                        'formato_tooltip':'moneda', 
+                        'color':'secondary'
+                    },
+                    {
+                        'name': 'Zubale',
+                        'data': zubale, 
+                        'type': 'column',
+                        'formato_tooltip':'moneda', 
+                        'color':'dark'
+                    },
+                    {
+                        'name': 'Meta',
+                        'data': [45, 65, 110],
+                        'type': 'column',
+                        'formato_tooltip':'moneda', 
+                        'color':'success'
+                    }
+                ]
             else:
-                hayResultados = "no"
+                hayResultados = 'no'
                 categories = []
                 series = []
+        print(str({'hayResultados':hayResultados,'categories':categories, 'series':series, 'pipeline': pipeline, 'lenArreglo':len(arreglo)}))
         return  {'hayResultados':hayResultados,'categories':categories, 'series':series, 'pipeline': pipeline, 'lenArreglo':len(arreglo)}
 
 @router.post("/{seccion}")
