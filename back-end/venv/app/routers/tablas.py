@@ -4460,7 +4460,7 @@ class Tablas():
         # print(f"Data desde Tablas -> Temporada: {str(data)}")
         return {'hayResultados':hayResultados, 'pipeline': pipeline, 'columns':columns, 'data':data}
 
-    async def ConsolidadoCostos(self):
+    async def CostoPorPedido(self):
         anio = self.filtros.anio
         mes = self.filtros.mes
         data = []
@@ -4490,7 +4490,7 @@ class Tablas():
                 {queryLugar}
                 order by cf.Mes, cf.Cebe
                 """
-        # print(f"query desde tablas->ConsolidadoCostos->{self.titulo}: {str(pipeline)}")
+        # print(f"query desde tablas->CostoPorPedido->{self.titulo}: {str(pipeline)}")
         cnxn = conexion_sql('DWH')
         cursor = cnxn.cursor().execute(pipeline)
         arreglo = crear_diccionario(cursor)

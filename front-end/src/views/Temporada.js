@@ -26,7 +26,7 @@ const Temporada = () => {
     const [clase, setClase] = useState('')
     const [subClase, setSubClase] = useState('')
     const [fuenteDataStudio, setFuenteDataStudio] = useState('')
-    // console.log(`Fecha y hora actual: ${new Date()}`)
+    const hora = new Date().getHours()
 
     // useEffect(() => {
     //   console.log(`canal=${canal}`)
@@ -60,31 +60,31 @@ const Temporada = () => {
           <Filtro mismoMes fechas={fechas} canal={canal} setFechas={setFechas} setCanal={setCanal} />
         </Col>
       </Row>
-      <Row className='match-height'>
+      {hora >= 8 && <Row className='match-height'>
         <Col sm='12'>
           <TarjetaEnFila seccion={seccion} formato='moneda' titulo='Indicadores' cols={{ xl: '4', sm: '6' }}/>
         </Col>
-      </Row>
-      <Row className='match-height'>
+      </Row>}
+      {hora >= 8 && <Row className='match-height'>
         <Col sm='12'>
             <EjesMultiplesApilados seccion={seccion} titulo='Pedidos Levantados Hoy (con impuesto - todos los canales)' fechas={fechas} />
         </Col>
-      </Row>
-      <Row className='match-height'>
+      </Row>}
+      {hora >= 8 && <Row className='match-height'>
         <Col sm='12'>
             <EjesMultiplesApilados seccion={seccion} titulo='Pedidos Pagados Hoy (sin impuesto)' canal={canal} fechas={fechas} />
         </Col>
-      </Row>
-      <Row className='match-height'>
+      </Row>}
+      {hora >= 8 && <Row className='match-height'>
         <Col sm='12'>
             <EjesMultiplesApilados seccion={seccion} titulo='Pedidos por Día' fechas={fechas} canal={canal} />
         </Col>
-      </Row>
-      <Row className='match-height'>
+      </Row>}
+      {hora >= 8 && <Row className='match-height'>
         <Col sm='12'>
             <EjesMultiplesApilados splineLabelsEnabled seccion={seccion} titulo='Venta por Región' fechas={fechas} canal={canal} />
         </Col>
-      </Row>
+      </Row>}
       <Row className='match-height'>
         <Col sm='12'>
             <Tabla seccion={seccion} titulo='Venta por Tienda' fechas={fechas} canal={canal} />
