@@ -257,8 +257,8 @@ const Routes = [
     }
   },
   {
-    path: '/consolidadoCostos',
-    component: lazy(() => import('../../views/ConsolidadoCostos')),
+    path: '/costoPorPedido',
+    component: lazy(() => import('../../views/CostoPorPedido')),
     meta: {
       publicRoute: false
       // menuCollapsed: false

@@ -36,7 +36,7 @@ const VentaSinImpuesto = () => {
     console.log(`mes: ${mes}`)
   }, [anio, mes])
 
-  const seccion = 'ConsolidadoCostos'
+  const seccion = 'CostoPorPedido'
 
   return (
     <>

@@ -45,7 +45,7 @@ class TablasExpandibles():
         else:
             self.filtro_lugar = False
 
-    async def ConsolidadoCostos(self):
+    async def CostoPorPedido(self):
         anio = self.filtros.anio
         mes = self.filtros.mes
         data = []
@@ -75,7 +75,7 @@ class TablasExpandibles():
                 {queryLugar}
                 order by cf.Mes, cf.Cebe
                 """
-        # print(f"query desde tablas->ConsolidadoCostos->{self.titulo}: {str(pipeline)}")
+        # print(f"query desde tablas->CostoPorPedido->{self.titulo}: {str(pipeline)}")
         cnxn = conexion_sql('DWH')
         cursor = cnxn.cursor().execute(pipeline)
         arreglo = crear_diccionario(cursor)

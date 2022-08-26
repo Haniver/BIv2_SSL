@@ -2623,7 +2623,7 @@ class EjesMultiples():
 
         return  {'hayResultados':hayResultados,'categories':categories, 'series':series, 'pipeline': pipeline, 'lenArreglo':len(arreglo)}
 
-    async def ConsolidadoCostos(self):
+    async def CostoPorPedido(self):
         anio = self.filtros.anio
         mes = self.filtros.mes
         categories = []
@@ -2665,7 +2665,7 @@ class EjesMultiples():
             {queryLugar3}
             group by TiendaEnLinea{queryLugar1}
             """
-            print(f"Query desde EjesMultiples -> ConsolidadoCostos: {pipeline}")
+            print(f"Query desde EjesMultiples -> CostoPorPedido: {pipeline}")
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)
