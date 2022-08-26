@@ -2742,7 +2742,7 @@ class EjesMultiples():
                     },
                     {
                         'name': 'Meta',
-                        'data': [45, 65, 110],
+                        'data': [46.35, 66.95, 113.3],
                         'type': 'column',
                         'formato_tooltip':'moneda', 
                         'color':'success'
