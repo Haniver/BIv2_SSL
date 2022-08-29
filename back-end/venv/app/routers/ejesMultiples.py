@@ -2750,7 +2750,7 @@ class EjesMultiples():
                     {
                         'name': 'Meta',
                         'data': [costosReferencia['Meta de costo de pickeo'], costosReferencia['Meta de costo de envío'], costosReferencia['Meta de End To End']],
-                        'type': 'spline',
+                        'type': 'column',
                         'formato_tooltip':'moneda', 
                         'color':'success'
                     }
