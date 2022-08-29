@@ -115,11 +115,14 @@ class Tablas():
                 ]
                 lugar = 1
                 for dato in arreglo:
+                    nombre = dato['nombre'] if 'nombre' in dato and dato['nombre'] != '' and dato['nombre'] is not None else '--'
+                    id = dato['id'] if 'id' in dato and dato['id'] != '' and dato['id'] is not None else '--'
+                    monto = dato['monto'] if 'monto' in dato and dato['monto'] != '' and dato['monto'] is not None else '--'
                     data.append(
                         {'lugar': lugar,
-                        'nombre': dato['nombre'],
-                        'id': dato['id'],
-                        'monto': dato['monto']
+                        'nombre': nombre,
+                        'id': id,
+                        'monto': monto
                     })
                     lugar += 1
 

@@ -2655,7 +2655,14 @@ class EjesMultiples():
             logistica = []
             series = []
             zubale = []
-            pipeline = f"""select TiendaEnLinea, SUM(RH) as RH, SUM(pRH) as pRH, SUM(Reclutamiento) as Surtido, SUM(Envio) as Envio, SUM(Combustible) as Combustible, sum(pPickedUp) as pPickedUp, SUM(pEnviados) as pEnviados, SUM(pZubale) as pZubale, SUM(PagoXDistancia) as PagoXDistancia{queryLugar1}
+            query = f"""select * from  DWH.artus.catCostos"""
+            cnxn = conexion_sql('DWH')
+            cursor = cnxn.cursor().execute(query)
+            costosReferencia_tmp = crear_diccionario(cursor)
+            costosReferencia = {}
+            for row in costosReferencia_tmp:
+                costosReferencia[row['descripCosto']] = row['Costo']
+            pipeline = f"""select TiendaEnLinea, SUM(RH) as RH, SUM(pRH) as pRH, SUM(Reclutamiento) as Surtido, SUM(Envio) as Envio, SUM(Combustible) as Combustible, sum(pPickedUp) as pPickedUp, SUM(pEnviados) as pEnviados, SUM(pZubale) as pZubale, SUM(PagoXDistancia) as PagoXDistancia, SUM(pZub45) as pedSoloPickeo{queryLugar1}
             from dwh.report.consolidadoFinanzas cf
             {queryLugar2}
             where Mes <= 12
@@ -2665,8 +2672,7 @@ class EjesMultiples():
             {queryLugar3}
             group by TiendaEnLinea{queryLugar1}
             """
-            print(f"Query desde EjesMultiples -> CostoPorPedido: {pipeline}")
-            cnxn = conexion_sql('DWH')
+            # print(f"Query desde EjesMultiples -> CostoPorPedido: {pipeline}")
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)
 
@@ -2677,33 +2683,34 @@ class EjesMultiples():
                 # La segunda dimensión es:
                 # 0: RH, 1: Envio, 2: Combustible, 3: pRH(Tot Pedidos), 4: pPickedUp, 5: pEnviados, 6: Costo Picker, 7: Costo Envío, 8: End to End
                 parm = [[0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0]]
+                surtidoNoZubale = pickeoZubale = 0
                 for row in arreglo:
-                    print("Debug 1")
-                    parm[2][0] += row['Surtido']
                     parm[2][1] += row['PagoXDistancia']
                     parm[2][3] += row['pZubale']
                     parm[2][5] += row['pZubale']
                     if row['TiendaEnLinea'] == 'Zubale' or row['TiendaEnLinea'] == 'No es Zubale':
-                        print("Debug 2")
                         parm[0][0] += row['RH']
                         parm[0][1] += row['Envio']
                         parm[0][2] += row['Combustible']
                         parm[0][3] += row['pRH']
                         parm[0][4] += row['pPickedUp']
                         parm[0][5] += row['pEnviados']
+                        if row['TiendaEnLinea'] == 'Zubale':
+                            parm[2][0] += row['Surtido']
+                        else:
+                            surtidoNoZubale += row['Surtido']
+                            pickeoZubale += row['pedSoloPickeo']
                     elif row['TiendaEnLinea'] == 'Logística':
-                        print("Debug 3")
                         parm[1][0] += row['RH']
                         parm[1][1] += row['Envio']
                         parm[1][2] += row['Combustible']
                         parm[1][3] += row['pRH']
                         parm[1][4] += row['pPickedUp']
                         parm[1][5] += row['pEnviados']
-                print("Debug 4")
                 parm[2][8] = parm[2][0] / parm[2][5] if parm[2][5] != 0 else 0
-                parm[2][6] = parm[2][8] * 45 / 110
+                parm[2][6] = parm[2][8] * costosReferencia['Costo de Zubale para pickeo'] / costosReferencia['Costo de Zubale para envío']
                 parm[2][7] = parm[2][8] - parm[2][6]
-                parm[0][6] = parm[0][0] / parm[0][3] if parm[0][3] != 0 else 0
+                parm[0][6] = (parm[0][0] + surtidoNoZubale) / (parm[0][3] + pickeoZubale) if parm[0][3] != 0 else 0
                 parm[1][6] = parm[1][0] / parm[1][3] if parm[1][3] != 0 else 0
                 parm[0][7] = (parm[0][1] + parm[0][2]) / parm[0][5] if parm[0][5] != 0 else 0
                 parm[1][7] = (parm[1][1] + parm[1][2]) / parm[1][5] if parm[1][5] != 0 else 0
@@ -2711,13 +2718,13 @@ class EjesMultiples():
                 parm[1][8] = parm[1][6] + parm[1][7]
                 categories = ['Costo de Pickeo por Pedido', 'Costo Envío por Pedido', 'Costo End to End por Pedido']
                 for i in range(6,9):
-                    print("Debug 5")
+                    # print("Debug 5")
                     propios.append(parm[0][i])
                     logistica.append(parm[1][i])
                     zubale.append(parm[2][i])
-                print(f"propios: {str(propios)}")
-                print(f"logistica: {str(logistica)}")
-                print(f"zubale: {str(zubale)}")
+                # print(f"propios: {str(propios)}")
+                # print(f"logistica: {str(logistica)}")
+                # print(f"zubale: {str(zubale)}")
                 series = [
                     {
                         'name': 'Recursos Propios',
@@ -2742,8 +2749,8 @@ class EjesMultiples():
                     },
                     {
                         'name': 'Meta',
-                        'data': [46.35, 66.95, 113.3],
-                        'type': 'column',
+                        'data': [costosReferencia['Meta de costo de pickeo'], costosReferencia['Meta de costo de envío'], costosReferencia['Meta de End To End']],
+                        'type': 'spline',
                         'formato_tooltip':'moneda', 
                         'color':'success'
                     }
@@ -2752,7 +2759,8 @@ class EjesMultiples():
                 hayResultados = 'no'
                 categories = []
                 series = []
-        print(str({'hayResultados':hayResultados,'categories':categories, 'series':series, 'pipeline': pipeline, 'lenArreglo':len(arreglo)}))
+        # print(f"parm: {str(parm)}")
+        # print(str({'hayResultados':hayResultados,'categories':categories, 'series':series, 'pipeline': pipeline, 'lenArreglo':len(arreglo)}))
         return  {'hayResultados':hayResultados,'categories':categories, 'series':series, 'pipeline': pipeline, 'lenArreglo':len(arreglo)}
 
 @router.post("/{seccion}")
