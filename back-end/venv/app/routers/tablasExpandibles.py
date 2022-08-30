@@ -81,7 +81,7 @@ class TablasExpandibles():
         arreglo = crear_diccionario(cursor)
         if len(arreglo) > 0:
             hayResultados = "si"
-            totRH = totEnvio = totCombustible = totPPickedUp = totPEnviados = totPZubale = totEstimadoZubale  = totConsumosInternos = totGND = totMattoTransp = totTotalGasto = 0
+            totRH = totEnvio = totCombustible = totPPickedUp = totPEnviados = totPZubale = totEstimadoZubale  = totConsumosInternos = totGND = totMattoTransp = totTotalGasto = totPedidos = 0
             data = [{}]
             # n=1
             for row in arreglo:
@@ -126,6 +126,7 @@ class TablasExpandibles():
                     'RH': row['RH'],
                     'Envio': row['Envio'],
                     'Combustible': row['Combustible'],
+                    'Pedidos': row['pRH'],
                     'pPickedUp': row['pPickedUp'],
                     'pEnviados': row['pEnviados'],
                     'pZubale': row['pZubale'],
@@ -143,6 +144,7 @@ class TablasExpandibles():
                 totRH += float(row['RH'])
                 totEnvio += float(row['Envio'])
                 totCombustible += float(row['Combustible'])
+                totPedidos += float(row['pRH'])
                 totPPickedUp += float(row['pPickedUp'])
                 totPEnviados += float(row['pEnviados'])
                 totPZubale += float(row['pZubale'])
@@ -161,6 +163,7 @@ class TablasExpandibles():
                 'RH': totRH,
                 'Envio': totEnvio,
                 'Combustible': totCombustible,
+                'Pedidos': totPedidos,
                 'pPickedUp': totPPickedUp,
                 'pEnviados': totPEnviados,
                 'pZubale': totPZubale,
@@ -178,18 +181,19 @@ class TablasExpandibles():
                 {'name': 'Año', 'selector':'Anio', 'formato':'texto'},
                 {'name': 'Mes', 'selector':'Mes', 'formato':'texto'},
                 {'name': 'Método de Envío', 'selector':'MetodoEnvio', 'formato':'texto', 'ancho': '200px'},
-                {'name': 'Cto Recursos Humanos', 'selector':'RH', 'formato':'moneda', 'ancho': '130px'},
-                {'name': 'Cto Envío', 'selector':'Envio', 'formato':'moneda', 'ancho': '130px'},
-                {'name': 'Combustible', 'selector':'Combustible', 'formato':'moneda', 'ancho': '130px'},
-                {'name': 'Pedidos Recogidos en Tienda', 'selector':'pPickedUp', 'formato':'entero', 'ancho': '130px'},
-                {'name': 'Pedidos Enviados', 'selector':'pEnviados', 'formato':'entero', 'ancho': '130px'},
-                {'name': 'Pedidos Zubale', 'selector':'pZubale', 'formato':'entero', 'ancho': '130px'},
-                {'name': 'Estimado Zubale', 'selector':'EstimadoZubale', 'formato':'moneda', 'ancho': '130px'},
-                {'name': 'Consumos Internos', 'selector':'ConsumosInternos', 'formato':'moneda', 'ancho': '130px'},
-                {'name': 'GND', 'selector':'GND', 'formato':'moneda', 'ancho': '130px'},
-                {'name': 'Mantenimiento Transporte', 'selector':'MattoTransp', 'formato':'moneda', 'ancho': '130px'},
-                {'name': 'Gastos Totales', 'selector':'TotalGasto', 'formato':'moneda', 'ancho': '130px'},
-                {'name': 'Gasto Total por Pedido', 'selector':'TotalGtosXPedido', 'formato':'moneda', 'ancho': '130px'}
+                {'name': 'Cto Recursos Humanos', 'selector':'RH', 'formato':'moneda'},
+                {'name': 'Cto Envío', 'selector':'Envio', 'formato':'moneda'},
+                {'name': 'Combustible', 'selector':'Combustible', 'formato':'moneda'},
+                {'name': 'Pedidos', 'selector':'Pedidos', 'formato':'entero'},
+                {'name': 'Pedidos Recogidos en Tienda', 'selector':'pPickedUp', 'formato':'entero'},
+                {'name': 'Pedidos Enviados', 'selector':'pEnviados', 'formato':'entero'},
+                {'name': 'Pedidos Zubale', 'selector':'pZubale', 'formato':'entero'},
+                {'name': 'Estimado Zubale', 'selector':'EstimadoZubale', 'formato':'moneda'},
+                {'name': 'Consumos Internos', 'selector':'ConsumosInternos', 'formato':'moneda'},
+                {'name': 'GND', 'selector':'GND', 'formato':'moneda'},
+                {'name': 'Mantenimiento Transporte', 'selector':'MattoTransp', 'formato':'moneda'},
+                {'name': 'Gastos Totales', 'selector':'TotalGasto', 'formato':'moneda'},
+                {'name': 'Gasto Total por Pedido', 'selector':'TotalGtosXPedido', 'formato':'moneda'}
             ]
 
         return {'hayResultados':hayResultados, 'pipeline': pipeline, 'columns':columns, 'data':data}
