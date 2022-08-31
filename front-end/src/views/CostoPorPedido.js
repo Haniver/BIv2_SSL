@@ -22,7 +22,7 @@ import {
   PieChart
 } from 'react-feather'
 
-const VentaSinImpuesto = () => {
+const CostoPorPedido = () => {
 
   const [region, setRegion] = useState('')
   const [zona, setZona] = useState('')
@@ -45,42 +45,22 @@ const VentaSinImpuesto = () => {
           <Filtro anioOpcional={anio} mesOpcional={mes} region={region} zona={zona} tienda={tienda} metodoEnvio={metodoEnvio} setAnioOpcional={setAnio} setMesOpcional={setMes} setRegion={setRegion} setZona={setZona} setTienda={setTienda} setMetodoEnvio={setMetodoEnvio} />
         </Col>
       </Row>
-      <Row className='match-height'>
-        <Col sm='12'>
-          <TablaExpandible titulo='Tabla General' yLabel='Pesos'seccion={seccion} mes={mes} anio={anio} region={region} zona={zona} tienda={tienda} metodoEnvio={metodoEnvio} />
-        </Col>
-      </Row>
       {(metodoEnvio === '') && <Row className='match-height'>
         <Col sm='12'>
           <EjesMultiples titulo='Costo por Método de envío' seccion={seccion} formato='moneda' yLabel='Pesos' mes={mes} anio={anio} region={region} zona={zona} tienda={tienda} metodoEnvio={metodoEnvio} />
         </Col>
       </Row>}
-      {/* {(tienda === false || tienda === '') && <Row className='match-height'>
-        <Col sm='12'>
-          <Tabla titulo={`Venta anual por mes: ${anio} vs. ${anio - 1} y Objetivo`} tituloAPI='Venta anual por mes: $anioActual vs. $anioAnterior y Objetivo' formato='moneda' yLabel='Pesos' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} mes={mes} seccion={seccion} />
-        </Col>
-      </Row>}
       <Row className='match-height'>
         <Col sm='12'>
-          <EjesMultiples titulo={`Venta mensual por día: ${anio} vs. ${anio - 1} y Objetivo`} tituloAPI='Venta mensual por día: $anioActual vs. $anioAnterior y Objetivo' formato='moneda' yLabel='Pesos' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} mes={mes} seccion={seccion} />
+          <TablaExpandible titulo='Tabla General' yLabel='Pesos'seccion={seccion} mes={mes} anio={anio} region={region} zona={zona} tienda={tienda} metodoEnvio={metodoEnvio} />
         </Col>
       </Row>
-      {(tienda === false || tienda === '') && <Row className='match-height'>
+      {/* <Row className='match-height'>
         <Col sm='12'>
-          <EjesMultiples titulo={`Venta anual por lugar: ${anio} vs. ${anio - 1} y Objetivo`} tituloAPI='Venta anual por lugar: $anioActual vs. $anioAnterior y Objetivo' formato='moneda' yLabel='Pesos' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} mes={mes} seccion={seccion} />
-        </Col>
-      </Row>}
-      {(tienda === false || tienda === '') && <Row className='match-height'>
-        <Col sm='12'>
-          <EjesMultiples titulo={`Venta mensual por lugar: ${anio} vs. ${anio - 1} y Objetivo`} tituloAPI='Venta mensual por lugar: $anioActual vs. $anioAnterior y Objetivo' formato='moneda' yLabel='Pesos' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} mes={mes} seccion={seccion} />
-        </Col>
-      </Row>}
-      <Row className='match-height'>
-        <Col sm='12'>
-          <Tabla quitarBusqueda={true} titulo='Venta sin impuesto por Departamento o Sub Departamento' formato='moneda' yLabel='Pesos' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} mes={mes} seccion={seccion} />
+          <EjesMultiples titulo='Pedidos por Picker: Top 20' formato='moneda' mes={mes} anio={anio} region={region} zona={zona} tienda={tienda} metodoEnvio={metodoEnvio} seccion={seccion} />
         </Col>
       </Row> */}
     </>
   )
 }
-export default VentaSinImpuesto
+export default CostoPorPedido
