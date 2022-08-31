@@ -88,12 +88,8 @@ class TablasExpandibles():
                 dataSub = []
                 query = f"""select * from DWH.report.consolidadoFinanzasPicker
                 where Año={str(int(row['Anio']))} and Mes={str(int(row['Mes']))} and CeBe={row['Cebe']}"""
-                # n+=1
                 cursor = cnxn.cursor().execute(query)
                 arregloSub = crear_diccionario(cursor)
-                # if n < 200:
-                #     print(f"query{n} = {query}")
-                #     print(str(arregloSub))
                 columnsSub = [
                     {'name': 'Puesto', 'selector':'Puesto', 'formato':'texto'},
                     {'name': 'Autorizados', 'selector':'Autorizada', 'formato':'entero'},
@@ -137,7 +133,6 @@ class TablasExpandibles():
                     'TotalGasto': row['TotalGasto'],
                     'TotalGtosXPedido': row['TotalGtosXPedido'],
                     'subTabla': json.dumps({'columns': columnsSub, 'data': dataSub})
-                    # wawa te quedaste en ver cómo mandas este objeto, porque no lo está recibiendo
                 }
                 # print(f"datum: {str(datum)}")
                 data.append(datum)
