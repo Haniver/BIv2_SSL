@@ -2761,7 +2761,7 @@ class EjesMultiples():
                         'data': propiosParaZubale, 
                         'type': 'column',
                         'formato_tooltip':'moneda', 
-                        'color':'dark'
+                        'color':'light'
                     },
                     {
                         'name': 'Meta',
