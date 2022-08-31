@@ -238,7 +238,7 @@ const Filtro = (props) => {
   const comboMetodoEnvio = [
     {label: 'Zubale', value: 'Zubale'},
     {label: 'Recursos Propios', value: 'No es Zubale'},
-    {label: 'Rec. Propios/Logística', value: 'Logística'}
+    {label: 'Logística', value: 'Logística'}
   ]
 
   // Hooks para mensajes

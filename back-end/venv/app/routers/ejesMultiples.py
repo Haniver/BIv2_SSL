@@ -2652,8 +2652,9 @@ class EjesMultiples():
         if self.titulo == 'Costo por Método de envío':
             propios = []
             logistica = []
-            series = []
             zubale = []
+            propiosParaZubale = []
+            series = []
             query = f"""select * from  DWH.artus.catCostos"""
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(query)
@@ -2678,27 +2679,32 @@ class EjesMultiples():
             if len(arreglo) > 0:
                 hayResultados = "si"
                 # Vamos a hacer un arreglo de dos dimensiones, con parámetros que van a alimentar los indicadores. La primera dimensión es:
-                # 0: Rec. Propios, 1: Rec. Propios/Logisitca, 2: Zubale
+                # 0: Solo Rec. Propios, 1: Rec. Propios y Logística, 2: Zubale, 3: Rec. Propios para tiendas Zubale
+
                 # La segunda dimensión es:
                 # 0: RH, 1: Envio, 2: Combustible, 3: pRH(Tot Pedidos), 4: pPickedUp, 5: pEnviados, 6: Costo Picker, 7: Costo Envío, 8: End to End
-                parm = [[0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0]]
+                parm = [[0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0]]
                 surtidoNoZubale = pickeoZubale = 0
                 for row in arreglo:
-                    parm[2][1] += row['PagoXDistancia']
                     parm[2][3] += row['pZubale']
                     parm[2][5] += row['pZubale']
-                    if row['TiendaEnLinea'] == 'Zubale' or row['TiendaEnLinea'] == 'No es Zubale':
+                    if row['TiendaEnLinea'] == 'No es Zubale':
                         parm[0][0] += row['RH']
                         parm[0][1] += row['Envio']
                         parm[0][2] += row['Combustible']
                         parm[0][3] += row['pRH']
                         parm[0][4] += row['pPickedUp']
                         parm[0][5] += row['pEnviados']
-                        if row['TiendaEnLinea'] == 'Zubale':
-                            parm[2][0] += row['Surtido']
-                        else:
-                            surtidoNoZubale += row['Surtido']
-                            pickeoZubale += row['pedSoloPickeo']
+                        surtidoNoZubale += row['Surtido']
+                        pickeoZubale += row['pedSoloPickeo']
+                    elif row['TiendaEnLinea'] == 'Zubale':
+                        parm[3][0] += row['RH']
+                        parm[3][1] += row['Envio']
+                        parm[3][2] += row['Combustible']
+                        parm[3][3] += row['pRH']
+                        parm[3][4] += row['pPickedUp']
+                        parm[3][5] += row['pEnviados']
+                        parm[2][0] += row['Surtido']
                     elif row['TiendaEnLinea'] == 'Logística':
                         parm[1][0] += row['RH']
                         parm[1][1] += row['Envio']
@@ -2706,42 +2712,53 @@ class EjesMultiples():
                         parm[1][3] += row['pRH']
                         parm[1][4] += row['pPickedUp']
                         parm[1][5] += row['pEnviados']
+                parm[0][6] = (parm[0][0] + surtidoNoZubale) / (parm[0][3] + pickeoZubale) if parm[0][3] != 0 else 0
+                parm[0][7] = (parm[0][1] + parm[0][2]) / parm[0][5] if parm[0][5] != 0 else 0
+                parm[0][8] = parm[0][6] + parm[0][7]
+                parm[1][6] = parm[1][0] / parm[1][3] if parm[1][3] != 0 else 0
+                parm[1][7] = (parm[1][1] + parm[1][2]) / parm[1][5] if parm[1][5] != 0 else 0
+                parm[1][8] = parm[1][6] + parm[1][7]
                 parm[2][8] = parm[2][0] / parm[2][5] if parm[2][5] != 0 else 0
                 parm[2][6] = parm[2][8] * costosReferencia['Costo de Zubale para pickeo'] / costosReferencia['Costo de Zubale para envío']
                 parm[2][7] = parm[2][8] - parm[2][6]
-                parm[0][6] = (parm[0][0] + surtidoNoZubale) / (parm[0][3] + pickeoZubale) if parm[0][3] != 0 else 0
-                parm[1][6] = parm[1][0] / parm[1][3] if parm[1][3] != 0 else 0
-                parm[0][7] = (parm[0][1] + parm[0][2]) / parm[0][5] if parm[0][5] != 0 else 0
-                parm[1][7] = (parm[1][1] + parm[1][2]) / parm[1][5] if parm[1][5] != 0 else 0
-                parm[0][8] = parm[0][6] + parm[0][7]
-                parm[1][8] = parm[1][6] + parm[1][7]
+                parm[3][6] = parm[3][0] / parm[3][3] if parm[3][3] != 0 else 0
+                parm[3][7] = (parm[3][1] + parm[3][2]) / parm[3][5] if parm[3][5] != 0 else 0
+                parm[3][8] = parm[3][6] + parm[3][7]
                 categories = ['Costo de Pickeo por Pedido', 'Costo Envío por Pedido', 'Costo End to End por Pedido']
                 for i in range(6,9):
                     # print("Debug 5")
                     propios.append(parm[0][i])
                     logistica.append(parm[1][i])
                     zubale.append(parm[2][i])
+                    propiosParaZubale.append(parm[3][i])
                 # print(f"propios: {str(propios)}")
                 # print(f"logistica: {str(logistica)}")
                 # print(f"zubale: {str(zubale)}")
                 series = [
                     {
-                        'name': 'Recursos Propios',
+                        'name': 'Solo Recursos Propios',
                         'data': propios, 
                         'type': 'column',
                         'formato_tooltip':'moneda', 
                         'color':'primary'
                     },
                     {
-                        'name': 'Rec. Propios/Logística',
+                        'name': 'Rec. Propios y Logística',
                         'data': logistica, 
                         'type': 'column',
                         'formato_tooltip':'moneda', 
                         'color':'secondary'
                     },
                     {
-                        'name': 'Zubale',
+                        'name': 'Solo Zubale',
                         'data': zubale, 
+                        'type': 'column',
+                        'formato_tooltip':'moneda', 
+                        'color':'dark'
+                    },
+                    {
+                        'name': 'Rec. Prop. para tiendas Zubale',
+                        'data': propiosParaZubale, 
                         'type': 'column',
                         'formato_tooltip':'moneda', 
                         'color':'dark'
@@ -2824,6 +2841,7 @@ class EjesMultiples():
                     propios.append(parm[0][i])
                     logistica.append(parm[1][i])
                     zubale.append(parm[2][i])
+                    propiosParaZubale.append(parm[3][i])
                 # print(f"propios: {str(propios)}")
                 # print(f"logistica: {str(logistica)}")
                 # print(f"zubale: {str(zubale)}")
