@@ -238,18 +238,19 @@ class TarjetasEnFila():
             # print(str(arreglo))
 
             if len(arreglo) >= 2:
-                venta_pasado = arreglo[0]['venta']
-                venta_actual = arreglo[1]['venta']
-                objetivo = arreglo[1]['objetivo']
+                venta_pasado = arreglo[0]['venta'] if arreglo[0]['venta'] is not None else 0
+                venta_actual = arreglo[1]['venta'] if arreglo[1]['venta'] is not None else 0
+                objetivo = arreglo[1]['objetivo'] if arreglo[1]['objetivo'] is not None else 0
             elif len(arreglo) == 1:
                 venta_pasado = 0
-                venta_actual = arreglo[0]['venta']
-                objetivo = arreglo[0]['objetivo']
+                venta_actual = arreglo[0]['venta'] if arreglo[0]['venta'] is not None else 0
+                objetivo = arreglo[0]['objetivo'] if arreglo[0]['objetivo'] is not None else 0
             else:
                 venta_pasado = 0
                 venta_actual = 0
                 objetivo = 0
             dias_en_mes = monthrange(self.anioElegido, self.mesElegido)[1]
+            # print(f"****** dias_en_mes: {dias_en_mes}. venta_actual: {venta_actual}. self.diaElegido: {self.diaElegido}******")
             proyeccion_actual = dias_en_mes*venta_actual/self.diaElegido
             avance_actual = venta_actual/objetivo if objetivo != 0 else '--'
             alcance_actual = proyeccion_actual/objetivo - 1 if objetivo != 0 else '--'
@@ -267,12 +268,12 @@ class TarjetasEnFila():
                 res_tmp['Alcance $mes $anio'] = alcance_actual
             elif variante == 'MesAlDia':
                 if len(arreglo) >= 2:
-                    objetivoDia = arreglo[1]['objetivoDia']
-                    ventaDiaActual = arreglo[1]['ventaDia']
-                    ventaDiaAnterior = arreglo[0]['ventaDia']
+                    objetivoDia = arreglo[1]['objetivoDia'] if arreglo[1]['objetivoDia'] is not None else 0
+                    ventaDiaActual = arreglo[1]['ventaDia'] if arreglo[1]['ventaDia'] is not None else 0
+                    ventaDiaAnterior = arreglo[0]['ventaDia'] if arreglo[0]['ventaDia'] is not None else 0
                 elif len(arreglo) == 1:
-                    objetivoDia = arreglo[0]['objetivoDia']
-                    ventaDiaActual = arreglo[0]['ventaDia']
+                    objetivoDia = arreglo[0]['objetivoDia'] if arreglo[0]['objetivoDia'] is not None else 0
+                    ventaDiaActual = arreglo[0]['ventaDia'] if arreglo[0]['ventaDia'] is not None else 0
                     ventaDiaAnterior = 0
                 else:
                     objetivoDia = 0
