@@ -9,7 +9,7 @@ import ColumnasApiladas from '../componentes/graficos/ColumnasApiladas'
 import BarrasApiladas from '../componentes/graficos/BarrasApiladas'
 // import userService from '../services/user.service'
 
-const PedidoPerfecto = () => {
+const OnTimeInFull = () => {
     
     const [fechas, setFechas] = useState({fecha_ini: fechas_srv.primeroDelMesVencido(), fecha_fin: fechas_srv.actualVencida()})
     const [agrupador, setAgrupador] = useState('semana')
@@ -24,7 +24,7 @@ const PedidoPerfecto = () => {
     // const [sufijoTituloTabla, setSufijoTituloTabla] = useState('')
     // const [prefijoTituloTabla, setPrefijoTituloTabla] = useState('')
 
-    const seccion = 'PedidoPerfecto'
+    const seccion = 'OnTimeInFull'
 
 
     useEffect(() => {
@@ -85,9 +85,9 @@ const PedidoPerfecto = () => {
         </Col>
       </Row>
       {!tienda && <Row className='match-height'>
-        <Col sm='12' lg='6'>
+        {/* <Col sm='12' lg='6'>
           <ColumnasApiladas titulo='Evaluación de KPI Pedido Perfecto por Lugar' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} formato='porcentaje' />
-        </Col>
+        </Col> */}
         <Col sm='12' lg='6'>
           <EjesMultiples titulo='Evaluación Pedido Perfecto por Lugar' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} />
         </Col>
@@ -96,29 +96,29 @@ const PedidoPerfecto = () => {
         <Col sm='12' lg='6'>
           <EjesMultiples titulo='Motivos de Quejas' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} />
         </Col>
-        <Col sm='12' lg='6'>
+        {/* <Col sm='12' lg='6'>
           <ColumnasApiladas titulo='Pedidos por Tipo de Entrega' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} formato='entero' />
-        </Col>
+        </Col> */}
       </Row>
-      {!tienda && <Row className='match-height'>
+      {/* {!tienda && <Row className='match-height'>
         <Col sm='12' lg='6'>
           <BarrasApiladas tituloAPI='Quejas por lugar $periodo1' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} formato='entero' />
         </Col>
         <Col sm='12' lg='6'>
           <BarrasApiladas tituloAPI='Quejas por lugar $periodo2' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} formato='entero' />
         </Col>
-      </Row>}
-      <Row className='match-height'>
+      </Row>} */}
+      {/* <Row className='match-height'>
         <Col sm='12'>
           <Tabla titulo='Tiendas por % Pedido Perfecto más bajo' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} setSibling={setSibling} quitarBusqueda={quitarBusqueda} quitarPaginacion={quitarPaginacion} />
         </Col>
-      </Row>
-      {sibling && <Row className='match-height'>
+      </Row> */}
+      {/* {sibling && <Row className='match-height'>
         <Col sm='12'>
           <Tabla tituloAPI='$Tienda' titulo={labelTienda} fechas={fechas} region={sibling.region.value} zona={sibling.zona.value} tienda={sibling.tienda.value} agrupador={agrupador} periodo={periodo} seccion={seccion} />
         </Col>
-      </Row>}
+      </Row>} */}
     </>
   )
 }
-export default PedidoPerfecto
+export default OnTimeInFull

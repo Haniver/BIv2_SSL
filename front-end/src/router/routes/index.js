@@ -113,6 +113,14 @@ const Routes = [
     }
   },
   {
+    path: '/onTimeInFull',
+    component: lazy(() => import('../../views/OnTimeInFull')),
+    meta: {
+      publicRoute: false
+      // menuCollapsed: false
+    }
+  },
+  {
     path: '/pedidoPerfecto',
     component: lazy(() => import('../../views/PedidoPerfecto')),
     meta: {
