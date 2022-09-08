@@ -99,7 +99,7 @@ class Tablas():
                 {'$sort': {'monto': -1}},
                 { '$limit': 200 }
             ])
-            print(f"Pipeline desde Tablas -> Venta Top 200 Proveedores: {str(pipeline)}")
+            # print(f"Pipeline desde Tablas -> Venta Top 200 Proveedores: {str(pipeline)}")
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=1000)
             if len(arreglo) <= 0:
@@ -1827,6 +1827,357 @@ class Tablas():
         # Return para debugging:
         # return {'hayResultados':'no', 'pipeline': [], 'columns':[], 'data':[]}
 
+    async def OnTimeInFull(self):
+        pipeline = []
+        data = []
+        columns = []
+        if self.titulo == 'Tiendas por % A Tiempo y Completo más bajo':
+            if self.filtros.periodo != {}:
+                collection = conexion_mongo('report').report_pedidoPerfecto
+                if self.filtros.region != '' and self.filtros.region != "False":
+                    # print('Sí hay región, y es: '+self.filtros.region)
+                    filtro_lugar = True
+                    if self.filtros.zona != '' and self.filtros.zona != "False" and self.filtros.zona != None:
+                        if self.filtros.tienda != '' and self.filtros.tienda != "False" and self.filtros.tienda != None:
+                            nivel = 'idtienda'
+                            lugar = int(self.filtros.tienda)
+                        else:
+                            nivel = 'zona'
+                            lugar = int(self.filtros.zona)
+                    else:
+                            nivel = 'region'
+                            lugar = int(self.filtros.region)
+                else:
+                    filtro_lugar = False
+                    lugar = ''
+                    # print('No hay filtro_lugar')
+                pipeline = [{'$unwind': '$sucursal'}]
+                if filtro_lugar:
+                    pipeline.extend([
+                        {'$match': {'sucursal.'+ nivel: lugar}}
+                    ])
+                # print("self.filtros.periodo desde Tabla: "+str(self.filtros.periodo))
+                pipeline.extend([
+                    {'$match': {
+                        '$expr': {
+                            '$and': []
+                        }
+                    }},
+                    {'$group': {
+                        '_id': {
+                            'regionNombre': '$sucursal.regionNombre',
+                            'zonaNombre': '$sucursal.zonaNombre',
+                            'tiendaNombre': '$sucursal.tiendaNombre',
+                            'region': '$sucursal.region',
+                            'zona': '$sucursal.zona',
+                            'idtienda': '$sucursal.idtienda'
+                        },
+                        'totales': {
+                            '$sum': '$Total_Pedidos'
+                        },
+                        'retrasados': {
+                            '$sum': '$retrasados'
+                        },
+                        'cancelados': {
+                            '$sum': '$Cancelados'
+                        },
+                        'entregados': {
+                            '$sum': '$Total_Entregados'
+                        },
+                        'incompletos': {
+                            '$sum': '$incompletos'
+                        },
+                        'upSells': {
+                            '$sum': '$upSells'
+                        }
+                    }},
+                    {'$project': {
+                        '_id': '$_id',
+                        'totales': '$totales',
+                        'quejas': '$quejas',
+                        'retrasados': '$retrasados',
+                        'porc_retrasados':  { '$cond': [ { '$eq': [ "$totales", 0 ] }, "--", {'$divide': ['$retrasados', '$totales']}]},
+                        'entregados': '$entregados',
+                        'incompletos': '$incompletos',
+                        'porc_incompletos':  { '$cond': [ { '$eq': [ "$totales", 0 ] }, "--", {'$divide': ['$incompletos', '$totales']}]},
+                        'otif': {'$subtract': ['$totales', {'$add': ['$incompletos', '$retrasados']}]},
+                        'porc_otif':  { '$cond': [ { '$eq': [ "$totales", 0 ] }, "--", {'$divide': [{'$subtract': ['$totales', {'$add': ['$incompletos', '$retrasados']}]}, '$totales']}]},
+                        'upSells': '$upSells',
+                        'porc_upSells':  { '$cond': [ { '$eq': [ "$totales", 0 ] }, "--", {'$divide': ['$upSells', '$totales']}]},
+                        # 'porc_objetivo': 90 # Parece que no se puede poner un número dentro de un aggregation de MongoDB
+                    }},
+                    {'$sort': {
+                        'porc_otif': 1
+                    }}
+                ])
+                # Creamos variables para manipular los diccionarios:
+                match = pipeline[-4]['$match']['$expr']['$and']
+                
+                # Modificamos el pipeline para el caso de que el agrupador sea por mes:
+                if self.filtros.agrupador == 'mes':
+                    anio = self.filtros.periodo['anio']
+                    mes = self.filtros.periodo['mes']
+                    match.extend([
+                        {'$eq': [
+                            anio,
+                            {'$year': '$fecha'}
+                        ]},
+                        {'$eq': [
+                            mes,
+                            {'$month': '$fecha'}
+                        ]}
+                    ])
+                # Modificamos el pipeline para el caso de que el agrupador sea por semana:
+                elif self.filtros.agrupador == 'semana':
+                    semana = self.filtros.periodo['semana']
+                    match.extend([
+                        {'$eq': [
+                            semana,
+                            '$idSemDS'
+                        ]}
+                    ])
+                # Modificamos el pipeline para el caso de que el agrupador sea por día:
+                elif self.filtros.agrupador == 'dia':
+                    anio = self.filtros.periodo['anio']
+                    mes = self.filtros.periodo['mes']
+                    dia = self.filtros.periodo['dia']
+                    match.extend([
+                        {'$eq': [
+                            anio,
+                            {'$year': '$fecha'}
+                        ]},
+                        {'$eq': [
+                            mes,
+                            {'$month': '$fecha'}
+                        ]},
+                        {'$eq': [
+                            dia,
+                            {'$dayOfMonth': '$fecha'}
+                        ]}
+                    ])
+                # print(str(pipeline))
+                # Ejecutamos el query:
+                cursor = collection.aggregate(pipeline)
+                arreglo = await cursor.to_list(length=5000)
+                # print(str(arreglo))
+                if len(arreglo) >0:
+                    hayResultados = "si"
+                    # Creamos los arreglos que alimentarán la tabla:
+                    columns = [
+                        {'name': 'Región', 'selector':'Region', 'formato':'texto', 'ancho': '220px'},
+                        {'name': 'Zona', 'selector':'Zona', 'formato':'texto', 'ancho': '220px'},
+                        {'name': 'Tienda', 'selector':'Tienda', 'formato':'texto', 'ancho': '420px'},
+                        {'name': 'Ver Detalle de Tienda', 'selector':'sibling', 'formato':'sibling'},
+                        {'name': 'Total Pedidos', 'selector':'Totales', 'formato':'entero'},
+                        {'name': 'Retrasados', 'selector':'Retrasados', 'formato':'entero'},
+                        {'name': '% Retrasados', 'selector':'Porc_Retrasados', 'formato':'porcentaje'},
+                        {'name': 'Entregados', 'selector':'Entregados', 'formato':'entero'},
+                        {'name': 'Incompletos', 'selector':'Incompletos', 'formato':'entero'},
+                        {'name': '% Incompletos', 'selector':'Porc_Incompletos', 'formato':'porcentaje'},
+                        {'name': 'ATYC', 'selector':'ATYC', 'formato':'entero'},
+                        {'name': '% ATYC', 'selector':'Porc_ATYC', 'formato':'porcentaje'},
+                        {'name': 'UpSells', 'selector':'UpSells', 'formato':'entero'},
+                        {'name': '% UpSells', 'selector':'Porc_UpSells', 'formato':'porcentaje'},
+                        {'name': '% Objetivo ATYC', 'selector':'Porc_Objetivo_ATYC', 'formato':'porcentaje'}
+                    ]
+                    data = []
+                    for row in arreglo:
+                        upSells = row['upSells'] if row['upSells'] != None else 0
+                        porc_upSells = row['porc_upSells'] if row['porc_upSells'] != None else 0
+                        # porc_objetivo = float(row['porc_objetivo']) / 100 if row['porc_objetivo'] != None else 0
+                        porc_objetivo = 0.9
+                        cambiar_lugar = json.dumps({
+                            'region': {
+                                'label': row['_id']['regionNombre'],
+                                'value': row['_id']['region']
+                            },
+                            'zona': {
+                                'label': row['_id']['zonaNombre'],
+                                'value': row['_id']['zona']
+                            },
+                            'tienda': {
+                                'label': row['_id']['tiendaNombre'],
+                                'value': row['_id']['idtienda']
+                            }
+                        }).replace('"', '""')
+                        data.append({
+                            'Region': row['_id']['regionNombre'],
+                            'Zona': row['_id']['zonaNombre'],
+                            'Tienda': row['_id']['tiendaNombre'],
+                            'sibling': cambiar_lugar,
+                            # 'Tienda': row['_id']['tiendaNombre'],
+                            'Totales': row['totales'],
+                            'Retrasados': row['retrasados'],
+                            'Porc_Retrasados': row['porc_retrasados'],
+                            'Entregados': row['entregados'],
+                            'Incompletos': row['incompletos'],
+                            'Porc_Incompletos': row['porc_incompletos'],
+                            'ATYC': row['otif'],
+                            'Porc_ATYC': row['porc_otif'],
+                            'UpSells': upSells,
+                            'Porc_UpSells': porc_upSells,
+                            'Porc_Objetivo_ATYC': porc_objetivo
+                        })
+                else:
+                    hayResultados = 'no'
+            else:
+                hayResultados = 'no'
+
+        if self.titulo == '$Tienda':
+            if self.filtros.periodo != {}:
+                collection = conexion_mongo('report').report_detallePedidos
+                # print("self.filtros.periodo desde Tabla: "+str(self.filtros.periodo))
+                pipeline = [{'$match': {'idtienda': int(self.filtros.tienda)}}]
+                pipeline.extend([
+                    {'$match': {
+                        '$expr': {
+                            '$and': []
+                        }
+                    }},
+                    {'$project': {
+                        'fechaATYC': {'$dateToString': {'format': '%d/%m/%Y', 'date': '$fechaPP'}},
+                        'nPedido': '$nPedido',
+                        'nConsigna': '$nConsigna',
+                        'timeslot_from': {'$dateToString': {'format': '%d/%m/%Y %H:%M', 'date': '$timeslot_from'}},
+                        'timeslot_to': {'$dateToString': {'format': '%d/%m/%Y %H:%M', 'date': '$timeslot_to'}},
+                        'metodoEntrega': '$metodoEntrega',
+                        'estatusConsigna': '$estatusConsigna',
+                        'fechaEntrega': {'$dateToString': {'format': '%d/%m/%Y', 'date': '$fechaEntrega'}},
+                        'fechaDespacho': {'$dateToString': {'format': '%d/%m/%Y', 'date': '$fechaDespacho'}},
+                        'Entregados': '$Entregados',
+                        'evaluacion': '$evaluacion',
+                        'otif': {
+                            '$cond': [
+                                {
+                                    '$and': [
+                                        {'$eq': ['$Entregados', 'COMPLETO']}, 
+                                        {'$or': [
+                                            {'$eq': ['$evaluacion', 'Despachado-A tiempo']},
+                                            {'$eq': ['$evaluacion', 'Entregado-A tiempo']}
+                                        ]} 
+                                    ]
+                                },
+                                'Sí', 
+                                'No'
+                            ]
+                        },
+                    }},
+                    {'$sort': {
+                        'nPedido': 1
+                    }}
+                ])
+                # Creamos variables para manipular los diccionarios:
+                match = pipeline[-3]['$match']['$expr']['$and']
+                
+                # Modificamos el pipeline para el caso de que el agrupador sea por mes:
+                if self.filtros.agrupador == 'mes':
+                    anio = self.filtros.periodo['anio']
+                    mes = self.filtros.periodo['mes']
+                    match.extend([
+                        {'$eq': [
+                            anio,
+                            {'$year': '$fechaATYC'}
+                        ]},
+                        {'$eq': [
+                            mes,
+                            {'$month': '$fechaATYC'}
+                        ]}
+                    ])
+                # Modificamos el pipeline para el caso de que el agrupador sea por semana:
+                elif self.filtros.agrupador == 'semana':
+                    semana = self.filtros.periodo['semana']
+                    match.extend([
+                        {'$eq': [
+                            semana,
+                            '$idSemDSPP'
+                        ]}
+                    ])
+                # Modificamos el pipeline para el caso de que el agrupador sea por día:
+                elif self.filtros.agrupador == 'dia':
+                    anio = self.filtros.periodo['anio']
+                    mes = self.filtros.periodo['mes']
+                    dia = self.filtros.periodo['dia']
+                    match.extend([
+                        {'$eq': [
+                            anio,
+                            {'$year': '$fechaATYC'}
+                        ]},
+                        {'$eq': [
+                            mes,
+                            {'$month': '$fechaATYC'}
+                        ]},
+                        {'$eq': [
+                            dia,
+                            {'$dayOfMonth': '$fechaATYC'}
+                        ]}
+                    ])
+                # print(f"pipeline desde tablas -> OnTimeInFull -> $Tienda: {str(pipeline)}")
+                # Ejecutamos el query:
+                cursor = collection.aggregate(pipeline)
+                arreglo = await cursor.to_list(length=None)
+                # print(str(arreglo))
+                if len(arreglo) >0:
+                    hayResultados = "si"
+                    # Creamos los arreglos que alimentarán la tabla:
+                    columns = [
+                        {'name': 'Fecha', 'selector':'Fecha', 'formato':'texto'},
+                        {'name': 'No. Pedido', 'selector':'NumPedido', 'formato':'sinComas'},
+                        {'name': 'No. Consigna', 'selector':'NumConsigna', 'formato':'texto', 'ancho': '120px'},
+                        {'name': 'Timeslot From', 'selector':'TimeslotFrom', 'formato':'texto', 'ancho': '150px'},
+                        {'name': 'Timeslot To', 'selector':'TimeslotTo', 'formato':'texto', 'ancho': '150px'},
+                        {'name': 'Método de Entrega', 'selector':'MetodoEntrega', 'formato':'texto', 'ancho': '150px'},
+                        {'name': 'Estatus Consigna', 'selector':'EstatusConsigna', 'formato':'texto', 'ancho': '180px'},
+                        {'name': 'Fecha de Entrega', 'selector':'FechaEntrega', 'formato':'texto'},
+                        {'name': 'Fecha de Despacho', 'selector':'FechaDespacho', 'formato':'texto'},
+                        {'name': 'Entregados', 'selector':'Entregados', 'formato':'texto', 'ancho': '150px'},
+                        {'name': 'Evaluación', 'selector':'Evaluacion', 'formato':'texto', 'ancho': '250px'},
+                        {'name': 'ATYC', 'selector':'ATYC', 'formato':'texto'},
+                        {'name': '% Objetivo ATYC', 'selector':'Objetivo', 'formato':'porcentaje'}
+                    ]
+                    data = []
+                    for row in arreglo:
+                        fechaATYC = row['fechaATYC'] if 'fechaATYC' in row else '--'
+                        nPedido = row['nPedido'] if 'nPedido' in row else '--'
+                        nConsigna = row['nConsigna'] if 'nConsigna' in row else '--'
+                        timeslot_from = row['timeslot_from'] if 'timeslot_from' in row else '--'
+                        timeslot_to = row['timeslot_to'] if 'timeslot_to' in row else '--'
+                        metodoEntrega = row['metodoEntrega'] if 'metodoEntrega' in row else '--'
+                        estatusConsigna = row['estatusConsigna'] if 'estatusConsigna' in row else '--'
+                        fechaEntrega = row['fechaEntrega'] if 'fechaEntrega' in row else '--'
+                        fechaDespacho = row['fechaDespacho'] if 'fechaDespacho' in row else '--'
+                        Entregados = row['Entregados'] if 'Entregados' in row else '--'
+                        evaluacion = row['evaluacion'] if 'evaluacion' in row else '--'
+                        otif = row['otif'] if 'otif' in row else '--'
+                        noImputableTienda = row['noImputableTienda'] if 'noImputableTienda' in row else '--'
+                        # objetivoPP = float(row['objetivoPP']) / 100 if 'objetivoPP' in row else '--'
+                        objetivo = 0.9
+
+                        data.append({
+                            'Fecha': fechaATYC,
+                            'NumPedido': nPedido,
+                            'NumConsigna': nConsigna,
+                            'TimeslotFrom': timeslot_from,
+                            'TimeslotTo': timeslot_to,
+                            'MetodoEntrega': metodoEntrega,
+                            'EstatusConsigna': estatusConsigna,
+                            'FechaEntrega': fechaEntrega,
+                            'FechaDespacho': fechaDespacho,
+                            # 'Atrasados
+                            'Entregados': Entregados,
+                            'Evaluacion': evaluacion,
+                            # 'Incompletos
+                            'ATYC': otif,
+                            'Objetivo': objetivo
+                        })
+                else:
+                    hayResultados = 'no'
+            else:
+                hayResultados = 'no'
+        # print(f"Query desde tabla {self.titulo} en pedidoPerfecto: {str(pipeline)}")
+        return {'hayResultados':hayResultados, 'pipeline': pipeline, 'columns':columns, 'data':data}
+        # Return para debugging:
+        # return {'hayResultados':'no', 'pipeline': [], 'columns':[], 'data':[]}
+
     async def TablaMapas(self):
         data = []
         columns = []
@@ -2262,6 +2613,7 @@ class Tablas():
                     data.append(diccionario)
                 # print("Columns desde tablas: "+str(columns))
                 # print("Data desde tablas: "+str(data))
+                # print(f"Pipeline desde tablas -> PedidoDiario: {str(pipeline)}")
             else:
                 hayResultados = 'no'
         return {'hayResultados':hayResultados, 'pipeline': pipeline, 'columns':columns, 'data':data}
@@ -2333,7 +2685,7 @@ class Tablas():
             # print(f"'$' + camino desde tablas -> NPSDetalle: {'$' + camino}")
             pipeline[-1]['$project'][camino] = '$' + camino
             # print(f"pipeline[-1]['$project'][camino] desde tablas -> NPSDetalle: {str(pipeline[-1]['$project'][camino])}")
-        print(f"pipeline desde tablas -> NPSDetalle: {str(pipeline)}")
+        # print(f"pipeline desde tablas -> NPSDetalle: {str(pipeline)}")
         # Ejecutamos el query:
         collection = conexion_mongo('report').report_pedidoDetalleNPS
         cursor = collection.aggregate(pipeline)

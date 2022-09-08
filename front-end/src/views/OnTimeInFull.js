@@ -75,49 +75,38 @@ const OnTimeInFull = () => {
       </Row>
       <Row className='match-height'>
         <Col sm='12' lg='5'>
-          <EjesMultiples titulo='Pedidos Perfectos' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} seccion={seccion} />
+          <EjesMultiples titulo='Pedidos A Tiempo y Completos' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} seccion={seccion} />
         </Col>
         <Col sm='12' lg='4'>
-          <EjesMultiples titulo='Evaluación por KPI Pedido Perfecto' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} />
+          <EjesMultiples titulo='Evaluación por KPI A Tiempo y Completo' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} />
         </Col>
         <Col sm='12' lg='3'>
           <EjesMultiples titulo='Evaluación por KPI' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} />
         </Col>
       </Row>
       {!tienda && <Row className='match-height'>
-        {/* <Col sm='12' lg='6'>
-          <ColumnasApiladas titulo='Evaluación de KPI Pedido Perfecto por Lugar' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} formato='porcentaje' />
-        </Col> */}
         <Col sm='12' lg='6'>
-          <EjesMultiples titulo='Evaluación Pedido Perfecto por Lugar' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} />
+          <ColumnasApiladas titulo='Evaluación de KPI A Tiempo y Completo por Lugar' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} formato='porcentaje' />
+        </Col>
+        <Col sm='12' lg='6'>
+          <EjesMultiples titulo='Evaluación A Tiempo y Completo por Lugar' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} />
         </Col>
       </Row>}
       <Row className='match-height'>
         <Col sm='12' lg='6'>
-          <EjesMultiples titulo='Motivos de Quejas' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} />
-        </Col>
-        {/* <Col sm='12' lg='6'>
           <ColumnasApiladas titulo='Pedidos por Tipo de Entrega' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} formato='entero' />
-        </Col> */}
+        </Col>
       </Row>
-      {/* {!tienda && <Row className='match-height'>
-        <Col sm='12' lg='6'>
-          <BarrasApiladas tituloAPI='Quejas por lugar $periodo1' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} formato='entero' />
-        </Col>
-        <Col sm='12' lg='6'>
-          <BarrasApiladas tituloAPI='Quejas por lugar $periodo2' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} formato='entero' />
-        </Col>
-      </Row>} */}
-      {/* <Row className='match-height'>
+      <Row className='match-height'>
         <Col sm='12'>
-          <Tabla titulo='Tiendas por % Pedido Perfecto más bajo' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} setSibling={setSibling} quitarBusqueda={quitarBusqueda} quitarPaginacion={quitarPaginacion} />
+          <Tabla titulo='Tiendas por % A Tiempo y Completo más bajo' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} setSibling={setSibling} quitarBusqueda={quitarBusqueda} quitarPaginacion={quitarPaginacion} />
         </Col>
-      </Row> */}
-      {/* {sibling && <Row className='match-height'>
+      </Row>
+      {sibling && <Row className='match-height'>
         <Col sm='12'>
           <Tabla tituloAPI='$Tienda' titulo={labelTienda} fechas={fechas} region={sibling.region.value} zona={sibling.zona.value} tienda={sibling.tienda.value} agrupador={agrupador} periodo={periodo} seccion={seccion} />
         </Col>
-      </Row>} */}
+      </Row>}
     </>
   )
 }

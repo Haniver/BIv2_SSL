@@ -1377,6 +1377,7 @@ class EjesMultiples():
                         {'name': tituloAnterior, 'data':serie1, 'type': 'column','formato_tooltip':'entero', 'color':'secondary'},
                         {'name': tituloElegida, 'data':serie2, 'type': 'column', 'formato_tooltip':'entero', 'color':'primary'}
                     ]
+                    # print (f"Pipeline de Motivos de Quejas en PedidoPerfecto: {str(pipeline)}")
                 else:
                     hayResultados = "no"
                     # print("No hay resultados 2")
@@ -1419,7 +1420,7 @@ class EjesMultiples():
             ])
         collection = conexion_mongo('report').report_pedidoPerfecto
 
-        if self.titulo == 'Pedidos Perfectos':
+        if self.titulo == 'Pedidos A Tiempo y Completos':
             # print("Entró a Pedidos Perfectos en Ejes Múltiples")
             serie1 = []
             serie2 = []
@@ -1435,12 +1436,20 @@ class EjesMultiples():
                 {'$group': {
                     '_id': {},
                     'totales': {'$sum': '$Total_Pedidos'},
-                    'perfectos': {'$sum': '$perfecto'}
+                    'retrasados': {'$sum': '$retrasados'},
+                    'incompletos': {'$sum': '$incompletos'}
+                }}, 
+                {'$project': {
+                    '_id': '$_id',
+                    'totales': '$totales',
+                    'retrasados': '$retrasados',
+                    'incompletos': '$incompletos',
+                    'otif': {'$subtract': ['$totales', {'$add': ['$retrasados', '$incompletos']}]}
                 }}, 
                 {'$sort': {'_id.anio': 1}}
             ])
             # print(str(pipeline))
-            grupo = pipeline[-2]['$group']['_id']
+            grupo = pipeline[-3]['$group']['_id']
             sort = pipeline[-1]['$sort']
             # print("Agrupador en Pedidos Perfectos en Ejes Múltiples = "+self.filtros.agrupador)
             if self.filtros.agrupador == 'mes' or self.filtros.agrupador == 'dia' :
@@ -1477,7 +1486,7 @@ class EjesMultiples():
                         else:
                             category = 'Semana no encontrada'
                     categories.append(category)
-                    serie1.append(round((arreglo[i]['perfectos']/arreglo[i]['totales']), 4))
+                    serie1.append(round((arreglo[i]['otif'] / arreglo[i]['totales']), 4))
                     serie2.append(round((serie1[i]-serie1[i-1]), 4)) if i > 0 else serie2.append(0)
                     
                 series.extend([
@@ -1487,7 +1496,7 @@ class EjesMultiples():
             else:
                 hayResultados = "no"
 
-        if self.titulo == 'Evaluación por KPI Pedido Perfecto':
+        if self.titulo == 'Evaluación por KPI A Tiempo y Completo':
             if self.filtros.periodo != {}:
                 serie1 = []
                 serie2 = []
@@ -1511,9 +1520,7 @@ class EjesMultiples():
                         }
                     }},
                     {'$project': {
-                        'con_queja': '$con_queja',
                         'retrasados': '$retrasados',
-                        'Cancelados': '$Cancelados',
                         'incompletos': '$incompletos',
                         'upSells': '$upSells',
                         'Total_Pedidos': '$Total_Pedidos',
@@ -1527,14 +1534,8 @@ class EjesMultiples():
                     }},
                     {'$group': {
                         '_id': '$periodo',
-                        'con_quejas': {
-                            '$sum': '$con_queja'
-                        },
                         'retrasados': {
                             '$sum': '$retrasados'
-                        },
-                        'cancelados': {
-                            '$sum': '$Cancelados'
                         },
                         'incompletos': {
                             '$sum': '$incompletos'
@@ -1669,35 +1670,31 @@ class EjesMultiples():
                     tituloElegida = str(dia_elegido) + ' ' + mesTexto(mes_elegido) + ' ' + str(anio_elegido)
                     tituloAnterior = str(dia_anterior) + ' ' + mesTexto(mes_anterior) + ' ' + str(anio_anterior)
                 # Agregamos los facets al pipeline:
-                # print('Pipeline Evaluación por KPI Pedido Perfecto: '+str(pipeline))
+                # print('Pipeline Evaluación por KPI A Tiempo y Completo: '+str(pipeline))
                 # Ejecutamos el query:
                 cursor = collection.aggregate(pipeline)
                 arreglo = await cursor.to_list(length=1000)
-                # print('Arreglo Evaluación por KPI Pedido Perfecto: '+str(arreglo))
+                # print('Arreglo Evaluación por KPI A Tiempo y Completo: '+str(arreglo))
                 if len(arreglo) >0:
                     hayResultados = "si"
                     # Creamos los arreglos que alimentarán al gráfico:
-                    categories = ['Con Quejas', 'Retrasados', 'Cancelados', 'Incompletos', 'UpSells']
+                    categories = ['Retrasados', 'Incompletos', 'UpSells']
                     arrEleg = arreglo[1]
                     arrAnt = arreglo[0]
                     if arrEleg == [] or arrAnt == []:
                         return {'hayResultados':'no','categories':[], 'series':[], 'pipeline': '', 'lenArreglo':0}
-                    # print('Evaluación por KPI Pedido Perfecto:')
+                    # print('Evaluación por KPI A Tiempo y Completo:')
                     # print(str('arrAnt = '+str(arrAnt)))
                     # print(str('arrEleg = '+str(arrEleg)))
                     arrAntUpSells = arrAnt['upSells'] if arrAnt['upSells'] != None else 0
                     arrElegUpSells = arrEleg['upSells'] if arrEleg['upSells'] != None else 0
                     serie1 = [
-                        round((arrAnt['con_quejas']/arrAnt['totales']), 4), 
                         round((arrAnt['retrasados']/arrAnt['totales']), 4), 
-                        round((arrAnt['cancelados']/arrAnt['totales']), 4), 
                         round((arrAnt['incompletos']/arrAnt['totales']), 4),
                         round((arrAntUpSells/arrAnt['totales']), 4)
                     ] if len(arrAnt) > 0 else []
                     serie2 = [
-                        round((arrEleg['con_quejas']/arrEleg['totales']), 4), 
                         round((arrEleg['retrasados']/arrEleg['totales']), 4), 
-                        round((arrEleg['cancelados']/arrEleg['totales']), 4), 
                         round((arrEleg['incompletos']/arrEleg['totales']), 4),
                         round((arrElegUpSells/arrEleg['totales']), 4)
                     ] if len(arrEleg) > 0 else []
@@ -1945,7 +1942,7 @@ class EjesMultiples():
                 hayResultados = "no"
                 # print("No hay resultados 1")
 
-        if self.titulo == 'Evaluación Pedido Perfecto por Lugar':
+        if self.titulo == 'Evaluación A Tiempo y Completo por Lugar':
             if self.filtros.periodo != {}:
                 # Desde el inicio de la clase puse el filtro por tienda, en su caso. Ahora el requerimiento es que solo para este gráfico el filtro llegue hasta zona, así que hay que hacer modificaciones:
                 if self.filtros.tienda != '' and self.filtros.tienda != "False" and self.filtros.tienda != None:
@@ -1976,8 +1973,10 @@ class EjesMultiples():
                         }
                     }},
                     {'$project': {
-                        'perfecto': '$perfecto',
+                        'retrasados': '$retrasados',
+                        'incompletos': '$incompletos',
                         'Total_Pedidos': '$Total_Pedidos',
+                        'otif': {'$subtract': ['$Total_Pedidos', {'$add': ['$retrasados', '$incompletos']}]},
                         'lugar': '$sucursal.' + siguiente_lugar,
                         'periodo': {
                             '$cond': [
@@ -1992,8 +1991,8 @@ class EjesMultiples():
                             'lugar': '$lugar',
                             'periodo': '$periodo'
                         },
-                        'perfecto': {
-                            '$sum': '$perfecto'
+                        'otif': {
+                            '$sum': '$otif'
                         },
                         'totales': {
                             '$sum': '$Total_Pedidos'
@@ -2118,7 +2117,7 @@ class EjesMultiples():
                     ])
                     tituloElegida = str(dia_elegido) + ' ' + mesTexto(mes_elegido) + ' ' + str(anio_elegido)
                     tituloAnterior = str(dia_anterior) + ' ' + mesTexto(mes_anterior) + ' ' + str(anio_anterior)
-                # print(f"Pipeline desde Pedido Perfecto por Lugar en Ejes múltiples: {str(pipeline)}")
+                # print(f"Pipeline desde A Tiempo y Completo por Lugar en Ejes múltiples: {str(pipeline)}")
                 # Ejecutamos el query:
                 cursor = collection.aggregate(pipeline)
                 arreglo = await cursor.to_list(length=1000)
@@ -2135,9 +2134,9 @@ class EjesMultiples():
                     for row in arrEleg:
                         # print('El dizque string: '+row['_id']['lugar'])
                         categories.append(row['_id']['lugar'])
-                        serie1.append(round((row['perfecto']/row['totales']), 4))
+                        serie1.append(round((row['otif']/row['totales']), 4))
                     for row in arrAnt:
-                        serie2.append(round((row['perfecto']/row['totales']), 4))
+                        serie2.append(round((row['otif']/row['totales']), 4))
                     # Obtener los títulos de las series cuando el agrupador sea por semana. Los sacamos de catTiempo por alguna razón
                     if self.filtros.agrupador == 'semana':
                         cursor_semana = conexion_mongo('report').catTiempo.find({
@@ -2153,230 +2152,6 @@ class EjesMultiples():
                     series = [
                         {'name': tituloAnterior, 'data':serie1, 'type': 'column','formato_tooltip':'porcentaje', 'color':'secondary'},
                         {'name': tituloElegida, 'data':serie2, 'type': 'column', 'formato_tooltip':'porcentaje', 'color':'primary'}
-                    ]
-                else:
-                    hayResultados = "no"
-                    # print("No hay resultados 2")
-            else:
-                hayResultados = "no"
-                # print("No hay resultados 1")
-
-        if self.titulo == 'Motivos de Quejas':
-            if self.filtros.periodo != {}:
-                serie1 = []
-                serie2 = []
-                serie3 = []
-
-                # pipeline.append(
-                #     {'$match': {
-                #         'fecha': {
-                #             '$gte': self.fecha_ini_a12, 
-                #             '$lt': self.fecha_fin_a12
-                #         }
-                #     }}
-                # )
-                # Vamos a crear 2 facets: uno para el periodo elegido y otro para el anterior. Creamos una plantilla para el facet:
-                pipeline.extend([
-                    {'$match': {
-                        '$expr': {
-                            '$or': [
-                                {'$and': []},
-                                {'$and': []}
-                            ]
-                        }
-                    }},
-                    {
-                        '$unwind': '$quejas'
-                    },
-                    {'$project': {
-                        'entregaFalso': '$quejas.entregaFalso',
-                        'entregaIncompleta': '$quejas.entregaIncompleta',
-                        'inconformidadProducto': '$quejas.inconformidadProducto',
-                        'pedidoRetrasado': '$quejas.pedidoRetrasado',
-                        'periodo': {
-                            '$cond': [
-                                {'$and': []},
-                                0,
-                                1
-                            ]
-                        }
-                    }},
-                    {'$group': {
-                        '_id': '$periodo',
-                        'entregaFalso': {
-                            '$sum': '$entregaFalso'
-                        },
-                        'entregaIncompleta': {
-                            '$sum': '$entregaIncompleta'
-                        },
-                        'inconformidadProducto': {
-                            '$sum': '$inconformidadProducto'
-                        },
-                        'pedidoRetrasado': {
-                            '$sum': '$pedidoRetrasado'
-                        }
-                    }},
-                    {'$sort': {'_id': 1}}
-                ])
-                # Creamos variables para manipular los diccionarios:
-                match1 = pipeline[-5]['$match']['$expr']['$or'][0]['$and']
-                match2 = pipeline[-5]['$match']['$expr']['$or'][1]['$and']
-                cond_periodo = pipeline[-3]['$project']['periodo']['$cond'][0]['$and']                
-                
-                # Modificamos los facets para el caso de que el agrupador sea por mes:
-                if self.filtros.agrupador == 'mes':
-                    anio_elegido = self.filtros.periodo['anio']
-                    mes_elegido = self.filtros.periodo['mes']
-                    if mes_elegido > 1:
-                        mes_anterior = mes_elegido - 1
-                        anio_anterior = anio_elegido
-                    else:
-                        mes_anterior = 12
-                        anio_anterior = anio_elegido - 1
-                    condicion_anterior = [
-                        {'$eq': [
-                            anio_elegido,
-                            {'$year': '$fecha'}
-                        ]},
-                        {'$eq': [
-                            mes_elegido,
-                            {'$month': '$fecha'}
-                        ]}
-                    ]
-                    match1.extend(condicion_anterior)
-                    cond_periodo.extend(condicion_anterior)
-                    match2.extend([
-                        {'$eq': [
-                            anio_anterior,
-                            {'$year': '$fecha'}
-                        ]},
-                        {'$eq': [
-                            mes_anterior,
-                            {'$month': '$fecha'}
-                        ]}
-                    ])
-                    tituloElegida = mesTexto(mes_elegido) + ' ' + str(anio_elegido)
-                    tituloAnterior = mesTexto(mes_anterior) + ' ' + str(anio_anterior)
-                # Modificamos los facets para el caso de que el agrupador sea por semana:
-                elif self.filtros.agrupador == 'semana':
-                    semana_elegida_txt = self.filtros.periodo['semana']
-                    semana_elegida = int(str(semana_elegida_txt)[4:6])
-                    anio_elegido = int(str(semana_elegida_txt)[0:4])
-                    if semana_elegida != 1:
-                        semana_anterior = semana_elegida - 1
-                        anio_anterior = anio_elegido
-                    else:
-                        anio_anterior = anio_elegido - 1
-                        last_week = date(anio_anterior, 12, 28) # La lógica de esto está aquí: https://stackoverflow.com/questions/29262859/the-number-of-calendar-weeks-in-a-year
-                        semana_anterior = last_week.isocalendar()[1]
-                    semana_anterior_txt = '0' + str(semana_anterior) if semana_anterior < 10 else str(semana_anterior)
-                    semana_anterior_txt = int(str(anio_anterior) + semana_anterior_txt)
-                    condicion_anterior = [
-                        {'$eq': [
-                            semana_elegida_txt,
-                            '$idSemDS'
-                        ]}
-                    ]
-                    match1.extend(condicion_anterior)
-                    cond_periodo.extend(condicion_anterior)
-                    match2.extend([
-                        {'$eq': [
-                            semana_anterior_txt,
-                            '$idSemDS'
-                        ]}
-                    ])
-                # Modificamos los facets para el caso de que el agrupador sea por día:
-                elif self.filtros.agrupador == 'dia':
-                    anio_elegido = self.filtros.periodo['anio']
-                    mes_elegido = self.filtros.periodo['mes']
-                    dia_elegido = self.filtros.periodo['dia']
-                    if dia_elegido != 1:
-                        dia_anterior = dia_elegido - 1
-                        mes_anterior = mes_elegido
-                        anio_anterior = anio_elegido
-                    else:
-                        if mes_elegido != 1:
-                            mes_anterior = mes_elegido - 1
-                            anio_anterior = anio_elegido
-                        else:
-                            mes_anterior = 12
-                            anio_anterior = anio_elegido - 1
-                        dia_anterior = monthrange(anio_anterior, mes_anterior)[1] # La lógica de esto está aquí: https://stackoverflow.com/questions/42950/how-to-get-the-last-day-of-the-month
-                    condicion_anterior = [
-                        {'$eq': [
-                            anio_elegido,
-                            {'$year': '$fecha'}
-                        ]},
-                        {'$eq': [
-                            mes_elegido,
-                            {'$month': '$fecha'}
-                        ]},
-                        {'$eq': [
-                            dia_elegido,
-                            {'$dayOfMonth': '$fecha'}
-                        ]}
-                    ]
-                    match1.extend(condicion_anterior)
-                    cond_periodo.extend(condicion_anterior)
-                    match2.extend([
-                        {'$eq': [
-                            anio_anterior,
-                            {'$year': '$fecha'}
-                        ]},
-                        {'$eq': [
-                            mes_anterior,
-                            {'$month': '$fecha'}
-                        ]},
-                        {'$eq': [
-                            dia_anterior,
-                            {'$dayOfMonth': '$fecha'}
-                        ]}
-                    ])
-                    tituloElegida = str(dia_elegido) + ' ' + mesTexto(mes_elegido) + ' ' + str(anio_elegido)
-                    tituloAnterior = str(dia_anterior) + ' ' + mesTexto(mes_anterior) + ' ' + str(anio_anterior)
-                # print(str(pipeline))
-                # Ejecutamos el query:
-                cursor = collection.aggregate(pipeline)
-                arreglo = await cursor.to_list(length=1000)
-                if len(arreglo) >0:
-                    hayResultados = "si"
-                    # Creamos los arreglos que alimentarán al gráfico:
-                    categories = ['Pedido Retrasado', 'Inconformidad de Producto', 'Entrega Incompleta', 'Entrega en Falso']
-                    arrEleg = arreglo[0]
-                    arrAnt = arreglo[1]
-                    if arrEleg == [] or arrAnt == []:
-                        return {'hayResultados':'no','categories':[], 'series':[], 'pipeline': '', 'lenArreglo':0}
-                    # print('Evaluación por KPI:')
-                    # print(str('pipeline = '+str(pipeline)))
-                    # print(str('arrAnt = '+str(arrAnt)))
-                    # print(str('arrEleg = '+str(arrEleg)))
-                    serie1 = [
-                        arrAnt['pedidoRetrasado'],
-                        arrAnt['inconformidadProducto'], 
-                        arrAnt['entregaIncompleta'], 
-                        arrAnt['entregaFalso']
-                    ]
-                    serie2 = [
-                        arrEleg['pedidoRetrasado'],
-                        arrEleg['inconformidadProducto'], 
-                        arrEleg['entregaIncompleta'], 
-                        arrEleg['entregaFalso']
-                    ]
-                    # Obtener los títulos de las series cuando el agrupador sea por semana. Los sacamos de catTiempo por alguna razón
-                    if self.filtros.agrupador == 'semana':
-                        cursor_semana = conexion_mongo('report').catTiempo.find({
-                            'idSemDS': semana_elegida_txt
-                        })
-                        arreglo_semana = await cursor_semana.to_list(length=1)
-                        tituloElegida = arreglo_semana[0]['nSemDS']
-                        cursor_semana = conexion_mongo('report').catTiempo.find({
-                            'idSemDS': semana_anterior_txt
-                        })
-                        arreglo_semana = await cursor_semana.to_list(length=1)
-                        tituloAnterior = arreglo_semana[0]['nSemDS']
-                    series = [
-                        {'name': tituloAnterior, 'data':serie1, 'type': 'column','formato_tooltip':'entero', 'color':'secondary'},
-                        {'name': tituloElegida, 'data':serie2, 'type': 'column', 'formato_tooltip':'entero', 'color':'primary'}
                     ]
                 else:
                     hayResultados = "no"

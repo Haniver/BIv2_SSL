@@ -286,6 +286,7 @@ class BarrasApiladas():
                     {'name': 'Entrega Incompleta', 'data':serie3, 'color': 'dark'},
                     {'name': 'Entrega en Falso', 'data':serie4, 'color': 'danger'}
                 ]
+                # print(f"Pipeline Quejas Por Lugar $lugar1 en barrasApiladas: {pipeline}")
             else:
                 hayResultados = "no"
                 # print("No hay resultados 2")
