@@ -86,7 +86,7 @@ const PedidoPerfecto = () => {
       </Row>
       {!tienda && <Row className='match-height'>
         <Col sm='12' lg='6'>
-          <ColumnasApiladas titulo='Evaluación de KPI Pedido Perfecto por Lugar' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} formato='porcentaje' />
+          <ColumnasApiladas titulo='Evaluación de KPI Pedido Perfecto por Lugar' ocultarTotales fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} formato='porcentaje' />
         </Col>
         <Col sm='12' lg='6'>
           <EjesMultiples titulo='Evaluación Pedido Perfecto por Lugar' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} />
