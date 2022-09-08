@@ -10,11 +10,12 @@ import { Card, CardBody } from 'reactstrap'
 import drilldown from 'highcharts/modules/drilldown'
 import LoadingGif from '../auxiliares/LoadingGif'
 import { procesarSerie } from '../../services/funcionesAdicionales'
+import { string } from 'prop-types'
 require('highcharts/modules/data')(Highcharts)
 require('highcharts/modules/exporting')(Highcharts)
 require('highcharts/modules/export-data')(Highcharts)
 
-const ColumnasApiladas = ({ titulo, yLabel, seccion, formato, fechas, region, zona, tienda, proveedor, categoria, tipoEntrega, agrupador, periodo, tituloAPI, origen }) => {
+const ColumnasApiladas = ({ titulo, yLabel, seccion, formato, fechas, region, zona, tienda, proveedor, categoria, tipoEntrega, agrupador, periodo, tituloAPI, origen, ocultarTotales }) => {
     const titulo_enviar = (tituloAPI !== undefined) ? tituloAPI : titulo
     const [series, setSeries] = useState([])
     const [categorias, setCategorias] = useState([])
@@ -120,7 +121,7 @@ const ColumnasApiladas = ({ titulo, yLabel, seccion, formato, fechas, region, zo
                 text: yLabel
             },
             stackLabels: {
-                enabled: true,
+                enabled: !ocultarTotales,
                 style: {
                     fontWeight: 'bold',
                     color: colorTexto
@@ -180,12 +181,22 @@ const ColumnasApiladas = ({ titulo, yLabel, seccion, formato, fechas, region, zo
         tooltip: {
             headerFormat: '<b>{point.x}</b><br/>',
             formatter(tooltip) {
+                let stringTotal = ''
                 if (formato === 'moneda') {
-                    return `${this.series.name}: $${Highcharts.numberFormat(this.point.y, 2, '.', ',')}<br/>Total: $${Highcharts.numberFormat(this.point.stackTotal, 2, '.', ',')}`
+                    if (!ocultarTotales) {
+                        stringTotal = `<br/>Total: $${Highcharts.numberFormat(this.point.stackTotal, 2, '.', ',')}`
+                    }
+                    return `${this.series.name}: $${Highcharts.numberFormat(this.point.y, 2, '.', ',')}${stringTotal}`
                 } else if (formato === 'entero') {
-                    return `${this.series.name}: ${Highcharts.numberFormat(this.point.y, 0, '.', ',')}<br/>Total: ${Highcharts.numberFormat(this.point.stackTotal, 0, '.', ',')}`
+                    if (!ocultarTotales) {
+                        stringTotal = `<br/>Total: ${Highcharts.numberFormat(this.point.stackTotal, 0, '.', ',')}`
+                    }
+                    return `${this.series.name}: ${Highcharts.numberFormat(this.point.y, 0, '.', ',')}${stringTotal}`
                 } else if (formato === 'porcentaje') {
-                    return `${this.series.name}: ${Highcharts.numberFormat(this.point.y, 2, '.', ',')}%<br/>Total: ${Highcharts.numberFormat(this.point.stackTotal, 2, '.', ',')}%`
+                    if (!ocultarTotales) {
+                        stringTotal = `<br/>Total: ${Highcharts.numberFormat(this.point.stackTotal, 2, '.', ',')}%`
+                    }
+                    return `${this.series.name}: ${Highcharts.numberFormat(this.point.y, 2, '.', ',')}%${stringTotal}`
                 }
         }
         },
