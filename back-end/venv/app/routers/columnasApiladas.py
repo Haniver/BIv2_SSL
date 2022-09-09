@@ -861,8 +861,12 @@ class ColumnasApiladas():
                 hayResultados = "si"
                 for registro in arreglo:
                     categorias.append(registro['_id']['lugar'])
-                    serie2.append(round((float(registro['retrasados'])/float(registro['totales'])), 4))
-                    serie4.append(round((float(registro['incompletos'])/float(registro['totales'])), 4))
+                    if 'totales' in registro and registro['totales'] is not None and int(registro['totales']) != 0:
+                        serie2.append(round((float(registro['retrasados'])/float(registro['totales'])), 4))
+                        serie4.append(round((float(registro['incompletos'])/float(registro['totales'])), 4))
+                    else:
+                        serie2.append(0)
+                        serie4.append(0)
                 series = [
                     {'name': 'Retrasados', 'data':serie2, 'color': 'warning'},
                     {'name': 'Incompletos', 'data':serie4, 'color': 'primary'}
