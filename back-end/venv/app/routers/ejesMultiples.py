@@ -1465,7 +1465,7 @@ class EjesMultiples():
                 sort['_id.semana'] = 1
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=1000)
-            # print("Pipeline de Pedidos Perfectos en Ejes Múltiples: "+str(pipeline))
+            print("Pipeline de Pedidos Perfectos en Ejes Múltiples: "+str(pipeline))
             if len(arreglo) >0:
                 hayResultados = "si"
                 # print("Arreglo de Pedidos Perfectos en Ejes Múltiples: "+str(arreglo))
@@ -1522,7 +1522,6 @@ class EjesMultiples():
                     {'$project': {
                         'retrasados': '$retrasados',
                         'incompletos': '$incompletos',
-                        'upSells': '$upSells',
                         'Total_Pedidos': '$Total_Pedidos',
                         'periodo': {
                             '$cond': [
@@ -1539,9 +1538,6 @@ class EjesMultiples():
                         },
                         'incompletos': {
                             '$sum': '$incompletos'
-                        },
-                        'upSells': {
-                            '$sum': '$upSells'
                         },
                         'totales': {
                             '$sum': '$Total_Pedidos'
@@ -1569,11 +1565,11 @@ class EjesMultiples():
                         anio_anterior = anio_elegido - 1
                     condicion_anterior = [
                         {'$eq': [
-                            anio_elegido,
+                            anio_anterior,
                             {'$year': '$fecha'}
                         ]},
                         {'$eq': [
-                            mes_elegido,
+                            mes_anterior,
                             {'$month': '$fecha'}
                         ]}
                     ]
@@ -1581,11 +1577,11 @@ class EjesMultiples():
                     cond_periodo.extend(condicion_anterior)
                     match2.extend([
                         {'$eq': [
-                            anio_anterior,
+                            anio_elegido,
                             {'$year': '$fecha'}
                         ]},
                         {'$eq': [
-                            mes_anterior,
+                            mes_elegido,
                             {'$month': '$fecha'}
                         ]}
                     ])
@@ -1608,7 +1604,7 @@ class EjesMultiples():
                     semana_anterior_txt = int(str(anio_anterior) + semana_anterior_txt)
                     condicion_anterior = [
                         {'$eq': [
-                            semana_elegida_txt,
+                            semana_anterior_txt,
                             '$idSemDS'
                         ]}
                     ]
@@ -1616,7 +1612,7 @@ class EjesMultiples():
                     cond_periodo.extend(condicion_anterior)
                     match2.extend([
                         {'$eq': [
-                            semana_anterior_txt,
+                            semana_elegida_txt,
                             '$idSemDS'
                         ]}
                     ])
@@ -1639,22 +1635,6 @@ class EjesMultiples():
                         dia_anterior = monthrange(anio_anterior, mes_anterior)[1] # La lógica de esto está aquí: https://stackoverflow.com/questions/42950/how-to-get-the-last-day-of-the-month
                     condicion_anterior = [
                         {'$eq': [
-                            anio_elegido,
-                            {'$year': '$fecha'}
-                        ]},
-                        {'$eq': [
-                            mes_elegido,
-                            {'$month': '$fecha'}
-                        ]},
-                        {'$eq': [
-                            dia_elegido,
-                            {'$dayOfMonth': '$fecha'}
-                        ]}
-                    ]
-                    match1.extend(condicion_anterior)
-                    cond_periodo.extend(condicion_anterior)
-                    match2.extend([
-                        {'$eq': [
                             anio_anterior,
                             {'$year': '$fecha'}
                         ]},
@@ -1666,11 +1646,27 @@ class EjesMultiples():
                             dia_anterior,
                             {'$dayOfMonth': '$fecha'}
                         ]}
+                    ]
+                    match1.extend(condicion_anterior)
+                    cond_periodo.extend(condicion_anterior)
+                    match2.extend([
+                        {'$eq': [
+                            anio_elegido,
+                            {'$year': '$fecha'}
+                        ]},
+                        {'$eq': [
+                            mes_elegido,
+                            {'$month': '$fecha'}
+                        ]},
+                        {'$eq': [
+                            dia_elegido,
+                            {'$dayOfMonth': '$fecha'}
+                        ]}
                     ])
                     tituloElegida = str(dia_elegido) + ' ' + mesTexto(mes_elegido) + ' ' + str(anio_elegido)
                     tituloAnterior = str(dia_anterior) + ' ' + mesTexto(mes_anterior) + ' ' + str(anio_anterior)
                 # Agregamos los facets al pipeline:
-                # print('Pipeline Evaluación por KPI A Tiempo y Completo: '+str(pipeline))
+                print('Pipeline Evaluación por KPI A Tiempo y Completo: '+str(pipeline))
                 # Ejecutamos el query:
                 cursor = collection.aggregate(pipeline)
                 arreglo = await cursor.to_list(length=1000)
@@ -1686,17 +1682,13 @@ class EjesMultiples():
                     # print('Evaluación por KPI A Tiempo y Completo:')
                     # print(str('arrAnt = '+str(arrAnt)))
                     # print(str('arrEleg = '+str(arrEleg)))
-                    arrAntUpSells = arrAnt['upSells'] if arrAnt['upSells'] != None else 0
-                    arrElegUpSells = arrEleg['upSells'] if arrEleg['upSells'] != None else 0
                     serie1 = [
                         round((arrAnt['retrasados']/arrAnt['totales']), 4), 
                         round((arrAnt['incompletos']/arrAnt['totales']), 4),
-                        round((arrAntUpSells/arrAnt['totales']), 4)
                     ] if len(arrAnt) > 0 else []
                     serie2 = [
                         round((arrEleg['retrasados']/arrEleg['totales']), 4), 
                         round((arrEleg['incompletos']/arrEleg['totales']), 4),
-                        round((arrElegUpSells/arrEleg['totales']), 4)
                     ] if len(arrEleg) > 0 else []
                     for i in range(len(serie1)):
                         serie3.append(round((serie2[i] - serie1[i]), 4))
