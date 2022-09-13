@@ -1465,7 +1465,7 @@ class EjesMultiples():
                 sort['_id.semana'] = 1
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=1000)
-            print("Pipeline de Pedidos Perfectos en Ejes Múltiples: "+str(pipeline))
+            # print("Pipeline de OTIF en Ejes Múltiples: "+str(pipeline))
             if len(arreglo) >0:
                 hayResultados = "si"
                 # print("Arreglo de Pedidos Perfectos en Ejes Múltiples: "+str(arreglo))
@@ -1666,7 +1666,7 @@ class EjesMultiples():
                     tituloElegida = str(dia_elegido) + ' ' + mesTexto(mes_elegido) + ' ' + str(anio_elegido)
                     tituloAnterior = str(dia_anterior) + ' ' + mesTexto(mes_anterior) + ' ' + str(anio_anterior)
                 # Agregamos los facets al pipeline:
-                print('Pipeline Evaluación por KPI A Tiempo y Completo: '+str(pipeline))
+                # print('Pipeline Evaluación por KPI A Tiempo y Completo: '+str(pipeline))
                 # Ejecutamos el query:
                 cursor = collection.aggregate(pipeline)
                 arreglo = await cursor.to_list(length=1000)

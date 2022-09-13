@@ -801,6 +801,9 @@ class ColumnasApiladas():
                     },
                     'totales': {
                         '$sum': '$Total_Pedidos'
+                    },
+                    'entregados': {
+                        '$sum': '$Total_Entregados'
                     }
                 }},
                 {
@@ -855,6 +858,7 @@ class ColumnasApiladas():
                 ])
 
             # Ejecutamos el query:
+            # print(f"Pipeline ColumnasApiladas Otif: {pipeline}")
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=1000)
             if len(arreglo) >0:
@@ -863,7 +867,7 @@ class ColumnasApiladas():
                     categorias.append(registro['_id']['lugar'])
                     if 'totales' in registro and registro['totales'] is not None and int(registro['totales']) != 0:
                         serie2.append(round((float(registro['retrasados'])/float(registro['totales'])), 4))
-                        serie4.append(round((float(registro['incompletos'])/float(registro['totales'])), 4))
+                        serie4.append(round((float(registro['incompletos'])/float(registro['entregados'])), 4))
                     else:
                         serie2.append(0)
                         serie4.append(0)
