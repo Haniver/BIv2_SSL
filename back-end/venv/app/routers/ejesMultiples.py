@@ -3148,7 +3148,10 @@ class EjesMultiples():
                     category = mesTexto(mes) + ' ' + str(anio)
                     category = str(arreglo[i]['_id']['dia']) + ' ' + category
                     categories.append(category)
-                    serie1.append(round((arreglo[i]['perfectos']/arreglo[i]['totales']), 4))
+                    if arreglo[i]['totales'] > 0:
+                        serie1.append(round((arreglo[i]['perfectos']/arreglo[i]['totales']), 4))
+                    else:
+                        serie1.append(0)
                     serie2.append(round((serie1[i]-serie1[i-1]), 4)) if i > 0 else serie2.append(0)
                     
                 series.extend([
