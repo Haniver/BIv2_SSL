@@ -1460,9 +1460,15 @@ class Tablas():
                     # print('No hay filtro_lugar')
                 pipeline = [{'$unwind': '$sucursal'}]
                 if filtro_lugar:
-                    pipeline.extend([
-                        {'$match': {'sucursal.'+ nivel: lugar}}
-                    ])
+                    pipeline.append({'$match': {'sucursal.'+ nivel: lugar}})
+                else:
+                    pipeline.append({'$match': {
+                        'sucursal.region': { 
+                            '$exists': True,
+                            '$ne': None
+                        }
+                    }})
+
                 # print("self.filtros.periodo desde Tabla: "+str(self.filtros.periodo))
                 pipeline.extend([
                     {'$match': {
@@ -1584,7 +1590,7 @@ class Tablas():
                             {'$dayOfMonth': '$fecha'}
                         ]}
                     ])
-                # print(str(pipeline))
+                print(f"Pipeline desde Tablas -> PedidoPerfecto: {str(pipeline)}")
                 # Ejecutamos el query:
                 cursor = collection.aggregate(pipeline)
                 arreglo = await cursor.to_list(length=5000)
