@@ -1133,10 +1133,12 @@ class EjesMultiples():
                     # print("ArrEleg en ejes multiples: "+str(arrEleg))
                     for row in arrEleg:
                         # print('El dizque string: '+row['_id']['lugar'])
-                        categories.append(row['_id']['lugar'])
-                        serie1.append(round((row['perfecto']/row['totales']), 4))
+                        if 'lugar' in row['_id']:
+                            categories.append(row['_id']['lugar'])
+                            serie1.append(round((row['perfecto']/row['totales']), 4))
                     for row in arrAnt:
-                        serie2.append(round((row['perfecto']/row['totales']), 4))
+                        if 'lugar' in row['_id']:
+                            serie2.append(round((row['perfecto']/row['totales']), 4))
                     # Obtener los títulos de las series cuando el agrupador sea por semana. Los sacamos de catTiempo por alguna razón
                     if self.filtros.agrupador == 'semana':
                         cursor_semana = conexion_mongo('report').catTiempo.find({
@@ -2125,16 +2127,18 @@ class EjesMultiples():
                     # print("ArrEleg en ejes multiples: "+str(arrEleg))
                     for row in arrEleg:
                         # print('El dizque string: '+row['_id']['lugar'])
-                        categories.append(row['_id']['lugar'])
-                        if row['totales'] is not None and row['totales'] != 0:
-                            serie1.append(round((row['otif']/row['totales']), 4))
-                        else:
-                            serie1.append(0)
+                        if 'lugar' in row['_id']:
+                            categories.append(row['_id']['lugar'])
+                            if row['totales'] is not None and row['totales'] != 0:
+                                serie1.append(round((row['otif']/row['totales']), 4))
+                            else:
+                                serie1.append(0)
                     for row in arrAnt:
-                        if row['totales'] is not None and row['totales'] != 0:
-                            serie2.append(round((row['otif']/row['totales']), 4))
-                        else:
-                            serie2.append(0)
+                        if 'lugar' in row['_id']:
+                            if row['totales'] is not None and row['totales'] != 0:
+                                serie2.append(round((row['otif']/row['totales']), 4))
+                            else:
+                                serie2.append(0)
                     # Obtener los títulos de las series cuando el agrupador sea por semana. Los sacamos de catTiempo por alguna razón
                     if self.filtros.agrupador == 'semana':
                         cursor_semana = conexion_mongo('report').catTiempo.find({

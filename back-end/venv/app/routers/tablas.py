@@ -2762,7 +2762,9 @@ class Tablas():
                     '_id': {
                         'Region': '$regionNombre',
                         'Zona': zona_query,
-                        'Tienda': tienda_query
+                        'Tienda': tienda_query,
+                        'Estatus': '$estatus',
+                        'TipoDeEntrega': '$metodoEntrega'
                     }
                     # Aquí falta insertarle la suma de nPedido para cada día
                 }},
@@ -2804,8 +2806,8 @@ class Tablas():
                     {'name': 'Región', 'selector':'Region', 'formato':'texto', 'ancho':'220px'},
                     {'name': 'Zona', 'selector':'Zona', 'formato':'texto', 'ancho':'220px'},
                     {'name': 'Tienda', 'selector':'Tienda', 'formato':'texto', 'ancho':'420px'},
-                    # {'name': 'Estatus', 'selector':'Estatus', 'formato':'texto', 'ancho':'150px'},
-                    # {'name': 'Tipo de Entrega', 'selector':'TipoDeEntrega', 'formato':'texto', 'ancho':'150px'}
+                    {'name': 'Estatus', 'selector':'Estatus', 'formato':'texto', 'ancho':'150px'},
+                    {'name': 'Tipo de Entrega', 'selector':'TipoDeEntrega', 'formato':'texto', 'ancho':'150px'}
                     # A esto falta agregarle los días agregados dinámicamente
                 ]
                 for i in range(len(fechas)):
@@ -2816,8 +2818,8 @@ class Tablas():
                         'Region': row['_id']['Region'],
                         'Zona': row['_id']['Zona'],
                         'Tienda': row['_id']['Tienda'],
-                        # 'Estatus': row['_id']['Estatus'],
-                        # 'TipoDeEntrega': row['_id']['TipoDeEntrega']
+                        'Estatus': row['_id']['Estatus'],
+                        'TipoDeEntrega': row['_id']['TipoDeEntrega']
                         # A esto falta agregarle los días agregados dinámicamente
                     }
                     for i in range(len(fechas)):
