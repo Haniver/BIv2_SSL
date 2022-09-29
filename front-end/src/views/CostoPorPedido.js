@@ -1,26 +1,9 @@
 import { Fragment, useState, useEffect } from 'react'
 import { Row, Col, Card, CardBody } from 'reactstrap'
 import Filtro from '../componentes/auxiliares/Filtro'
-import Tarjeta from '../componentes/auxiliares/Tarjeta'
-import fechas_srv from '../services/fechas_srv'
 import EjesMultiples from '../componentes/graficos/EjesMultiples'
-import Tabla from '../componentes/tablas/Tabla'
-import TablaExpandible from '../componentes/tablas/TablaExpandible'
-import tarjetasCombinadas from '../services/tarjetasCombinadas'
-import TarjetaEnFila from '../componentes/auxiliares/TarjetaEnFila'
-import Barras from '../componentes/graficos/Barras'
+import TablaCostos from '../componentes/tablas/TablaCostos'
 // import userService from '../services/user.service'
-
-import {
-  DollarSign,
-  Calendar,
-  Target,
-  Divide,
-  DivideCircle,
-  FastForward,
-  Navigation2,
-  PieChart
-} from 'react-feather'
 
 const CostoPorPedido = () => {
 
@@ -30,11 +13,9 @@ const CostoPorPedido = () => {
   const [metodoEnvio, setMetodoEnvio] = useState('')
   const [anio, setAnio] = useState(0)
   const [mes, setMes] = useState(0)
-
-  // useEffect(() => {
-  //   console.log(`anio: ${anio}`)
-  //   console.log(`mes: ${mes}`)
-  // }, [anio, mes])
+  const [filtCostosEnvio, setFiltCostosEnvio] = useState(0)
+  const [filtCostosRHxPedido, setFiltCostosRHxPedido] = useState(0)
+  const [filtCostosTotalxPedido, setFiltCostosTotalxPedido] = useState(0)
 
   const seccion = 'CostoPorPedido'
 
@@ -52,7 +33,7 @@ const CostoPorPedido = () => {
       </Row>}
       <Row className='match-height'>
         <Col sm='12'>
-          <TablaExpandible titulo='Tabla General' yLabel='Pesos'seccion={seccion} mes={mes} anio={anio} region={region} zona={zona} tienda={tienda} metodoEnvio={metodoEnvio} />
+          <TablaCostos titulo='Tabla General' yLabel='Pesos' seccion={seccion} mes={mes} anio={anio} region={region} zona={zona} tienda={tienda} metodoEnvio={metodoEnvio} />
         </Col>
       </Row>
       {/* <Row className='match-height'>
