@@ -919,20 +919,14 @@ class EjesMultiples():
                     # print(str('pipeline = '+str(pipeline)))
                     # print(str('arrAnt = '+str(arrAnt)))
                     # print(str('arrEleg = '+str(arrEleg)))
-                    if 'ini' in arrAnt and arrAnt['ini'] is not None:
-                        serie1 = [
-                            round((arrAnt['found']/arrAnt['ini']), 4), 
-                            round((arrAnt['fin']/arrAnt['ini']), 4), 
-                        ] if len(arrAnt) > 0 else []
-                    else:
-                        serie1 = [0,0]
-                    if 'ini' in arrAnt and arrAnt['ini'] is not None:
-                        serie2 = [
-                            round((arrEleg['found']/arrEleg['ini']), 4), 
-                            round((arrEleg['fin']/arrEleg['ini']), 4), 
-                        ] if len(arrEleg) > 0 else []
-                    else:
-                        serie1 = [0,0]
+                    serie1 = [
+                        round((arrAnt['found']/arrAnt['ini']), 4), 
+                        round((arrAnt['fin']/arrAnt['ini']), 4), 
+                    ] if 'ini' in arrAnt and arrAnt['ini'] is not None and arrAnt['ini'] != 0 else []
+                    serie2 = [
+                        round((arrEleg['found']/arrEleg['ini']), 4), 
+                        round((arrEleg['fin']/arrEleg['ini']), 4), 
+                    ] if 'ini' in arrEleg and arrEleg['ini'] is not None and arrEleg['ini'] != 0 else []
                     for i in range(len(serie1)):
                         serie3.append(round((serie2[i] - serie1[i]), 4))
                     # Obtener los títulos de las series cuando el agrupador sea por semana. Los sacamos de catTiempo por alguna razón
