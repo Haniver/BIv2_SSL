@@ -455,13 +455,22 @@ class Tablas():
             if len(arreglo) >0:
                 hayResultados = "si"
                 for dato in arreglo:
-                    data.append({
-                        'region': dato['_id']['region'],
-                        'zona': dato['_id']['zona'],
-                        'tienda': dato['_id']['tienda'],
-                        'pedidos': dato['pedidos'],
-                        'fecha': ddmmyyyy(dato['fechaEntrega'])
-                    })
+                    if 'region' in dato['_id']:
+                        data.append({
+                            'region': dato['_id']['region'],
+                            'zona': dato['_id']['zona'],
+                            'tienda': dato['_id']['tienda'],
+                            'pedidos': dato['pedidos'],
+                            'fecha': ddmmyyyy(dato['fechaEntrega'])
+                        })
+                    else:
+                        data.append({
+                            'region': '--',
+                            'zona': '--',
+                            'tienda': '--',
+                            'pedidos': dato['pedidos'],
+                            'fecha': ddmmyyyy(dato['fechaEntrega'])
+                        })
             else:
                 hayResultados = 'no'
             columns = [
@@ -1590,7 +1599,7 @@ class Tablas():
                             {'$dayOfMonth': '$fecha'}
                         ]}
                     ])
-                print(f"Pipeline desde Tablas -> PedidoPerfecto: {str(pipeline)}")
+                # print(f"Pipeline desde Tablas -> PedidoPerfecto: {str(pipeline)}")
                 # Ejecutamos el query:
                 cursor = collection.aggregate(pipeline)
                 arreglo = await cursor.to_list(length=5000)
@@ -2095,38 +2104,41 @@ class Tablas():
                         porc_upSells = row['porc_upSells'] if row['porc_upSells'] != None else 0
                         # porc_objetivo = float(row['porc_objetivo']) / 100 if row['porc_objetivo'] != None else 0
                         porc_objetivo = 0.9
-                        cambiar_lugar = json.dumps({
-                            'region': {
-                                'label': row['_id']['regionNombre'],
-                                'value': row['_id']['region']
-                            },
-                            'zona': {
-                                'label': row['_id']['zonaNombre'],
-                                'value': row['_id']['zona']
-                            },
-                            'tienda': {
-                                'label': row['_id']['tiendaNombre'],
-                                'value': row['_id']['idtienda']
-                            }
-                        }).replace('"', '""')
-                        data.append({
-                            'Region': row['_id']['regionNombre'],
-                            'Zona': row['_id']['zonaNombre'],
-                            'Tienda': row['_id']['tiendaNombre'],
-                            'sibling': cambiar_lugar,
-                            # 'Tienda': row['_id']['tiendaNombre'],
-                            'Totales': row['totales'],
-                            'Retrasados': row['retrasados'],
-                            'Porc_Retrasados': row['porc_retrasados'],
-                            'Entregados': row['entregados'],
-                            'Incompletos': row['incompletos'],
-                            'Porc_Incompletos': row['porc_incompletos'],
-                            'ATYC': row['otif'],
-                            'Porc_ATYC': row['porc_otif'],
-                            'UpSells': upSells,
-                            'Porc_UpSells': porc_upSells,
-                            'Porc_Objetivo_ATYC': porc_objetivo
-                        })
+                        if 'regionNombre' in row['_id']:
+                            cambiar_lugar = json.dumps({
+                                'region': {
+                                    'label': row['_id']['regionNombre'],
+                                    'value': row['_id']['region']
+                                },
+                                'zona': {
+                                    'label': row['_id']['zonaNombre'],
+                                    'value': row['_id']['zona']
+                                },
+                                'tienda': {
+                                    'label': row['_id']['tiendaNombre'],
+                                    'value': row['_id']['idtienda']
+                                }
+                            }).replace('"', '""')
+                            data.append({
+                                'Region': row['_id']['regionNombre'],
+                                'Zona': row['_id']['zonaNombre'],
+                                'Tienda': row['_id']['tiendaNombre'],
+                                'sibling': cambiar_lugar,
+                                # 'Tienda': row['_id']['tiendaNombre'],
+                                'Totales': row['totales'],
+                                'Retrasados': row['retrasados'],
+                                'Porc_Retrasados': row['porc_retrasados'],
+                                'Entregados': row['entregados'],
+                                'Incompletos': row['incompletos'],
+                                'Porc_Incompletos': row['porc_incompletos'],
+                                'ATYC': row['otif'],
+                                'Porc_ATYC': row['porc_otif'],
+                                'UpSells': upSells,
+                                'Porc_UpSells': porc_upSells,
+                                'Porc_Objetivo_ATYC': porc_objetivo
+                            })
+                        else:
+                            hayResultados = 'no'
                 else:
                     hayResultados = 'no'
             else:

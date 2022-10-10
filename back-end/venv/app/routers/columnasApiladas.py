@@ -509,10 +509,16 @@ class ColumnasApiladas():
                 hayResultados = "si"
                 for registro in arreglo:
                     categorias.append(registro['_id']['lugar'])
-                    serie1.append(round((float(registro['con_quejas'])/float(registro['totales'])), 4))
-                    serie2.append(round((float(registro['retrasados'])/float(registro['totales'])), 4))
-                    serie3.append(round((float(registro['cancelados'])/float(registro['totales'])), 4))
-                    serie4.append(round((float(registro['incompletos'])/float(registro['totales'])), 4))
+                    if registro['totales'] > 0:
+                        serie1.append(round((float(registro['con_quejas'])/float(registro['totales'])), 4))
+                        serie2.append(round((float(registro['retrasados'])/float(registro['totales'])), 4))
+                        serie3.append(round((float(registro['cancelados'])/float(registro['totales'])), 4))
+                        serie4.append(round((float(registro['incompletos'])/float(registro['totales'])), 4))
+                    else:
+                        serie1.append(0)
+                        serie2.append(0)
+                        serie3.append(0)
+                        serie4.append(0)
                 series = [
                     {'name': 'Con quejas', 'data':serie1, 'color': 'danger'},
                     {'name': 'Retrasados', 'data':serie2, 'color': 'warning'},

@@ -476,7 +476,10 @@ class EjesMultiples():
                         else:
                             category = 'Semana no encontrada'
                     categories.append(category)
-                    serie1.append(round((arreglo[i]['perfectos']/arreglo[i]['totales']), 4))
+                    if arreglo[i]['totales'] > 0:
+                        serie1.append(round((arreglo[i]['perfectos']/arreglo[i]['totales']), 4))
+                    else:
+                        serie1.append(0)
                     serie2.append(round((serie1[i]-serie1[i-1]), 4)) if i > 0 else serie2.append(0)
                     
                 series.extend([
@@ -673,7 +676,7 @@ class EjesMultiples():
                 cursor = collection.aggregate(pipeline)
                 arreglo = await cursor.to_list(length=1000)
                 # print('Arreglo Evaluación por KPI Pedido Perfecto: '+str(arreglo))
-                if len(arreglo) >0:
+                if len(arreglo) >= 2:
                     hayResultados = "si"
                     # Creamos los arreglos que alimentarán al gráfico:
                     categories = ['Con Quejas', 'Retrasados', 'Cancelados', 'Incompletos', 'UpSells']
@@ -686,20 +689,26 @@ class EjesMultiples():
                     # print(str('arrEleg = '+str(arrEleg)))
                     arrAntUpSells = arrAnt['upSells'] if arrAnt['upSells'] != None else 0
                     arrElegUpSells = arrEleg['upSells'] if arrEleg['upSells'] != None else 0
-                    serie1 = [
-                        round((arrAnt['con_quejas']/arrAnt['totales']), 4), 
-                        round((arrAnt['retrasados']/arrAnt['totales']), 4), 
-                        round((arrAnt['cancelados']/arrAnt['totales']), 4), 
-                        round((arrAnt['incompletos']/arrAnt['totales']), 4),
-                        round((arrAntUpSells/arrAnt['totales']), 4)
-                    ] if len(arrAnt) > 0 else []
-                    serie2 = [
-                        round((arrEleg['con_quejas']/arrEleg['totales']), 4), 
-                        round((arrEleg['retrasados']/arrEleg['totales']), 4), 
-                        round((arrEleg['cancelados']/arrEleg['totales']), 4), 
-                        round((arrEleg['incompletos']/arrEleg['totales']), 4),
-                        round((arrElegUpSells/arrEleg['totales']), 4)
-                    ] if len(arrEleg) > 0 else []
+                    if arrAnt['totales'] > 0:
+                        serie1 = [
+                            round((arrAnt['con_quejas']/arrAnt['totales']), 4), 
+                            round((arrAnt['retrasados']/arrAnt['totales']), 4), 
+                            round((arrAnt['cancelados']/arrAnt['totales']), 4), 
+                            round((arrAnt['incompletos']/arrAnt['totales']), 4),
+                            round((arrAntUpSells/arrAnt['totales']), 4)
+                        ]
+                    else:
+                        serie1 = [0,0,0,0,0]
+                    if arrEleg['totales'] > 0:
+                        serie2 = [
+                            round((arrEleg['con_quejas']/arrEleg['totales']), 4), 
+                            round((arrEleg['retrasados']/arrEleg['totales']), 4), 
+                            round((arrEleg['cancelados']/arrEleg['totales']), 4), 
+                            round((arrEleg['incompletos']/arrEleg['totales']), 4),
+                            round((arrElegUpSells/arrEleg['totales']), 4)
+                        ] if len(arrEleg) > 0 else []
+                    else:
+                        serie2 = [0,0,0,0,0]
                     for i in range(len(serie1)):
                         serie3.append(round((serie2[i] - serie1[i]), 4))
                     # Obtener los títulos de las series cuando el agrupador sea por semana. Los sacamos de catTiempo por alguna razón
@@ -898,7 +907,7 @@ class EjesMultiples():
                 # Ejecutamos el query:
                 cursor = collection.aggregate(pipeline)
                 arreglo = await cursor.to_list(length=1000)
-                if len(arreglo) >0:
+                if len(arreglo) >= 2:
                     hayResultados = "si"
                     # Creamos los arreglos que alimentarán al gráfico:
                     categories = ['Found Rate', 'Fulfillment Rate']
@@ -1135,10 +1144,16 @@ class EjesMultiples():
                         # print('El dizque string: '+row['_id']['lugar'])
                         if 'lugar' in row['_id']:
                             categories.append(row['_id']['lugar'])
-                            serie1.append(round((row['perfecto']/row['totales']), 4))
+                            if row['totales'] > 0:
+                                serie1.append(round((row['perfecto']/row['totales']), 4))
+                            else:
+                                serie1.append(0)
                     for row in arrAnt:
                         if 'lugar' in row['_id']:
-                            serie2.append(round((row['perfecto']/row['totales']), 4))
+                            if row['totales'] > 0:
+                                serie2.append(round((row['perfecto']/row['totales']), 4))
+                            else:
+                                serie2.append(0)
                     # Obtener los títulos de las series cuando el agrupador sea por semana. Los sacamos de catTiempo por alguna razón
                     if self.filtros.agrupador == 'semana':
                         cursor_semana = conexion_mongo('report').catTiempo.find({
@@ -1339,7 +1354,7 @@ class EjesMultiples():
                 # Ejecutamos el query:
                 cursor = collection.aggregate(pipeline)
                 arreglo = await cursor.to_list(length=1000)
-                if len(arreglo) >0:
+                if len(arreglo) >= 2:
                     hayResultados = "si"
                     # Creamos los arreglos que alimentarán al gráfico:
                     categories = ['Pedido Retrasado', 'Inconformidad de Producto', 'Entrega Incompleta', 'Entrega en Falso']
@@ -1488,7 +1503,10 @@ class EjesMultiples():
                         else:
                             category = 'Semana no encontrada'
                     categories.append(category)
-                    serie1.append(round((arreglo[i]['otif'] / arreglo[i]['totales']), 4))
+                    if arreglo[i]['totales'] > 0:
+                        serie1.append(round((arreglo[i]['otif'] / arreglo[i]['totales']), 4))
+                    else:
+                        serie1.append(0)
                     serie2.append(round((serie1[i]-serie1[i-1]), 4)) if i > 0 else serie2.append(0)
                     
                 series.extend([
@@ -1684,14 +1702,26 @@ class EjesMultiples():
                     # print('Evaluación por KPI A Tiempo y Completo:')
                     # print(str('arrAnt = '+str(arrAnt)))
                     # print(str('arrEleg = '+str(arrEleg)))
-                    serie1 = [
-                        round((arrAnt['retrasados']/arrAnt['totales']), 4), 
-                        round((arrAnt['incompletos']/arrAnt['totales']), 4),
-                    ] if len(arrAnt) > 0 else []
-                    serie2 = [
-                        round((arrEleg['retrasados']/arrEleg['totales']), 4), 
-                        round((arrEleg['incompletos']/arrEleg['totales']), 4),
-                    ] if len(arrEleg) > 0 else []
+                    if len(arrAnt) > 0:
+                        if arrAnt['totales'] > 0:
+                            serie1 = [
+                                round((arrAnt['retrasados']/arrAnt['totales']), 4), 
+                                round((arrAnt['incompletos']/arrAnt['totales']), 4),
+                            ]
+                        else:
+                            serie1 = [0,0]
+                    else:
+                        serie1 = []
+                    if len(arrEleg) > 0:
+                        if arrEleg['totales'] > 0:
+                            serie2 = [
+                                round((arrEleg['retrasados']/arrEleg['totales']), 4), 
+                                round((arrEleg['incompletos']/arrEleg['totales']), 4),
+                            ]
+                        else:
+                            serie2 = [0,0]
+                    else:
+                        serie2 = []
                     for i in range(len(serie1)):
                         serie3.append(round((serie2[i] - serie1[i]), 4))
                     # Obtener los títulos de las series cuando el agrupador sea por semana. Los sacamos de catTiempo por alguna razón
