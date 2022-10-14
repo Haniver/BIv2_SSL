@@ -671,7 +671,7 @@ class EjesMultiples():
                     tituloElegida = str(dia_elegido) + ' ' + mesTexto(mes_elegido) + ' ' + str(anio_elegido)
                     tituloAnterior = str(dia_anterior) + ' ' + mesTexto(mes_anterior) + ' ' + str(anio_anterior)
                 # Agregamos los facets al pipeline:
-                # print('Pipeline Evaluación por KPI Pedido Perfecto: '+str(pipeline))
+                print('Pipeline EjesMultiples -> Evaluación por KPI Pedido Perfecto: '+str(pipeline))
                 # Ejecutamos el query:
                 cursor = collection.aggregate(pipeline)
                 arreglo = await cursor.to_list(length=1000)
@@ -1356,6 +1356,7 @@ class EjesMultiples():
                 # Ejecutamos el query:
                 cursor = collection.aggregate(pipeline)
                 arreglo = await cursor.to_list(length=1000)
+                print(f"Arreglo desde EjesMultiples-> Motivos de quejas: {str(arreglo)}, que tiene len = {str(len(arreglo))}")
                 if len(arreglo) >= 2:
                     hayResultados = "si"
                     # Creamos los arreglos que alimentarán al gráfico:
@@ -1403,6 +1404,7 @@ class EjesMultiples():
             else:
                 hayResultados = "no"
                 # print("No hay resultados 1")
+        print({'hayResultados':hayResultados,'categories':str(categories), 'series':str(series), 'pipeline': str(pipeline), 'lenArreglo':str(len(arreglo))})
         return  {'hayResultados':hayResultados,'categories':categories, 'series':series, 'pipeline': pipeline, 'lenArreglo':len(arreglo)}
 
     async def OnTimeInFull(self):
@@ -1419,18 +1421,22 @@ class EjesMultiples():
                     nivel = 'idtienda'
                     lugar = int(self.filtros.tienda)
                     siguiente_lugar = 'tiendaNombre'
+                    lugar_sql = f"AND ct.tienda = {self.filtros.tienda}"
                 else:
                     nivel = 'zona'
                     lugar = int(self.filtros.zona)
                     siguiente_lugar = 'tiendaNombre'
+                    lugar_sql = f"AND ct.zona = {self.filtros.zona}"
             else:
                 nivel = 'region'
                 lugar = int(self.filtros.region)
                 siguiente_lugar = 'zonaNombre'
+                lugar_sql = f"AND ct.region = {self.filtros.region}"
         else:
             filtro_lugar = False
             lugar = ''
             siguiente_lugar = 'regionNombre'
+            lugar_sql = ''
 
         pipeline = [{'$unwind': '$sucursal'}]
         if filtro_lugar:
@@ -1439,7 +1445,196 @@ class EjesMultiples():
             ])
         collection = conexion_mongo('report').report_pedidoPerfecto
 
-        if self.titulo == 'Pedidos A Tiempo y Completos':
+        if self.titulo == 'Evaluación':
+            if self.filtros.periodo != {}:
+                series = []
+                arreglo = []
+                serie1 = []
+                serie2 = []
+                serie3 = []
+                serie4 = []
+
+                cnxn = conexion_sql('DWH')
+                if self.filtros.agrupador == 'semana':
+                    periodoNum = 'idSemDS'
+                    periodoTxt = 'dt.nSemDS'
+                    # print(f"Filtro periodo desde EjesMultiples -> OTIF -> Evaluación: {self.filtros.periodo}")
+                    print(f"self.filtros.periodo: {self.filtros.periodo}")
+                    sem2 = str(self.filtros.periodo['semana'])
+                    query = f"""
+                        select idSemDS from DWH.dbo.dim_tiempo where fecha = (
+                            select DATEADD(DAY, -7, (select CONVERT(varchar,(min(fecha))) from DWH.dbo.dim_tiempo where idSemDS = {sem2}))
+                        )
+                    """
+                    cursor = cnxn.cursor().execute(query)
+                    arreglo = crear_diccionario(cursor)
+                    sem1 = arreglo[0]['idSemDS']
+                    where = f"dt.idSemDS in ('{sem1}', '{sem2}')"
+                if self.filtros.agrupador == 'mes':
+                    periodoNum = 'num_mes'
+                    periodoTxt = "CONCAT(dt.abrev_mes, ' ', anio)"
+                    mesNum = int(self.filtros.periodo['mes'])
+                    mesTxt = '%02d' % (mesNum)
+                    anio = int(self.filtros.periodo['anio'])
+                    diasEnMes_fin = monthrange(anio, mesNum)[1]
+                    fecha_fin_txt = f"{str(anio)}-{mesTxt}-{diasEnMes_fin}"
+                    year, month, day = map(int, fecha_fin_txt.split('-'))
+                    if month > 1:
+                        month -= 1
+                    else:
+                        month = 12
+                        year -= 1
+                    fecha_ini_txt = '%04d-%02d-01' % (year, month)
+                    where = f"dt.fecha BETWEEN '{fecha_ini_txt}' and '{fecha_fin_txt}'"
+                if self.filtros.agrupador == 'dia':
+                    periodoNum = 'id_fecha'
+                    periodoTxt = "dt.descrip_fecha"
+                    day = int(self.filtros.periodo['dia'])
+                    month = int(self.filtros.periodo['mes'])
+                    year = int(self.filtros.periodo['anio'])
+                    fecha_fin_txt = '%04d-%02d-%02d' % (year, month, day)
+                    if day == 1 and month == 1:
+                        fecha_ini_txt = str(year - 1) + "-12-31"
+                    elif day == 1:
+                        fecha_ini_txt = str(year) + "-" + str(month - 1).zfill(2) + "-31"
+                    else:
+                        fecha_ini_txt = str(year) + "-" + str(month).zfill(2) + "-" + str(day - 1).zfill(2)
+                    where = f"dt.fecha BETWEEN '{fecha_ini_txt}' and '{fecha_fin_txt}'"
+                pipeline = f"""
+                    select dt.{periodoNum} periodoNum, {periodoTxt} periodoTxt,
+                    sum (case when ho.evaluacion = 'Despachado-Fuera de tiempo' then 1 else 0 end) Pickeado_Fuera_de_Tiempo,
+                    sum (case when ho.evaluacion = 'Despachado-A tiempo' then 1 else 0 end) Pickeado_A_Tiempo,
+                    sum (case when ho.evaluacion = 'Entregado-Fuera de tiempo' then 1 else 0 end) Entregado_Fuera_de_Tiempo,
+                    sum (case when ho.evaluacion = 'Entregado-A tiempo' then 1 else 0 end) Entregado_A_Tiempo
+                    from DWH.dbo.hecho_order ho
+                    LEFT JOIN DWH.dbo.dim_tiempo dt on dt.fecha = CONVERT(date, creation_date)
+                    LEFT JOIN DWH.artus.catTienda ct on ct.tienda=ho.store_num
+                    WHERE {where}
+                    {lugar_sql}
+                    GROUP BY dt.{periodoNum}, {periodoTxt}
+                    """
+                # print('EjesMultiples -> OTIF -> Evaluación: '+pipeline)
+                cursor = cnxn.cursor().execute(pipeline)
+                arreglo = crear_diccionario(cursor)
+                if len(arreglo) >0:
+                    hayResultados = "si"
+                    for registro in arreglo:
+                        categories.append(registro['periodoTxt'])
+                        Entregado_A_Tiempo = float(registro['Entregado_A_Tiempo'])
+                        Entregado_Fuera_de_Tiempo = float(registro['Entregado_Fuera_de_Tiempo'])
+                        Totales = Entregado_A_Tiempo + Entregado_Fuera_de_Tiempo
+                        if Totales == 0:
+                            hayResultados = 'no'
+                        else:
+                            serie1.append(Entregado_A_Tiempo / Totales)
+                            serie2.append(Entregado_Fuera_de_Tiempo / Totales)
+                    series = [
+                        {'name': 'Entregado a Tiempo', 'data':serie1, 'type': 'spline','formato_tooltip':'porcentaje', 'color':'success'},
+                        {'name': 'Entregado Fuera de Tiempo', 'data':serie2, 'type': 'spline', 'formato_tooltip':'porcentaje', 'color':'primary'}
+                    ]
+                else:
+                    hayResultados = "no"
+            else:
+                hayResultados = "no"
+                # print("No hay resultados 2")
+
+        if self.titulo == 'Razón de Retraso':
+            if self.filtros.periodo != {}:
+                series = []
+                arreglo = []
+                serie1 = []
+                serie2 = []
+                serie3 = []
+                serie4 = []
+
+                cnxn = conexion_sql('DWH')
+                if self.filtros.agrupador == 'semana':
+                    periodoNum = 'idSemDS'
+                    periodoTxt = 'dt.nSemDS'
+                    # print(f"Filtro periodo desde EjesMultiples -> OTIF -> Evaluación: {self.filtros.periodo}")
+                    print(f"self.filtros.periodo: {self.filtros.periodo}")
+                    sem2 = str(self.filtros.periodo['semana'])
+                    query = f"""
+                        select idSemDS from DWH.dbo.dim_tiempo where fecha = (
+                            select DATEADD(DAY, -7, (select CONVERT(varchar,(min(fecha))) from DWH.dbo.dim_tiempo where idSemDS = {sem2}))
+                        )
+                    """
+                    cursor = cnxn.cursor().execute(query)
+                    arreglo = crear_diccionario(cursor)
+                    sem1 = arreglo[0]['idSemDS']
+                    where = f"dt.idSemDS in ('{sem1}', '{sem2}')"
+                if self.filtros.agrupador == 'mes':
+                    periodoNum = 'num_mes'
+                    periodoTxt = "CONCAT(dt.abrev_mes, ' ', anio)"
+                    mesNum = int(self.filtros.periodo['mes'])
+                    mesTxt = '%02d' % (mesNum)
+                    anio = int(self.filtros.periodo['anio'])
+                    diasEnMes_fin = monthrange(anio, mesNum)[1]
+                    fecha_fin_txt = f"{str(anio)}-{mesTxt}-{diasEnMes_fin}"
+                    year, month, day = map(int, fecha_fin_txt.split('-'))
+                    if month > 1:
+                        month -= 1
+                    else:
+                        month = 12
+                        year -= 1
+                    fecha_ini_txt = '%04d-%02d-01' % (year, month)
+                    where = f"dt.fecha BETWEEN '{fecha_ini_txt}' and '{fecha_fin_txt}'"
+                if self.filtros.agrupador == 'dia':
+                    periodoNum = 'id_fecha'
+                    periodoTxt = "dt.descrip_fecha"
+                    day = int(self.filtros.periodo['dia'])
+                    month = int(self.filtros.periodo['mes'])
+                    year = int(self.filtros.periodo['anio'])
+                    fecha_fin_txt = '%04d-%02d-%02d' % (year, month, day)
+                    if day == 1 and month == 1:
+                        fecha_ini_txt = str(year - 1) + "-12-31"
+                    elif day == 1:
+                        fecha_ini_txt = str(year) + "-" + str(month - 1).zfill(2) + "-31"
+                    else:
+                        fecha_ini_txt = str(year) + "-" + str(month).zfill(2) + "-" + str(day - 1).zfill(2)
+                    where = f"dt.fecha BETWEEN '{fecha_ini_txt}' and '{fecha_fin_txt}'"
+                pipeline = f"""
+                    select dt.{periodoNum} periodoNum, {periodoTxt} periodoTxt,
+                    sum (case when ho.fin_picking > ho.timeslot_from then 1 else 0 end) Pickeado_Fuera_de_Tiempo,
+                    sum (case when ho.fin_picking < ho.timeslot_from  and ho.fin_entrega > ho.timeslot_to then 1 else 0 end) Entregado_Fuera_de_Tiempo
+                    --sum (case when ho.fin_picking <= ho.timeslot_from then (case when ho.fin_entrega > ho.timeslot_to then 1 else 0 end) else 0 end) Entregado_Fuera_de_Tiempo
+                    from DWH.dbo.hecho_order ho
+                    LEFT JOIN DWH.dbo.dim_tiempo dt on dt.fecha = CONVERT(date, creation_date)
+                    LEFT JOIN DWH.artus.catTienda ct on ct.tienda=ho.store_num
+                    left join DWH.dbo.dim_estatus de on de.id_estatus = ho.id_estatus
+                    WHERE {where}
+                    and de.descrip_delviery_mode = 'domicilio'
+                    and ho.evaluacion = 'Entregado-Fuera de tiempo'
+                    {lugar_sql}
+                    GROUP BY dt.{periodoNum}, {periodoTxt}
+                    """
+                print('EjesMultiples -> OTIF -> Razón de Retraso: '+pipeline)
+                # hayResultados = 'no'
+                cursor = cnxn.cursor().execute(pipeline)
+                arreglo = crear_diccionario(cursor)
+                if len(arreglo) >0:
+                    hayResultados = "si"
+                    for registro in arreglo:
+                        categories.append(registro['periodoTxt'])
+                        Pickeado_Fuera_de_Tiempo = float(registro['Pickeado_Fuera_de_Tiempo'])
+                        Entregado_Fuera_de_Tiempo = float(registro['Entregado_Fuera_de_Tiempo'])
+                        Totales = Pickeado_Fuera_de_Tiempo + Entregado_Fuera_de_Tiempo
+                        if Totales == 0:
+                            hayResultados = 'no'
+                        else:
+                            serie1.append(Pickeado_Fuera_de_Tiempo / Totales)
+                            serie2.append(Entregado_Fuera_de_Tiempo / Totales)
+                    series = [
+                        {'name': 'Pickeado Fuera de Tiempo', 'data':serie1, 'type': 'spline','formato_tooltip':'porcentaje', 'color':'primary'},
+                        {'name': 'Entregado Fuera de Tiempo', 'data':serie2, 'type': 'spline', 'formato_tooltip':'porcentaje', 'color':'secondary'}
+                    ]
+                else:
+                    hayResultados = "no"
+            else:
+                hayResultados = "no"
+                # print("No hay resultados 2")
+
+        elif self.titulo == 'Pedidos A Tiempo y Completos':
             # print("Entró a Pedidos Perfectos en Ejes Múltiples")
             serie1 = []
             serie2 = []
@@ -1693,7 +1888,7 @@ class EjesMultiples():
                 cursor = collection.aggregate(pipeline)
                 arreglo = await cursor.to_list(length=1000)
                 # print('Arreglo Evaluación por KPI A Tiempo y Completo: '+str(arreglo))
-                if len(arreglo) >0:
+                if len(arreglo) >1:
                     hayResultados = "si"
                     # Creamos los arreglos que alimentarán al gráfico:
                     categories = ['Retrasados', 'Incompletos', 'UpSells']
@@ -1923,7 +2118,7 @@ class EjesMultiples():
                 # Ejecutamos el query:
                 cursor = collection.aggregate(pipeline)
                 arreglo = await cursor.to_list(length=1000)
-                if len(arreglo) >0:
+                if len(arreglo) > 1:
                     hayResultados = "si"
                     # Creamos los arreglos que alimentarán al gráfico:
                     categories = ['Found Rate', 'Fulfillment Rate']

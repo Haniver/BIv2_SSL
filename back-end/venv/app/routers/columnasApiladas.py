@@ -1,8 +1,10 @@
 from copy import deepcopy
+from time import strftime
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.auth import get_current_active_user
 from app.servicios.conectar_mongo import conexion_mongo
+from app.servicios.conectar_sql import conexion_sql, crear_diccionario
 from app.servicios.Filtro import Filtro
 from app.servicios.formatoFechas import fechaAbrevEspanol
 from app.servicios.formatoFechas import mesTexto
@@ -483,7 +485,7 @@ class ColumnasApiladas():
                         '$idSemDS'
                     ]}
                 ])
-            # Modificamos los facets para el caso de que el agrupador sea por día:
+            # Modificamos los facets para el caso de que el agrupador sea por dÃ­a:
             elif self.filtros.agrupador == 'dia':
                 anio = self.filtros.periodo['anio']
                 mes = self.filtros.periodo['mes']
@@ -763,17 +765,26 @@ class ColumnasApiladas():
         if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
             filtro_lugar = True
             if self.filtros.zona != '' and self.filtros.zona != "False"  and self.filtros.zona != None:
-                nivel = 'zona'
-                lugar = int(self.filtros.zona)
-                siguiente_lugar = 'tiendaNombre'
+                if self.filtros.tienda != '' and self.filtros.tienda != "False" and self.filtros.tienda != None:
+                    nivel = 'zona'
+                    lugar = int(self.filtros.zona)
+                    siguiente_lugar = 'tiendaNombre'
+                    lugar_sql = f"AND ct.tienda = {self.filtros.tienda}"
+                else:
+                    nivel = 'zona'
+                    lugar = int(self.filtros.zona)
+                    siguiente_lugar = 'tiendaNombre'
+                    lugar_sql = f"AND ct.zona = {self.filtros.zona}"
             else:
                 nivel = 'region'
                 lugar = int(self.filtros.region)
                 siguiente_lugar = 'zonaNombre'
+                lugar_sql = f"AND ct.region = {self.filtros.region}"
         else:
             filtro_lugar = False
             lugar = ''
             siguiente_lugar = 'regionNombre'
+            lugar_sql = ''
 
         pipeline = [
             # {'$match': {
@@ -887,223 +898,99 @@ class ColumnasApiladas():
                 # print("No hay resultados 2")
 
         if self.titulo == 'Estatus':
-            if self.filtros.periodo != {}:
-                serie1 = []
-                serie2 = []
-                serie3 = []
+            series = []
+            arreglo = []
+            serie1 = []
+            serie2 = []
+            serie3 = []
+            serie4 = []
 
-                # pipeline.append(
-                #     {'$match': {
-                #         'fecha': {
-                #             '$gte': self.fecha_ini_a12, 
-                #             '$lt': self.fecha_fin_a12
-                #         }
-                #     }}
-                # )
-                # Vamos a crear 2 facets: uno para el periodo elegido y otro para el anterior. Creamos una plantilla para el facet:
-                pipeline.extend([
-                    {'$match': {
-                        '$expr': {
-                            '$or': [
-                                {'$and': []},
-                                {'$and': []}
-                            ]
-                        }
-                    }},
-                    {'$project': {
-                        'itemsFound': '$itemsFound',
-                        'itemsFin': '$itemsFin',
-                        'itemsIni': '$itemsIni',
-                        'periodo': {
-                            '$cond': [
-                                {'$and': []},
-                                0,
-                                1
-                            ]
-                        }
-                    }},
-                    {'$group': {
-                        '_id': '$periodo',
-                        'found': {
-                            '$sum': '$itemsFound'
-                        },
-                        'fin': {
-                            '$sum': '$itemsFin'
-                        },
-                        'ini': {
-                            '$sum': '$itemsIni'
-                        }
-                    }},
-                    {'$sort': {'_id': 1}}
-                ])
-                # Creamos variables para manipular los diccionarios:
-                match1 = pipeline[-4]['$match']['$expr']['$or'][0]['$and']
-                match2 = pipeline[-4]['$match']['$expr']['$or'][1]['$and']
-                cond_periodo = pipeline[-3]['$project']['periodo']['$cond'][0]['$and']
-                
-                # Modificamos los facets para el caso de que el agrupador sea por mes:
-                if self.filtros.agrupador == 'mes':
-                    anio_elegido = self.filtros.periodo['anio']
-                    mes_elegido = self.filtros.periodo['mes']
-                    if mes_elegido > 1:
-                        mes_anterior = mes_elegido - 1
-                        anio_anterior = anio_elegido
-                    else:
-                        mes_anterior = 12
-                        anio_anterior = anio_elegido - 1
-                    condicion_anterior = [
-                        {'$eq': [
-                            anio_elegido,
-                            {'$year': '$fecha'}
-                        ]},
-                        {'$eq': [
-                            mes_elegido,
-                            {'$month': '$fecha'}
-                        ]}
-                    ]
-                    match1.extend(condicion_anterior)
-                    cond_periodo.extend(condicion_anterior)
-                    match2.extend([
-                        {'$eq': [
-                            anio_anterior,
-                            {'$year': '$fecha'}
-                        ]},
-                        {'$eq': [
-                            mes_anterior,
-                            {'$month': '$fecha'}
-                        ]}
-                    ])
-                    tituloElegida = mesTexto(mes_elegido) + ' ' + str(anio_elegido)
-                    tituloAnterior = mesTexto(mes_anterior) + ' ' + str(anio_anterior)
-                # Modificamos los facets para el caso de que el agrupador sea por semana:
-                elif self.filtros.agrupador == 'semana':
-                    semana_elegida = int(str(self.filtros.periodo['semana'])[4:6])
-                    anio_elegido = int(str(self.filtros.periodo['semana'])[0:4])
-                    if semana_elegida != 1:
-                        semana_anterior = semana_elegida - 1
-                        anio_anterior = anio_elegido
-                    else:
-                        anio_anterior = anio_elegido - 1
-                        last_week = date(anio_anterior, 12, 28) # La lógica de esto está aquí: https://stackoverflow.com/questions/29262859/the-number-of-calendar-weeks-in-a-year
-                        semana_anterior = last_week.isocalendar()[1]
-                    semana_elegida_txt = '0' + str(semana_elegida) if semana_elegida < 10 else str(semana_elegida)
-                    semana_anterior_txt = '0' + str(semana_anterior) if semana_anterior < 10 else str(semana_anterior)
-                    semana_elegida_txt = int(str(anio_elegido) + semana_elegida_txt)
-                    semana_anterior_txt = int(str(anio_anterior) + semana_anterior_txt)
-                    condicion_anterior = [
-                        {'$eq': [
-                            semana_elegida_txt,
-                            '$idSemDS'
-                        ]}
-                    ]
-                    match1.extend(condicion_anterior)
-                    cond_periodo.extend(condicion_anterior)
-                    match2.extend([
-                        {'$eq': [
-                            semana_anterior_txt,
-                            '$idSemDS'
-                        ]}
-                    ])
-                # Modificamos los facets para el caso de que el agrupador sea por día:
-                elif self.filtros.agrupador == 'dia':
-                    anio_elegido = self.filtros.periodo['anio']
-                    mes_elegido = self.filtros.periodo['mes']
-                    dia_elegido = self.filtros.periodo['dia']
-                    if dia_elegido != 1:
-                        dia_anterior = dia_elegido - 1
-                        mes_anterior = mes_elegido
-                        anio_anterior = anio_elegido
-                    else:
-                        if mes_elegido != 1:
-                            mes_anterior = mes_elegido - 1
-                            anio_anterior = anio_elegido
-                        else:
-                            mes_anterior = 12
-                            anio_anterior = anio_elegido - 1
-                        dia_anterior = monthrange(anio_anterior, mes_anterior)[1] # La lógica de esto está aquí: https://stackoverflow.com/questions/42950/how-to-get-the-last-day-of-the-month
-                    condicion_anterior = [
-                        {'$eq': [
-                            anio_elegido,
-                            {'$year': '$fecha'}
-                        ]},
-                        {'$eq': [
-                            mes_elegido,
-                            {'$month': '$fecha'}
-                        ]},
-                        {'$eq': [
-                            dia_elegido,
-                            {'$dayOfMonth': '$fecha'}
-                        ]}
-                    ]
-                    match1.extend(condicion_anterior)
-                    cond_periodo.extend(condicion_anterior)
-                    match2.extend([
-                        {'$eq': [
-                            anio_anterior,
-                            {'$year': '$fecha'}
-                        ]},
-                        {'$eq': [
-                            mes_anterior,
-                            {'$month': '$fecha'}
-                        ]},
-                        {'$eq': [
-                            dia_anterior,
-                            {'$dayOfMonth': '$fecha'}
-                        ]}
-                    ])
-                    tituloElegida = str(dia_elegido) + ' ' + mesTexto(mes_elegido) + ' ' + str(anio_elegido)
-                    tituloAnterior = str(dia_anterior) + ' ' + mesTexto(mes_anterior) + ' ' + str(anio_anterior)
-                # Agregamos los facets al pipeline:
-                # print(str(pipeline))
-                # Ejecutamos el query:
-                cursor = collection.aggregate(pipeline)
-                arreglo = await cursor.to_list(length=1000)
-                if len(arreglo) >= 2:
-                    hayResultados = "si"
-                    # Creamos los arreglos que alimentarán al gráfico:
-                    categories = ['Found Rate', 'Fulfillment Rate']
-                    arrEleg = arreglo[0]
-                    arrAnt = arreglo[1]
-                    if arrEleg == [] or arrAnt == []:
-                        return {'hayResultados':'no','categories':[], 'series':[], 'pipeline': '', 'lenArreglo':0}
-                    # print('Evaluación por KPI:')
-                    # print(str('pipeline = '+str(pipeline)))
-                    # print(str('arrAnt = '+str(arrAnt)))
-                    # print(str('arrEleg = '+str(arrEleg)))
-                    serie1 = [
-                        round((arrAnt['found']/arrAnt['ini']), 4), 
-                        round((arrAnt['fin']/arrAnt['ini']), 4), 
-                    ] if 'ini' in arrAnt and arrAnt['ini'] is not None and arrAnt['ini'] != 0 else []
-                    serie2 = [
-                        round((arrEleg['found']/arrEleg['ini']), 4), 
-                        round((arrEleg['fin']/arrEleg['ini']), 4), 
-                    ] if 'ini' in arrEleg and arrEleg['ini'] is not None and arrEleg['ini'] != 0 else []
-                    if len(serie1) == len(serie2):
-                        for i in range(len(serie1)):
-                            serie3.append(round((serie2[i] - serie1[i]), 4))
-                    # Obtener los títulos de las series cuando el agrupador sea por semana. Los sacamos de catTiempo por alguna razón
-                    if self.filtros.agrupador == 'semana':
-                        cursor_semana = conexion_mongo('report').catTiempo.find({
-                            'idSemDS': semana_elegida_txt
-                        })
-                        arreglo_semana = await cursor_semana.to_list(length=1)
-                        tituloElegida = arreglo_semana[0]['nSemDS']
-                        cursor_semana = conexion_mongo('report').catTiempo.find({
-                            'idSemDS': semana_anterior_txt
-                        })
-                        arreglo_semana = await cursor_semana.to_list(length=1)
-                        tituloAnterior = arreglo_semana[0]['nSemDS']
-                    series = [
-                        {'name': tituloAnterior, 'data':serie1, 'type': 'column','formato_tooltip':'porcentaje', 'color':'secondary'},
-                        {'name': tituloElegida, 'data':serie2, 'type': 'column', 'formato_tooltip':'porcentaje', 'color':'primary'},
-                        {'name': '% Dif', 'data':serie3, 'type': 'spline', 'formato_tooltip':'porcentaje', 'color':'dark'},
-                    ]
+            # print(f"self.filtros.periodo: {self.filtros.periodo}")
+            cnxn = conexion_sql('DWH')
+            if self.filtros.agrupador == 'semana':
+                periodoNum = 'idSemDS'
+                periodoTxt = 'dt.nSemDS'
+                sem2 = str(self.filtros.periodo['semana'])
+                query = f"""
+                    select idSemDS from DWH.dbo.dim_tiempo where fecha = (
+                        select DATEADD(DAY, -7, (select CONVERT(varchar,(min(fecha))) from DWH.dbo.dim_tiempo where idSemDS = {sem2}))
+                    )
+                """
+                cursor = cnxn.cursor().execute(query)
+                arreglo = crear_diccionario(cursor)
+                sem1 = arreglo[0]['idSemDS']
+                where = f"dt.idSemDS in ('{sem1}', '{sem2}')"
+            if self.filtros.agrupador == 'mes':
+                periodoNum = 'num_mes'
+                periodoTxt = "CONCAT(dt.abrev_mes, ' ', anio)"
+                mesNum = int(self.filtros.periodo['mes'])
+                mesTxt = '%02d' % (mesNum)
+                anio = int(self.filtros.periodo['anio'])
+                diasEnMes_fin = monthrange(anio, mesNum)[1]
+                fecha_fin_txt = f"{str(anio)}-{mesTxt}-{diasEnMes_fin}"
+                year, month, day = map(int, fecha_fin_txt.split('-'))
+                if month > 1:
+                    month -= 1
                 else:
-                    hayResultados = "no"
-                    # print("No hay resultados 2")
+                    month = 12
+                    year -= 1
+                fecha_ini_txt = '%04d-%02d-01' % (year, month)
+                where = f"dt.fecha BETWEEN '{fecha_ini_txt}' and '{fecha_fin_txt}'"
+            if self.filtros.agrupador == 'dia':
+                periodoNum = 'id_fecha'
+                periodoTxt = "dt.descrip_fecha"
+                day = int(self.filtros.periodo['dia'])
+                month = int(self.filtros.periodo['mes'])
+                year = int(self.filtros.periodo['anio'])
+                fecha_fin_txt = '%04d-%02d-%02d' % (year, month, day)
+                if day == 1 and month == 1:
+                    fecha_ini_txt = str(year - 1) + "-12-31"
+                elif day == 1:
+                    fecha_ini_txt = str(year) + "-" + str(month - 1).zfill(2) + "-31"
+                else:
+                    fecha_ini_txt = str(year) + "-" + str(month).zfill(2) + "-" + str(day - 1).zfill(2)
+                where = f"dt.fecha BETWEEN '{fecha_ini_txt}' and '{fecha_fin_txt}'"
+            pipeline = f"""
+                select dt.{periodoNum} periodoNum, {periodoTxt} periodoTxt,
+                sum (case when ho.tmp_n_estatus = 'COMPLETO' then 1 else 0 end) Completos,
+                sum (case when ho.tmp_n_estatus = 'INCOMPLETO' then 1 else 0 end) Incompletos,
+                sum (case when ho.tmp_n_estatus = 'INC_SUSTITITOS' then 1 else 0 end) Inc_Sustitutos,
+                sum (case when ho.tmp_n_estatus = 'COMP_SUSTITUTOS' then 1 else 0 end) Comp_Sustitutos
+                from DWH.dbo.hecho_order ho
+                LEFT JOIN DWH.dbo.dim_tiempo dt on dt.fecha = CONVERT(date, creation_date)
+                LEFT JOIN DWH.artus.catTienda ct on ct.tienda=ho.store_num
+                WHERE {where}
+                {lugar_sql}
+                GROUP BY dt.{periodoNum}, {periodoTxt}
+                """
+            # print('ColumnasApiladas -> OTIF -> Estatus: '+pipeline)
+            cursor = cnxn.cursor().execute(pipeline)
+            arreglo = crear_diccionario(cursor)
+            if len(arreglo) >0:
+                hayResultados = "si"
+                for registro in arreglo:
+                    categorias.append(registro['periodoTxt'])
+                    Completos = float(registro['Completos'])
+                    Incompletos = float(registro['Incompletos'])
+                    Comp_Sustitutos = float(registro['Comp_Sustitutos'])
+                    Inc_Sustitutos = float(registro['Inc_Sustitutos'])
+                    Totales = Completos + Incompletos + Comp_Sustitutos + Inc_Sustitutos
+                    if Totales == 0:
+                        hayResultados = 'no'
+                    else:
+                        serie1.append(Completos / Totales)
+                        serie2.append(Incompletos / Totales)
+                        serie3.append(Comp_Sustitutos / Totales)
+                        serie4.append(Inc_Sustitutos / Totales)
+                series = [
+                    {'name': 'Completos Sin Sustitutos', 'data':serie1, 'color': 'success'},
+                    {'name': 'Incompletos Sin Sustitutos', 'data':serie2, 'color': 'danger'},
+                    {'name': 'Completos Con Sustitutos', 'data':serie3, 'color': 'dark'},
+                    {'name': 'Incompletos Con Sustitutos', 'data':serie4, 'color': 'primary'}
+                ]
             else:
                 hayResultados = "no"
-                # print("No hay resultados 1")
+                # print("No hay resultados 2")
 
         elif self.titulo == 'Pedidos por Tipo de Entrega':
             pipeline.extend([

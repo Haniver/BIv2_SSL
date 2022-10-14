@@ -144,7 +144,6 @@ async def cargar_periodo(filtros: Filtro, user: dict = Depends(get_current_activ
                 'value': value
             }
             res.append(objeto)
-    # print(f'periodos desde cargarPeriodo.py: {str(res)}')
     # print(f"Lo que se regresa desde CargarFiltros -> CargarPeriodo es: {str(res)}")
     return res
 

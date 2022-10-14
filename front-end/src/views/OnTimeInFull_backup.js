@@ -4,7 +4,6 @@ import Filtro from '../componentes/auxiliares/Filtro'
 import Tarjeta from '../componentes/auxiliares/Tarjeta'
 import fechas_srv from '../services/fechas_srv'
 import EjesMultiples from '../componentes/graficos/EjesMultiples'
-import EjesMultiplesConEscala from '../componentes/graficos/EjesMultiplesConEscala'
 import Tabla from '../componentes/tablas/Tabla'
 import ColumnasApiladas from '../componentes/graficos/ColumnasApiladas'
 import BarrasApiladas from '../componentes/graficos/BarrasApiladas'
@@ -72,22 +71,6 @@ const OnTimeInFull = () => {
       <Row className='match-height'>
         <Col sm='12'>
           <Filtro fechas={fechas} agrupador={agrupador} periodo={periodo} region={region} zona={zona} tienda={tienda} sibling={sibling} setFechas={setFechas} setAgrupador={setAgrupador} setPeriodo={setPeriodo} setRegion={setRegion} setZona={setZona} setTienda={setTienda} setLabelTienda={setLabelTienda} />
-        </Col>
-      </Row>
-      <Row className='match-height'>
-        <Col sm='12' lg='4'>
-          <ColumnasApiladas titulo='Estatus' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} formato='porcentaje' />
-        </Col>
-        <Col sm='12' lg='4'>
-          <EjesMultiplesConEscala titulo='Evaluación' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} yLabel='Porcentaje del Total de Entregados' />
-        </Col>
-        <Col sm='12' lg='4'>
-          <EjesMultiplesConEscala titulo='Razón de Retraso' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} yLabel='Porcentaje del Total de Retrasados' />
-        </Col>
-      </Row>
-      <Row className='match-height'>
-        <Col sm='12'>
-          <Tabla titulo='Pedidos Fuera de Tiempo' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} />
         </Col>
       </Row>
       <Row className='match-height'>

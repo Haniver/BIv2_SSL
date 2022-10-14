@@ -1349,7 +1349,6 @@ class Tablas():
             arreglo_resultados = await cursor.to_list(length=1000)
             if len(arreglo_resultados) <= 0:
                 hayResultados = "no"
-            
             else:
                 hayResultados = "si"
                 # Populamos con ceros el arreglo que tiene dos dimensiones: justificaciones x periodos
@@ -1358,7 +1357,7 @@ class Tablas():
                 # Para cada resultado del query principal, ponemos en nuestro arreglo-tabla los valores que sí tengamos:
                 # print('len(arreglo_resultados) = '+str(len(arreglo_resultados)))
                 for dato in arreglo_resultados:
-                    x = arreglo_departamentos.index(dato['_id']['departamento'])
+                    x = arreglo_departamentos.index(dato['_id']['departamento']) if 'departamento' in dato['_id'] else '--'
                     # print('x = '+str(x))
                     # La posición y será el índice del arreglo de periodos que tenga el nombre de periodo del dato actual:
                     if self.filtros.agrupador == 'mes':
@@ -1949,6 +1948,108 @@ class Tablas():
         pipeline = []
         data = []
         columns = []
+        hayResultados = 'sí'
+        if self.titulo == 'Pedidos Fuera de Tiempo':
+            if self.filtros.periodo == {}:
+                return {'hayResultados':'no','categorias':[], 'series':[], 'pipeline': []}
+            if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
+                filtro_lugar = True
+                if self.filtros.zona != '' and self.filtros.zona != "False"  and self.filtros.zona != None:
+                    if self.filtros.tienda != '' and self.filtros.tienda != "False" and self.filtros.tienda != None:
+                        lugar_sql = f"AND ct.tienda = {self.filtros.tienda}"
+                    else:
+                        lugar_sql = f"AND ct.zona = {self.filtros.zona}"
+                else:
+                    lugar_sql = f"AND ct.region = {self.filtros.region}"
+            else:
+                lugar_sql = ''
+            cnxn = conexion_sql('DWH')
+            if self.filtros.agrupador == 'semana':
+                sem2 = str(self.filtros.periodo['semana'])
+                query = f"""
+                    select idSemDS from DWH.dbo.dim_tiempo where fecha = (
+                        select DATEADD(DAY, -7, (select CONVERT(varchar,(min(fecha))) from DWH.dbo.dim_tiempo where idSemDS = {sem2}))
+                    )
+                """
+                cursor = cnxn.cursor().execute(query)
+                arreglo = crear_diccionario(cursor)
+                sem1 = arreglo[0]['idSemDS']
+                where = f"dt.idSemDS in ('{sem1}', '{sem2}')"
+            if self.filtros.agrupador == 'mes':
+                mesNum = int(self.filtros.periodo['mes'])
+                mesTxt = '%02d' % (mesNum)
+                anio = int(self.filtros.periodo['anio'])
+                diasEnMes_fin = monthrange(anio, mesNum)[1]
+                fecha_fin_txt = f"{str(anio)}-{mesTxt}-{diasEnMes_fin}"
+                year, month, day = map(int, fecha_fin_txt.split('-'))
+                if month > 1:
+                    month -= 1
+                else:
+                    month = 12
+                    year -= 1
+                fecha_ini_txt = '%04d-%02d-01' % (year, month)
+                where = f"dt.fecha BETWEEN '{fecha_ini_txt}' and '{fecha_fin_txt}'"
+            if self.filtros.agrupador == 'dia':
+                day = int(self.filtros.periodo['dia'])
+                month = int(self.filtros.periodo['mes'])
+                year = int(self.filtros.periodo['anio'])
+                fecha_fin_txt = '%04d-%02d-%02d' % (year, month, day)
+                if day == 1 and month == 1:
+                    fecha_ini_txt = str(year - 1) + "-12-31"
+                elif day == 1:
+                    fecha_ini_txt = str(year) + "-" + str(month - 1).zfill(2) + "-31"
+                else:
+                    fecha_ini_txt = str(year) + "-" + str(month).zfill(2) + "-" + str(day - 1).zfill(2)
+                where = f"dt.fecha BETWEEN '{fecha_ini_txt}' and '{fecha_fin_txt}'"
+            pipeline = f"""
+            select ct.regionNombre, ct.zonaNombre, ct.tiendaNombre, ho.ultimo_cambio, ho.order_number, de.descrip_delviery_mode, ho.fin_picking, ho.timeslot_from, ho.fin_entrega, ho.timeslot_to
+                from DWH.dbo.hecho_order ho
+                LEFT JOIN DWH.artus.catTienda ct on ct.tienda=ho.store_num
+                left join DWH.dbo.dim_estatus de on de.id_estatus = ho.id_estatus
+                LEFT JOIN DWH.dbo.dim_tiempo dt on dt.fecha = CONVERT(date, creation_date)
+                where ho.evaluacion = 'Entregado-Fuera de tiempo'
+                AND {where}
+                {lugar_sql}
+                order by ho.ultimo_cambio desc
+            """
+            cursor = cnxn.cursor().execute(pipeline)
+            arreglo = crear_diccionario(cursor)
+            # print(str(arreglo))
+            if len(arreglo) > 0:
+                hayResultados = "si"
+                for row in arreglo:
+                    ultimo_cambio = row['ultimo_cambio'].strftime("%d/%m/%Y %H:%M") if row['ultimo_cambio'] is not None else '--'
+                    fin_picking = row['fin_picking'].strftime("%d/%m/%Y %H:%M") if row['fin_picking'] is not None else '--'
+                    timeslot_from = row['timeslot_from'].strftime("%d/%m/%Y %H:%M") if row['timeslot_from'] is not None else '--'
+                    fin_entrega = row['fin_entrega'].strftime("%d/%m/%Y %H:%M") if row['fin_entrega'] is not None else '--'
+                    timeslot_to = row['timeslot_to'].strftime("%d/%m/%Y %H:%M") if row['timeslot_to'] is not None else '--'
+                    data.append({
+                        'Region': row['regionNombre'],
+                        'Zona': row['zonaNombre'],
+                        'Tienda': row['tiendaNombre'],
+                        'UltimoCambio': ultimo_cambio,
+                        'NumeroDeOrden': row['order_number'],
+                        'ModoDeEntrega': row['descrip_delviery_mode'],
+                        'FinDePicking': fin_picking,
+                        'InicioTimeslot': timeslot_from,
+                        'FinDeEntrega': fin_entrega,
+                        'FinTimeslot': timeslot_to,
+                    })
+                    columns = [
+                        {'name': 'Región', 'selector':'Region', 'formato':'texto', 'ancho': '220px'},
+                        {'name': 'Zona', 'selector':'Zona', 'formato':'texto', 'ancho': '220px'},
+                        {'name': 'Tienda', 'selector':'Tienda', 'formato':'texto', 'ancho': '420px'},
+                        {'name': 'Último Cambio', 'selector':'UltimoCambio', 'formato':'texto'},
+                        {'name': 'Número De Orden', 'selector':'NumeroDeOrden', 'formato':'entero'},
+                        {'name': 'Modo De Entrega', 'selector':'ModoDeEntrega', 'formato':'texto'},
+                        {'name': 'Fin De Picking', 'selector':'FinDePicking', 'formato':'texto'},
+                        {'name': 'Inicio Timeslot', 'selector':'InicioTimeslot', 'formato':'texto'},
+                        {'name': 'Fin De Entrega', 'selector':'FinDeEntrega', 'formato':'texto'},
+                        {'name': 'Fin Timeslot', 'selector':'FinTimeslot', 'formato':'texto'},
+                    ]
+            else:
+                hayResultados = 'no'
+
         if self.titulo == 'Tiendas por % A Tiempo y Completo más bajo':
             if self.filtros.periodo != {}:
                 collection = conexion_mongo('report').report_pedidoPerfecto
