@@ -67,10 +67,13 @@ class BarrasApiladas():
                     '$and': []
                 }
             }},
+            {'$unwind': '$sucursal'},
+            {'$match': {
+                'sucursal.region': {'$ne': None}
+            }}
         ]
         if filtro_lugar:
             pipeline.extend([
-                {'$unwind': '$sucursal'},
                 {'$match': {'sucursal.'+ nivel: lugar}},
                 {'$unwind': '$quejas'},
             ])

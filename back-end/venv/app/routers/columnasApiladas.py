@@ -412,27 +412,27 @@ class ColumnasApiladas():
             lugar = ''
             siguiente_lugar = 'regionNombre'
 
-        pipeline = [
-            # {'$match': {
-            #     'fecha': {
-            #         '$gte': self.fecha_ini_a12, 
-            #         '$lt': self.fecha_fin_a12
-            #     }
-            # }},
-            {'$match': {
-                '$expr': {
-                    '$and': []
-                }
-            }},
-            {'$unwind': '$sucursal'},
-            {'$match': {'sucursal.region':{'$ne':None}}}
-        ]
-        if filtro_lugar:
-            pipeline.extend([
-                {'$match': {'sucursal.'+ nivel: lugar}}
-            ])
-
         if self.titulo == 'Evaluación de KPI Pedido Perfecto por Lugar':
+            pipeline = [
+                # {'$match': {
+                #     'fecha': {
+                #         '$gte': self.fecha_ini_a12, 
+                #         '$lt': self.fecha_fin_a12
+                #     }
+                # }},
+                {'$match': {
+                    '$expr': {
+                        '$and': []
+                    }
+                }},
+                {'$unwind': '$sucursal'},
+                {'$match': {'sucursal.region':{'$ne':None}}}
+            ]
+            if filtro_lugar:
+                pipeline.extend([
+                    {'$match': {'sucursal.'+ nivel: lugar}}
+                ])
+
             pipeline.extend([
                 {'$group': {
                     '_id': {
@@ -532,7 +532,121 @@ class ColumnasApiladas():
                 hayResultados = "no"
                 # print("No hay resultados 2")
 
+        if self.titulo == 'Evaluación de KPI Pedido Perfecto por Periodo':
+            pipeline = [
+                {'$unwind': '$sucursal'},
+                {'$match': {
+                    'sucursal.region':{'$ne':None}
+                }}
+            ]
+            if filtro_lugar:
+                pipeline.extend([
+                    {'$match': {'sucursal.'+ nivel: lugar}}
+                ])
+
+            pipeline.extend([
+                {'$match': {
+                    'fecha': {'$gte': self.fecha_ini_a12}
+                }},
+                {'$match': {
+                    'fecha': {'$lte': self.fecha_fin_a12}
+                }}
+            ])
+            # Modificamos el pipeline para el caso de que el agrupador sea por mes:
+            if self.filtros.agrupador == 'mes':
+                periodo = '$nMes'
+            # Modificamos el pipeline para el caso de que el agrupador sea por semana:
+            elif self.filtros.agrupador == 'semana':
+                periodo = '$idSemDS'
+            # Modificamos los facets para el caso de que el agrupador sea por dÃ­a:
+            elif self.filtros.agrupador == 'dia':
+                periodo = '$fecha'
+            # return {'hayResultados':'no','categories':[], 'series':[], 'pipeline': '', 'lenArreglo':0}
+            pipeline.extend([
+                {'$group': {
+                    '_id': {
+                        # poner el agrupador
+                        'periodo': periodo,
+                    },
+                    'con_quejas': {
+                        '$sum': '$con_queja'
+                    },
+                    'retrasados': {
+                        '$sum': '$retrasados'
+                    },
+                    'cancelados': {
+                        '$sum': '$Cancelados'
+                    },
+                    'incompletos': {
+                        '$sum': '$incompletos'
+                    },
+                    'totales': {
+                        '$sum': '$Total_Pedidos'
+                    }
+                }},
+                {
+                    '$sort': {'_id.periodo': 1}
+                }
+            ])
+            
+            print(f"pipeline desde ColumnasApiladas -> PedidoPerfecto -> Evaluación de KPI Pedido Perfecto por Periodo: {str(pipeline)}")
+            # Ejecutamos el query:
+            cursor = collection.aggregate(pipeline)
+            arreglo = await cursor.to_list(length=1000)
+            if len(arreglo) >0:
+                hayResultados = "si"
+                for registro in arreglo:
+                    if self.filtros.agrupador == 'mes':
+                        categorias.append(mesTexto(registro['_id']['periodo']))
+                    elif self.filtros.agrupador == 'semana':
+                        periodo = int(registro['_id']['periodo'])
+                        anio = periodo // 100
+                        numSem = periodo - anio * 100
+                        categorias.append('Sem ' + str(numSem))
+                    elif self.filtros.agrupador == 'dia':
+                        fecha = registro['_id']['periodo']
+                        categorias.append(str(fecha.day) + ' '+ mesTexto(fecha.month))
+                    if registro['totales'] > 0:
+                        serie1.append(round((float(registro['con_quejas'])/float(registro['totales'])), 4))
+                        serie2.append(round((float(registro['retrasados'])/float(registro['totales'])), 4))
+                        serie3.append(round((float(registro['cancelados'])/float(registro['totales'])), 4))
+                        serie4.append(round((float(registro['incompletos'])/float(registro['totales'])), 4))
+                    else:
+                        serie1.append(0)
+                        serie2.append(0)
+                        serie3.append(0)
+                        serie4.append(0)
+                series = [
+                    {'name': 'Con quejas', 'data':serie1, 'color': 'danger'},
+                    {'name': 'Retrasados', 'data':serie2, 'color': 'warning'},
+                    {'name': 'Cancelados', 'data':serie3, 'color': 'dark'},
+                    {'name': 'Incompletos', 'data':serie4, 'color': 'primary'}
+                ]
+            else:
+                hayResultados = "no"
+                # print("No hay resultados 2")
+
         elif self.titulo == 'Pedidos por Tipo de Entrega':
+            pipeline = [
+                # {'$match': {
+                #     'fecha': {
+                #         '$gte': self.fecha_ini_a12, 
+                #         '$lt': self.fecha_fin_a12
+                #     }
+                # }},
+                {'$match': {
+                    '$expr': {
+                        '$and': []
+                    }
+                }},
+                {'$unwind': '$sucursal'},
+                {'$match': {'sucursal.region':{'$ne':None}}}
+            ]
+            if filtro_lugar:
+                pipeline.extend([
+                    {'$match': {'sucursal.'+ nivel: lugar}}
+                ])
+
             pipeline.extend([
                 {'$unwind': '$entrega'},
                     {'$match': {

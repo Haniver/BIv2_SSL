@@ -671,7 +671,7 @@ class EjesMultiples():
                     tituloElegida = str(dia_elegido) + ' ' + mesTexto(mes_elegido) + ' ' + str(anio_elegido)
                     tituloAnterior = str(dia_anterior) + ' ' + mesTexto(mes_anterior) + ' ' + str(anio_anterior)
                 # Agregamos los facets al pipeline:
-                print('Pipeline EjesMultiples -> Evaluación por KPI Pedido Perfecto: '+str(pipeline))
+                # print('Pipeline EjesMultiples -> Evaluación por KPI Pedido Perfecto: '+str(pipeline))
                 # Ejecutamos el query:
                 cursor = collection.aggregate(pipeline)
                 arreglo = await cursor.to_list(length=1000)
@@ -1356,7 +1356,7 @@ class EjesMultiples():
                 # Ejecutamos el query:
                 cursor = collection.aggregate(pipeline)
                 arreglo = await cursor.to_list(length=1000)
-                print(f"Arreglo desde EjesMultiples-> Motivos de quejas: {str(arreglo)}, que tiene len = {str(len(arreglo))}")
+                # print(f"Arreglo desde EjesMultiples-> Motivos de quejas: {str(arreglo)}, que tiene len = {str(len(arreglo))}")
                 if len(arreglo) >= 2:
                     hayResultados = "si"
                     # Creamos los arreglos que alimentarán al gráfico:
@@ -1404,7 +1404,7 @@ class EjesMultiples():
             else:
                 hayResultados = "no"
                 # print("No hay resultados 1")
-        print({'hayResultados':hayResultados,'categories':str(categories), 'series':str(series), 'pipeline': str(pipeline), 'lenArreglo':str(len(arreglo))})
+        # print({'hayResultados':hayResultados,'categories':str(categories), 'series':str(series), 'pipeline': str(pipeline), 'lenArreglo':str(len(arreglo))})
         return  {'hayResultados':hayResultados,'categories':categories, 'series':series, 'pipeline': pipeline, 'lenArreglo':len(arreglo)}
 
     async def OnTimeInFull(self):

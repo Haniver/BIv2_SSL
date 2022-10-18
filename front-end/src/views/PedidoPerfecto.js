@@ -74,13 +74,18 @@ const PedidoPerfecto = () => {
         </Col>
       </Row>
       <Row className='match-height'>
-        <Col sm='12' lg='5'>
+        <Col sm='12' lg='6'>
           <EjesMultiples titulo='Pedidos Perfectos' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} seccion={seccion} />
         </Col>
-        <Col sm='12' lg='4'>
+        <Col sm='12' lg='6'>
           <EjesMultiples titulo='Evaluación por KPI Pedido Perfecto' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} />
         </Col>
-        <Col sm='12' lg='3'>
+      </Row>
+      <Row className='match-height'>
+      <Col sm='12' lg='6'>
+          <ColumnasApiladas titulo='Evaluación de KPI Pedido Perfecto por Periodo' ocultarTotales fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} formato='porcentaje' />
+        </Col>
+        <Col sm='12' lg='6'>
           <EjesMultiples titulo='Evaluación por KPI' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} />
         </Col>
       </Row>
@@ -90,6 +95,14 @@ const PedidoPerfecto = () => {
         </Col>
         <Col sm='12' lg='6'>
           <EjesMultiples titulo='Evaluación Pedido Perfecto por Lugar' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} />
+        </Col>
+      </Row>}
+      {!tienda && <Row className='match-height'>
+        <Col sm='12' lg='6'>
+          <ColumnasApiladas titulo='Evaluación de KPI Pedido Perfecto por Lugar' ocultarTotales fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} formato='porcentaje' />
+        </Col>
+        <Col sm='12' lg='6'>
+          {/* <EjesMultiples titulo='Evaluación Pedido Perfecto por Lugar' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} /> */}
         </Col>
       </Row>}
       <Row className='match-height'>
