@@ -1477,6 +1477,7 @@ class EjesMultiples():
                     WHERE dt.fecha BETWEEN '{self.filtros.fechas['fecha_ini'][:10]}' AND '{self.filtros.fechas['fecha_fin'][:10]}'
                     {lugar_sql}
                     GROUP BY dt.{periodoNum}, {periodoTxt}
+                    ORDER BY min(dt.fecha)
                     """
                 print('EjesMultiples -> OTIF -> Evaluación: '+pipeline)
                 cursor = cnxn.cursor().execute(pipeline)
@@ -1571,6 +1572,7 @@ class EjesMultiples():
                     and ho.evaluacion = 'Entregado-Fuera de tiempo'
                     {lugar_sql}
                     GROUP BY dt.{periodoNum}, {periodoTxt}
+                    ORDER BY min(dt.fecha)
                     """
                 # print('EjesMultiples -> OTIF -> Razón de Retraso: '+pipeline)
                 # hayResultados = 'no'
