@@ -90,7 +90,7 @@ const OnTimeInFull = () => {
           <EjesMultiplesConEscala titulo='Entrega a Tiempo vs. Fuera de Tiempo' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} yLabel='Porcentaje del Total de Entregados' />
         </Col>
         <Col sm='12' lg='4'>
-          <EjesMultiplesConEscala titulo='Razón de Retraso' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} yLabel='Porcentaje del Total de Retrasados' />
+          <EjesMultiplesConEscala titulo='Proceso con Retraso' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} yLabel='Porcentaje del Total de Retrasados' />
         </Col>
       </Row>
       <Row className='match-height'>

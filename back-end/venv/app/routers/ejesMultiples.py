@@ -1503,7 +1503,7 @@ class EjesMultiples():
                 hayResultados = "no"
                 # print("No hay resultados 2")
 
-        if self.titulo == 'Razón de Retraso':
+        if self.titulo == 'Proceso con Retraso':
             if self.filtros.periodo != {}:
                 series = []
                 arreglo = []
