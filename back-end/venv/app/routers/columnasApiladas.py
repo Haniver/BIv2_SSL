@@ -593,6 +593,7 @@ class ColumnasApiladas():
             # Ejecutamos el query:
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=1000)
+            print(f"Arreglo desde ColumnasApiladas -> PedidoPerfecto -> Evaluación de KPI Pedido Perfecto por Periodo: {str(arreglo)}")
             if len(arreglo) >0:
                 hayResultados = "si"
                 for registro in arreglo:
@@ -1011,7 +1012,7 @@ class ColumnasApiladas():
                 hayResultados = "no"
                 # print("No hay resultados 2")
 
-        if self.titulo == 'Estatus':
+        if self.titulo == 'Pedidos Completos vs. Incompletos':
             series = []
             arreglo = []
             serie1 = []
@@ -1097,10 +1098,10 @@ class ColumnasApiladas():
                         serie3.append(Comp_Sustitutos / Totales)
                         serie4.append(Inc_Sustitutos / Totales)
                 series = [
-                    {'name': 'Completos Sin Sustitutos', 'data':serie1, 'color': 'success'},
-                    {'name': 'Incompletos Sin Sustitutos', 'data':serie2, 'color': 'danger'},
+                    {'name': 'Incompletos Con Sustitutos', 'data':serie4, 'color': 'primary'},
                     {'name': 'Completos Con Sustitutos', 'data':serie3, 'color': 'dark'},
-                    {'name': 'Incompletos Con Sustitutos', 'data':serie4, 'color': 'primary'}
+                    {'name': 'Incompletos Sin Sustitutos', 'data':serie2, 'color': 'danger'},
+                    {'name': 'Completos Sin Sustitutos', 'data':serie1, 'color': 'success'}
                 ]
             else:
                 hayResultados = "no"

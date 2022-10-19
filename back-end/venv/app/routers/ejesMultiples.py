@@ -1445,7 +1445,7 @@ class EjesMultiples():
             ])
         collection = conexion_mongo('report').report_pedidoPerfecto
 
-        if self.titulo == 'Evaluación':
+        if self.titulo == 'Entrega a Tiempo vs. Fuera de Tiempo':
             if self.filtros.periodo != {}:
                 series = []
                 arreglo = []
@@ -1458,48 +1458,13 @@ class EjesMultiples():
                 if self.filtros.agrupador == 'semana':
                     periodoNum = 'idSemDS'
                     periodoTxt = 'dt.nSemDS'
-                    # print(f"Filtro periodo desde EjesMultiples -> OTIF -> Evaluación: {self.filtros.periodo}")
-                    print(f"self.filtros.periodo: {self.filtros.periodo}")
-                    sem2 = str(self.filtros.periodo['semana'])
-                    query = f"""
-                        select idSemDS from DWH.dbo.dim_tiempo where fecha = (
-                            select DATEADD(DAY, -7, (select CONVERT(varchar,(min(fecha))) from DWH.dbo.dim_tiempo where idSemDS = {sem2}))
-                        )
-                    """
-                    cursor = cnxn.cursor().execute(query)
-                    arreglo = crear_diccionario(cursor)
-                    sem1 = arreglo[0]['idSemDS']
-                    where = f"dt.idSemDS in ('{sem1}', '{sem2}')"
                 if self.filtros.agrupador == 'mes':
                     periodoNum = 'num_mes'
                     periodoTxt = "CONCAT(dt.abrev_mes, ' ', anio)"
-                    mesNum = int(self.filtros.periodo['mes'])
-                    mesTxt = '%02d' % (mesNum)
-                    anio = int(self.filtros.periodo['anio'])
-                    diasEnMes_fin = monthrange(anio, mesNum)[1]
-                    fecha_fin_txt = f"{str(anio)}-{mesTxt}-{diasEnMes_fin}"
-                    year, month, day = map(int, fecha_fin_txt.split('-'))
-                    if month > 1:
-                        month -= 1
-                    else:
-                        month = 12
-                        year -= 1
-                    fecha_ini_txt = '%04d-%02d-01' % (year, month)
-                    where = f"dt.fecha BETWEEN '{fecha_ini_txt}' and '{fecha_fin_txt}'"
                 if self.filtros.agrupador == 'dia':
                     periodoNum = 'id_fecha'
                     periodoTxt = "dt.descrip_fecha"
-                    day = int(self.filtros.periodo['dia'])
-                    month = int(self.filtros.periodo['mes'])
-                    year = int(self.filtros.periodo['anio'])
-                    fecha_fin_txt = '%04d-%02d-%02d' % (year, month, day)
-                    if day == 1 and month == 1:
-                        fecha_ini_txt = str(year - 1) + "-12-31"
-                    elif day == 1:
-                        fecha_ini_txt = str(year) + "-" + str(month - 1).zfill(2) + "-31"
-                    else:
-                        fecha_ini_txt = str(year) + "-" + str(month).zfill(2) + "-" + str(day - 1).zfill(2)
-                    where = f"dt.fecha BETWEEN '{fecha_ini_txt}' and '{fecha_fin_txt}'"
+                print
                 pipeline = f"""
                     select dt.{periodoNum} periodoNum, {periodoTxt} periodoTxt,
                     sum (case when ho.evaluacion = 'Despachado-Fuera de tiempo' then 1 else 0 end) Pickeado_Fuera_de_Tiempo,
@@ -1509,11 +1474,11 @@ class EjesMultiples():
                     from DWH.dbo.hecho_order ho
                     LEFT JOIN DWH.dbo.dim_tiempo dt on dt.fecha = CONVERT(date, creation_date)
                     LEFT JOIN DWH.artus.catTienda ct on ct.tienda=ho.store_num
-                    WHERE {where}
+                    WHERE dt.fecha BETWEEN '{self.filtros.fechas['fecha_ini'][:10]}' AND '{self.filtros.fechas['fecha_fin'][:10]}'
                     {lugar_sql}
                     GROUP BY dt.{periodoNum}, {periodoTxt}
                     """
-                # print('EjesMultiples -> OTIF -> Evaluación: '+pipeline)
+                print('EjesMultiples -> OTIF -> Evaluación: '+pipeline)
                 cursor = cnxn.cursor().execute(pipeline)
                 arreglo = crear_diccionario(cursor)
                 if len(arreglo) >0:
@@ -1530,7 +1495,7 @@ class EjesMultiples():
                             serie2.append(Entregado_Fuera_de_Tiempo / Totales)
                     series = [
                         {'name': 'Entregado a Tiempo', 'data':serie1, 'type': 'spline','formato_tooltip':'porcentaje', 'color':'success'},
-                        {'name': 'Entregado Fuera de Tiempo', 'data':serie2, 'type': 'spline', 'formato_tooltip':'porcentaje', 'color':'primary'}
+                        {'name': 'Entregado Fuera de Tiempo', 'data':serie2, 'type': 'spline', 'formato_tooltip':'porcentaje', 'color':'danger'}
                     ]
                 else:
                     hayResultados = "no"
@@ -1551,64 +1516,63 @@ class EjesMultiples():
                 if self.filtros.agrupador == 'semana':
                     periodoNum = 'idSemDS'
                     periodoTxt = 'dt.nSemDS'
-                    # print(f"Filtro periodo desde EjesMultiples -> OTIF -> Evaluación: {self.filtros.periodo}")
-                    print(f"self.filtros.periodo: {self.filtros.periodo}")
-                    sem2 = str(self.filtros.periodo['semana'])
-                    query = f"""
-                        select idSemDS from DWH.dbo.dim_tiempo where fecha = (
-                            select DATEADD(DAY, -7, (select CONVERT(varchar,(min(fecha))) from DWH.dbo.dim_tiempo where idSemDS = {sem2}))
-                        )
-                    """
-                    cursor = cnxn.cursor().execute(query)
-                    arreglo = crear_diccionario(cursor)
-                    sem1 = arreglo[0]['idSemDS']
-                    where = f"dt.idSemDS in ('{sem1}', '{sem2}')"
+                    # # print(f"Filtro periodo desde EjesMultiples -> OTIF -> Evaluación: {self.filtros.periodo}")
+                    # # print(f"self.filtros.periodo: {self.filtros.periodo}")
+                    # sem2 = str(self.filtros.periodo['semana'])
+                    # query = f"""
+                    #     select idSemDS from DWH.dbo.dim_tiempo where fecha = (
+                    #         select DATEADD(DAY, -7, (select CONVERT(varchar,(min(fecha))) from DWH.dbo.dim_tiempo where idSemDS = {sem2}))
+                    #     )
+                    # """
+                    # cursor = cnxn.cursor().execute(query)
+                    # arreglo = crear_diccionario(cursor)
+                    # sem1 = arreglo[0]['idSemDS']
+                    # where = f"dt.idSemDS in ('{sem1}', '{sem2}')"
                 if self.filtros.agrupador == 'mes':
                     periodoNum = 'num_mes'
                     periodoTxt = "CONCAT(dt.abrev_mes, ' ', anio)"
-                    mesNum = int(self.filtros.periodo['mes'])
-                    mesTxt = '%02d' % (mesNum)
-                    anio = int(self.filtros.periodo['anio'])
-                    diasEnMes_fin = monthrange(anio, mesNum)[1]
-                    fecha_fin_txt = f"{str(anio)}-{mesTxt}-{diasEnMes_fin}"
-                    year, month, day = map(int, fecha_fin_txt.split('-'))
-                    if month > 1:
-                        month -= 1
-                    else:
-                        month = 12
-                        year -= 1
-                    fecha_ini_txt = '%04d-%02d-01' % (year, month)
-                    where = f"dt.fecha BETWEEN '{fecha_ini_txt}' and '{fecha_fin_txt}'"
+                    # mesNum = int(self.filtros.periodo['mes'])
+                    # mesTxt = '%02d' % (mesNum)
+                    # anio = int(self.filtros.periodo['anio'])
+                    # diasEnMes_fin = monthrange(anio, mesNum)[1]
+                    # fecha_fin_txt = f"{str(anio)}-{mesTxt}-{diasEnMes_fin}"
+                    # year, month, day = map(int, fecha_fin_txt.split('-'))
+                    # if month > 1:
+                    #     month -= 1
+                    # else:
+                    #     month = 12
+                    #     year -= 1
+                    # fecha_ini_txt = '%04d-%02d-01' % (year, month)
+                    # where = f"dt.fecha BETWEEN '{fecha_ini_txt}' and '{fecha_fin_txt}'"
                 if self.filtros.agrupador == 'dia':
                     periodoNum = 'id_fecha'
                     periodoTxt = "dt.descrip_fecha"
-                    day = int(self.filtros.periodo['dia'])
-                    month = int(self.filtros.periodo['mes'])
-                    year = int(self.filtros.periodo['anio'])
-                    fecha_fin_txt = '%04d-%02d-%02d' % (year, month, day)
-                    if day == 1 and month == 1:
-                        fecha_ini_txt = str(year - 1) + "-12-31"
-                    elif day == 1:
-                        fecha_ini_txt = str(year) + "-" + str(month - 1).zfill(2) + "-31"
-                    else:
-                        fecha_ini_txt = str(year) + "-" + str(month).zfill(2) + "-" + str(day - 1).zfill(2)
-                    where = f"dt.fecha BETWEEN '{fecha_ini_txt}' and '{fecha_fin_txt}'"
+                    # day = int(self.filtros.periodo['dia'])
+                    # month = int(self.filtros.periodo['mes'])
+                    # year = int(self.filtros.periodo['anio'])
+                    # fecha_fin_txt = '%04d-%02d-%02d' % (year, month, day)
+                    # if day == 1 and month == 1:
+                    #     fecha_ini_txt = str(year - 1) + "-12-31"
+                    # elif day == 1:
+                    #     fecha_ini_txt = str(year) + "-" + str(month - 1).zfill(2) + "-31"
+                    # else:
+                    #     fecha_ini_txt = str(year) + "-" + str(month).zfill(2) + "-" + str(day - 1).zfill(2)
+                    # where = f"dt.fecha BETWEEN '{fecha_ini_txt}' and '{fecha_fin_txt}'"
                 pipeline = f"""
                     select dt.{periodoNum} periodoNum, {periodoTxt} periodoTxt,
                     sum (case when ho.fin_picking > ho.timeslot_from then 1 else 0 end) Pickeado_Fuera_de_Tiempo,
                     sum (case when ho.fin_picking < ho.timeslot_from  and ho.fin_entrega > ho.timeslot_to then 1 else 0 end) Entregado_Fuera_de_Tiempo
-                    --sum (case when ho.fin_picking <= ho.timeslot_from then (case when ho.fin_entrega > ho.timeslot_to then 1 else 0 end) else 0 end) Entregado_Fuera_de_Tiempo
                     from DWH.dbo.hecho_order ho
                     LEFT JOIN DWH.dbo.dim_tiempo dt on dt.fecha = CONVERT(date, creation_date)
                     LEFT JOIN DWH.artus.catTienda ct on ct.tienda=ho.store_num
                     left join DWH.dbo.dim_estatus de on de.id_estatus = ho.id_estatus
-                    WHERE {where}
+                    WHERE dt.fecha BETWEEN '{self.filtros.fechas['fecha_ini'][:10]}' AND '{self.filtros.fechas['fecha_fin'][:10]}'
                     and de.descrip_delviery_mode = 'domicilio'
                     and ho.evaluacion = 'Entregado-Fuera de tiempo'
                     {lugar_sql}
                     GROUP BY dt.{periodoNum}, {periodoTxt}
                     """
-                print('EjesMultiples -> OTIF -> Razón de Retraso: '+pipeline)
+                # print('EjesMultiples -> OTIF -> Razón de Retraso: '+pipeline)
                 # hayResultados = 'no'
                 cursor = cnxn.cursor().execute(pipeline)
                 arreglo = crear_diccionario(cursor)
@@ -1626,7 +1590,7 @@ class EjesMultiples():
                             serie2.append(Entregado_Fuera_de_Tiempo / Totales)
                     series = [
                         {'name': 'Pickeado Fuera de Tiempo', 'data':serie1, 'type': 'spline','formato_tooltip':'porcentaje', 'color':'primary'},
-                        {'name': 'Entregado Fuera de Tiempo', 'data':serie2, 'type': 'spline', 'formato_tooltip':'porcentaje', 'color':'secondary'}
+                        {'name': 'Entregado Fuera de Tiempo', 'data':serie2, 'type': 'spline', 'formato_tooltip':'porcentaje', 'color':'dark'}
                     ]
                 else:
                     hayResultados = "no"

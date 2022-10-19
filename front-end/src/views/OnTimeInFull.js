@@ -75,11 +75,19 @@ const OnTimeInFull = () => {
         </Col>
       </Row>
       <Row className='match-height'>
+        <Col sm='12' lg='6'>
+          <EjesMultiples titulo='Pedidos A Tiempo y Completos' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} seccion={seccion} />
+        </Col>
+        <Col sm='12' lg='6'>
+          <EjesMultiples titulo='Evaluación por KPI A Tiempo y Completo' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} />
+        </Col>
+      </Row>
+      <Row className='match-height'>
         <Col sm='12' lg='4'>
-          <ColumnasApiladas titulo='Estatus' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} formato='porcentaje' />
+          <ColumnasApiladas titulo='Pedidos Completos vs. Incompletos' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} formato='porcentaje' />
         </Col>
         <Col sm='12' lg='4'>
-          <EjesMultiplesConEscala titulo='Evaluación' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} yLabel='Porcentaje del Total de Entregados' />
+          <EjesMultiplesConEscala titulo='Entrega a Tiempo vs. Fuera de Tiempo' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} yLabel='Porcentaje del Total de Entregados' />
         </Col>
         <Col sm='12' lg='4'>
           <EjesMultiplesConEscala titulo='Razón de Retraso' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} yLabel='Porcentaje del Total de Retrasados' />
@@ -88,14 +96,6 @@ const OnTimeInFull = () => {
       <Row className='match-height'>
         <Col sm='12'>
           <Tabla titulo='Pedidos Fuera de Tiempo' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} />
-        </Col>
-      </Row>
-      <Row className='match-height'>
-        <Col sm='12' lg='6'>
-          <EjesMultiples titulo='Pedidos A Tiempo y Completos' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} seccion={seccion} />
-        </Col>
-        <Col sm='12' lg='6'>
-          <EjesMultiples titulo='Evaluación por KPI A Tiempo y Completo' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} />
         </Col>
       </Row>
       {!tienda && <Row className='match-height'>
