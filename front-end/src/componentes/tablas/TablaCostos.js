@@ -446,10 +446,10 @@ const TablaCostos = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar
 
     //Búsqueda
     const filteredItems = data.filter(item => {
-        if (item.Envio && item.RH && item.TotalGtosXPedido) {
-            const EnvioAsFloat = parseFloat(item.Envio.replace(/[^0-9.-]/g, ''))
+        if (item.CostoEnvioRH && item.CostoRHPorPedido && item.TotalGtosXPedido) {
+            const EnvioAsFloat = parseFloat(item.CostoEnvioRH.replace(/[^0-9.-]/g, ''))
             const filterTextEnvioAsFloat = parseFloat(filterTextEnvio.replace(/[^0-9.-]/g, ''))
-            const RHAsFloat = parseFloat(item.RH.replace(/[^0-9.-]/g, ''))
+            const RHAsFloat = parseFloat(item.CostoRHPorPedido.replace(/[^0-9.-]/g, ''))
             const filterTextRHAsFloat = parseFloat(filterTextRH.replace(/[^0-9.-]/g, ''))
             const TotalAsFloat = parseFloat(item.TotalGtosXPedido.replace(/[^0-9.-]/g, ''))
             const filterTextTotalAsFloat = parseFloat(filterTextTotal.replace(/[^0-9.-]/g, ''))
@@ -483,9 +483,9 @@ const TablaCostos = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar
         return (
             <>
                 <Row className='match-height'>
-                    <FilterComponent onFilter={e => setFilterTextEnvio(e.target.value)} onClear={handleClear} tituloFiltro="🚚 Costo de Envío mayor a:" origen={filterTextEnvio} />
-                    <FilterComponent onFilter={e => setFilterTextRH(e.target.value)} onClear={handleClear} tituloFiltro="👷 Costo de Recursos Humanos por pedido mayor a:" origen={filterTextRH} />
-                    <FilterComponent onFilter={e => setFilterTextTotal(e.target.value)} onClear={handleClear} tituloFiltro="📦 Costo Total del Pedido mayor a:" origen={filterTextTotal} />
+                    <FilterComponent onFilter={e => setFilterTextEnvio(e.target.value)} onClear={handleClear} tituloFiltro="🚚 Costo de Envío RH mayor a:" origen={filterTextEnvio} />
+                    <FilterComponent onFilter={e => setFilterTextRH(e.target.value)} onClear={handleClear} tituloFiltro="👷 Costo RH Por Pedido mayor a:" origen={filterTextRH} />
+                    <FilterComponent onFilter={e => setFilterTextTotal(e.target.value)} onClear={handleClear} tituloFiltro="📦 Gasto Total por Pedido mayor a:" origen={filterTextTotal} />
                 </Row>
             </>
         )    
