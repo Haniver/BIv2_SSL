@@ -3,6 +3,7 @@ import { Row, Col, Card, CardBody } from 'reactstrap'
 import Filtro from '../componentes/auxiliares/Filtro'
 import EjesMultiples from '../componentes/graficos/EjesMultiples'
 import TablaCostos from '../componentes/tablas/TablaCostos'
+import ColumnasBasicas from '../componentes/graficos/ColumnasBasicas'
 // import userService from '../services/user.service'
 
 const CostoPorPedido = () => {
@@ -36,11 +37,14 @@ const CostoPorPedido = () => {
           <TablaCostos titulo='Tabla General' yLabel='Pesos' seccion={seccion} mes={mes} anio={anio} region={region} zona={zona} tienda={tienda} metodoEnvio={metodoEnvio} />
         </Col>
       </Row>
-      {/* <Row className='match-height'>
+      <Row className='match-height'>
         <Col sm='12'>
-          <EjesMultiples titulo='Pedidos por Picker: Top 20' formato='moneda' mes={mes} anio={anio} region={region} zona={zona} tienda={tienda} metodoEnvio={metodoEnvio} seccion={seccion} />
+          <ColumnasBasicas titulo='Pedidos por Picker' seccion={seccion} formato='entero' mes={mes} anio={anio} region={region} zona={zona} tienda={tienda} metodoEnvio={metodoEnvio} />
         </Col>
-      </Row> */}
+        <Col sm='12'>
+          <ColumnasBasicas titulo='Costo de RH por pedido' seccion={seccion} formato='moneda' mes={mes} anio={anio} region={region} zona={zona} tienda={tienda} metodoEnvio={metodoEnvio} />
+        </Col>
+      </Row>
     </>
   )
 }

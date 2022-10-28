@@ -58,7 +58,7 @@ class Burbuja3D():
                     ]
                 }}
             ])
-            # print(str(pipeline))
+            print(f"Pipeline desde Burbuja3d -> Frecuencia por monto: {str(pipeline)}")
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=1000)
             # print('Arreglo desde burbuja3d: '+str(arreglo))

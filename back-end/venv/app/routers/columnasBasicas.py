@@ -198,6 +198,151 @@ class ColumnasBasicas():
         # Para debugging
         # return {'hayResultados':'no','categorias':[], 'series':[], 'pipeline': []}
 
+    async def CostoPorPedido(self):
+        categorias = []
+        series = []
+
+        queryMetodoEnvio = f"and cf.TiendaEnLinea = '{self.filtros.metodoEnvio}'" if self.filtros.metodoEnvio != '' and self.filtros.metodoEnvio != "False" and self.filtros.metodoEnvio != None else ''
+        if self.filtros.anio != 0 and self.filtros.anio != None:
+            query1Anio = f"and cf.Anio = {self.filtros.anio}"
+            query2Anio = f"and Anio = {self.filtros.anio}"
+        else:
+            query1Anio = query2Anio = ''
+        if self.filtros.mes != 0 and self.filtros.mes != None:
+            query1Mes = f"and cf.Mes = {self.filtros.mes}"
+            query2Mes = f"and Mes = {self.filtros.mes}"
+        else:
+            query1Mes = query2Mes = ''
+        if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
+            if self.filtros.zona != '' and self.filtros.zona != "False" and self.filtros.zona != None:
+                if self.filtros.tienda != '' and self.filtros.tienda != "False" and self.filtros.tienda != None:
+                    queryLugar = f""" and ct.tienda = {self.filtros.tienda} """
+                    lugar = f"tiendaNombre"
+                else:
+                    queryLugar = f""" and ct.zona = {self.filtros.zona} """
+                    lugar = f"tiendaNombre"
+            else:
+                queryLugar = f""" and ct.region = {self.filtros.region} """
+                lugar = f"zonaNombre"
+        else:
+            queryLugar = ''
+            lugar = f"regionNombre"
+
+        if self.titulo == 'Pedidos por Picker':
+            series = []
+            data = []
+            query = f"""select * from  DWH.artus.catCostos"""
+            cnxn = conexion_sql('DWH')
+            cursor = cnxn.cursor().execute(query)
+            costosReferencia_tmp = crear_diccionario(cursor)
+            costosReferencia = {}
+            for row in costosReferencia_tmp:
+                costosReferencia[row['descripCosto']] = row['Costo']
+            pipeline = f"""select {lugar} as lugar, sum(cf.pRH) pedidos from dwh.report.consolidadoFinanzas cf 
+                left join DWH.artus.catTienda ct on cf.Cebe = ct.tienda 
+                left join DWH.dbo.dim_tiempo dt on dt.id_fecha = cf.Anio * 10000 + cf.Mes * 100 + 1
+                where Mes <= 12
+                {queryMetodoEnvio}
+                {query1Anio}
+                {query1Mes}
+                {queryLugar}
+                group by {lugar}
+                """
+            print(f"query desde tablas->CostoPorPedido->{self.titulo}->General: {str(pipeline)}")
+            cnxn = conexion_sql('DWH')
+            cursor = cnxn.cursor().execute(pipeline)
+            arreglo = crear_diccionario(cursor)
+            if len(arreglo) > 0:
+                hayResultados = "si"
+                for row in arreglo:
+                    query = f"""select SUM(Ocupada) as pickers from DWH.report.consolidadoFinanzasPicker cfp
+                    left join DWH.artus.catTienda ct on cfp.Cebe = ct.tienda 
+                    where Puesto like '%surtidor%'
+                    and ct.{lugar} = '{row['lugar']}'
+                    {query2Anio} 
+                    {query2Mes} 
+                    {queryLugar}"""
+                    print(f"query desde tablas->CostoPorPedido->{self.titulo}->Picker: {str(query)}")
+                    cursor = cnxn.cursor().execute(query)
+                    arregloSub = crear_diccionario(cursor)
+                    pedidos = float(row['pedidos'])
+                    pickers = float(arregloSub[0]['pickers']) if arregloSub[0]['pickers'] is not None else 0
+                    # print(f"DataSub: {str(dataSub)}")
+                    pedidosPorPicker = pedidos / pickers if pickers != 0 else 0
+                    data.append((pedidosPorPicker, row['lugar'])) 
+                # Lo ordenas según https://stackoverflow.com/questions/31942169/python-sort-array-of-arrays-by-multiple-conditions
+                data = sorted(data)
+                # Extraes los datos para las series y las categories
+                for tupla in data:
+                    series.append(tupla[0])
+                    categorias.append(tupla[1])
+                series = [
+                    {
+                        'name': 'Pedidos por Picker',
+                        'data': series,
+                        'type': 'column',
+                        'formato_tooltip':'moneda', 
+                        'color':'primary'
+                    }
+                ]
+            else:
+                hayResultados = 'no'
+                series = []
+
+        if self.titulo == 'Costo de RH por pedido':
+            series = []
+            data = []
+            query = f"""select * from  DWH.artus.catCostos"""
+            cnxn = conexion_sql('DWH')
+            cursor = cnxn.cursor().execute(query)
+            costosReferencia_tmp = crear_diccionario(cursor)
+            costosReferencia = {}
+            for row in costosReferencia_tmp:
+                costosReferencia[row['descripCosto']] = row['Costo']
+            pipeline = f"""select {lugar} as lugar, sum(cf.pRH) pedidos, sum(cf.RH) RH, SUM(cf.Envio) Envio, SUM(cf.Combustible) Combustible from dwh.report.consolidadoFinanzas cf 
+                left join DWH.artus.catTienda ct on cf.Cebe = ct.tienda 
+                left join DWH.dbo.dim_tiempo dt on dt.id_fecha = cf.Anio * 10000 + cf.Mes * 100 + 1
+                where Mes <= 12
+                {queryMetodoEnvio}
+                {query1Anio}
+                {query1Mes}
+                {queryLugar}
+                group by {lugar}
+                """
+            print(f"query desde tablas->CostoPorPedido->{self.titulo}->General: {str(pipeline)}")
+            cnxn = conexion_sql('DWH')
+            cursor = cnxn.cursor().execute(pipeline)
+            arreglo = crear_diccionario(cursor)
+            if len(arreglo) > 0:
+                hayResultados = "si"
+                for row in arreglo:
+                    pedidos = float(row['pedidos'])
+                    RH = float(row['RH']) if row['RH'] is not None else 0
+                    Envio = float(row['Envio']) if row['Envio'] is not None else 0
+                    Combustible = float(row['Combustible']) if row['Combustible'] is not None else 0
+                    # print(f"DataSub: {str(dataSub)}")
+                    RHxPedido = ((RH + Envio + Combustible) / pedidos) if pedidos != 0 else 0
+                    data.append((RHxPedido, row['lugar'])) 
+                # Lo ordenas según https://stackoverflow.com/questions/31942169/python-sort-array-of-arrays-by-multiple-conditions
+                data = sorted(data)
+                # Extraes los datos para las series y las categories
+                for tupla in data:
+                    series.append(tupla[0])
+                    categorias.append(tupla[1])
+                series = [
+                    {
+                        'name': 'Costo de RH por Pedido',
+                        'data': series,
+                        'type': 'column',
+                        'formato_tooltip':'moneda', 
+                        'color':'secondary'
+                    }
+                ]
+            else:
+                hayResultados = 'no'
+                series = []
+        return {'hayResultados':hayResultados,'categorias':categorias, 'series':series, 'pipeline': pipeline, 'categoria':self.filtros.categoria}
+
 @router.post("/{seccion}")
 async def columnas_basicas (filtros: Filtro, titulo: str, seccion: str, user: dict = Depends(get_current_active_user)):
     if tienePermiso(user.id, seccion):

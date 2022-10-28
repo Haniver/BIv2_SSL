@@ -75,7 +75,7 @@ class TablasExpandibles():
                 {queryLugar}
                 order by cf.Mes, cf.Cebe
                 """
-        print(f"query desde tablas->CostoPorPedido->{self.titulo}: {str(pipeline)}")
+        # print(f"query desde tablas->CostoPorPedido->{self.titulo}: {str(pipeline)}")
         cnxn = conexion_sql('DWH')
         cursor = cnxn.cursor().execute(pipeline)
         arreglo = crear_diccionario(cursor)
