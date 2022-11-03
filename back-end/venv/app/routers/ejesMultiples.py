@@ -1673,7 +1673,7 @@ class EjesMultiples():
                     serie2.append(round((serie1[i]-serie1[i-1]), 4)) if i > 0 else serie2.append(0)
                     
                 series.extend([
-                    {'name': '% Perfectos', 'data':serie1, 'type': 'column', 'formato_tooltip':'porcentaje', 'color':'secondary'},
+                    {'name': '% ATYC', 'data':serie1, 'type': 'column', 'formato_tooltip':'porcentaje', 'color':'secondary'},
                     {'name': '% Dif', 'data':serie2, 'type': 'spline','formato_tooltip':'porcentaje', 'color':'dark'}
                 ])
             else:
@@ -3354,7 +3354,7 @@ class EjesMultiples():
                     serie2.append(round((serie1[i]-serie1[i-1]), 4)) if i > 0 else serie2.append(0)
                     
                 series.extend([
-                    {'name': '% Perfectos', 'data':serie1, 'type': 'column', 'formato_tooltip':'porcentaje', 'color':'secondary'},
+                    {'name': '% ATYC', 'data':serie1, 'type': 'column', 'formato_tooltip':'porcentaje', 'color':'secondary'},
                     {'name': '% Dif', 'data':serie2, 'type': 'spline','formato_tooltip':'porcentaje', 'color':'dark'}
                 ])
             else:
