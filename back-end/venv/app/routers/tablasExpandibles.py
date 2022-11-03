@@ -65,7 +65,7 @@ class TablasExpandibles():
             queryLugar = ''
         queryMes = f"and cf.Mes = {self.filtros.mes}" if self.filtros.mes != 0 and self.filtros.mes != None else ''
         if self.titulo == 'Tabla General':
-            pipeline = f"""select * from dwh.report.consolidadoFinanzas cf 
+            pipeline = f"""select *, ct.tienda as NumSucursal from dwh.report.consolidadoFinanzas cf 
                 left join DWH.artus.catTienda ct on cf.Cebe = ct.tienda 
                 left join DWH.dbo.dim_tiempo dt on dt.id_fecha = cf.Anio * 10000 + cf.Mes * 100 + 1
                 where Mes <= 12
@@ -120,6 +120,7 @@ class TablasExpandibles():
                     'Region': row['regionNombre'] if row['regionNombre'] is not None else '--',
                     'Zona': row['zonaNombre'] if row['zonaNombre'] is not None else '--',
                     'Tienda': row['tiendaNombre'] if row['tiendaNombre'] is not None else '--',
+                    'NumSucursal': row['NumSucursal'] if row['NumSucursal'] is not None else '--',
                     'RH': row['RH'] if row['RH'] is not None else '--',
                     'Envio': row['Envio'] if row['Envio'] is not None else '--',
                     'Combustible': row['Combustible'] if row['Combustible'] is not None else '--',
@@ -195,7 +196,8 @@ class TablasExpandibles():
                 'FechaInicioProyecto': '',
                 'Region': '',
                 'Zona': '',
-                'Tienda': 'Total:',
+                'Tienda': '',
+                'NumSucursal': '--',
                 'RH': totRH,
                 'Envio': totEnvio,
                 'Combustible': totCombustible,
@@ -237,6 +239,7 @@ class TablasExpandibles():
                 {'name': 'Región', 'selector':'Region', 'formato':'texto', 'ancho': '200px'},
                 {'name': 'Zona', 'selector':'Zona', 'formato':'texto', 'ancho': '200px'},
                 {'name': 'Tienda', 'selector':'Tienda', 'formato':'texto', 'ancho': '400px'},
+                {'name': 'Sucursal', 'selector':'NumSucursal', 'formato':'entero', 'ancho': '400px'},
                 {'name': 'Cto Recursos Humanos', 'selector':'RH', 'formato':'moneda', 'ancho': '220px'},
                 {'name': 'Cto Envío', 'selector':'Envio', 'formato':'moneda', 'ancho': '180px'},
                 {'name': 'Combustible', 'selector':'Combustible', 'formato':'moneda'},
