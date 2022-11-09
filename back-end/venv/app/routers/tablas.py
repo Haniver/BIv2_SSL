@@ -3753,7 +3753,7 @@ class Tablas():
                 pipeline += f" and ct.region ='{self.filtros.region}' "
             pipeline += f" group by nd.calificacion, {rango} {', (dt.anio * 100 + dt.num_mes)' if esMes else ''} order by {rango if not esMes else '(dt.anio * 100 + dt.num_mes) '}"
 
-            print('Query Evaluación NPS por Día desde Tabla: '+str(pipeline))
+            # print('Query Evaluación NPS por Día desde Tabla: '+str(pipeline))
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)
@@ -4834,6 +4834,8 @@ class Tablas():
                         'VentaHoy': row['DiaActual_AnioActual'],
                         'VentaHoyAA': row['DiaActual_AnioAnterior'],
                         'DiaComparable_AnioAnterior': row['DiaComparable_AnioAnterior'],
+                        # 'PorcVsDiaComparable': f"{row['DiaActual_AnioActual']}/{row['DiaComparable_AnioAnterior']}",
+                        'PorcVsDiaComparable': float(row['DiaActual_AnioActual']/row['DiaComparable_AnioAnterior']) if row['DiaComparable_AnioAnterior'] != 0 else '--',
                         'PorcPartHoy': row['porc_part_dia_actual'],
                         'DiaComparable_AnioAnteriorTF': row['DiaComparable_AnioAnteriorTF'],
                         'PorcPartHoyVsAA': row['porcParDiff'],
@@ -4868,6 +4870,7 @@ class Tablas():
                         'VentaHoy': totales['DiaActual_AnioActual'],
                         'VentaHoyAA': totales['DiaActual_AnioAnterior'],
                         'DiaComparable_AnioAnterior': totales['DiaComparable_AnioAnterior'],
+                        'PorcVsDiaComparable': '--',
                         # 'PorcPartHoy': totales['porc_part_dia_actual'],
                         'PorcPartHoy': '--',
                         # 'DiaComparable_AnioAnteriorTF': totales['DiaComparable_AnioAnteriorTF'],
@@ -4893,6 +4896,7 @@ class Tablas():
                     {'name': 'Venta Hoy ('+str(maxHora)+':00)', 'selector':'VentaHoy', 'formato':'moneda', 'ancho': '150px'},
                     {'name': 'Venta Hoy AA', 'selector':'VentaHoyAA', 'formato':'moneda', 'ancho': '150px'},
                     {'name': 'Día Comparable', 'selector':'DiaComparable_AnioAnterior', 'formato':'moneda', 'ancho': '150px'},
+                    {'name': '% Vs. Día Comparable', 'selector':'PorcVsDiaComparable', 'formato':'porcentaje'},
                     {'name': '% Part Hoy', 'selector':'PorcPartHoy', 'formato':'porcentaje'},
                     {'name': '% Part Comparable', 'selector':'DiaComparable_AnioAnteriorTF', 'formato':'porcentaje'},
                     {'name': '% Part Hoy Vs. AA', 'selector':'PorcPartHoyVsAA', 'formato':'porcentaje'},
