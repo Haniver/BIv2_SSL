@@ -570,11 +570,11 @@ class EjesMultiples():
                         anio_anterior = anio_elegido - 1
                     condicion_anterior = [
                         {'$eq': [
-                            anio_elegido,
+                            anio_anterior,
                             {'$year': '$fecha'}
                         ]},
                         {'$eq': [
-                            mes_elegido,
+                            mes_anterior,
                             {'$month': '$fecha'}
                         ]}
                     ]
@@ -582,11 +582,11 @@ class EjesMultiples():
                     cond_periodo.extend(condicion_anterior)
                     match2.extend([
                         {'$eq': [
-                            anio_anterior,
+                            anio_elegido,
                             {'$year': '$fecha'}
                         ]},
                         {'$eq': [
-                            mes_anterior,
+                            mes_elegido,
                             {'$month': '$fecha'}
                         ]}
                     ])
@@ -609,7 +609,7 @@ class EjesMultiples():
                     semana_anterior_txt = int(str(anio_anterior) + semana_anterior_txt)
                     condicion_anterior = [
                         {'$eq': [
-                            semana_elegida_txt,
+                            semana_anterior_txt,
                             '$idSemDS'
                         ]}
                     ]
@@ -617,7 +617,7 @@ class EjesMultiples():
                     cond_periodo.extend(condicion_anterior)
                     match2.extend([
                         {'$eq': [
-                            semana_anterior_txt,
+                            semana_elegida_txt,
                             '$idSemDS'
                         ]}
                     ])
@@ -640,22 +640,6 @@ class EjesMultiples():
                         dia_anterior = monthrange(anio_anterior, mes_anterior)[1] # La lógica de esto está aquí: https://stackoverflow.com/questions/42950/how-to-get-the-last-day-of-the-month
                     condicion_anterior = [
                         {'$eq': [
-                            anio_elegido,
-                            {'$year': '$fecha'}
-                        ]},
-                        {'$eq': [
-                            mes_elegido,
-                            {'$month': '$fecha'}
-                        ]},
-                        {'$eq': [
-                            dia_elegido,
-                            {'$dayOfMonth': '$fecha'}
-                        ]}
-                    ]
-                    match1.extend(condicion_anterior)
-                    cond_periodo.extend(condicion_anterior)
-                    match2.extend([
-                        {'$eq': [
                             anio_anterior,
                             {'$year': '$fecha'}
                         ]},
@@ -665,6 +649,22 @@ class EjesMultiples():
                         ]},
                         {'$eq': [
                             dia_anterior,
+                            {'$dayOfMonth': '$fecha'}
+                        ]}
+                    ]
+                    match1.extend(condicion_anterior)
+                    cond_periodo.extend(condicion_anterior)
+                    match2.extend([
+                        {'$eq': [
+                            anio_elegido,
+                            {'$year': '$fecha'}
+                        ]},
+                        {'$eq': [
+                            mes_elegido,
+                            {'$month': '$fecha'}
+                        ]},
+                        {'$eq': [
+                            dia_elegido,
                             {'$dayOfMonth': '$fecha'}
                         ]}
                     ])
@@ -2206,11 +2206,11 @@ class EjesMultiples():
                         anio_anterior = anio_elegido - 1
                     condicion_anterior = [
                         {'$eq': [
-                            anio_elegido,
+                            anio_anterior,
                             {'$year': '$fecha'}
                         ]},
                         {'$eq': [
-                            mes_elegido,
+                            mes_anterior,
                             {'$month': '$fecha'}
                         ]}
                     ]
@@ -2218,11 +2218,11 @@ class EjesMultiples():
                     cond_periodo.extend(condicion_anterior)
                     match2.extend([
                         {'$eq': [
-                            anio_anterior,
+                            anio_elegido,
                             {'$year': '$fecha'}
                         ]},
                         {'$eq': [
-                            mes_anterior,
+                            mes_elegido,
                             {'$month': '$fecha'}
                         ]}
                     ])
@@ -2276,22 +2276,6 @@ class EjesMultiples():
                         dia_anterior = monthrange(anio_anterior, mes_anterior)[1] # La lógica de esto está aquí: https://stackoverflow.com/questions/42950/how-to-get-the-last-day-of-the-month
                     condicion_anterior = [
                         {'$eq': [
-                            anio_elegido,
-                            {'$year': '$fecha'}
-                        ]},
-                        {'$eq': [
-                            mes_elegido,
-                            {'$month': '$fecha'}
-                        ]},
-                        {'$eq': [
-                            dia_elegido,
-                            {'$dayOfMonth': '$fecha'}
-                        ]}
-                    ]
-                    match1.extend(condicion_anterior)
-                    cond_periodo.extend(condicion_anterior)
-                    match2.extend([
-                        {'$eq': [
                             anio_anterior,
                             {'$year': '$fecha'}
                         ]},
@@ -2301,6 +2285,22 @@ class EjesMultiples():
                         ]},
                         {'$eq': [
                             dia_anterior,
+                            {'$dayOfMonth': '$fecha'}
+                        ]}
+                    ]
+                    match1.extend(condicion_anterior)
+                    cond_periodo.extend(condicion_anterior)
+                    match2.extend([
+                        {'$eq': [
+                            anio_elegido,
+                            {'$year': '$fecha'}
+                        ]},
+                        {'$eq': [
+                            mes_elegido,
+                            {'$month': '$fecha'}
+                        ]},
+                        {'$eq': [
+                            dia_elegido,
                             {'$dayOfMonth': '$fecha'}
                         ]}
                     ])
