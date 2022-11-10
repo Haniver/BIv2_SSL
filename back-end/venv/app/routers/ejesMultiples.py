@@ -490,251 +490,344 @@ class EjesMultiples():
                 hayResultados = "no"
 
         if self.titulo == 'Evaluación por KPI Pedido Perfecto':
-            if self.filtros.periodo != {}:
-                serie1 = []
-                serie2 = []
-                serie3 = []
-
-                # pipeline.append(
-                #     {'$match': {
-                #         'fecha': {
-                #             '$gte': self.fecha_ini_a12, 
-                #             '$lt': self.fecha_fin_a12
-                #         }
-                #     }}
-                # )
+            
+            pipeline = [{'$unwind': '$sucursal'},
+                {'$match': {
+                    'sucursal.region':{'$ne':None}
+                }}
+            ]
+            if filtro_lugar:
                 pipeline.extend([
-                    {'$match': {
-                        '$expr': {
-                            '$or': [
-                                {'$and': []},
-                                {'$and': []}
-                            ]
-                        }
-                    }},
-                    {'$project': {
-                        'con_queja': '$con_queja',
-                        'retrasados': '$retrasados',
-                        'Cancelados': '$Cancelados',
-                        'incompletos': '$incompletos',
-                        'upSells': '$upSells',
-                        'Total_Pedidos': '$Total_Pedidos',
-                        'periodo': {
-                            '$cond': [
-                                {'$and': []},
-                                0,
-                                1
-                            ]
-                        }
-                    }},
-                    {'$group': {
-                        '_id': '$periodo',
-                        'con_quejas': {
-                            '$sum': '$con_queja'
-                        },
-                        'retrasados': {
-                            '$sum': '$retrasados'
-                        },
-                        'cancelados': {
-                            '$sum': '$Cancelados'
-                        },
-                        'incompletos': {
-                            '$sum': '$incompletos'
-                        },
-                        'upSells': {
-                            '$sum': '$upSells'
-                        },
-                        'totales': {
-                            '$sum': '$Total_Pedidos'
-                        }
-                    }},
-                    {'$sort': {'_id': 1}}
+                    {'$match': {'sucursal.'+ nivel: lugar}}
                 ])
-                # Lo copiamos en el otro facet:
-                # pipe_facet_elegida = deepcopy(pipe_facet_anterior)
-                # Creamos variables para manipular los diccionarios:
-                # match_facet_anterior = pipe_facet_anterior[-2]['$match']['$expr']['$and']
-                match1 = pipeline[-4]['$match']['$expr']['$or'][0]['$and']
-                match2 = pipeline[-4]['$match']['$expr']['$or'][1]['$and']
-                cond_periodo = pipeline[-3]['$project']['periodo']['$cond'][0]['$and']
-                
-                # Modificamos los facets para el caso de que el agrupador sea por mes:
-                if self.filtros.agrupador == 'mes':
-                    anio_elegido = self.filtros.periodo['anio']
-                    mes_elegido = self.filtros.periodo['mes']
-                    if mes_elegido > 1:
-                        mes_anterior = mes_elegido - 1
-                        anio_anterior = anio_elegido
+
+            pipeline.extend([
+                {'$match': {
+                    'fecha': {'$gte': self.fecha_ini_a12}
+                }},
+                {'$match': {
+                    'fecha': {'$lte': self.fecha_fin_a12}
+                }}
+            ])
+            # Modificamos el pipeline para el caso de que el agrupador sea por mes:
+            if self.filtros.agrupador == 'mes':
+                periodo = '$nMes'
+            # Modificamos el pipeline para el caso de que el agrupador sea por semana:
+            elif self.filtros.agrupador == 'semana':
+                periodo = '$idSemDS'
+            # Modificamos los facets para el caso de que el agrupador sea por dÃ­a:
+            elif self.filtros.agrupador == 'dia':
+                periodo = '$fecha'
+            # return {'hayResultados':'no','categories':[], 'series':[], 'pipeline': '', 'lenArreglo':0}
+            pipeline.extend([
+                {'$group': {
+                    '_id': {
+                        # poner el agrupador
+                        'periodo': periodo,
+                    },
+                    'con_quejas': {
+                        '$sum': '$con_queja'
+                    },
+                    'retrasados': {
+                        '$sum': '$retrasados'
+                    },
+                    'cancelados': {
+                        '$sum': '$Cancelados'
+                    },
+                    'incompletos': {
+                        '$sum': '$incompletos'
+                    },
+                    'totales': {
+                        '$sum': '$Total_Pedidos'
+                    }
+                }},
+                {
+                    '$sort': {'_id.periodo': 1}
+                }
+            ])
+            cursor = collection.aggregate(pipeline)
+            arreglo = await cursor.to_list(length=1000)
+            if len(arreglo) >0:
+                hayResultados = "si"
+                series = [[], []]
+                titulos = []
+                contador = 0
+                for registro in arreglo:
+                    if self.filtros.agrupador == 'mes':
+                        titulos.append(mesTexto(registro['_id']['periodo']))
+                    elif self.filtros.agrupador == 'semana':
+                        periodo = int(registro['_id']['periodo'])
+                        anio = periodo // 100
+                        numSem = periodo - anio * 100
+                        titulos.append('Sem ' + str(numSem))
+                    elif self.filtros.agrupador == 'dia':
+                        fecha = registro['_id']['periodo']
+                        titulos.append(str(fecha.day) + ' '+ mesTexto(fecha.month))
+                    if registro['totales'] > 0:
+                        series[contador].extend([
+                            round((float(registro['con_quejas'])/float(registro['totales'])), 4), 
+                            round((float(registro['retrasados'])/float(registro['totales'])), 4),
+                            round((float(registro['cancelados'])/float(registro['totales'])), 4),
+                            round((float(registro['incompletos'])/float(registro['totales'])), 4)
+                        ])
                     else:
-                        mes_anterior = 12
-                        anio_anterior = anio_elegido - 1
-                    condicion_anterior = [
-                        {'$eq': [
-                            anio_anterior,
-                            {'$year': '$fecha'}
-                        ]},
-                        {'$eq': [
-                            mes_anterior,
-                            {'$month': '$fecha'}
-                        ]}
-                    ]
-                    match1.extend(condicion_anterior)
-                    cond_periodo.extend(condicion_anterior)
-                    match2.extend([
-                        {'$eq': [
-                            anio_elegido,
-                            {'$year': '$fecha'}
-                        ]},
-                        {'$eq': [
-                            mes_elegido,
-                            {'$month': '$fecha'}
-                        ]}
-                    ])
-                    tituloElegida = mesTexto(mes_elegido) + ' ' + str(anio_elegido)
-                    tituloAnterior = mesTexto(mes_anterior) + ' ' + str(anio_anterior)
-                # Modificamos los facets para el caso de que el agrupador sea por semana:
-                elif self.filtros.agrupador == 'semana':
-                    semana_elegida = int(str(self.filtros.periodo['semana'])[4:6])
-                    anio_elegido = int(str(self.filtros.periodo['semana'])[0:4])
-                    if semana_elegida != 1:
-                        semana_anterior = semana_elegida - 1
-                        anio_anterior = anio_elegido
-                    else:
-                        anio_anterior = anio_elegido - 1
-                        last_week = date(anio_anterior, 12, 28) # La lógica de esto está aquí: https://stackoverflow.com/questions/29262859/the-number-of-calendar-weeks-in-a-year
-                        semana_anterior = last_week.isocalendar()[1]
-                    semana_elegida_txt = '0' + str(semana_elegida) if semana_elegida < 10 else str(semana_elegida)
-                    semana_anterior_txt = '0' + str(semana_anterior) if semana_anterior < 10 else str(semana_anterior)
-                    semana_elegida_txt = int(str(anio_elegido) + semana_elegida_txt)
-                    semana_anterior_txt = int(str(anio_anterior) + semana_anterior_txt)
-                    condicion_anterior = [
-                        {'$eq': [
-                            semana_anterior_txt,
-                            '$idSemDS'
-                        ]}
-                    ]
-                    match1.extend(condicion_anterior)
-                    cond_periodo.extend(condicion_anterior)
-                    match2.extend([
-                        {'$eq': [
-                            semana_elegida_txt,
-                            '$idSemDS'
-                        ]}
-                    ])
-                # Modificamos los facets para el caso de que el agrupador sea por día:
-                elif self.filtros.agrupador == 'dia':
-                    anio_elegido = self.filtros.periodo['anio']
-                    mes_elegido = self.filtros.periodo['mes']
-                    dia_elegido = self.filtros.periodo['dia']
-                    if dia_elegido != 1:
-                        dia_anterior = dia_elegido - 1
-                        mes_anterior = mes_elegido
-                        anio_anterior = anio_elegido
-                    else:
-                        if mes_elegido != 1:
-                            mes_anterior = mes_elegido - 1
-                            anio_anterior = anio_elegido
-                        else:
-                            mes_anterior = 12
-                            anio_anterior = anio_elegido - 1
-                        dia_anterior = monthrange(anio_anterior, mes_anterior)[1] # La lógica de esto está aquí: https://stackoverflow.com/questions/42950/how-to-get-the-last-day-of-the-month
-                    condicion_anterior = [
-                        {'$eq': [
-                            anio_anterior,
-                            {'$year': '$fecha'}
-                        ]},
-                        {'$eq': [
-                            mes_anterior,
-                            {'$month': '$fecha'}
-                        ]},
-                        {'$eq': [
-                            dia_anterior,
-                            {'$dayOfMonth': '$fecha'}
-                        ]}
-                    ]
-                    match1.extend(condicion_anterior)
-                    cond_periodo.extend(condicion_anterior)
-                    match2.extend([
-                        {'$eq': [
-                            anio_elegido,
-                            {'$year': '$fecha'}
-                        ]},
-                        {'$eq': [
-                            mes_elegido,
-                            {'$month': '$fecha'}
-                        ]},
-                        {'$eq': [
-                            dia_elegido,
-                            {'$dayOfMonth': '$fecha'}
-                        ]}
-                    ])
-                    tituloElegida = str(dia_elegido) + ' ' + mesTexto(mes_elegido) + ' ' + str(anio_elegido)
-                    tituloAnterior = str(dia_anterior) + ' ' + mesTexto(mes_anterior) + ' ' + str(anio_anterior)
-                # Agregamos los facets al pipeline:
-                # print('Pipeline EjesMultiples -> Evaluación por KPI Pedido Perfecto: '+str(pipeline))
-                # Ejecutamos el query:
-                cursor = collection.aggregate(pipeline)
-                arreglo = await cursor.to_list(length=1000)
-                # print('Arreglo Evaluación por KPI Pedido Perfecto: '+str(arreglo))
-                if len(arreglo) >= 2:
-                    hayResultados = "si"
-                    # Creamos los arreglos que alimentarán al gráfico:
-                    categories = ['Con Quejas', 'Retrasados', 'Cancelados', 'Incompletos', 'UpSells']
-                    arrEleg = arreglo[1]
-                    arrAnt = arreglo[0]
-                    if arrEleg == [] or arrAnt == []:
-                        return {'hayResultados':'no','categories':[], 'series':[], 'pipeline': '', 'lenArreglo':0}
-                    # print('Evaluación por KPI Pedido Perfecto:')
-                    # print(str('arrAnt = '+str(arrAnt)))
-                    # print(str('arrEleg = '+str(arrEleg)))
-                    arrAntUpSells = arrAnt['upSells'] if arrAnt['upSells'] != None else 0
-                    arrElegUpSells = arrEleg['upSells'] if arrEleg['upSells'] != None else 0
-                    if arrAnt['totales'] > 0:
-                        serie1 = [
-                            round((arrAnt['con_quejas']/arrAnt['totales']), 4), 
-                            round((arrAnt['retrasados']/arrAnt['totales']), 4), 
-                            round((arrAnt['cancelados']/arrAnt['totales']), 4), 
-                            round((arrAnt['incompletos']/arrAnt['totales']), 4),
-                            round((arrAntUpSells/arrAnt['totales']), 4)
-                        ]
-                    else:
-                        serie1 = [0,0,0,0,0]
-                    if arrEleg['totales'] > 0:
-                        serie2 = [
-                            round((arrEleg['con_quejas']/arrEleg['totales']), 4), 
-                            round((arrEleg['retrasados']/arrEleg['totales']), 4), 
-                            round((arrEleg['cancelados']/arrEleg['totales']), 4), 
-                            round((arrEleg['incompletos']/arrEleg['totales']), 4),
-                            round((arrElegUpSells/arrEleg['totales']), 4)
-                        ] if len(arrEleg) > 0 else []
-                    else:
-                        serie2 = [0,0,0,0,0]
-                    if len(serie1) == len(serie2):
-                        for i in range(len(serie1)):
-                            serie3.append(round((serie2[i] - serie1[i]), 4))
-                    # Obtener los títulos de las series cuando el agrupador sea por semana. Los sacamos de catTiempo por alguna razón
-                    if self.filtros.agrupador == 'semana':
-                        cursor_semana = conexion_mongo('report').catTiempo.find({
-                            'idSemDS': semana_elegida_txt
-                        })
-                        arreglo_semana = await cursor_semana.to_list(length=1)
-                        tituloElegida = arreglo_semana[0]['nSemDS']
-                        cursor_semana = conexion_mongo('report').catTiempo.find({
-                            'idSemDS': semana_anterior_txt
-                        })
-                        arreglo_semana = await cursor_semana.to_list(length=1)
-                        tituloAnterior = arreglo_semana[0]['nSemDS']
-                    series = [
-                        {'name': tituloAnterior, 'data':serie1, 'type': 'column','formato_tooltip':'porcentaje', 'color':'secondary'},
-                        {'name': tituloElegida, 'data':serie2, 'type': 'column', 'formato_tooltip':'porcentaje', 'color':'primary'},
-                        {'name': '% Dif', 'data':serie3, 'type': 'spline', 'formato_tooltip':'porcentaje', 'color':'dark'},
-                    ]
-                else:
-                    hayResultados = "no"
-                    # print("No hay resultados 2")
+                        series[contador].extend([0, 0, 0, 0])
+                    contador += 1
+                series = [
+                    {'name': titulos[0], 'data':series[0], 'type': 'column','formato_tooltip':'porcentaje', 'color':'secondary'},
+                    {'name': titulos[1], 'data':series[1], 'type': 'column', 'formato_tooltip':'porcentaje', 'color':'primary'}
+                ]
+                categories = ['Con quejas', 'Retrasados', 'Cancelados', 'Incompletos']
             else:
                 hayResultados = "no"
-                # print("No hay resultados 1")
+                # print("No hay resultados 2")
+
+        # if self.titulo == 'Evaluación por KPI Pedido Perfecto':
+        #     if self.filtros.periodo != {}:
+        #         serie1 = []
+        #         serie2 = []
+        #         serie3 = []
+
+        #         # pipeline.append(
+        #         #     {'$match': {
+        #         #         'fecha': {
+        #         #             '$gte': self.fecha_ini_a12, 
+        #         #             '$lt': self.fecha_fin_a12
+        #         #         }
+        #         #     }}
+        #         # )
+        #         pipeline.extend([
+        #             {'$match': {
+        #                 '$expr': {
+        #                     '$or': [
+        #                         {'$and': []},
+        #                         {'$and': []}
+        #                     ]
+        #                 }
+        #             }},
+        #             {'$project': {
+        #                 'con_queja': '$con_queja',
+        #                 'retrasados': '$retrasados',
+        #                 'Cancelados': '$Cancelados',
+        #                 'incompletos': '$incompletos',
+        #                 'upSells': '$upSells',
+        #                 'Total_Pedidos': '$Total_Pedidos',
+        #                 'periodo': {
+        #                     '$cond': [
+        #                         {'$and': []},
+        #                         0,
+        #                         1
+        #                     ]
+        #                 }
+        #             }},
+        #             {'$group': {
+        #                 '_id': '$periodo',
+        #                 'con_quejas': {
+        #                     '$sum': '$con_queja'
+        #                 },
+        #                 'retrasados': {
+        #                     '$sum': '$retrasados'
+        #                 },
+        #                 'cancelados': {
+        #                     '$sum': '$Cancelados'
+        #                 },
+        #                 'incompletos': {
+        #                     '$sum': '$incompletos'
+        #                 },
+        #                 'upSells': {
+        #                     '$sum': '$upSells'
+        #                 },
+        #                 'totales': {
+        #                     '$sum': '$Total_Pedidos'
+        #                 }
+        #             }},
+        #             {'$sort': {'_id': 1}}
+        #         ])
+        #         # Lo copiamos en el otro facet:
+        #         # pipe_facet_elegida = deepcopy(pipe_facet_anterior)
+        #         # Creamos variables para manipular los diccionarios:
+        #         # match_facet_anterior = pipe_facet_anterior[-2]['$match']['$expr']['$and']
+        #         match1 = pipeline[-4]['$match']['$expr']['$or'][0]['$and']
+        #         match2 = pipeline[-4]['$match']['$expr']['$or'][1]['$and']
+        #         cond_periodo = pipeline[-3]['$project']['periodo']['$cond'][0]['$and']
+                
+        #         # Modificamos los facets para el caso de que el agrupador sea por mes:
+        #         if self.filtros.agrupador == 'mes':
+        #             anio_elegido = self.filtros.periodo['anio']
+        #             mes_elegido = self.filtros.periodo['mes']
+        #             if mes_elegido > 1:
+        #                 mes_anterior = mes_elegido - 1
+        #                 anio_anterior = anio_elegido
+        #             else:
+        #                 mes_anterior = 12
+        #                 anio_anterior = anio_elegido - 1
+        #             condicion_anterior = [
+        #                 {'$eq': [
+        #                     anio_anterior,
+        #                     {'$year': '$fecha'}
+        #                 ]},
+        #                 {'$eq': [
+        #                     mes_anterior,
+        #                     {'$month': '$fecha'}
+        #                 ]}
+        #             ]
+        #             match1.extend(condicion_anterior)
+        #             cond_periodo.extend(condicion_anterior)
+        #             match2.extend([
+        #                 {'$eq': [
+        #                     anio_elegido,
+        #                     {'$year': '$fecha'}
+        #                 ]},
+        #                 {'$eq': [
+        #                     mes_elegido,
+        #                     {'$month': '$fecha'}
+        #                 ]}
+        #             ])
+        #             tituloElegida = mesTexto(mes_elegido) + ' ' + str(anio_elegido)
+        #             tituloAnterior = mesTexto(mes_anterior) + ' ' + str(anio_anterior)
+        #         # Modificamos los facets para el caso de que el agrupador sea por semana:
+        #         elif self.filtros.agrupador == 'semana':
+        #             semana_elegida = int(str(self.filtros.periodo['semana'])[4:6])
+        #             anio_elegido = int(str(self.filtros.periodo['semana'])[0:4])
+        #             if semana_elegida != 1:
+        #                 semana_anterior = semana_elegida - 1
+        #                 anio_anterior = anio_elegido
+        #             else:
+        #                 anio_anterior = anio_elegido - 1
+        #                 last_week = date(anio_anterior, 12, 28) # La lógica de esto está aquí: https://stackoverflow.com/questions/29262859/the-number-of-calendar-weeks-in-a-year
+        #                 semana_anterior = last_week.isocalendar()[1]
+        #             semana_elegida_txt = '0' + str(semana_elegida) if semana_elegida < 10 else str(semana_elegida)
+        #             semana_anterior_txt = '0' + str(semana_anterior) if semana_anterior < 10 else str(semana_anterior)
+        #             semana_elegida_txt = int(str(anio_elegido) + semana_elegida_txt)
+        #             semana_anterior_txt = int(str(anio_anterior) + semana_anterior_txt)
+        #             condicion_anterior = [
+        #                 {'$eq': [
+        #                     semana_anterior_txt,
+        #                     '$idSemDS'
+        #                 ]}
+        #             ]
+        #             match1.extend(condicion_anterior)
+        #             cond_periodo.extend(condicion_anterior)
+        #             match2.extend([
+        #                 {'$eq': [
+        #                     semana_elegida_txt,
+        #                     '$idSemDS'
+        #                 ]}
+        #             ])
+        #         # Modificamos los facets para el caso de que el agrupador sea por día:
+        #         elif self.filtros.agrupador == 'dia':
+        #             anio_elegido = self.filtros.periodo['anio']
+        #             mes_elegido = self.filtros.periodo['mes']
+        #             dia_elegido = self.filtros.periodo['dia']
+        #             if dia_elegido != 1:
+        #                 dia_anterior = dia_elegido - 1
+        #                 mes_anterior = mes_elegido
+        #                 anio_anterior = anio_elegido
+        #             else:
+        #                 if mes_elegido != 1:
+        #                     mes_anterior = mes_elegido - 1
+        #                     anio_anterior = anio_elegido
+        #                 else:
+        #                     mes_anterior = 12
+        #                     anio_anterior = anio_elegido - 1
+        #                 dia_anterior = monthrange(anio_anterior, mes_anterior)[1] # La lógica de esto está aquí: https://stackoverflow.com/questions/42950/how-to-get-the-last-day-of-the-month
+        #             condicion_anterior = [
+        #                 {'$eq': [
+        #                     anio_anterior,
+        #                     {'$year': '$fecha'}
+        #                 ]},
+        #                 {'$eq': [
+        #                     mes_anterior,
+        #                     {'$month': '$fecha'}
+        #                 ]},
+        #                 {'$eq': [
+        #                     dia_anterior,
+        #                     {'$dayOfMonth': '$fecha'}
+        #                 ]}
+        #             ]
+        #             match1.extend(condicion_anterior)
+        #             cond_periodo.extend(condicion_anterior)
+        #             match2.extend([
+        #                 {'$eq': [
+        #                     anio_elegido,
+        #                     {'$year': '$fecha'}
+        #                 ]},
+        #                 {'$eq': [
+        #                     mes_elegido,
+        #                     {'$month': '$fecha'}
+        #                 ]},
+        #                 {'$eq': [
+        #                     dia_elegido,
+        #                     {'$dayOfMonth': '$fecha'}
+        #                 ]}
+        #             ])
+        #             tituloElegida = str(dia_elegido) + ' ' + mesTexto(mes_elegido) + ' ' + str(anio_elegido)
+        #             tituloAnterior = str(dia_anterior) + ' ' + mesTexto(mes_anterior) + ' ' + str(anio_anterior)
+        #         # Agregamos los facets al pipeline:
+        #         print('Pipeline EjesMultiples -> Evaluación por KPI Pedido Perfecto: '+str(pipeline))
+        #         # Ejecutamos el query:
+        #         cursor = collection.aggregate(pipeline)
+        #         arreglo = await cursor.to_list(length=1000)
+        #         # print('Arreglo Evaluación por KPI Pedido Perfecto: '+str(arreglo))
+        #         if len(arreglo) >= 2:
+        #             hayResultados = "si"
+        #             # Creamos los arreglos que alimentarán al gráfico:
+        #             categories = ['Con Quejas', 'Retrasados', 'Cancelados', 'Incompletos', 'UpSells']
+        #             arrEleg = arreglo[1]
+        #             arrAnt = arreglo[0]
+        #             if arrEleg == [] or arrAnt == []:
+        #                 return {'hayResultados':'no','categories':[], 'series':[], 'pipeline': '', 'lenArreglo':0}
+        #             # print('Evaluación por KPI Pedido Perfecto:')
+        #             # print(str('arrAnt = '+str(arrAnt)))
+        #             # print(str('arrEleg = '+str(arrEleg)))
+        #             arrAntUpSells = arrAnt['upSells'] if arrAnt['upSells'] != None else 0
+        #             arrElegUpSells = arrEleg['upSells'] if arrEleg['upSells'] != None else 0
+        #             if arrAnt['totales'] > 0:
+        #                 serie1 = [
+        #                     round((float(arrAnt['con_quejas'])/float(arrAnt['totales'])), 4), 
+        #                     round((float(arrAnt['retrasados'])/float(arrAnt['totales'])), 4), 
+        #                     round((float(arrAnt['cancelados'])/float(arrAnt['totales'])), 4), 
+        #                     round((float(arrAnt['incompletos'])/float(arrAnt['totales'])), 4),
+        #                     round((float(arrAntUpSells)/float(arrAnt['totales'])), 4)
+        #                 ]
+        #             else:
+        #                 serie1 = [0,0,0,0,0]
+        #             if arrEleg['totales'] > 0:
+        #                 serie2 = [
+        #                     round(float(arrEleg['con_quejas'])/float(arrEleg['totales']), 4), 
+        #                     round(float(arrEleg['retrasados'])/float(arrEleg['totales']), 4), 
+        #                     round(float(arrEleg['cancelados'])/float(arrEleg['totales']), 4), 
+        #                     round(float(arrEleg['incompletos'])/float(arrEleg['totales']), 4),
+        #                     round(float(arrElegUpSells)/float(arrEleg['totales']), 4)
+        #                 ] if len(arrEleg) > 0 else []
+        #             else:
+        #                 serie2 = [0,0,0,0,0]
+        #             if len(serie1) == len(serie2):
+        #                 for i in range(len(serie1)):
+        #                     serie3.append(round((serie2[i] - serie1[i]), 4))
+        #             # Obtener los títulos de las series cuando el agrupador sea por semana. Los sacamos de catTiempo por alguna razón
+        #             if self.filtros.agrupador == 'semana':
+        #                 cursor_semana = conexion_mongo('report').catTiempo.find({
+        #                     'idSemDS': semana_elegida_txt
+        #                 })
+        #                 arreglo_semana = await cursor_semana.to_list(length=1)
+        #                 tituloElegida = arreglo_semana[0]['nSemDS']
+        #                 cursor_semana = conexion_mongo('report').catTiempo.find({
+        #                     'idSemDS': semana_anterior_txt
+        #                 })
+        #                 arreglo_semana = await cursor_semana.to_list(length=1)
+        #                 tituloAnterior = arreglo_semana[0]['nSemDS']
+        #             series = [
+        #                 {'name': tituloAnterior, 'data':serie1, 'type': 'column','formato_tooltip':'porcentaje', 'color':'secondary'},
+        #                 {'name': tituloElegida, 'data':serie2, 'type': 'column', 'formato_tooltip':'porcentaje', 'color':'primary'},
+        #                 {'name': '% Dif', 'data':serie3, 'type': 'spline', 'formato_tooltip':'porcentaje', 'color':'dark'},
+        #             ]
+        #         else:
+        #             hayResultados = "no"
+        #             # print("No hay resultados 2")
+        #     else:
+        #         hayResultados = "no"
+        #         # print("No hay resultados 1")
 
         if self.titulo == 'Evaluación por KPI':
             if self.filtros.periodo != {}:
@@ -921,12 +1014,12 @@ class EjesMultiples():
                     # print(str('arrAnt = '+str(arrAnt)))
                     # print(str('arrEleg = '+str(arrEleg)))
                     serie1 = [
-                        round((arrAnt['found']/arrAnt['ini']), 4), 
-                        round((arrAnt['fin']/arrAnt['ini']), 4), 
+                        round(float(arrAnt['found'])/float(arrAnt['ini']), 4), 
+                        round(float(arrAnt['fin'])/float(arrAnt['ini']), 4), 
                     ] if 'ini' in arrAnt and arrAnt['ini'] is not None and arrAnt['ini'] != 0 else []
                     serie2 = [
-                        round((arrEleg['found']/arrEleg['ini']), 4), 
-                        round((arrEleg['fin']/arrEleg['ini']), 4), 
+                        round(float(arrEleg['found'])/float(arrEleg['ini']), 4), 
+                        round(float(arrEleg['fin'])/float(arrEleg['ini']), 4), 
                     ] if 'ini' in arrEleg and arrEleg['ini'] is not None and arrEleg['ini'] != 0 else []
                     if len(serie1) == len(serie2):
                         for i in range(len(serie1)):
@@ -1868,8 +1961,8 @@ class EjesMultiples():
                     if len(arrAnt) > 0:
                         if arrAnt['totales'] > 0:
                             serie1 = [
-                                round((arrAnt['retrasados']/arrAnt['totales']), 4), 
-                                round((arrAnt['incompletos']/arrAnt['totales']), 4),
+                                round(float(arrAnt['retrasados'])/float(arrAnt['totales']), 4), 
+                                round(float(arrAnt['incompletos'])/float(arrAnt['totales']), 4),
                             ]
                         else:
                             serie1 = [0,0]
@@ -1878,8 +1971,8 @@ class EjesMultiples():
                     if len(arrEleg) > 0:
                         if arrEleg['totales'] > 0:
                             serie2 = [
-                                round((arrEleg['retrasados']/arrEleg['totales']), 4), 
-                                round((arrEleg['incompletos']/arrEleg['totales']), 4),
+                                round(float(arrEleg['retrasados'])/float(arrEleg['totales']), 4), 
+                                round(float(arrEleg['incompletos'])/float(arrEleg['totales']), 4),
                             ]
                         else:
                             serie2 = [0,0]
@@ -2097,12 +2190,12 @@ class EjesMultiples():
                     # print(str('arrAnt = '+str(arrAnt)))
                     # print(str('arrEleg = '+str(arrEleg)))
                     serie1 = [
-                        round((arrAnt['found']/arrAnt['ini']), 4), 
-                        round((arrAnt['fin']/arrAnt['ini']), 4), 
+                        round(float(arrAnt['found'])/float(arrAnt['ini']), 4), 
+                        round(float(arrAnt['fin'])/float(arrAnt['ini']), 4), 
                     ] if 'ini' in arrAnt and arrAnt['ini'] is not None and arrAnt['ini'] != 0 else []
                     serie2 = [
-                        round((arrEleg['found']/arrEleg['ini']), 4), 
-                        round((arrEleg['fin']/arrEleg['ini']), 4), 
+                        round(float(arrEleg['found'])/float(arrEleg['ini']), 4), 
+                        round(float(arrEleg['fin'])/float(arrEleg['ini']), 4), 
                     ] if 'ini' in arrEleg and arrEleg['ini'] is not None and arrEleg['ini'] != 0 else []
                     if len(serie1) == len(serie2):
                         for i in range(len(serie1)):
