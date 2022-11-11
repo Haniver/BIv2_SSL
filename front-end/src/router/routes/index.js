@@ -33,6 +33,14 @@ const Routes = [
     }
   },
   {
+    path: '/checarHash',
+    component: lazy(() => import('../../views/checarHash')),
+    meta: {
+      publicRoute: true
+      // menuCollapsed: false
+    }
+  },
+  {
     path: '/perfil',
     component: lazy(() => import('../../views/Perfil')),
     meta: {
