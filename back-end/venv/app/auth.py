@@ -11,6 +11,7 @@ from passlib.context import CryptContext
 from pydantic import BaseModel
 from starlette.middleware.cors import CORSMiddleware
 import json
+from argon2 import PasswordHasher
 
 router = APIRouter()
 # to get a string like this run:
@@ -47,7 +48,9 @@ class User(BaseModel):
     razonRechazo: Optional[str]
 
 class UserInDB(User):
-    password: str
+    # $w 5 Aquí se define que password es obligatoria
+    # password: str
+    hash: str
 
 class claseCambiarPassword(BaseModel):
     password: Optional[str]
@@ -61,14 +64,17 @@ def buscar_usuario_en_bd(usuario):
     respuesta = []
     cnxn = conectar_sql.conexion_sql('DJANGO')
     cursor = cnxn.cursor()
-    cursor.execute(f"""select u.id, u.usuario, u.nivel, u.password, u.nombre, u.idTienda, ct.region, ct.zona, ct.regionNombre, ct.zonaNombre, ct.tiendaNombre
+    # $w 1 aquí lee la password de la BD
+    cursor.execute(f"""select u.id, u.usuario, u.nivel, u.nombre, u.hash, u.idTienda, ct.region, ct.zona, ct.regionNombre, ct.zonaNombre, ct.tiendaNombre
     from DJANGO.php.usuarios u
     left join DWH.artus.catTienda ct on  u.idTienda =ct.tienda
     where usuario = '{usuario}'""")
     resultados = conectar_sql.crear_diccionario(cursor)
     usuario = resultados[0]['usuario']
     # id_rol = resultados[0]['id_rol']
-    password = resultados[0]['password']
+    # $w 2 aquí pepena la password para meterla en el usuario
+    # password = resultados[0]['password']
+    hash = resultados[0]['hash']
     nombre = resultados[0]['nombre']
     # rol = resultados[0]['rol']
     nivel = resultados[0]['nivel']
@@ -131,21 +137,30 @@ def buscar_usuario_en_bd(usuario):
     #         "icon": row['icon']
     #     })
     # rol = f'Usuario Nivel {str(nivel)}'
-    respuesta = {usuario: {'usuario': usuario, 'password': password, 'nombre': nombre, 'nivel': nivel, 'rol': rol, 'id': id, 'vistas': json.dumps(vistas), 'documentos': json.dumps(documentos), 'tienda': tienda, 'region': region, 'zona': zona, 'lugarNombre': rol}}
+    # $w 3 Aquí manda la password al frontend
+    # respuesta = {usuario: {'usuario': usuario, 'password': password, 'nombre': nombre, 'nivel': nivel, 'rol': rol, 'id': id, 'vistas': json.dumps(vistas), 'documentos': json.dumps(documentos), 'tienda': tienda, 'region': region, 'zona': zona, 'lugarNombre': rol}}
+    respuesta = {usuario: {'usuario': usuario, 'hash': hash, 'nombre': nombre, 'nivel': nivel, 'rol': rol, 'id': id, 'vistas': json.dumps(vistas), 'documentos': json.dumps(documentos), 'tienda': tienda, 'region': region, 'zona': zona, 'lugarNombre': rol}}
     # print(f"Respuesta desde auth.py: {str(respuesta)}")
     return respuesta
 
 def get_user(db, usuario: str):
     if usuario in db:
         user_dict = db[usuario]
+        # $w 4 aquí solicita la password que generó buscar_usuario_en_bd, porque la requiere UserInDB ()
         return UserInDB(**user_dict)
 
 def authenticate_user(fake_db, usuario: str, password: str):
     user = get_user(fake_db, usuario)
     if not user:
         return False
-    if password != user.password:
+    # $w 6 aquí se compara la password que envía el usuario con la del usuario en la BD
+    ph = PasswordHasher()
+    try:
+        ph.verify(user.hash, password)
+    except:
         return False
+    # if password != user.password:
+    #     return False
     return user
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
