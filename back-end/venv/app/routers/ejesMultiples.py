@@ -391,7 +391,7 @@ class EjesMultiples():
         pipeline = []
         arreglo = []
         hayResultados = 'no'
-        # Esta monstruosidad está aquí porque a veces los filtros no terminan de cargar y ya está cargando la gráfica. Hay que verificar que los filtros hagan sentido.
+        # esta condición está aquí porque a veces los filtros no terminan de cargar y ya está cargando la gráfica. Hay que verificar que los filtros hagan sentido.
         if self.titulo != 'Pedidos Perfectos' and (not self.filtros.periodo or (self.filtros.agrupador == 'mes' and 'semana' in self.filtros.periodo) or (self.filtros.agrupador == 'semana' and not 'semana' in self.filtros.periodo) or (self.filtros.agrupador == 'dia' and not 'dia' in self.filtros.periodo)):
             return {'hayResultados':'no','categories':[], 'series':[], 'pipeline': [], 'lenArreglo':0}
         if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
@@ -525,6 +525,8 @@ class EjesMultiples():
                     dia_elegido = self.filtros.periodo['dia']
                     fecha_fin = datetime(anio_elegido, mes_elegido, dia_elegido)
                     fecha_ini = fecha_fin - timedelta(days=1)
+                    # print(f"fecha_ini es {str(fecha_ini)} y fecha_fin es {str(fecha_fin)}")
+                fecha_fin = fecha_fin.replace(hour=23, minute=59, second=59, microsecond=999999)
 
                 pipeline = [{'$unwind': '$sucursal'},
                     {'$match': {

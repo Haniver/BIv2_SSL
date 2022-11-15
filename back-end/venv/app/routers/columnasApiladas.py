@@ -385,7 +385,7 @@ class ColumnasApiladas():
         return {'hayResultados':hayResultados,'categorias':categorias, 'series':series, 'pipeline': pipeline}
 
     async def PedidoPerfecto(self):
-        # Esta monstruosidad está aquí porque a veces los filtros no terminan de cargar y ya está cargando la gráfica. Hay que verificar que los filtros hagan sentido.
+        # esta condición está aquí porque a veces los filtros no terminan de cargar y ya está cargando la gráfica. Hay que verificar que los filtros hagan sentido.
         if not self.filtros.periodo or (self.filtros.agrupador == 'mes' and 'semana' in self.filtros.periodo) or (self.filtros.agrupador == 'semana' and not 'semana' in self.filtros.periodo) or (self.filtros.agrupador == 'dia' and not 'dia' in self.filtros.periodo):
             return {'hayResultados':'no','categorias':[], 'series':[], 'pipeline': []}       
         categorias = []
