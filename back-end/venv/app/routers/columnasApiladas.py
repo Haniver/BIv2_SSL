@@ -385,6 +385,9 @@ class ColumnasApiladas():
         return {'hayResultados':hayResultados,'categorias':categorias, 'series':series, 'pipeline': pipeline}
 
     async def PedidoPerfecto(self):
+        # Esta monstruosidad está aquí porque a veces los filtros no terminan de cargar y ya está cargando la gráfica. Hay que verificar que los filtros hagan sentido.
+        if not self.filtros.periodo or (self.filtros.agrupador == 'mes' and 'semana' in self.filtros.periodo) or (self.filtros.agrupador == 'semana' and not 'semana' in self.filtros.periodo) or (self.filtros.agrupador == 'dia' and not 'dia' in self.filtros.periodo):
+            return {'hayResultados':'no','categorias':[], 'series':[], 'pipeline': []}       
         categorias = []
         pipeline = []
         series = []
@@ -589,11 +592,11 @@ class ColumnasApiladas():
                 }
             ])
             
-            print(f"pipeline desde ColumnasApiladas -> PedidoPerfecto -> Evaluación de KPI Pedido Perfecto por Periodo: {str(pipeline)}")
+            # print(f"pipeline desde ColumnasApiladas -> PedidoPerfecto -> Evaluación de KPI Pedido Perfecto por Periodo: {str(pipeline)}")
             # Ejecutamos el query:
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=1000)
-            print(f"Arreglo desde ColumnasApiladas -> PedidoPerfecto -> Evaluación de KPI Pedido Perfecto por Periodo: {str(arreglo)}")
+            # print(f"Arreglo desde ColumnasApiladas -> PedidoPerfecto -> Evaluación de KPI Pedido Perfecto por Periodo: {str(arreglo)}")
             if len(arreglo) >0:
                 hayResultados = "si"
                 for registro in arreglo:
@@ -814,7 +817,7 @@ class ColumnasApiladas():
                 ])
                 tituloElegida = str(dia_elegido) + ' ' + mesTexto(mes_elegido) + ' ' + str(anio_elegido)
                 tituloAnterior = str(dia_anterior) + ' ' + mesTexto(mes_anterior) + ' ' + str(anio_anterior)
-            print(f"Pipeline desde ColumnasApiladas -> Pedido Perfecto: {str(pipeline)}")
+            # print(f"Pipeline desde ColumnasApiladas -> Pedido Perfecto: {str(pipeline)}")
             # Ejecutamos el query:
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=1000)

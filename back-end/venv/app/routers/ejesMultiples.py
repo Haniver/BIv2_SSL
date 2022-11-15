@@ -391,6 +391,9 @@ class EjesMultiples():
         pipeline = []
         arreglo = []
         hayResultados = 'no'
+        # Esta monstruosidad está aquí porque a veces los filtros no terminan de cargar y ya está cargando la gráfica. Hay que verificar que los filtros hagan sentido.
+        if self.titulo != 'Pedidos Perfectos' and (not self.filtros.periodo or (self.filtros.agrupador == 'mes' and 'semana' in self.filtros.periodo) or (self.filtros.agrupador == 'semana' and not 'semana' in self.filtros.periodo) or (self.filtros.agrupador == 'dia' and not 'dia' in self.filtros.periodo)):
+            return {'hayResultados':'no','categories':[], 'series':[], 'pipeline': [], 'lenArreglo':0}
         if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
             filtro_lugar = True
             if self.filtros.zona != '' and self.filtros.zona != "False" and self.filtros.zona != None:
@@ -490,97 +493,123 @@ class EjesMultiples():
                 hayResultados = "no"
 
         if self.titulo == 'Evaluación por KPI Pedido Perfecto':
-            
-            pipeline = [{'$unwind': '$sucursal'},
-                {'$match': {
-                    'sucursal.region':{'$ne':None}
-                }}
-            ]
-            if filtro_lugar:
-                pipeline.extend([
-                    {'$match': {'sucursal.'+ nivel: lugar}}
-                ])
-
-            pipeline.extend([
-                {'$match': {
-                    'fecha': {'$gte': self.fecha_ini_a12}
-                }},
-                {'$match': {
-                    'fecha': {'$lte': self.fecha_fin_a12}
-                }}
-            ])
-            # Modificamos el pipeline para el caso de que el agrupador sea por mes:
-            if self.filtros.agrupador == 'mes':
-                periodo = '$nMes'
-            # Modificamos el pipeline para el caso de que el agrupador sea por semana:
-            elif self.filtros.agrupador == 'semana':
-                periodo = '$idSemDS'
-            # Modificamos los facets para el caso de que el agrupador sea por dÃ­a:
-            elif self.filtros.agrupador == 'dia':
-                periodo = '$fecha'
-            # return {'hayResultados':'no','categories':[], 'series':[], 'pipeline': '', 'lenArreglo':0}
-            pipeline.extend([
-                {'$group': {
-                    '_id': {
-                        # poner el agrupador
-                        'periodo': periodo,
-                    },
-                    'con_quejas': {
-                        '$sum': '$con_queja'
-                    },
-                    'retrasados': {
-                        '$sum': '$retrasados'
-                    },
-                    'cancelados': {
-                        '$sum': '$Cancelados'
-                    },
-                    'incompletos': {
-                        '$sum': '$incompletos'
-                    },
-                    'totales': {
-                        '$sum': '$Total_Pedidos'
-                    }
-                }},
-                {
-                    '$sort': {'_id.periodo': 1}
-                }
-            ])
-            cursor = collection.aggregate(pipeline)
-            arreglo = await cursor.to_list(length=1000)
-            if len(arreglo) >0:
-                hayResultados = "si"
-                series = [[], []]
-                titulos = []
-                contador = 0
-                for registro in arreglo:
-                    if self.filtros.agrupador == 'mes':
-                        titulos.append(mesTexto(registro['_id']['periodo']))
-                    elif self.filtros.agrupador == 'semana':
-                        periodo = int(registro['_id']['periodo'])
-                        anio = periodo // 100
-                        numSem = periodo - anio * 100
-                        titulos.append('Sem ' + str(numSem))
-                    elif self.filtros.agrupador == 'dia':
-                        fecha = registro['_id']['periodo']
-                        titulos.append(str(fecha.day) + ' '+ mesTexto(fecha.month))
-                    if registro['totales'] > 0:
-                        series[contador].extend([
-                            round((float(registro['con_quejas'])/float(registro['totales'])), 4), 
-                            round((float(registro['retrasados'])/float(registro['totales'])), 4),
-                            round((float(registro['cancelados'])/float(registro['totales'])), 4),
-                            round((float(registro['incompletos'])/float(registro['totales'])), 4)
-                        ])
+            # fecha_ini = self.fecha_ini_a12
+            # fecha_fin = self.fecha_fin_a12
+            if self.filtros.periodo:
+                # print(f"***************El periodo es: {str(self.filtros.periodo)}")
+                if self.filtros.agrupador == 'mes':
+                    periodo = '$nMes'
+                    anio_elegido = self.filtros.periodo['anio']
+                    mes_elegido = self.filtros.periodo['mes']
+                    fecha_fin = datetime(anio_elegido, mes_elegido, monthrange(anio_elegido, mes_elegido)[1])
+                    if fecha_fin.month == 1:
+                        fecha_ini = datetime(fecha_fin.year - 1, 12, 1)
                     else:
-                        series[contador].extend([0, 0, 0, 0])
-                    contador += 1
-                series = [
-                    {'name': titulos[0], 'data':series[0], 'type': 'column','formato_tooltip':'porcentaje', 'color':'secondary'},
-                    {'name': titulos[1], 'data':series[1], 'type': 'column', 'formato_tooltip':'porcentaje', 'color':'primary'}
+                        fecha_ini = datetime(fecha_fin.year, fecha_fin.month - 1, 1)
+                elif self.filtros.agrupador == 'semana':
+                    periodo = '$idSemDS'
+                    semana_elegida = int(str(self.filtros.periodo['semana'])[4:6])
+                    anio_elegido = int(str(self.filtros.periodo['semana'])[0:4])
+                    d = datetime(anio_elegido, 1, 1)
+                    if(d.weekday() > 0):
+                        d = d + timedelta(7 - d.weekday())
+                    else:
+                        d = d - timedelta(d.weekday())
+                    dlt = timedelta(days = (semana_elegida - 1) * 7)
+                    fecha_fin = d + dlt + timedelta(days=6)
+                    fecha_ini = fecha_fin - timedelta(days=13)
+                elif self.filtros.agrupador == 'dia':
+                    periodo = '$fecha'
+                    anio_elegido = self.filtros.periodo['anio']
+                    mes_elegido = self.filtros.periodo['mes']
+                    dia_elegido = self.filtros.periodo['dia']
+                    fecha_fin = datetime(anio_elegido, mes_elegido, dia_elegido)
+                    fecha_ini = fecha_fin - timedelta(days=1)
+
+                pipeline = [{'$unwind': '$sucursal'},
+                    {'$match': {
+                        'sucursal.region':{'$ne':None}
+                    }}
                 ]
-                categories = ['Con quejas', 'Retrasados', 'Cancelados', 'Incompletos']
-            else:
-                hayResultados = "no"
-                # print("No hay resultados 2")
+                if filtro_lugar:
+                    pipeline.extend([
+                        {'$match': {'sucursal.'+ nivel: lugar}}
+                    ])
+
+                pipeline.extend([
+                    {'$match': {
+                        'fecha': {
+                            '$gte': fecha_ini,
+                            '$lte': fecha_fin
+                        }
+                    }}
+                ])
+                pipeline.extend([
+                    {'$group': {
+                        '_id': {
+                            # poner el agrupador
+                            'periodo': periodo,
+                        },
+                        'con_quejas': {
+                            '$sum': '$con_queja'
+                        },
+                        'retrasados': {
+                            '$sum': '$retrasados'
+                        },
+                        'cancelados': {
+                            '$sum': '$Cancelados'
+                        },
+                        'incompletos': {
+                            '$sum': '$incompletos'
+                        },
+                        'totales': {
+                            '$sum': '$Total_Pedidos'
+                        }
+                    }},
+                    {
+                        '$sort': {'_id.periodo': 1}
+                    }
+                ])
+                cursor = collection.aggregate(pipeline)
+                arreglo = await cursor.to_list(length=1000)
+                if len(arreglo) >0:
+                    if len(arreglo) > 2:
+                        print(f"Arreglo tiene más de dos registros: {str(arreglo)}")
+                    if len(arreglo) <= 1:
+                        print(f"Arreglo tiene SOLO UN REGISTRO: {str(arreglo)}")
+                    hayResultados = "si"
+                    series = [[], []]
+                    titulos = [[], []]
+                    contador = 0
+                    for registro in arreglo:
+                        if self.filtros.agrupador == 'mes':
+                            titulos[contador] = mesTexto(registro['_id']['periodo'])
+                        elif self.filtros.agrupador == 'semana':
+                            periodo = int(registro['_id']['periodo'])
+                            anio = periodo // 100
+                            numSem = periodo - anio * 100
+                            titulos[contador] = 'Sem ' + str(numSem)
+                        elif self.filtros.agrupador == 'dia':
+                            fecha = registro['_id']['periodo']
+                            titulos[contador] = str(fecha.day) + ' '+ mesTexto(fecha.month)
+                        if registro['totales'] > 0:
+                            series[contador].extend([
+                                round((float(registro['con_quejas'])/float(registro['totales'])), 4), 
+                                round((float(registro['retrasados'])/float(registro['totales'])), 4),
+                                round((float(registro['cancelados'])/float(registro['totales'])), 4),
+                                round((float(registro['incompletos'])/float(registro['totales'])), 4)
+                            ])
+                        else:
+                            series[contador].extend([0, 0, 0, 0])
+                        contador += 1
+                    series = [
+                        {'name': titulos[0], 'data':series[0], 'type': 'column','formato_tooltip':'porcentaje', 'color':'secondary'},
+                        {'name': titulos[1], 'data':series[1], 'type': 'column', 'formato_tooltip':'porcentaje', 'color':'primary'}
+                    ]
+                    categories = ['Con quejas', 'Retrasados', 'Cancelados', 'Incompletos']
+                else:
+                    hayResultados = "no"
+                    # print("No hay resultados 2")
 
         # if self.titulo == 'Evaluación por KPI Pedido Perfecto':
         #     if self.filtros.periodo != {}:
