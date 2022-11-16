@@ -7,6 +7,7 @@ import EjesMultiples from '../componentes/graficos/EjesMultiples'
 import Tabla from '../componentes/tablas/Tabla'
 import ColumnasApiladas from '../componentes/graficos/ColumnasApiladas'
 import BarrasApiladas from '../componentes/graficos/BarrasApiladas'
+import Leyenda from '../componentes/auxiliares/Leyenda'
 // import userService from '../services/user.service'
 
 const PedidoPerfecto = () => {
@@ -33,8 +34,6 @@ const PedidoPerfecto = () => {
         setQuitarBusqueda(false)
         setQuitarPaginacion(false)
         setSibling(false)
-        // setPrefijoTituloTabla('50 tiendas con ')
-        // setSufijoTituloTabla(' más bajo')
       } else {
         setQuitarBusqueda(true)
         setQuitarPaginacion(true)
@@ -51,8 +50,6 @@ const PedidoPerfecto = () => {
           }
         })
       }
-      // console.log(`Sibling:`)
-      // console.log(sibling)
     }, [tienda])
     
     useEffect(() => {
@@ -68,6 +65,11 @@ const PedidoPerfecto = () => {
 
   return (
     <>
+      <Row className='match-height'>
+        <Col sm='12'>
+          <Leyenda seccion={seccion} titulo='Última actualización:' />
+        </Col>
+      </Row>
       <Row className='match-height'>
         <Col sm='12'>
           <Filtro fechas={fechas} agrupador={agrupador} periodo={periodo} region={region} zona={zona} tienda={tienda} sibling={sibling} setFechas={setFechas} setAgrupador={setAgrupador} setPeriodo={setPeriodo} setRegion={setRegion} setZona={setZona} setTienda={setTienda} setLabelTienda={setLabelTienda} />

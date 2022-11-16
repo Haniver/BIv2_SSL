@@ -132,3 +132,9 @@ code[class^='language-'], code[class*=' language-']{
   content: attr(data-count);
   display: block;
 }
+
+.leyenda {
+  font-size: small;
+  text-align: left;
+  color: #272F44;
+}
