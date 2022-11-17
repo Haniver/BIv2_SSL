@@ -4,6 +4,7 @@ import Filtro from '../componentes/auxiliares/Filtro'
 import Tabla from '../componentes/tablas/Tabla'
 import ColumnasApiladas from '../componentes/graficos/ColumnasApiladas'
 import Pie from '../componentes/graficos/Pie'
+import Leyenda from '../componentes/auxiliares/Leyenda'
 
 const PedidosPendientes = () => {
   const [tipoEntrega, setTipoEntrega] = useState('')
@@ -16,6 +17,11 @@ const PedidosPendientes = () => {
 
   return (
     <Fragment>
+      <Row className='match-height'>
+        <Col sm='12'>
+          <Leyenda seccion={seccion} titulo='Última actualización:' />
+        </Col>
+      </Row>
       <Row className='match-height'>
         <Col sm='12'>
           <Filtro region={region} zona={zona} tienda={tienda} tipoEntrega={tipoEntrega} origen={origen} setTipoEntrega={setTipoEntrega} setRegion={setRegion} setZona={setZona} setTienda={setTienda} setOrigen={setOrigen} />

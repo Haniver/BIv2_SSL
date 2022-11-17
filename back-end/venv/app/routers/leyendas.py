@@ -36,6 +36,27 @@ class Leyendas():
             print(f"No entró a nada porque el título es: '{self.titulo}'")
         return {'hayResultados':hayResultados, 'res': res, 'pipeline': query}
 
+    async def PedidosPendientes(self):
+        hayResultados = 'no'
+        res = []
+        query = []
+        if self.titulo == 'Última actualización:':
+            collection = conexion_mongo('report').report_pedidoPendientes
+            pipeline = [
+                {'$sort': {'fechaUpdate': -1}},
+                {'$group': {'_id': None, 'ultima_actualizacion': {'$first': "$fechaUpdate"}}}
+            ]
+            print(f"Query desde leyendas -> PedidosPendientes: {pipeline}")
+            cursor = collection.aggregate(pipeline)
+            arreglo = await cursor.to_list(length=1000)
+            # print(f"arreglo desde ejesMultiplesApilados: {str(arreglo)}")
+            if len(arreglo) > 0:
+                hayResultados = "si"
+                res = arreglo[0]['ultima_actualizacion'].strftime("%d/%m/%Y %H:%M")
+        else:
+            print(f"No entró a nada porque el título es: '{self.titulo}'")
+        return {'hayResultados':hayResultados, 'res': res, 'pipeline': query}
+
 @router.get("/{seccion}")
 async def leyendas (titulo: str, seccion: str, user: dict = Depends(get_current_active_user)):
     # print("El usuario desde tarjetas .py es: {str(user)}")
