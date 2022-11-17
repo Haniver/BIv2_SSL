@@ -1,7 +1,6 @@
 # Información sensible y configuración específica de este servidor
 /venv/app/servicios/urls.py
 /venv/app/servicios/credenciales.py
-/venv/app/routers/checarHash.py
 
 # Entorno virtual
 venv/Scripts
