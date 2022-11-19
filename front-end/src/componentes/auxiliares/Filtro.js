@@ -177,6 +177,12 @@ const Filtro = (props) => {
     {label: '2', value: '2'}
   ]
 
+  const comboProvLogist = [
+    {label: 'Zubale', value: 'Zubale'},
+    {label: 'Depto de Logística', value: 'Logística'},
+    {label: 'Recursos Propios', value: 'No es Zubale'}
+  ]
+
   const comboAnio = [
     {label: `${fechas_srv.anioActual()}`, value: fechas_srv.anioActual()}
     // {label: `${fechas_srv.anioActual() - 1}`, value: fechas_srv.anioActual() - 1},
@@ -273,6 +279,7 @@ const Filtro = (props) => {
   const [canalValue, setCanalValue] = useState({value:'', label:''})
   const [canal2Value, setCanal2Value] = useState({value:'', label:''})
   const [origenValue, setOrigenValue] = useState({value:'', label:''})
+  const [provLogistValue, setProvLogistValue] = useState([])
   const [e3Value, setE3Value] = useState({value:'', label:''})
   const [anioValue, setAnioValue] = useState(comboAnio[0])
   const [anioOpcionalValue, setAnioOpcionalValue] = useState()
@@ -331,6 +338,7 @@ const Filtro = (props) => {
       const [Canal_tmp, setCanal_tmp] = useState(props.canal)
       const [Canal2_tmp, setCanal2_tmp] = useState(props.canal2)
       const [Origen_tmp, setOrigen_tmp] = useState(props.origen)
+      const [ProvLogist_tmp, setProvLogist_tmp] = useState(props.provLogist)
       const [E3_tmp, setE3_tmp] = useState(props.e3)
       const [Proveedor_tmp, setProveedor_tmp] = useState(props.proveedor)
       const [Categoria_tmp, setCategoria_tmp] = useState(props.categoria)
@@ -1151,6 +1159,31 @@ const Filtro = (props) => {
                     setOrigen_tmp('')
                   }
                 }
+              }}
+            />
+          </Col>}
+          {props.provLogist !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
+            <Label>🚗 Proveedor de Logística</Label>
+            <Select
+              theme={selectThemeColors}
+              isMulti
+              value={provLogistValue}
+              className="basic-multi-select"
+              classNamePrefix='select'
+              name='filtroProvLogist'
+              options={comboProvLogist}
+              isClearable={true}
+              onChange={e => {
+                // console.log("~~~~~~~~e:")
+                // console.log(e)
+                const provLogistValue_tmp = []
+                const provLogistCompleto_tmp = []
+                e.forEach(elemento => {
+                  provLogistValue_tmp.push(elemento.value)
+                  provLogistCompleto_tmp.push(elemento)
+                })
+                props.setProvLogist(provLogistValue_tmp)
+                setProvLogistValue(provLogistCompleto_tmp)
               }}
             />
           </Col>}

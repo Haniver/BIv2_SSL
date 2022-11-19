@@ -25,6 +25,18 @@ class ColumnasNps():
         categorias = []
         series = []
 
+        clauseCatTienda = " AND ct.provLogist is not null "
+        if len(self.filtros.provLogist) > 0:
+            clauseCatTienda = " AND ("
+            contador = 0
+            for prov in self.filtros.provLogist:
+                clauseCatTienda += f" ct.provLogist = '{prov}' "
+                if contador < len(self.filtros.provLogist) - 1:
+                    clauseCatTienda += f" OR "
+                else:
+                    clauseCatTienda += f") "
+                contador += 1
+
         if self.titulo == 'Distribución de clientes por calificación':
             serie1 = []
             serie2 = []
@@ -51,7 +63,7 @@ class ColumnasNps():
             inner join DWH.limesurvey.nps_detalle nd on nmp.id_encuesta =nd.id_encuesta and nd.nEncuesta=nmp.nEncuesta
             left join DWH.artus.catTienda ct on nmp.idTienda =ct.tienda
             left join DWH.dbo.dim_tiempo dt on nmp.fecha = dt.fecha 
-            where {agrupador_where} """
+            where {agrupador_where} {clauseCatTienda} """
             if self.filtros.tienda != '' and self.filtros.tienda != None and self.filtros.tienda != 'False':
                 pipeline += f""" and ct.tienda ='{self.filtros.tienda}' """
             elif self.filtros.zona != '' and self.filtros.zona != None and self.filtros.zona != 'False':

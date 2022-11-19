@@ -13,7 +13,7 @@ require('highcharts/modules/data')(Highcharts)
 require('highcharts/modules/exporting')(Highcharts)
 require('highcharts/modules/export-data')(Highcharts)
 
-const ColumnasNps = ({ titulo, yLabel, seccion, formato, fechas, region, zona, tienda, proveedor, categoria, tipoEntrega, tituloAPI, periodo, agrupador }) => {
+const ColumnasNps = ({ titulo, yLabel, seccion, formato, fechas, region, zona, tienda, proveedor, categoria, tipoEntrega, tituloAPI, periodo, agrupador, provLogist }) => {
     const [series, setSeries] = useState([])
     const [categorias, setCategorias] = useState([])
         const [estadoLoader, dispatchLoader] = useReducer((estadoLoader, accion) => {
@@ -69,7 +69,8 @@ const ColumnasNps = ({ titulo, yLabel, seccion, formato, fechas, region, zona, t
             tienda,
             proveedor,
             periodo,
-            agrupador
+            agrupador,
+            provLogist
           }
         })
         dispatchLoader({tipo: 'recibirDeAPI'})
@@ -90,7 +91,7 @@ const ColumnasNps = ({ titulo, yLabel, seccion, formato, fechas, region, zona, t
             setCategorias([])
             setSeries([])
         }
-      }, [fechas, region, zona, tienda, proveedor, categoria, tipoEntrega, periodo, agrupador])
+      }, [fechas, region, zona, tienda, proveedor, categoria, tipoEntrega, periodo, agrupador, provLogist])
     
     const options = {
         chart: {

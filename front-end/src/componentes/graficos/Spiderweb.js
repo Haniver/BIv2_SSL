@@ -15,7 +15,7 @@ require('highcharts/modules/exporting')(Highcharts)
 require('highcharts/modules/export-data')(Highcharts)
 HighchartsMore(Highcharts)
 
-const Spiderweb = ({ titulo, yLabel, seccion, formato, fechas, region, zona, tienda, proveedor, categoria, tipoEntrega, tituloAPI, periodo, agrupador }) => {
+const Spiderweb = ({ titulo, yLabel, seccion, formato, fechas, region, zona, tienda, proveedor, categoria, tipoEntrega, tituloAPI, periodo, agrupador, provLogist }) => {
     const [series, setSeries] = useState([])
     const [categories, setCategories] = useState([])
         const [estadoLoader, dispatchLoader] = useReducer((estadoLoader, accion) => {
@@ -71,7 +71,8 @@ const Spiderweb = ({ titulo, yLabel, seccion, formato, fechas, region, zona, tie
             tienda,
             proveedor,
             periodo,
-            agrupador
+            agrupador,
+            provLogist
           }
         })
         dispatchLoader({tipo: 'recibirDeAPI'})
@@ -93,7 +94,7 @@ const Spiderweb = ({ titulo, yLabel, seccion, formato, fechas, region, zona, tie
             setCategories([])
             setSeries([])
         }
-      }, [fechas, region, zona, tienda, proveedor, categoria, tipoEntrega, periodo, agrupador])
+      }, [fechas, region, zona, tienda, proveedor, categoria, tipoEntrega, periodo, agrupador, provLogist])
     
     const options = {
         chart: {

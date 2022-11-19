@@ -34,3 +34,4 @@ class Filtro(BaseModel):
     fromSibling: Optional[str]
     origen: Optional[str]
     metodoEnvio: Optional[str]
+    provLogist: Optional[list]

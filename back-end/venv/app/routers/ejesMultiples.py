@@ -1,4 +1,4 @@
-from os import pipe
+from os import pipe, getcwd
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.auth import get_current_active_user
@@ -11,6 +11,7 @@ from copy import deepcopy
 from calendar import monthrange
 import json
 from app.servicios.permisos import tienePermiso
+from app.servicios.urls import rutaLogs
 
 router = APIRouter(
     prefix="/ejesMultiples",
@@ -2750,6 +2751,17 @@ class EjesMultiples():
         series = []
         pipeline = []
         arreglo = []
+        clauseCatTienda = " AND ct.provLogist is not null "
+        if len(self.filtros.provLogist) > 0:
+            clauseCatTienda = " AND ("
+            contador = 0
+            for prov in self.filtros.provLogist:
+                clauseCatTienda += f" ct.provLogist = '{prov}' "
+                if contador < len(self.filtros.provLogist) - 1:
+                    clauseCatTienda += f" OR "
+                else:
+                    clauseCatTienda += f") "
+                contador += 1
         hayResultados = 'no'
         # print(f"Desde {titulo}, periodo = {self.filtros.periodo}")
         if self.filtros.agrupador == 'dia':
@@ -2813,7 +2825,8 @@ class EjesMultiples():
                 pipeline += f" and ct.zona='{self.filtros.zona}' "
             elif self.filtros.region != '' and self.filtros.region != None and self.filtros.region != 'False':
                 pipeline += f" and ct.region ='{self.filtros.region}' "
-            pipeline += f"group by dt.{rango} order by f_inicio_drilldown"
+            pipeline += clauseCatTienda
+            pipeline += f" group by dt.{rango} order by f_inicio_drilldown"
 
             # print("query desde ejes multiples nps: "+pipeline)
             cnxn = conexion_sql('DWH')
@@ -2861,7 +2874,7 @@ class EjesMultiples():
             inner join DWH.limesurvey.nps_detalle nd on nmp.id_encuesta =nd.id_encuesta and nd.nEncuesta=nmp.nEncuesta
             left join DWH.dbo.dim_tiempo dt on nmp.fecha = dt.fecha 
             left join DWH.artus.catTienda ct on nmp.idTienda =ct.tienda
-            where {agrupador_where} {lugar_where} 
+            where {agrupador_where} {lugar_where} {clauseCatTienda}
             group by {lugar_select}"""
 
             # print("query desde ejes multiples nps: "+pipeline)
@@ -2921,7 +2934,7 @@ class EjesMultiples():
             from DWH.limesurvey.nps_pregunta_respuesta npr
             left join DWH.dbo.dim_tiempo dt on npr.fecha = dt.fecha 
             left join DWH.artus.catTienda ct on npr.idtienda =ct.tienda
-            where {agrupador_where} {lugar_where}
+            where {agrupador_where} {lugar_where} {clauseCatTienda}
             group by id_pregunta
             ) a on ncp.id_pregunta =a.id_pregunta
             where ncp.tipo_respuesta ='R1'
@@ -2970,7 +2983,7 @@ class EjesMultiples():
             inner join DWH.limesurvey.nps_cat_preguntas ncp on npr.id_pregunta =ncp.id_pregunta
             where ncp.tipo_respuesta ='R1' and ncp.flujo = 'F1'
             and {agrupador_where} 
-            {lugar_where}
+            {lugar_where} {clauseCatTienda}
             ) as float) F1,
             sum(case when flujo='F2' then a.cant else 0 end)*100/cast((select sum(cant) cant
             from DWH.limesurvey.nps_pregunta_respuesta npr
@@ -2979,7 +2992,7 @@ class EjesMultiples():
             left join DWH.artus.catTienda ct on npr.idtienda =ct.tienda
             where ncp.tipo_respuesta ='R1' and ncp.flujo = 'F2'
             and {agrupador_where}
-            {lugar_where}
+            {lugar_where} {clauseCatTienda}
             ) as float) F2
             from DWH.limesurvey.nps_cat_preguntas ncp
             left join
@@ -2989,7 +3002,7 @@ class EjesMultiples():
             left join DWH.dbo.dim_tiempo dt on npr.fecha = dt.fecha 
             left join DWH.artus.catTienda ct on npr.idtienda =ct.tienda
             where {agrupador_where} 
-            {lugar_where}
+            {lugar_where} {clauseCatTienda}
             group by id_pregunta
             ) a on ncp.id_pregunta =a.id_pregunta
             where ncp.tipo_respuesta ='R1'
@@ -3041,7 +3054,7 @@ class EjesMultiples():
             from DWH.limesurvey.nps_pregunta_respuesta npr
             left join DWH.dbo.dim_tiempo dt on npr.fecha = dt.fecha 
             left join DWH.artus.catTienda ct on npr.idtienda =ct.tienda
-            where {agrupador_where} {lugar_where}
+            where {agrupador_where} {lugar_where} {clauseCatTienda}
             group by id_pregunta
             ) a on ncp.id_pregunta =a.id_pregunta
             where ncp.tipo_respuesta ='R2'
@@ -3097,7 +3110,7 @@ class EjesMultiples():
             where descripcion = '{self.filtros.nps}' and tipo_respuesta = 'R1' and flujo='F1'
             )
             and {agrupador_where} 
-            {lugar_where}
+            {lugar_where} {clauseCatTienda}
             and tipo_respuesta = 'R2' and flujo='F1') as float) F1,
             isnull(sum(case when flujo='F2' then a.cant else 0 end),0)*100/cast((select sum(cant) cant
             from DWH.limesurvey.nps_pregunta_respuesta npr
@@ -3109,7 +3122,7 @@ class EjesMultiples():
             where descripcion = '{self.filtros.nps}' and tipo_respuesta = 'R1' and flujo='F2'
             )
             and {agrupador_where}
-            {lugar_where}
+            {lugar_where} {clauseCatTienda}
             and tipo_respuesta = 'R2' and flujo='F2') as float) F2
             from DWH.limesurvey.nps_cat_preguntas ncp
             left join
@@ -3119,7 +3132,7 @@ class EjesMultiples():
             left join DWH.dbo.dim_tiempo dt on npr.fecha = dt.fecha 
             left join DWH.artus.catTienda ct on npr.idtienda =ct.tienda
             where {agrupador_where} 
-            {lugar_where}
+            {lugar_where} {clauseCatTienda}
             group by id_pregunta
             ) a on ncp.id_pregunta =a.id_pregunta
             where ncp.tipo_respuesta ='R2'
@@ -3177,7 +3190,7 @@ class EjesMultiples():
             inner join DWH.dbo.dim_store ds on nmp.idtienda =ds.idtienda
             left join DWH.dbo.dim_tiempo dt on nmp.fecha = dt.fecha 
             left join DWH.artus.catTienda ct on nmp.idtienda =ct.tienda
-            where {agrupador_where} {lugar_where}
+            where {agrupador_where} {lugar_where} {clauseCatTienda}
             group by isnull(ds.proyecto,'Sin Aduana') """
 
             # print("query desde ejes multiples nps: "+pipeline)
@@ -3243,7 +3256,7 @@ class EjesMultiples():
             inner join DWH.dbo.dim_store ds on nmp.idtienda =ds.idtienda
             left join DWH.dbo.dim_tiempo dt on nmp.fecha = dt.fecha 
             left join DWH.artus.catTienda ct on nmp.idtienda =ct.tienda
-            where {agrupador_where} {lugar_where}
+            where {agrupador_where} {lugar_where} {clauseCatTienda}
             group by isnull(ds.proyecto,'Sin Aduana') """
 
             # print("query desde ejes multiples nps: "+pipeline)
@@ -3309,7 +3322,7 @@ class EjesMultiples():
             inner join DWH.dbo.dim_store ds on nmp.idtienda =ds.idtienda
             left join DWH.dbo.dim_tiempo dt on nmp.fecha = dt.fecha 
             left join DWH.artus.catTienda ct on nmp.idtienda =ct.tienda
-            where {agrupador_where} {lugar_where}
+            where {agrupador_where} {lugar_where} {clauseCatTienda}
             group by isnull(ds.proyecto,'Sin Aduana') """
 
             pipeline = f"""select ds.formato_tienda,
@@ -3323,7 +3336,7 @@ class EjesMultiples():
             inner join DWH.dbo.dim_store ds on nmp.idtienda =ds.idtienda
             left join DWH.dbo.dim_tiempo dt on nmp.fecha = dt.fecha 
             left join DWH.artus.catTienda ct on nmp.idtienda =ct.tienda
-            where {agrupador_where} {lugar_where}
+            where {agrupador_where} {lugar_where} {clauseCatTienda}
             group by ds.formato_tienda
             """
 
@@ -3985,6 +3998,9 @@ class EjesMultiples():
 
 @router.post("/{seccion}")
 async def ejes_multiples (filtros: Filtro, titulo: str, seccion: str, user: dict = Depends(get_current_active_user)):
+    with open(f"{rutaLogs()}{user.usuario}.log", "a+") as file:
+        file.write(f"\n{datetime.now().strftime('%d/%m/%Y %H:%M:%S')} Consulta ejesMultiples->{seccion}->{titulo} | Filtros: {str(filtros)}\n")
+    file.close()
     if tienePermiso(user.id, seccion):
         objeto = EjesMultiples(filtros, titulo)
         funcion = getattr(objeto, seccion)

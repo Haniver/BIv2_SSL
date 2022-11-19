@@ -22,6 +22,7 @@ const PedidoPerfecto = () => {
     const [labelTienda, setLabelTienda] = useState(false)
     const [quitarBusqueda, setQuitarBusqueda] = useState(false)
     const [quitarPaginacion, setQuitarPaginacion] = useState(false)
+    const [provLogist, setProvLogist] = useState(false)
     // const [sufijoTituloTabla, setSufijoTituloTabla] = useState('')
     // const [prefijoTituloTabla, setPrefijoTituloTabla] = useState('')
 
@@ -72,7 +73,7 @@ const PedidoPerfecto = () => {
       </Row>
       <Row className='match-height'>
         <Col sm='12'>
-          <Filtro fechas={fechas} agrupador={agrupador} periodo={periodo} region={region} zona={zona} tienda={tienda} sibling={sibling} setFechas={setFechas} setAgrupador={setAgrupador} setPeriodo={setPeriodo} setRegion={setRegion} setZona={setZona} setTienda={setTienda} setLabelTienda={setLabelTienda} />
+          <Filtro fechas={fechas} provLogist={provLogist} agrupador={agrupador} periodo={periodo} region={region} zona={zona} tienda={tienda} sibling={sibling} setFechas={setFechas} setProvLogist={setProvLogist} setAgrupador={setAgrupador} setPeriodo={setPeriodo} setRegion={setRegion} setZona={setZona} setTienda={setTienda} setLabelTienda={setLabelTienda} />
         </Col>
       </Row>
       <Row className='match-height'>

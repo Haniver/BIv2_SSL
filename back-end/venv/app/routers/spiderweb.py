@@ -25,6 +25,18 @@ class Spiderweb():
         categories = []
         series = []
 
+        clauseCatTienda = " AND ct.provLogist is not null "
+        if len(self.filtros.provLogist) > 0:
+            clauseCatTienda = " AND ("
+            contador = 0
+            for prov in self.filtros.provLogist:
+                clauseCatTienda += f" ct.provLogist = '{prov}' "
+                if contador < len(self.filtros.provLogist) - 1:
+                    clauseCatTienda += f" OR "
+                else:
+                    clauseCatTienda += f") "
+                contador += 1
+
         if self.titulo == 'Respuestas por responsable':
             serie1 = []
             serie2 = []
@@ -53,7 +65,7 @@ class Spiderweb():
             inner join DWH.dbo.dim_tiempo dt on npr.fecha=dt.fecha
             left join DWH.artus.catTienda ct on npr.idTienda =ct.tienda
             where ncp.tipo_respuesta = 'R2'
-            and {agrupador_where} """
+            and {agrupador_where} {clauseCatTienda} """
             if self.filtros.tienda != '' and self.filtros.tienda != None and self.filtros.tienda != 'False':
                 pipeline += f""" and ct.tienda ='{self.filtros.tienda}' """
             elif self.filtros.zona != '' and self.filtros.zona != None and self.filtros.zona != 'False':
