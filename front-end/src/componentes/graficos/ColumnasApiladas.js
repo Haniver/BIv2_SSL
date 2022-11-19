@@ -15,7 +15,7 @@ require('highcharts/modules/data')(Highcharts)
 require('highcharts/modules/exporting')(Highcharts)
 require('highcharts/modules/export-data')(Highcharts)
 
-const ColumnasApiladas = ({ titulo, yLabel, seccion, formato, fechas, region, zona, tienda, proveedor, categoria, tipoEntrega, agrupador, periodo, tituloAPI, origen, ocultarTotales }) => {
+const ColumnasApiladas = ({ titulo, yLabel, seccion, formato, fechas, region, zona, tienda, proveedor, categoria, tipoEntrega, agrupador, periodo, tituloAPI, origen, ocultarTotales, provLogist }) => {
     const titulo_enviar = (tituloAPI !== undefined) ? tituloAPI : titulo
     const [series, setSeries] = useState([])
     const [categorias, setCategorias] = useState([])
@@ -71,7 +71,8 @@ const ColumnasApiladas = ({ titulo, yLabel, seccion, formato, fechas, region, zo
             proveedor, 
             agrupador, 
             periodo,
-            origen
+            origen,
+            provLogist
           }
         })
         dispatchLoader({tipo: 'recibirDeAPI'})
@@ -93,7 +94,7 @@ const ColumnasApiladas = ({ titulo, yLabel, seccion, formato, fechas, region, zo
             setCategorias([])
             setSeries([])
         }
-      }, [fechas, region, zona, tienda, proveedor, categoria, tipoEntrega, agrupador, periodo, origen])
+      }, [fechas, region, zona, tienda, proveedor, categoria, tipoEntrega, agrupador, periodo, origen, provLogist])
     
     const options = {
         chart: {

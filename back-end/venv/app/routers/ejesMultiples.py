@@ -395,6 +395,23 @@ class EjesMultiples():
         # esta condición está aquí porque a veces los filtros no terminan de cargar y ya está cargando la gráfica. Hay que verificar que los filtros hagan sentido.
         if self.titulo != 'Pedidos Perfectos' and (not self.filtros.periodo or (self.filtros.agrupador == 'mes' and 'semana' in self.filtros.periodo) or (self.filtros.agrupador == 'semana' and not 'semana' in self.filtros.periodo) or (self.filtros.agrupador == 'dia' and not 'dia' in self.filtros.periodo)):
             return {'hayResultados':'no','categories':[], 'series':[], 'pipeline': [], 'lenArreglo':0}
+        clauseCatTienda = False
+        if len(self.filtros.provLogist) == 1:
+            clauseCatTienda = {'$match': {'sucursal.provLogist': self.filtros.provLogist[0]}}
+        elif len(self.filtros.provLogist) > 1:
+            clauseCatTienda = {'$match': {
+                '$expr': {
+                    '$or': []
+                }
+            }}
+            for prov in self.filtros.provLogist:
+                clauseCatTienda['$match']['$expr']['$or'].append(
+                    {'$eq': [
+                        '$sucursal.provLogist',
+                        prov
+                    ]}
+                )
+
         if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
             filtro_lugar = True
             if self.filtros.zona != '' and self.filtros.zona != "False" and self.filtros.zona != None:
@@ -434,6 +451,8 @@ class EjesMultiples():
                     }
                 }}
             )
+            if clauseCatTienda:
+                pipeline.append(clauseCatTienda)
             pipeline.extend([
                 {'$group': {
                     '_id': {},
@@ -459,7 +478,7 @@ class EjesMultiples():
                 sort['_id.semana'] = 1
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=1000)
-            # print("Pipeline de Pedidos Perfectos en Ejes Múltiples: "+str(pipeline))
+            print("Pipeline de Pedidos Perfectos en Ejes Múltiples: "+str(pipeline))
             if len(arreglo) >0:
                 hayResultados = "si"
                 # print("Arreglo de Pedidos Perfectos en Ejes Múltiples: "+str(arreglo))
@@ -538,6 +557,8 @@ class EjesMultiples():
                     pipeline.extend([
                         {'$match': {'sucursal.'+ nivel: lugar}}
                     ])
+                if clauseCatTienda:
+                    pipeline.append(clauseCatTienda)
 
                 pipeline.extend([
                     {'$match': {
@@ -876,6 +897,8 @@ class EjesMultiples():
                 #     }}
                 # )
                 # Vamos a crear 2 facets: uno para el periodo elegido y otro para el anterior. Creamos una plantilla para el facet:
+                if clauseCatTienda:
+                    pipeline.append(clauseCatTienda)
                 pipeline.extend([
                     {'$match': {
                         '$expr': {
@@ -1101,6 +1124,8 @@ class EjesMultiples():
                 #     }}
                 # )
                 # Vamos a crear 2 facets: uno para el periodo elegido y otro para el anterior. Creamos una plantilla para el facet:
+                if clauseCatTienda:
+                    pipeline.append(clauseCatTienda)
                 pipeline.extend([
                     {'$match': {
                         '$expr': {
@@ -1319,6 +1344,8 @@ class EjesMultiples():
                 #     }}
                 # )
                 # Vamos a crear 2 facets: uno para el periodo elegido y otro para el anterior. Creamos una plantilla para el facet:
+                if clauseCatTienda:
+                    pipeline.append(clauseCatTienda)
                 pipeline.extend([
                     {'$match': {
                         '$expr': {

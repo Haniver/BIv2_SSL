@@ -14,7 +14,7 @@ require('highcharts/modules/data')(Highcharts)
 require('highcharts/modules/exporting')(Highcharts)
 require('highcharts/modules/export-data')(Highcharts)
 
-const BarrasApiladas = ({ titulo, tituloAPI, yLabel, porcentaje, sinCantidad, seccion, formato, fechas, region, zona, tienda, proveedor, categoria, tipoEntrega, agrupador, periodo, grupoDeptos, deptoAgrupado, subDeptoAgrupado }) => {
+const BarrasApiladas = ({ titulo, tituloAPI, yLabel, porcentaje, sinCantidad, seccion, formato, fechas, region, zona, tienda, proveedor, categoria, tipoEntrega, agrupador, periodo, grupoDeptos, deptoAgrupado, subDeptoAgrupado, provLogist }) => {
     const [series, setSeries] = useState([])
     const [categorias, setCategorias] = useState([])
         const [estadoLoader, dispatchLoader] = useReducer((estadoLoader, accion) => {
@@ -87,7 +87,8 @@ const BarrasApiladas = ({ titulo, tituloAPI, yLabel, porcentaje, sinCantidad, se
             periodo, 
             grupoDeptos, 
             deptoAgrupado, 
-            subDeptoAgrupado
+            subDeptoAgrupado,
+            provLogist
           }
         })
         dispatchLoader({tipo: 'recibirDeAPI'})
@@ -113,7 +114,7 @@ const BarrasApiladas = ({ titulo, tituloAPI, yLabel, porcentaje, sinCantidad, se
             setCategorias([])
             setSeries([])
         }
-      }, [fechas, region, zona, tienda, proveedor, categoria, tipoEntrega, agrupador, periodo, grupoDeptos, deptoAgrupado, subDeptoAgrupado])
+      }, [fechas, region, zona, tienda, proveedor, categoria, tipoEntrega, agrupador, periodo, grupoDeptos, deptoAgrupado, subDeptoAgrupado, provLogist])
     
     Highcharts.setOptions({
       lang: {

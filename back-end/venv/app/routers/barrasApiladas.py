@@ -43,6 +43,22 @@ class BarrasApiladas():
 
         if self.filtros.periodo == {}:
             return {'hayResultados':'no','categorias':[], 'series':[], 'pipeline': [], 'modTitulo': ''}
+        clauseCatTienda = False
+        if len(self.filtros.provLogist) == 1:
+            clauseCatTienda = {'$match': {'sucursal.provLogist': self.filtros.provLogist[0]}}
+        elif len(self.filtros.provLogist) > 1:
+            clauseCatTienda = {'$match': {
+                '$expr': {
+                    '$or': []
+                }
+            }}
+            for prov in self.filtros.provLogist:
+                clauseCatTienda['$match']['$expr']['$or'].append(
+                    {'$eq': [
+                        '$sucursal.provLogist',
+                        prov
+                    ]}
+                )
         if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
             filtro_lugar = True
             if self.filtros.zona != '' and self.filtros.zona != "False"  and self.filtros.zona != None:
@@ -80,6 +96,8 @@ class BarrasApiladas():
                 {'$match': {'sucursal.'+ nivel: lugar}},
                 {'$unwind': '$quejas'},
             ])
+        if clauseCatTienda:
+            pipeline.append(clauseCatTienda)
 
         if self.titulo == 'Quejas por lugar $periodo2':
             pipeline.extend([

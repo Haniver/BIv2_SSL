@@ -22,7 +22,7 @@ const PedidoPerfecto = () => {
     const [labelTienda, setLabelTienda] = useState(false)
     const [quitarBusqueda, setQuitarBusqueda] = useState(false)
     const [quitarPaginacion, setQuitarPaginacion] = useState(false)
-    const [provLogist, setProvLogist] = useState(false)
+    const [provLogist, setProvLogist] = useState([])
     // const [sufijoTituloTabla, setSufijoTituloTabla] = useState('')
     // const [prefijoTituloTabla, setPrefijoTituloTabla] = useState('')
 
@@ -60,9 +60,10 @@ const PedidoPerfecto = () => {
       }
     }, [sibling])
 
-    // useEffect(() => {
-    //   console.log(`labelTienda: ${labelTienda}`)
-    // }, [labelTienda])
+    useEffect(() => {
+      console.log(`provLogist:`)
+      console.log(provLogist)
+    }, [provLogist])
 
   return (
     <>
@@ -78,52 +79,52 @@ const PedidoPerfecto = () => {
       </Row>
       <Row className='match-height'>
         <Col sm='12' lg='6'>
-          <EjesMultiples titulo='Pedidos Perfectos' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} seccion={seccion} />
+          <EjesMultiples titulo='Pedidos Perfectos' fechas={fechas} provLogist={provLogist} region={region} zona={zona} tienda={tienda} agrupador={agrupador} seccion={seccion} />
         </Col>
         <Col sm='12' lg='6'>
-          <EjesMultiples titulo='Evaluación por KPI Pedido Perfecto' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} />
+          <EjesMultiples titulo='Evaluación por KPI Pedido Perfecto' fechas={fechas} provLogist={provLogist} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} />
         </Col>
       </Row>
       <Row className='match-height'>
       <Col sm='12' lg='6'>
-          <ColumnasApiladas titulo='Evaluación de KPI Pedido Perfecto por Periodo' ocultarTotales fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} formato='porcentaje' />
+          <ColumnasApiladas titulo='Evaluación de KPI Pedido Perfecto por Periodo' ocultarTotales fechas={fechas} provLogist={provLogist} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} formato='porcentaje' />
         </Col>
         <Col sm='12' lg='6'>
-          <EjesMultiples titulo='Evaluación por KPI' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} />
+          <EjesMultiples titulo='Evaluación por KPI' fechas={fechas} provLogist={provLogist} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} />
         </Col>
       </Row>
       {!tienda && <Row className='match-height'>
         <Col sm='12' lg='6'>
-          <ColumnasApiladas titulo='Evaluación de KPI Pedido Perfecto por Lugar' ocultarTotales fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} formato='porcentaje' />
+          <ColumnasApiladas titulo='Evaluación de KPI Pedido Perfecto por Lugar' ocultarTotales fechas={fechas} provLogist={provLogist} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} formato='porcentaje' />
         </Col>
         <Col sm='12' lg='6'>
-          <EjesMultiples titulo='Evaluación Pedido Perfecto por Lugar' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} />
+          <EjesMultiples titulo='Evaluación Pedido Perfecto por Lugar' fechas={fechas} provLogist={provLogist} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} />
         </Col>
       </Row>}
       <Row className='match-height'>
         <Col sm='12' lg='6'>
-          <EjesMultiples titulo='Motivos de Quejas' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} />
+          <EjesMultiples titulo='Motivos de Quejas' fechas={fechas} provLogist={provLogist} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} />
         </Col>
         <Col sm='12' lg='6'>
-          <ColumnasApiladas titulo='Pedidos por Tipo de Entrega' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} formato='entero' />
+          <ColumnasApiladas titulo='Pedidos por Tipo de Entrega' fechas={fechas} provLogist={provLogist} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} formato='entero' />
         </Col>
       </Row>
       {!tienda && <Row className='match-height'>
         <Col sm='12' lg='6'>
-          <BarrasApiladas tituloAPI='Quejas por lugar $periodo1' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} formato='entero' />
+          <BarrasApiladas tituloAPI='Quejas por lugar $periodo1' fechas={fechas} provLogist={provLogist} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} formato='entero' />
         </Col>
         <Col sm='12' lg='6'>
-          <BarrasApiladas tituloAPI='Quejas por lugar $periodo2' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} formato='entero' />
+          <BarrasApiladas tituloAPI='Quejas por lugar $periodo2' fechas={fechas} provLogist={provLogist} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} formato='entero' />
         </Col>
       </Row>}
       <Row className='match-height'>
         <Col sm='12'>
-          <Tabla titulo='Tiendas por % Pedido Perfecto más bajo' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} setSibling={setSibling} quitarBusqueda={quitarBusqueda} quitarPaginacion={quitarPaginacion} />
+          <Tabla titulo='Tiendas por % Pedido Perfecto más bajo' fechas={fechas} provLogist={provLogist} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} setSibling={setSibling} quitarBusqueda={quitarBusqueda} quitarPaginacion={quitarPaginacion} />
         </Col>
       </Row>
       {sibling && <Row className='match-height'>
         <Col sm='12'>
-          <Tabla tituloAPI='$Tienda' titulo={labelTienda} fechas={fechas} region={sibling.region.value} zona={sibling.zona.value} tienda={sibling.tienda.value} agrupador={agrupador} periodo={periodo} seccion={seccion} />
+          <Tabla tituloAPI='$Tienda' titulo={labelTienda} fechas={fechas} provLogist={provLogist} region={sibling.region.value} zona={sibling.zona.value} tienda={sibling.tienda.value} agrupador={agrupador} periodo={periodo} seccion={seccion} />
         </Col>
       </Row>}
     </>

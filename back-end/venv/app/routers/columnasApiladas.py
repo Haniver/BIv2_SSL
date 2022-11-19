@@ -400,6 +400,23 @@ class ColumnasApiladas():
 
         if self.filtros.periodo == {}:
             return {'hayResultados':'no','categorias':[], 'series':[], 'pipeline': []}
+        clauseCatTienda = False
+        if len(self.filtros.provLogist) == 1:
+            clauseCatTienda = {'$match': {'sucursal.provLogist': self.filtros.provLogist[0]}}
+        elif len(self.filtros.provLogist) > 1:
+            clauseCatTienda = {'$match': {
+                '$expr': {
+                    '$or': []
+                }
+            }}
+            for prov in self.filtros.provLogist:
+                clauseCatTienda['$match']['$expr']['$or'].append(
+                    {'$eq': [
+                        '$sucursal.provLogist',
+                        prov
+                    ]}
+                )
+
         if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
             filtro_lugar = True
             if self.filtros.zona != '' and self.filtros.zona != "False"  and self.filtros.zona != None:
@@ -435,6 +452,8 @@ class ColumnasApiladas():
                 pipeline.extend([
                     {'$match': {'sucursal.'+ nivel: lugar}}
                 ])
+            if clauseCatTienda:
+                pipeline.append(clauseCatTienda)
 
             pipeline.extend([
                 {'$group': {
@@ -546,6 +565,8 @@ class ColumnasApiladas():
                 pipeline.extend([
                     {'$match': {'sucursal.'+ nivel: lugar}}
                 ])
+            if clauseCatTienda:
+                pipeline.append(clauseCatTienda)
 
             pipeline.extend([
                 {'$match': {
@@ -650,6 +671,8 @@ class ColumnasApiladas():
                 pipeline.extend([
                     {'$match': {'sucursal.'+ nivel: lugar}}
                 ])
+            if clauseCatTienda:
+                pipeline.append(clauseCatTienda)
 
             pipeline.extend([
                 {'$unwind': '$entrega'},
