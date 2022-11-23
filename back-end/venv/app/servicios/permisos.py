@@ -1,4 +1,6 @@
 from app.servicios.conectar_sql import conexion_sql, crear_diccionario
+from app.servicios.urls import rutaLogs
+from datetime import datetime
 
 def tienePermiso(idUsuario, seccion):
     # El ID de los componentes de React (idReact en la BD) es igual a la sección, pero con la primera letra en minúscula
@@ -32,3 +34,14 @@ def permisoMarkdown(id_rol, nombre_archivo):
     resultados = crear_diccionario(cursor)
     # print(f"arreglo de resultados de permisos.py: {str(resultados)}")
     return True if len(resultados) > 0 else False
+
+def crearLog(grafico, usuario, seccion, titulo, filtros = None, ip='?'):
+    with open(f"{rutaLogs()}{usuario}.log", "a+") as file:
+        if filtros is not None:
+            arr_filtros = [f"{key}: {value}" for key, value in vars(filtros).items() if value is not None]
+        else:
+            arr_filtros = []
+        file.write(f"\n{datetime.now().strftime('%d/%m/%Y %H:%M:%S')} {usuario} con IP {ip} | consultó {seccion} -> {grafico} -> {titulo} | con Filtros: {str(arr_filtros)}\n")
+        # print(f"\n{datetime.now().strftime('%d/%m/%Y %H:%M:%S')} Consulta {grafico}->{seccion}->{titulo} | Filtros: {str(arr_filtros)}\n")
+        file.close()
+

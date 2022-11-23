@@ -1,10 +1,10 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 
 from app.auth import get_current_active_user
 from app.servicios.conectar_sql import conexion_sql, crear_diccionario
 from app.servicios.conectar_mongo import conexion_mongo
 from app.servicios.Filtro import Filtro
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 from datetime import date, datetime
 from calendar import monthrange
 from copy import deepcopy

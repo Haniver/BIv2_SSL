@@ -1,6 +1,6 @@
 from copy import deepcopy
 from time import strftime
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 
 from app.auth import get_current_active_user
 from app.servicios.conectar_mongo import conexion_mongo
@@ -11,7 +11,8 @@ from app.servicios.formatoFechas import mesTexto
 from datetime import datetime, date, timedelta
 from calendar import monthrange
 import json
-from app.servicios.permisos import tienePermiso
+from app.servicios.permisos import tienePermiso, crearLog
+from inspect import stack
 
 router = APIRouter(
     prefix="/columnasApiladas",
@@ -1495,7 +1496,8 @@ class ColumnasApiladas():
 
 
 @router.post("/{seccion}")
-async def columnas_apiladas (filtros: Filtro, titulo: str, seccion: str, user: dict = Depends(get_current_active_user)):
+async def columnas_apiladas (filtros: Filtro, titulo: str, seccion: str, request: Request, user: dict = Depends(get_current_active_user)):
+    crearLog(stack()[0][3], user.usuario, seccion, titulo, filtros, request.client.host)
     if tienePermiso(user.id, seccion):
         objeto = ColumnasApiladas(filtros, titulo)
         funcion = getattr(objeto, seccion)

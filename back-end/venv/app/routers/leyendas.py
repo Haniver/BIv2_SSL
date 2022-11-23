@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request, Request
 
 from app.auth import get_current_active_user
 from app.servicios.conectar_mongo import conexion_mongo
@@ -6,7 +6,8 @@ from app.servicios.conectar_sql import conexion_sql, crear_diccionario
 from app.servicios.Filtro import Filtro
 from datetime import date, datetime, timedelta
 from calendar import monthrange
-from app.servicios.permisos import tienePermiso
+from app.servicios.permisos import tienePermiso, crearLog
+from inspect import stack
 
 router = APIRouter(
     prefix="/leyendas",
@@ -58,8 +59,10 @@ class Leyendas():
         return {'hayResultados':hayResultados, 'res': res, 'pipeline': query}
 
 @router.get("/{seccion}")
-async def leyendas (titulo: str, seccion: str, user: dict = Depends(get_current_active_user)):
+async def leyendas (titulo: str, seccion: str, request: Request, user: dict = Depends(get_current_active_user)):
     # print("El usuario desde tarjetas .py es: {str(user)}")
+    # print(f"Filtros desde leyendas: {str(filtros)}")
+    crearLog(stack()[0][3], user.usuario, seccion, titulo, ip=request.client.host)
     if tienePermiso(user.id, seccion):
         objeto = Leyendas(titulo)
         funcion = getattr(objeto, seccion)

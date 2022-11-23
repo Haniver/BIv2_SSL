@@ -1,5 +1,5 @@
 from asyncio.windows_events import NULL
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 
 from app.auth import get_current_active_user
 from app.servicios.conectar_mongo import conexion_mongo
@@ -11,7 +11,8 @@ from app.servicios.formatoFechas import mesTexto
 from app.servicios.conectar_sql import conexion_sql, crear_diccionario
 from copy import deepcopy
 from numpy import zeros
-from app.servicios.permisos import tienePermiso
+from app.servicios.permisos import tienePermiso, crearLog
+from inspect import stack
 import json
 
 router = APIRouter(
@@ -277,7 +278,8 @@ class TablasExpandibles():
         return {'hayResultados':hayResultados, 'pipeline': pipeline, 'columns':columns, 'data':data}
 
 @router.post("/{seccion}")
-async def tablas (filtros: Filtro, titulo: str, seccion: str, user: dict = Depends(get_current_active_user)):
+async def tablas (filtros: Filtro, titulo: str, seccion: str, request: Request, user: dict = Depends(get_current_active_user)):
+    crearLog(stack()[0][3], user.usuario, seccion, titulo, filtros, request.client.host)
     if tienePermiso(user.id, seccion):
         objeto = TablasExpandibles(filtros, titulo)
         funcion = getattr(objeto, seccion)

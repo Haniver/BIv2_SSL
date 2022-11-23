@@ -1,5 +1,5 @@
 from os import pipe, getcwd
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 
 from app.auth import get_current_active_user
 from app.servicios.conectar_mongo import conexion_mongo
@@ -10,8 +10,8 @@ from app.servicios.conectar_sql import conexion_sql, crear_diccionario
 from copy import deepcopy
 from calendar import monthrange
 import json
-from app.servicios.permisos import tienePermiso
-from app.servicios.urls import rutaLogs
+from app.servicios.permisos import tienePermiso, crearLog
+from inspect import stack
 
 router = APIRouter(
     prefix="/ejesMultiples",
@@ -4030,10 +4030,8 @@ class EjesMultiples():
         return  {'hayResultados':hayResultados,'categories':categories, 'series':series, 'pipeline': pipeline, 'lenArreglo':len(arreglo)}
 
 @router.post("/{seccion}")
-async def ejes_multiples (filtros: Filtro, titulo: str, seccion: str, user: dict = Depends(get_current_active_user)):
-    with open(f"{rutaLogs()}{user.usuario}.log", "a+") as file:
-        file.write(f"\n{datetime.now().strftime('%d/%m/%Y %H:%M:%S')} Consulta ejesMultiples->{seccion}->{titulo} | Filtros: {str(filtros)}\n")
-    file.close()
+async def ejes_multiples (filtros: Filtro, titulo: str, seccion: str, request: Request, user: dict = Depends(get_current_active_user)):
+    crearLog(stack()[0][3], user.usuario, seccion, titulo, filtros, request.client.host)
     if tienePermiso(user.id, seccion):
         objeto = EjesMultiples(filtros, titulo)
         funcion = getattr(objeto, seccion)

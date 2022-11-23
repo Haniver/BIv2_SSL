@@ -1,5 +1,5 @@
 from datetime import date, datetime
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
 
 from app.auth import get_current_active_user
 from app.servicios.conectar_sql import conexion_sql, crear_diccionario
@@ -7,7 +7,8 @@ from app.servicios.conectar_sql import conexion_sql, crear_diccionario
 from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime, timedelta, date
-from app.servicios.permisos import tienePermiso
+from app.servicios.permisos import tienePermiso, crearLog
+from inspect import stack
 
 class Producto(BaseModel):
     sku: Optional[int]
@@ -54,6 +55,7 @@ async def update_motivos_faltantes(producto: Producto):
 
 @router.post("/updateEstatusUsuario")
 async def update_motivos_faltantes(usuarioParaActualizar: UsuarioParaActualizar, user: dict = Depends(get_current_active_user)):
+    crearLog(stack()[0][3], user.usuario, seccion, titulo, filtros, request.client.host)
     if tienePermiso(user.id, 'AltaUsuarios'):
         query = f"""update us set us.estatus='{str(usuarioParaActualizar.estatus)}' from DJANGO.php.usuarios us where usuario='{usuarioParaActualizar.email}'"""
         # print("Query desde updateEstatusUsuario: " + query)
