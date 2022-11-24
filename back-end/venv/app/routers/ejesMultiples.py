@@ -395,17 +395,17 @@ class EjesMultiples():
         # esta condición está aquí porque a veces los filtros no terminan de cargar y ya está cargando la gráfica. Hay que verificar que los filtros hagan sentido.
         if self.titulo != 'Pedidos Perfectos' and (not self.filtros.periodo or (self.filtros.agrupador == 'mes' and 'semana' in self.filtros.periodo) or (self.filtros.agrupador == 'semana' and not 'semana' in self.filtros.periodo) or (self.filtros.agrupador == 'dia' and not 'dia' in self.filtros.periodo)):
             return {'hayResultados':'no','categories':[], 'series':[], 'pipeline': [], 'lenArreglo':0}
-        clauseCatTienda = False
+        clauseCatProveedor = False
         if len(self.filtros.provLogist) == 1:
-            clauseCatTienda = {'$match': {'sucursal.provLogist': self.filtros.provLogist[0]}}
+            clauseCatProveedor = {'$match': {'sucursal.provLogist': self.filtros.provLogist[0]}}
         elif len(self.filtros.provLogist) > 1:
-            clauseCatTienda = {'$match': {
+            clauseCatProveedor = {'$match': {
                 '$expr': {
                     '$or': []
                 }
             }}
             for prov in self.filtros.provLogist:
-                clauseCatTienda['$match']['$expr']['$or'].append(
+                clauseCatProveedor['$match']['$expr']['$or'].append(
                     {'$eq': [
                         '$sucursal.provLogist',
                         prov
@@ -451,8 +451,8 @@ class EjesMultiples():
                     }
                 }}
             )
-            if clauseCatTienda:
-                pipeline.append(clauseCatTienda)
+            if clauseCatProveedor:
+                pipeline.append(clauseCatProveedor)
             pipeline.extend([
                 {'$group': {
                     '_id': {},
@@ -561,8 +561,8 @@ class EjesMultiples():
                     pipeline.extend([
                         {'$match': {'sucursal.'+ nivel: lugar}}
                     ])
-                if clauseCatTienda:
-                    pipeline.append(clauseCatTienda)
+                if clauseCatProveedor:
+                    pipeline.append(clauseCatProveedor)
 
                 pipeline.extend([
                     {'$match': {
@@ -903,8 +903,8 @@ class EjesMultiples():
                 #     }}
                 # )
                 # Vamos a crear 2 facets: uno para el periodo elegido y otro para el anterior. Creamos una plantilla para el facet:
-                if clauseCatTienda:
-                    pipeline.append(clauseCatTienda)
+                if clauseCatProveedor:
+                    pipeline.append(clauseCatProveedor)
                 pipeline.extend([
                     {'$match': {
                         '$expr': {
@@ -1130,8 +1130,8 @@ class EjesMultiples():
                 #     }}
                 # )
                 # Vamos a crear 2 facets: uno para el periodo elegido y otro para el anterior. Creamos una plantilla para el facet:
-                if clauseCatTienda:
-                    pipeline.append(clauseCatTienda)
+                if clauseCatProveedor:
+                    pipeline.append(clauseCatProveedor)
                 pipeline.extend([
                     {'$match': {
                         '$expr': {
@@ -1350,8 +1350,8 @@ class EjesMultiples():
                 #     }}
                 # )
                 # Vamos a crear 2 facets: uno para el periodo elegido y otro para el anterior. Creamos una plantilla para el facet:
-                if clauseCatTienda:
-                    pipeline.append(clauseCatTienda)
+                if clauseCatProveedor:
+                    pipeline.append(clauseCatProveedor)
                 pipeline.extend([
                     {'$match': {
                         '$expr': {
@@ -2784,17 +2784,19 @@ class EjesMultiples():
         series = []
         pipeline = []
         arreglo = []
-        clauseCatTienda = " AND ct.provLogist is not null "
+        fecha_fin = self.filtros.fechas['fecha_fin'][:10]
+        clauseCatProveedor = " AND cp.proveedor is not null "
         if len(self.filtros.provLogist) > 0:
-            clauseCatTienda = " AND ("
+            clauseCatProveedor = " AND ("
             contador = 0
             for prov in self.filtros.provLogist:
-                clauseCatTienda += f" ct.provLogist = '{prov}' "
+                clauseCatProveedor += f" cp.proveedor = '{prov}' "
                 if contador < len(self.filtros.provLogist) - 1:
-                    clauseCatTienda += f" OR "
+                    clauseCatProveedor += f" OR "
                 else:
-                    clauseCatTienda += f") "
+                    clauseCatProveedor += f") "
                 contador += 1
+        clauseCatProveedor += f" AND ((cp.fecha_from = '2022-11-23' AND (cp.fecha_to is null OR cp.fecha_to <= '{fecha_fin}') OR (cp.fecha_from <= '{fecha_fin}' AND cp.fecha_to is null)))"
         hayResultados = 'no'
         # print(f"Desde {titulo}, periodo = {self.filtros.periodo}")
         if self.filtros.agrupador == 'dia':
@@ -2851,6 +2853,7 @@ class EjesMultiples():
             inner join DWH.limesurvey.nps_detalle nd on nmp.id_encuesta =nd.id_encuesta and nd.nEncuesta=nmp.nEncuesta
             left join DWH.dbo.dim_tiempo dt on nmp.fecha =dt.fecha
             left join DWH.artus.catTienda ct on nmp.idTienda =ct.tienda
+            left join DWH.artus.catProveedores cp on cp.idTienda = nmp.idTienda 
             where nmp.fecha between '{fecha_ini}' and '{fecha_fin}' """
             if self.filtros.tienda != '' and self.filtros.tienda != None and self.filtros.tienda != 'False':
                 pipeline += f""" and ct.tienda ='{self.filtros.tienda}' """
@@ -2858,7 +2861,7 @@ class EjesMultiples():
                 pipeline += f" and ct.zona='{self.filtros.zona}' "
             elif self.filtros.region != '' and self.filtros.region != None and self.filtros.region != 'False':
                 pipeline += f" and ct.region ='{self.filtros.region}' "
-            pipeline += clauseCatTienda
+            pipeline += clauseCatProveedor
             pipeline += f" group by dt.{rango} order by f_inicio_drilldown"
 
             # print("query desde ejes multiples nps: "+pipeline)
@@ -2907,7 +2910,8 @@ class EjesMultiples():
             inner join DWH.limesurvey.nps_detalle nd on nmp.id_encuesta =nd.id_encuesta and nd.nEncuesta=nmp.nEncuesta
             left join DWH.dbo.dim_tiempo dt on nmp.fecha = dt.fecha 
             left join DWH.artus.catTienda ct on nmp.idTienda =ct.tienda
-            where {agrupador_where} {lugar_where} {clauseCatTienda}
+            left join DWH.artus.catProveedores cp on cp.idTienda = nmp.idTienda 
+            where {agrupador_where} {lugar_where} {clauseCatProveedor}
             group by {lugar_select}"""
 
             # print("query desde ejes multiples nps: "+pipeline)
@@ -2967,7 +2971,8 @@ class EjesMultiples():
             from DWH.limesurvey.nps_pregunta_respuesta npr
             left join DWH.dbo.dim_tiempo dt on npr.fecha = dt.fecha 
             left join DWH.artus.catTienda ct on npr.idtienda =ct.tienda
-            where {agrupador_where} {lugar_where} {clauseCatTienda}
+            left join DWH.artus.catProveedores cp on cp.idTienda = npr.idTienda 
+            where {agrupador_where} {lugar_where} {clauseCatProveedor}
             group by id_pregunta
             ) a on ncp.id_pregunta =a.id_pregunta
             where ncp.tipo_respuesta ='R1'
@@ -3013,19 +3018,21 @@ class EjesMultiples():
             from DWH.limesurvey.nps_pregunta_respuesta npr
             left join DWH.dbo.dim_tiempo dt on npr.fecha = dt.fecha 
             left join DWH.artus.catTienda ct on npr.idtienda =ct.tienda
+            left join DWH.artus.catProveedores cp on cp.idTienda = npr.idTienda 
             inner join DWH.limesurvey.nps_cat_preguntas ncp on npr.id_pregunta =ncp.id_pregunta
             where ncp.tipo_respuesta ='R1' and ncp.flujo = 'F1'
             and {agrupador_where} 
-            {lugar_where} {clauseCatTienda}
+            {lugar_where} {clauseCatProveedor}
             ) as float) F1,
             sum(case when flujo='F2' then a.cant else 0 end)*100/cast((select sum(cant) cant
             from DWH.limesurvey.nps_pregunta_respuesta npr
             inner join DWH.limesurvey.nps_cat_preguntas ncp on npr.id_pregunta =ncp.id_pregunta
             left join DWH.dbo.dim_tiempo dt on npr.fecha = dt.fecha 
             left join DWH.artus.catTienda ct on npr.idtienda =ct.tienda
+            left join DWH.artus.catProveedores cp on cp.idTienda = npr.idTienda 
             where ncp.tipo_respuesta ='R1' and ncp.flujo = 'F2'
             and {agrupador_where}
-            {lugar_where} {clauseCatTienda}
+            {lugar_where} {clauseCatProveedor}
             ) as float) F2
             from DWH.limesurvey.nps_cat_preguntas ncp
             left join
@@ -3034,8 +3041,9 @@ class EjesMultiples():
             from DWH.limesurvey.nps_pregunta_respuesta npr
             left join DWH.dbo.dim_tiempo dt on npr.fecha = dt.fecha 
             left join DWH.artus.catTienda ct on npr.idtienda =ct.tienda
+            left join DWH.artus.catProveedores cp on cp.idTienda = npr.idTienda 
             where {agrupador_where} 
-            {lugar_where} {clauseCatTienda}
+            {lugar_where} {clauseCatProveedor}
             group by id_pregunta
             ) a on ncp.id_pregunta =a.id_pregunta
             where ncp.tipo_respuesta ='R1'
@@ -3087,7 +3095,8 @@ class EjesMultiples():
             from DWH.limesurvey.nps_pregunta_respuesta npr
             left join DWH.dbo.dim_tiempo dt on npr.fecha = dt.fecha 
             left join DWH.artus.catTienda ct on npr.idtienda =ct.tienda
-            where {agrupador_where} {lugar_where} {clauseCatTienda}
+            left join DWH.artus.catProveedores cp on cp.idTienda = npr.idTienda 
+            where {agrupador_where} {lugar_where} {clauseCatProveedor}
             group by id_pregunta
             ) a on ncp.id_pregunta =a.id_pregunta
             where ncp.tipo_respuesta ='R2'
@@ -3137,25 +3146,27 @@ class EjesMultiples():
             from DWH.limesurvey.nps_pregunta_respuesta npr
             left join DWH.dbo.dim_tiempo dt on npr.fecha = dt.fecha 
             left join DWH.artus.catTienda ct on npr.idtienda =ct.tienda
+            left join DWH.artus.catProveedores cp on cp.idTienda = npr.idTienda 
             inner join DWH.limesurvey.nps_cat_preguntas ncp on npr.id_pregunta =ncp.id_pregunta
             where ncp.orden in (select orden
             from DWH.limesurvey.nps_cat_preguntas ncp
             where descripcion = '{self.filtros.nps}' and tipo_respuesta = 'R1' and flujo='F1'
             )
             and {agrupador_where} 
-            {lugar_where} {clauseCatTienda}
+            {lugar_where} {clauseCatProveedor}
             and tipo_respuesta = 'R2' and flujo='F1') as float) F1,
             isnull(sum(case when flujo='F2' then a.cant else 0 end),0)*100/cast((select sum(cant) cant
             from DWH.limesurvey.nps_pregunta_respuesta npr
             inner join DWH.limesurvey.nps_cat_preguntas ncp on npr.id_pregunta =ncp.id_pregunta
             left join DWH.dbo.dim_tiempo dt on npr.fecha = dt.fecha 
             left join DWH.artus.catTienda ct on npr.idtienda =ct.tienda
+            left join DWH.artus.catProveedores cp on cp.idTienda = npr.idTienda 
             where ncp.orden in (select orden
             from DWH.limesurvey.nps_cat_preguntas ncp
             where descripcion = '{self.filtros.nps}' and tipo_respuesta = 'R1' and flujo='F2'
             )
             and {agrupador_where}
-            {lugar_where} {clauseCatTienda}
+            {lugar_where} {clauseCatProveedor}
             and tipo_respuesta = 'R2' and flujo='F2') as float) F2
             from DWH.limesurvey.nps_cat_preguntas ncp
             left join
@@ -3164,8 +3175,9 @@ class EjesMultiples():
             from DWH.limesurvey.nps_pregunta_respuesta npr
             left join DWH.dbo.dim_tiempo dt on npr.fecha = dt.fecha 
             left join DWH.artus.catTienda ct on npr.idtienda =ct.tienda
+            left join DWH.artus.catProveedores cp on cp.idTienda = npr.idTienda 
             where {agrupador_where} 
-            {lugar_where} {clauseCatTienda}
+            {lugar_where} {clauseCatProveedor}
             group by id_pregunta
             ) a on ncp.id_pregunta =a.id_pregunta
             where ncp.tipo_respuesta ='R2'
@@ -3223,7 +3235,8 @@ class EjesMultiples():
             inner join DWH.dbo.dim_store ds on nmp.idtienda =ds.idtienda
             left join DWH.dbo.dim_tiempo dt on nmp.fecha = dt.fecha 
             left join DWH.artus.catTienda ct on nmp.idtienda =ct.tienda
-            where {agrupador_where} {lugar_where} {clauseCatTienda}
+            left join DWH.artus.catProveedores cp on cp.idTienda = nmp.idTienda 
+            where {agrupador_where} {lugar_where} {clauseCatProveedor}
             group by isnull(ds.proyecto,'Sin Aduana') """
 
             # print("query desde ejes multiples nps: "+pipeline)
@@ -3289,7 +3302,8 @@ class EjesMultiples():
             inner join DWH.dbo.dim_store ds on nmp.idtienda =ds.idtienda
             left join DWH.dbo.dim_tiempo dt on nmp.fecha = dt.fecha 
             left join DWH.artus.catTienda ct on nmp.idtienda =ct.tienda
-            where {agrupador_where} {lugar_where} {clauseCatTienda}
+            left join DWH.artus.catProveedores cp on cp.idTienda = nmp.idTienda 
+            where {agrupador_where} {lugar_where} {clauseCatProveedor}
             group by isnull(ds.proyecto,'Sin Aduana') """
 
             # print("query desde ejes multiples nps: "+pipeline)
@@ -3355,7 +3369,8 @@ class EjesMultiples():
             inner join DWH.dbo.dim_store ds on nmp.idtienda =ds.idtienda
             left join DWH.dbo.dim_tiempo dt on nmp.fecha = dt.fecha 
             left join DWH.artus.catTienda ct on nmp.idtienda =ct.tienda
-            where {agrupador_where} {lugar_where} {clauseCatTienda}
+            left join DWH.artus.catProveedores cp on cp.idTienda = nmp.idTienda 
+            where {agrupador_where} {lugar_where} {clauseCatProveedor}
             group by isnull(ds.proyecto,'Sin Aduana') """
 
             pipeline = f"""select ds.formato_tienda,
@@ -3369,7 +3384,8 @@ class EjesMultiples():
             inner join DWH.dbo.dim_store ds on nmp.idtienda =ds.idtienda
             left join DWH.dbo.dim_tiempo dt on nmp.fecha = dt.fecha 
             left join DWH.artus.catTienda ct on nmp.idtienda =ct.tienda
-            where {agrupador_where} {lugar_where} {clauseCatTienda}
+            left join DWH.artus.catProveedores cp on cp.idTienda = nmp.idTienda 
+            where {agrupador_where} {lugar_where} {clauseCatProveedor}
             group by ds.formato_tienda
             """
 

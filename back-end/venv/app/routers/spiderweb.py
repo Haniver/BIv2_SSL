@@ -26,17 +26,19 @@ class Spiderweb():
         categories = []
         series = []
 
-        clauseCatTienda = " AND ct.provLogist is not null "
+        fecha_fin = self.filtros.fechas['fecha_fin'][:10]
+        clauseCatProveedor = " AND cp.proveedor is not null "
         if len(self.filtros.provLogist) > 0:
-            clauseCatTienda = " AND ("
+            clauseCatProveedor = " AND ("
             contador = 0
             for prov in self.filtros.provLogist:
-                clauseCatTienda += f" ct.provLogist = '{prov}' "
+                clauseCatProveedor += f" cp.proveedor = '{prov}' "
                 if contador < len(self.filtros.provLogist) - 1:
-                    clauseCatTienda += f" OR "
+                    clauseCatProveedor += f" OR "
                 else:
-                    clauseCatTienda += f") "
+                    clauseCatProveedor += f") "
                 contador += 1
+        clauseCatProveedor += f" AND ((cp.fecha_from = '2022-11-23' AND (cp.fecha_to is null OR cp.fecha_to <= '{fecha_fin}') OR (cp.fecha_from <= '{fecha_fin}' AND cp.fecha_to is null)))"
 
         if self.titulo == 'Respuestas por responsable':
             serie1 = []
@@ -65,8 +67,9 @@ class Spiderweb():
             inner join DWH.limesurvey.nps_cat_preguntas ncp on npr.id_pregunta =ncp.id_pregunta
             inner join DWH.dbo.dim_tiempo dt on npr.fecha=dt.fecha
             left join DWH.artus.catTienda ct on npr.idTienda =ct.tienda
+            left join DWH.artus.catProveedores cp on cp.idTienda = npr.idTienda 
             where ncp.tipo_respuesta = 'R2'
-            and {agrupador_where} {clauseCatTienda} """
+            and {agrupador_where} {clauseCatProveedor} """
             if self.filtros.tienda != '' and self.filtros.tienda != None and self.filtros.tienda != 'False':
                 pipeline += f""" and ct.tienda ='{self.filtros.tienda}' """
             elif self.filtros.zona != '' and self.filtros.zona != None and self.filtros.zona != 'False':

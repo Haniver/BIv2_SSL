@@ -178,9 +178,10 @@ const Filtro = (props) => {
   ]
 
   const comboProvLogist = [
-    {label: 'Zubale', value: 'Zubale'},
+    {label: 'Zubale Delivery', value: 'Zubale Delivery'},
+    {label: 'Zubale Delivery y Pickup', value: 'Zubale Delivery y Pickup'},
     {label: 'Depto de Logística', value: 'Logística'},
-    {label: 'Recursos Propios', value: 'No es Zubale'}
+    {label: 'Recursos Propios', value: 'Recursos Propios'}
   ]
 
   const comboAnio = [
