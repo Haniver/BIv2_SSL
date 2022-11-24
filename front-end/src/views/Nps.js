@@ -80,10 +80,10 @@ const Nps = () => {
         </Col>
       </Row>
       <Row className='match-height'>
-        <Col sm='12' lg='6'>
+        {/* <Col sm='12' lg='6'>
           {(periodo.mes !== undefined || periodo.semana !== undefined) && <EjesMultiples tituloAPI='% NPS Con o Sin Aduana' titulo={`% NPS Con o Sin Aduana 🌒 ${periodoLabel}`} fechas={fechas} provLogist={provLogist} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} />}
-        </Col>
-        <Col sm='12' lg='6'>
+        </Col> */}
+        <Col sm='12'>
           {(periodo.mes !== undefined || periodo.semana !== undefined) && <EjesMultiples tituloAPI='% NPS por Formato Tienda' titulo={`% NPS por Formato Tienda 🌒 ${periodoLabel}`} fechas={fechas} provLogist={provLogist} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} />}
         </Col>
       </Row>
