@@ -397,7 +397,7 @@ class EjesMultiples():
             return {'hayResultados':'no','categories':[], 'series':[], 'pipeline': [], 'lenArreglo':0}
         clauseCatProveedor = False
         if len(self.filtros.provLogist) == 1:
-            clauseCatProveedor = {'$match': {'sucursal.provLogist': self.filtros.provLogist[0]}}
+            clauseCatProveedor = {'$match': {'sucursal.proveedor': self.filtros.provLogist[0]}}
         elif len(self.filtros.provLogist) > 1:
             clauseCatProveedor = {'$match': {
                 '$expr': {
@@ -407,7 +407,7 @@ class EjesMultiples():
             for prov in self.filtros.provLogist:
                 clauseCatProveedor['$match']['$expr']['$or'].append(
                     {'$eq': [
-                        '$sucursal.provLogist',
+                        '$sucursal.proveedor',
                         prov
                     ]}
                 )
