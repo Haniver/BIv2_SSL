@@ -105,8 +105,9 @@ class TarjetasEnFila():
         cursor = cnxn.cursor().execute(query)
         arreglo = crear_diccionario(cursor)
         # print(f"arreglo desde ejesMultiplesApilados: {str(arreglo)}")
+        valor2 = arreglo[0]['pedidos'] if arreglo[0]['pedidos'] is not None else 0
         res.append({
-            'valor': arreglo[0]['pedidos'],
+            'valor': valor2,
             'titulo': f"Pedidos Última Hora (0{arreglo[0]['hora']}:00)" if int(arreglo[0]['hora']) < 10 else f"Pedidos Última Hora ({arreglo[0]['hora']}:00)",
             'icon': 'Package',
             'formato': 'entero'
@@ -122,8 +123,9 @@ class TarjetasEnFila():
         cursor = cnxn.cursor().execute(query)
         arreglo = crear_diccionario(cursor)
         # print(f"arreglo desde ejesMultiplesApilados: {str(arreglo)}")
+        valor3 = arreglo[0]['venta'] if arreglo[0]['venta'] is not None else 0
         res.append({
-            'valor': arreglo[0]['venta'],
+            'valor': valor3,
             'titulo': 'Venta Hoy',
             'icon': 'DollarSign',
             'formato': 'moneda'
@@ -144,8 +146,9 @@ class TarjetasEnFila():
         cursor = cnxn.cursor().execute(query)
         arreglo = crear_diccionario(cursor)
         # print(f"arreglo desde ejesMultiplesApilados: {str(arreglo)}")
+        valor4 = arreglo[0]['porc_part'] if arreglo[0]['porc_part'] is not None else 0
         res.append({
-            'valor': arreglo[0]['porc_part'],
+            'valor': valor4,
             'titulo': '% Participación Venta Hoy',
             'icon': 'Percent',
             'formato': 'porcentaje'
