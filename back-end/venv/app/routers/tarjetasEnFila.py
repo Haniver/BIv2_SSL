@@ -180,9 +180,13 @@ class TarjetasEnFila():
         cursor = cnxn.cursor().execute(query)
         arreglo = crear_diccionario(cursor)
         # print(f"arreglo desde ejesMultiplesApilados: {str(arreglo)}")
+        if arreglo[0]['artPromedio'] is not None:
+            valor2 = float(arreglo[0]['artPromedio'])
+        else:
+            valor2 = 0
         res.append({
             'titulo': 'Artículos Promedio',
-            'valor': float(arreglo[0]['artPromedio']),
+            'valor': valor2,
             'icon': 'Box',
             'formato': 'entero'
         })
