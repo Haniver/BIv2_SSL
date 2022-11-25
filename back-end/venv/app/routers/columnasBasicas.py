@@ -249,7 +249,7 @@ class ColumnasBasicas():
                 {queryLugar}
                 group by {lugar}
                 """
-            print(f"query desde tablas->CostoPorPedido->{self.titulo}->General: {str(pipeline)}")
+            print(f"query desde ColumnasBasicas->PedidosPorPicker->{self.titulo}->General: {str(pipeline)}")
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)
@@ -263,7 +263,7 @@ class ColumnasBasicas():
                     {query2Anio} 
                     {query2Mes} 
                     {queryLugar}"""
-                    print(f"query desde tablas->CostoPorPedido->{self.titulo}->Picker: {str(query)}")
+                    print(f"query desde columnasBasicas->PedidosPorPicker->{self.titulo}->Picker: {str(query)}")
                     cursor = cnxn.cursor().execute(query)
                     arregloSub = crear_diccionario(cursor)
                     pedidos = float(row['pedidos'])

@@ -160,9 +160,13 @@ class TarjetasEnFila():
         cursor = cnxn.cursor().execute(query)
         arreglo = crear_diccionario(cursor)
         print(f"arreglo desde tarjetasEnFila: {str(arreglo)}")
+        if arreglo[0]['pedidos'] != 0 and arreglo[0]['pedidos'] is not None and arreglo[0]['venta'] is not None:
+            valor = float(arreglo[0]['venta']/arreglo[0]['pedidos'])
+        else:
+            valor = 0
         res.append({
             'titulo': 'Ticket Promedio (sin imp)',
-            'valor': float(arreglo[0]['venta']/arreglo[0]['pedidos']),
+            'valor': valor,
             'icon': 'FileText',
             'formato': 'moneda'
         })
