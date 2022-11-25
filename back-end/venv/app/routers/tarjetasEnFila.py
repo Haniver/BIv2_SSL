@@ -83,8 +83,9 @@ class TarjetasEnFila():
         cursor = cnxn.cursor().execute(query)
         arreglo = crear_diccionario(cursor)
         # print(f"arreglo desde ejesMultiplesApilados: {str(arreglo)}")
+        valor = arreglo[0]['venta'] if arreglo[0]['venta'] is not None else 0
         res.append({
-            'valor': arreglo[0]['venta'],
+            'valor': valor,
             'titulo': f"Venta Última Hora (0{arreglo[0]['hora']}:00)" if int(arreglo[0]['hora']) < 10 else f"Venta Última Hora ({arreglo[0]['hora']}:00)",
             'icon': 'DollarSign',
             'formato': 'moneda'
