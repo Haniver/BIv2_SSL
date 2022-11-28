@@ -399,9 +399,9 @@ async def tarjetasEnFila (filtros: Filtro, titulo: str, seccion: str, request: R
     # print("El usuario desde tarjetas .py es: {str(user)}")
     loguearConsulta(stack()[0][3], user.usuario, seccion, titulo, filtros, request.client.host)
     if tienePermiso(user.id, seccion):
-        objeto = TarjetasEnFila(filtros, titulo)
-        funcion = getattr(objeto, seccion)
         try:
+            objeto = TarjetasEnFila(filtros, titulo)
+            funcion = getattr(objeto, seccion)
             diccionario = await funcion()
         except:
             error = traceback.format_exc()

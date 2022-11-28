@@ -105,9 +105,9 @@ class Distribucion3D():
 async def distribucion_3d (filtros: Filtro, titulo: str, seccion: str, request: Request, user: dict = Depends(get_current_active_user)):
     loguearConsulta(stack()[0][3], user.usuario, seccion, titulo, filtros, request.client.host)
     if tienePermiso(user.id, seccion):
-        objeto = Distribucion3D(filtros, titulo)
-        funcion = getattr(objeto, seccion)
         try:
+            objeto = Distribucion3D(filtros, titulo)
+            funcion = getattr(objeto, seccion)
             diccionario = await funcion()
         except:
             error = traceback.format_exc()

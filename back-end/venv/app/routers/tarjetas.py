@@ -555,9 +555,9 @@ async def tarjetas (filtros: Filtro, titulo: str, seccion: str, request: Request
     # print("El usuario desde tarjetas .py es: {str(user)}")
     loguearConsulta(stack()[0][3], user.usuario, seccion, titulo, filtros, request.client.host)
     if tienePermiso(user.id, seccion):
-        objeto = Tarjetas(filtros, titulo)
-        funcion = getattr(objeto, seccion)
         try:
+            objeto = Tarjetas(filtros, titulo)
+            funcion = getattr(objeto, seccion)
             diccionario = await funcion()
         except:
             error = traceback.format_exc()
