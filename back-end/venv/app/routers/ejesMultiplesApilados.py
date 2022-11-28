@@ -10,7 +10,9 @@ from app.servicios.conectar_sql import conexion_sql, crear_diccionario
 from copy import deepcopy
 from calendar import monthrange
 import json
-from app.servicios.permisos import tienePermiso, crearLog
+from app.servicios.permisos import tienePermiso
+from app.servicios.logs import loguearConsulta, loguearError
+import traceback
 from inspect import stack
 
 router = APIRouter(
@@ -516,11 +518,17 @@ class EjesMultiplesApilados():
 
 @router.post("/{seccion}")
 async def ejes_multiples_apilados (filtros: Filtro, titulo: str, seccion: str, request: Request, user: dict = Depends(get_current_active_user)):
-    crearLog(stack()[0][3], user.usuario, seccion, titulo, filtros, request.client.host)
+    loguearConsulta(stack()[0][3], user.usuario, seccion, titulo, filtros, request.client.host)
     if tienePermiso(user.id, seccion):
         objeto = EjesMultiplesApilados(filtros, titulo)
         funcion = getattr(objeto, seccion)
-        diccionario = await funcion()
+        try:
+            diccionario = await funcion()
+        except:
+            error = traceback.format_exc()
+            loguearError(stack()[0][3], user.usuario, seccion, titulo, error, filtros, request.client.host)
+            return {'hayResultados':'error'}
         return diccionario
+
     else:
         return {"message": "No tienes permiso para acceder a este recurso."}

@@ -15,12 +15,14 @@ import { useSkin } from '@hooks/useSkin'
 import { Card, CardBody } from 'reactstrap'
 import drilldown from 'highcharts/modules/drilldown'
 import LoadingGif from '../auxiliares/LoadingGif'
+import fechas_srv from '../../services/fechas_srv'
 import { procesarSerie } from '../../services/funcionesAdicionales'
 require('highcharts/modules/data')(Highcharts)
 require('highcharts/modules/exporting')(Highcharts)
 require('highcharts/modules/export-data')(Highcharts)
 
 const EjesMultiplesConEscala = ({ titulo, yLabel, seccion, formato, fechas, region, zona, tienda, proveedor, categoria, tipoEntrega, tituloAPI, canal, mes, depto, subDepto, agrupador, periodo, nps, anioRFM, mesRFM, anio }) => {
+    const [hayError, setHayError] = useState(false)
     const titulo_enviar = (tituloAPI) ? tituloAPI : titulo // Como la API usa el título de la gráfica para regresar su valor, había un problema cuando ese título es variable, como cuando incluye la fecha actual. Entonces, si desde la vista le mandas el prop tituloAPI, es ese el que se usa para la API. Si lo omites, se usa la variable titulo como estaba pensado originalmente
     const [estadoLoader, dispatchLoader] = useReducer((estadoLoader, accion) => {
         switch (accion.tipo) {
@@ -106,7 +108,10 @@ const EjesMultiplesConEscala = ({ titulo, yLabel, seccion, formato, fechas, regi
         })
         dispatchLoader({tipo: 'recibirDeAPI'})
         let formato_columnas_tmp = 'entero'
-        if (res.data.hayResultados === 'si') {
+        if (res.data.hayResultados === 'error') {
+            setHayError(true)
+        } else if (res.data.hayResultados === 'si') {
+        setHayError(false)
             const series_tmp = []
             const yAxis_tmp = []
             res.data.series.forEach(elemento => {
@@ -216,7 +221,8 @@ const EjesMultiplesConEscala = ({ titulo, yLabel, seccion, formato, fechas, regi
     return (
         <Card>
             <CardBody>
-                {estadoLoader.contador === 0 && <>
+                {hayError && <p classname='texto-rojo'>{`Error en la carga del componente "${tituloEnviar}" el ${fechas_srv.fechaYHoraActual()}`}</p>}
+                {!hayError && estadoLoader.contador === 0 && <>
                     <HighchartsReact
                         highcharts={Highcharts}
                         options={options}
@@ -224,7 +230,7 @@ const EjesMultiplesConEscala = ({ titulo, yLabel, seccion, formato, fechas, regi
                     />
                     {/* <button onClick={chartComponent.exportChart()}>Exportar</button> */}
                 </>}
-                {estadoLoader.contador !== 0 && <LoadingGif />}
+                {!hayError && estadoLoader.contador !== 0 && <LoadingGif />}
             </CardBody>
         </Card>
     )

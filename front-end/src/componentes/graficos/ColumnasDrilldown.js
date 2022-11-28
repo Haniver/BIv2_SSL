@@ -9,11 +9,13 @@ import { useSkin } from '@hooks/useSkin'
 import { Card, CardBody } from 'reactstrap'
 import drilldown from 'highcharts/modules/drilldown'
 import LoadingGif from '../auxiliares/LoadingGif'
+import fechas_srv from '../../services/fechas_srv'
 require('highcharts/modules/data')(Highcharts)
 require('highcharts/modules/exporting')(Highcharts)
 require('highcharts/modules/export-data')(Highcharts)
 
 const ColumnasDrilldown = ({ titulo, yLabel, seccion, formato, fechas, region, zona, tienda, proveedor }) => {
+    const [hayError, setHayError] = useState(false)
     const [series_outer, setSeries_outer] = useState([])
     const [drilldown_series, setDrilldown_series] = useState([])
         const [estadoLoader, dispatchLoader] = useReducer((estadoLoader, accion) => {
@@ -68,7 +70,10 @@ const ColumnasDrilldown = ({ titulo, yLabel, seccion, formato, fechas, region, z
         })
         dispatchLoader({tipo: 'recibirDeAPI'})
         const datos_tmp = res.data.res
-        if (res.data.hayResultados === 'si') {
+        if (res.data.hayResultados === 'error') {
+            setHayError(true)
+        } else if (res.data.hayResultados === 'si') {
+        setHayError(false)
             setSeries_outer(datos_tmp.series_outer)
             setDrilldown_series(datos_tmp.drilldown_series)
         } else {
@@ -182,11 +187,12 @@ const ColumnasDrilldown = ({ titulo, yLabel, seccion, formato, fechas, region, z
     return (
         <Card>
             <CardBody>
-                {estadoLoader.contador === 0 && <HighchartsReact
+                {hayError && <p classname='texto-rojo'>{`Error en la carga del componente "${tituloEnviar}" el ${fechas_srv.fechaYHoraActual()}`}</p>}
+                {!hayError && estadoLoader.contador === 0 && <HighchartsReact
                     highcharts={Highcharts}
                     options={options}
                 />}
-                {estadoLoader.contador !== 0 && <LoadingGif />}
+                {!hayError && estadoLoader.contador !== 0 && <LoadingGif />}
             </CardBody>
         </Card>
     )

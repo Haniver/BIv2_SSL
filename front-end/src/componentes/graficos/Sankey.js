@@ -9,6 +9,7 @@ import { useSkin } from '@hooks/useSkin'
 import { Card, CardBody } from 'reactstrap'
 import drilldown from 'highcharts/modules/drilldown'
 import LoadingGif from '../auxiliares/LoadingGif'
+import fechas_srv from '../../services/fechas_srv'
 require('highcharts/modules/data')(Highcharts)
 require('highcharts/modules/exporting')(Highcharts)
 require('highcharts/modules/export-data')(Highcharts)
@@ -16,6 +17,7 @@ import HighchartsSankey from "highcharts/modules/sankey"
 HighchartsSankey(Highcharts)
 
 const Sankey = ({ titulo, seccion, grupoDeptos, deptoAgrupado, periodo, agrupador, subDeptoAgrupado }) => {
+    const [hayError, setHayError] = useState(false)
     const [data, setData] = useState([])
     const [colores, setColores] = useState(['#000'])
     // const [data, setData] = useState([
@@ -93,7 +95,10 @@ const Sankey = ({ titulo, seccion, grupoDeptos, deptoAgrupado, periodo, agrupado
         // console.log('data:')
         // console.log(data_tmp)
         // console.log(`Hay resultados: ${res.data.hayResultados}`)
-        if (res.data.hayResultados === 'si') {
+        if (res.data.hayResultados === 'error') {
+            setHayError(true)
+        } else if (res.data.hayResultados === 'si') {
+        setHayError(false)
             setData(data_tmp)
             setColores(res.data.colors)
         } else {
@@ -150,7 +155,8 @@ const Sankey = ({ titulo, seccion, grupoDeptos, deptoAgrupado, periodo, agrupado
     return (
         <Card>
             <CardBody>
-                {estadoLoader.contador === 0 && <>
+                {hayError && <p classname='texto-rojo'>{`Error en la carga del componente "${tituloEnviar}" el ${fechas_srv.fechaYHoraActual()}`}</p>}
+                {!hayError && estadoLoader.contador === 0 && <>
                     <HighchartsReact
                         highcharts={Highcharts}
                         options={options}
@@ -158,7 +164,7 @@ const Sankey = ({ titulo, seccion, grupoDeptos, deptoAgrupado, periodo, agrupado
                     />
                     {/* <button onClick={chartComponent.exportChart()}>Exportar</button> */}
                 </>}
-                {estadoLoader.contador !== 0 && <LoadingGif />}
+                {!hayError && estadoLoader.contador !== 0 && <LoadingGif />}
             </CardBody>
         </Card>
     )

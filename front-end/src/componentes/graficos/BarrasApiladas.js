@@ -9,12 +9,14 @@ import { useSkin } from '@hooks/useSkin'
 import { Card, CardBody } from 'reactstrap'
 import drilldown from 'highcharts/modules/drilldown'
 import LoadingGif from '../auxiliares/LoadingGif'
+import fechas_srv from '../../services/fechas_srv'
 import { procesarSerie } from '../../services/funcionesAdicionales'
 require('highcharts/modules/data')(Highcharts)
 require('highcharts/modules/exporting')(Highcharts)
 require('highcharts/modules/export-data')(Highcharts)
 
 const BarrasApiladas = ({ titulo, tituloAPI, yLabel, porcentaje, sinCantidad, seccion, formato, fechas, region, zona, tienda, proveedor, categoria, tipoEntrega, agrupador, periodo, grupoDeptos, deptoAgrupado, subDeptoAgrupado, provLogist }) => {
+    const [hayError, setHayError] = useState(false)
     const [series, setSeries] = useState([])
     const [categorias, setCategorias] = useState([])
         const [estadoLoader, dispatchLoader] = useReducer((estadoLoader, accion) => {
@@ -92,7 +94,10 @@ const BarrasApiladas = ({ titulo, tituloAPI, yLabel, porcentaje, sinCantidad, se
           }
         })
         dispatchLoader({tipo: 'recibirDeAPI'})
-        if (res.data.hayResultados === 'si') {
+        if (res.data.hayResultados === 'error') {
+            setHayError(true)
+        } else if (res.data.hayResultados === 'si') {
+        setHayError(false)
             const series_tmp = []
             setCategorias(res.data.categorias)
             // console.log('categorias:')
@@ -203,7 +208,8 @@ const BarrasApiladas = ({ titulo, tituloAPI, yLabel, porcentaje, sinCantidad, se
     return (
         <Card>
             <CardBody>
-                {estadoLoader.contador === 0 && <>
+                {hayError && <p classname='texto-rojo'>{`Error en la carga del componente "${tituloEnviar}" el ${fechas_srv.fechaYHoraActual()}`}</p>}
+                {!hayError && estadoLoader.contador === 0 && <>
                     <HighchartsReact
                         highcharts={Highcharts}
                         options={options}
@@ -211,7 +217,7 @@ const BarrasApiladas = ({ titulo, tituloAPI, yLabel, porcentaje, sinCantidad, se
                     />
                     {/* <button onClick={chartComponent.exportChart()}>Exportar</button> */}
                 </>}
-                {estadoLoader.contador !== 0 && <LoadingGif />}
+                {!hayError && estadoLoader.contador !== 0 && <LoadingGif />}
             </CardBody>
         </Card>
     )

@@ -140,6 +140,10 @@ class fechas_srv {
         endOfDay.setUTCHours(23, 59, 59, 999)
         return endOfDay
     }
+    fechaYHoraActual() {
+        const hoy = new Date()
+        return `${hoy.getDate()}/${hoy.getMonth()}/${hoy.getFullYear()} @ ${hoy.getHours()}:${hoy.getMinutes()}`
+    }
 }
   
 export default new fechas_srv()

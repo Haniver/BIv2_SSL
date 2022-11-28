@@ -8,6 +8,7 @@ import { Card, CardBody, Input, Button } from 'reactstrap'
 import { Link } from 'react-router-dom'
 import DataTable, { ExpanderComponentProps } from 'react-data-table-component'
 import LoadingGif from '../auxiliares/LoadingGif'
+import fechas_srv from '../../services/fechas_srv'
 import Label from 'reactstrap/lib/Label'
 import Barras from '../graficos/Barras'
 
@@ -43,6 +44,7 @@ const TablaExpandible = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExpo
     const { colors } = useContext(ThemeColors)
 
     // Datos iniciales
+    const [hayError, setHayError] = useState(false)
         const [estadoLoader, dispatchLoader] = useReducer((estadoLoader, accion) => {
         switch (accion.tipo) {
           case 'llamarAPI':
@@ -138,7 +140,10 @@ const TablaExpandible = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExpo
           }
         })
         dispatchLoader({tipo: 'recibirDeAPI'})
-        if (res.data.hayResultados === 'si') {
+        if (res.data.hayResultados === 'error') {
+            setHayError(true)
+        } else if (res.data.hayResultados === 'si') {
+        setHayError(false)
             const columns_tmp = res.data.columns
             // console.log('Columnas:')
             // console.log(columns_tmp)
@@ -583,7 +588,8 @@ const TablaExpandible = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExpo
     return (
         <Card>
             <CardBody>
-                {estadoLoader.contador === 0 && <DataTable
+                {hayError && <p classname='texto-rojo'>{`Error en la carga del componente "${tituloEnviar}" el ${fechas_srv.fechaYHoraActual()}`}</p>}
+                {!hayError && estadoLoader.contador === 0 && <DataTable
                     title={titulo}
                     columns={columns}
                     data={filteredItems}
@@ -603,7 +609,7 @@ const TablaExpandible = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExpo
                     // Algunas filas vienen con una propiedad "esTotal = true" desde el back end. Si lo tienen, usarlo para darle formato de Total a esa fila:
                     conditionalRowStyles={conditionalRowStyles}
                 />}
-                {estadoLoader.contador !== 0 && <LoadingGif />}
+                {!hayError && estadoLoader.contador !== 0 && <LoadingGif />}
             </CardBody>
         </Card>
     )

@@ -85,23 +85,10 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     medianoche = datetime.combine(hoy, time.max)
     diferencia = medianoche - ahorita
     access_token_expires = timedelta(seconds=diferencia.seconds)
-    # access_token_expires = timedelta(seconds=20) # Para fines de debugging, lo vamos a poner de 30 segundos
     access_token = create_access_token(
         data={"sub": user.usuario}, expires_delta=access_token_expires
     )
     return {"access_token": access_token, "token_type": "bearer"}
-
-# @router.get("/roles")
-# async def roles():
-#     respuesta = []
-#     cnxn = conexion_sql('DJANGO')
-#     cursor = cnxn.cursor()
-#     cursor.execute("select * from DJANGO.php.rol r")
-#     rows = cursor.fetchall()
-#     for row in rows:
-#         respuesta.append({'value': row.id, 'label': row.rol})
-#     # print(f'Respuesta desde roles en login.py: {str(respuesta)}')
-#     return respuesta
 
 @router.get("/areas")
 async def areas():
@@ -218,9 +205,6 @@ async def verificar_usuario(input: TokenData):
         arregloDominios.append(registro['dominio'])
     if input.usuario[input.usuario.find('@') + 1:] in arregloDominios:
         # Ya no vamos a checar que el email no exista en la BD. Solo que sea de un dominio válido
-        # query2 = f"SELECT usuario from DJANGO.php.usuarios WHERE usuario = '{input.usuario}'"
-        # cursor = cnxn.cursor().execute(query2)
-        # arreglo = crear_diccionario(cursor)
         return "Éxito" # if len(arreglo) == 0 else "Usuario ya estaba"
     else:
         return "Dominio no válido"

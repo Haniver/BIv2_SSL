@@ -6,6 +6,7 @@ import axios from 'axios'
 import { useState, useEffect, useReducer } from 'react'
 import CustomUrls from '../../services/customUrls'
 import LoadingGif from '../auxiliares/LoadingGif'
+import fechas_srv from '../../services/fechas_srv'
 
 const Tarjeta = ({ icono, titulo, tituloAPI, seccion, className, formato, fechas, region, zona, tienda, proveedor, depto, subDepto, canal, anioRFM, mesRFM, resAPI, colorPositivo }) => {
   const [numero, setNumero] = useState('')

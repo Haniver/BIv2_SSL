@@ -20,6 +20,7 @@ import { useSkin } from '@hooks/useSkin'
 import { Card, CardBody } from 'reactstrap'
 import drilldown from 'highcharts/modules/drilldown'
 import LoadingGif from '../auxiliares/LoadingGif'
+import fechas_srv from '../../services/fechas_srv'
 import { conditionallyUpdateScrollbar } from "reactstrap/lib/utils"
 
 
@@ -39,6 +40,7 @@ const Distribucion3D = ({ titulo, yLabel, seccion, formato, fechas, region, zona
     //         }
     //     })
     // })
+    const [hayError, setHayError] = useState(false)
     const [data, setData] = useState([])
     const [tituloX, setTituloX] = useState('')
     const [tituloY, setTituloY] = useState('')
@@ -330,7 +332,10 @@ const Distribucion3D = ({ titulo, yLabel, seccion, formato, fechas, region, zona
             }
         })
         dispatchLoader({tipo: 'recibirDeAPI'})
-        if (res.data.hayResultados === 'si') {
+        if (res.data.hayResultados === 'error') {
+            setHayError(true)
+        } else if (res.data.hayResultados === 'si') {
+        setHayError(false)
             const series_tmp = []
             // console.log('Data desde Distribucion3D:')
             // console.log(res.data.data)
@@ -371,7 +376,7 @@ const Distribucion3D = ({ titulo, yLabel, seccion, formato, fechas, region, zona
                     hidden = {estadoLoader.contador !== 0}
                 />
                 {/* <button onClick={chartComponent.exportChart()}>Exportar</button> */}
-                {estadoLoader.contador !== 0 && <LoadingGif />}
+                {!hayError && estadoLoader.contador !== 0 && <LoadingGif />}
             </CardBody>
         </Card>
     )

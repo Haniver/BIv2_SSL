@@ -9,6 +9,7 @@ import { useSkin } from '@hooks/useSkin'
 import { Card, CardBody } from 'reactstrap'
 import drilldown from 'highcharts/modules/drilldown'
 import LoadingGif from '../auxiliares/LoadingGif'
+import fechas_srv from '../../services/fechas_srv'
 import { procesarSerie } from '../../services/funcionesAdicionales'
 import { string } from 'prop-types'
 require('highcharts/modules/data')(Highcharts)
@@ -16,6 +17,7 @@ require('highcharts/modules/exporting')(Highcharts)
 require('highcharts/modules/export-data')(Highcharts)
 
 const ColumnasApiladas = ({ titulo, yLabel, seccion, formato, fechas, region, zona, tienda, proveedor, categoria, tipoEntrega, agrupador, periodo, tituloAPI, origen, ocultarTotales, provLogist }) => {
+    const [hayError, setHayError] = useState(false)
     const titulo_enviar = (tituloAPI !== undefined) ? tituloAPI : titulo
     const [series, setSeries] = useState([])
     const [categorias, setCategorias] = useState([])
@@ -76,7 +78,10 @@ const ColumnasApiladas = ({ titulo, yLabel, seccion, formato, fechas, region, zo
           }
         })
         dispatchLoader({tipo: 'recibirDeAPI'})
-        if (res.data.hayResultados === 'si') {
+        if (res.data.hayResultados === 'error') {
+            setHayError(true)
+        } else if (res.data.hayResultados === 'si') {
+        setHayError(false)
             const series_tmp = []
             setCategorias(res.data.categorias)
             // console.log(`pipeline ${titulo}: ${JSON.stringify(res.data.pipeline)}`)
@@ -216,7 +221,8 @@ const ColumnasApiladas = ({ titulo, yLabel, seccion, formato, fechas, region, zo
     return (
         <Card>
             <CardBody>
-                {estadoLoader.contador === 0 && <>
+                {hayError && <p classname='texto-rojo'>{`Error en la carga del componente "${tituloEnviar}" el ${fechas_srv.fechaYHoraActual()}`}</p>}
+                {!hayError && estadoLoader.contador === 0 && <>
                     <HighchartsReact
                         highcharts={Highcharts}
                         options={options}
@@ -224,7 +230,7 @@ const ColumnasApiladas = ({ titulo, yLabel, seccion, formato, fechas, region, zo
                     />
                     {/* <button onClick={chartComponent.exportChart()}>Exportar</button> */}
                 </>}
-                {estadoLoader.contador !== 0 && <LoadingGif />}
+                {!hayError && estadoLoader.contador !== 0 && <LoadingGif />}
             </CardBody>
         </Card>
     )

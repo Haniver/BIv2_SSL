@@ -8,6 +8,7 @@ import { Card, CardBody, Input, Button } from 'reactstrap'
 import { Link } from 'react-router-dom'
 import DataTable from 'react-data-table-component'
 import LoadingGif from '../auxiliares/LoadingGif'
+import fechas_srv from '../../services/fechas_srv'
 import { ContextMenu, MenuItem, ContextMenuTrigger, SubMenu } from "react-contextmenu"
 
 // Búsqueda
@@ -42,6 +43,7 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
     const { colors } = useContext(ThemeColors)
 
     // Datos iniciales
+    const [hayError, setHayError] = useState(false)
         const [estadoLoader, dispatchLoader] = useReducer((estadoLoader, accion) => {
         switch (accion.tipo) {
           case 'llamarAPI':
@@ -115,7 +117,10 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
           }
         })
         dispatchLoader({tipo: 'recibirDeAPI'})
-        if (res.data.hayResultados === 'si') {
+        if (res.data.hayResultados === 'error') {
+            setHayError(true)
+        } else if (res.data.hayResultados === 'si') {
+        setHayError(false)
             const columns_tmp = res.data.columns
             // console.log('Columnas:')
             // console.log(columns_tmp)
@@ -513,7 +518,8 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
             <Card>
                 <CardBody>
                     {/* {estadoLoader.contador === 0 && buildContextMenuJSX() && <> */}
-                    {estadoLoader.contador === 0 && <>
+                    {hayError && <p classname='texto-rojo'>{`Error en la carga del componente "${tituloEnviar}" el ${fechas_srv.fechaYHoraActual()}`}</p>}
+                {!hayError && estadoLoader.contador === 0 && <>
                     <ContextMenuTrigger id={`context-${titulo}`} holdToDisplay={1000}>
                         <DataTable
                             title={titulo}
@@ -548,7 +554,7 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
                     </ContextMenu>
                     </>
                     }
-                    {estadoLoader.contador !== 0 && <LoadingGif />}
+                    {!hayError && estadoLoader.contador !== 0 && <LoadingGif />}
                 </CardBody>
             </Card>
         )
@@ -557,7 +563,8 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
             <Card>
                 <CardBody>
                     {/* {estadoLoader.contador === 0 && buildContextMenuJSX() && <> */}
-                    {estadoLoader.contador === 0 && <DataTable
+                    {hayError && <p classname='texto-rojo'>{`Error en la carga del componente "${tituloEnviar}" el ${fechas_srv.fechaYHoraActual()}`}</p>}
+                {!hayError && estadoLoader.contador === 0 && <DataTable
                         title={titulo}
                         columns={columns}
                         data={filteredItems}
@@ -575,7 +582,7 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
                         highlightOnHover
                     />
                     }
-                    {estadoLoader.contador !== 0 && <LoadingGif />}
+                    {!hayError && estadoLoader.contador !== 0 && <LoadingGif />}
                 </CardBody>
             </Card>
         )

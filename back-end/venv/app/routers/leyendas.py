@@ -6,7 +6,9 @@ from app.servicios.conectar_sql import conexion_sql, crear_diccionario
 from app.servicios.Filtro import Filtro
 from datetime import date, datetime, timedelta
 from calendar import monthrange
-from app.servicios.permisos import tienePermiso, crearLog
+from app.servicios.permisos import tienePermiso
+from app.servicios.logs import loguearConsulta, loguearError
+import traceback
 from inspect import stack
 
 router = APIRouter(
@@ -62,12 +64,18 @@ class Leyendas():
 async def leyendas (titulo: str, seccion: str, request: Request, user: dict = Depends(get_current_active_user)):
     # print("El usuario desde tarjetas .py es: {str(user)}")
     # print(f"Filtros desde leyendas: {str(filtros)}")
-    crearLog(stack()[0][3], user.usuario, seccion, titulo, ip=request.client.host)
+    loguearConsulta(stack()[0][3], user.usuario, seccion, titulo, ip=request.client.host)
     if tienePermiso(user.id, seccion):
         objeto = Leyendas(titulo)
         funcion = getattr(objeto, seccion)
-        diccionario = await funcion()
+        try:
+            diccionario = await funcion()
+        except:
+            error = traceback.format_exc()
+            loguearError(stack()[0][3], user.usuario, seccion, titulo, error, ip=request.client.host)
+            return {'hayResultados':'error'}
         return diccionario
+
     else:
         return {"message": "No tienes permiso para acceder a este recurso."}        
 

@@ -10,6 +10,7 @@ import { useSkin } from '@hooks/useSkin'
 import { Card, CardBody } from 'reactstrap'
 import drilldown from 'highcharts/modules/drilldown'
 import LoadingGif from '../auxiliares/LoadingGif'
+import fechas_srv from '../../services/fechas_srv'
 import HC_more from 'highcharts/highcharts-more'
 HC_more(Highcharts)
 require('highcharts/modules/data')(Highcharts)
@@ -17,6 +18,7 @@ require('highcharts/modules/exporting')(Highcharts)
 require('highcharts/modules/export-data')(Highcharts)
 
 const Burbuja3D = ({ titulo, yLabel, seccion, formato, fechas, region, zona, tienda, proveedor, categoria, tipoEntrega, tituloAPI, periodo, agrupador, anioRFM, mesRFM }) => {
+    const [hayError, setHayError] = useState(false)
     const [data, setData] = useState([])
     const [categoriesX, setCategoriesX] = useState([])
     const [categoriesY, setCategoriesY] = useState([])
@@ -171,7 +173,10 @@ const Burbuja3D = ({ titulo, yLabel, seccion, formato, fechas, region, zona, tie
           }
         })
         dispatchLoader({tipo: 'recibirDeAPI'})
-        if (res.data.hayResultados === 'si') {
+        if (res.data.hayResultados === 'error') {
+            setHayError(true)
+        } else if (res.data.hayResultados === 'si') {
+        setHayError(false)
             setCategoriesX(res.data.categoriesX)
             setCategoriesY(res.data.categoriesY)
             setData(res.data.data)
@@ -189,7 +194,8 @@ const Burbuja3D = ({ titulo, yLabel, seccion, formato, fechas, region, zona, tie
     return (
         <Card>
             <CardBody>
-                {estadoLoader.contador === 0 && <>
+                {hayError && <p classname='texto-rojo'>{`Error en la carga del componente "${tituloEnviar}" el ${fechas_srv.fechaYHoraActual()}`}</p>}
+                {!hayError && estadoLoader.contador === 0 && <>
                     <HighchartsReact
                         highcharts={Highcharts}
                         options={options}
@@ -197,7 +203,7 @@ const Burbuja3D = ({ titulo, yLabel, seccion, formato, fechas, region, zona, tie
                     />
                     {/* <button onClick={chartComponent.exportChart()}>Exportar</button> */}
                 </>}
-                {estadoLoader.contador !== 0 && <LoadingGif />}
+                {!hayError && estadoLoader.contador !== 0 && <LoadingGif />}
             </CardBody>
         </Card>
     )
