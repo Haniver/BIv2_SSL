@@ -4764,8 +4764,6 @@ class Tablas():
         nMes = '0'+ str(nMes) if nMes < 10 else f'{nMes}'
 
         if self.titulo != 'Venta por Tienda':
-            if 1/0 > 'banana':
-                print('chuchuwa')
             if self.titulo == 'Detalle Departamentos':
                 agrupador = 'a.depto,b.DEPTO_NOMBRE'
                 anterior = 'No hay'
