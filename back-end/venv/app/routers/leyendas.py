@@ -66,9 +66,9 @@ async def leyendas (titulo: str, seccion: str, request: Request, user: dict = De
     # print(f"Filtros desde leyendas: {str(filtros)}")
     loguearConsulta(stack()[0][3], user.usuario, seccion, titulo, ip=request.client.host)
     if tienePermiso(user.id, seccion):
-        objeto = Leyendas(titulo)
-        funcion = getattr(objeto, seccion)
         try:
+            objeto = Leyendas(titulo)
+            funcion = getattr(objeto, seccion)
             diccionario = await funcion()
         except:
             error = traceback.format_exc()

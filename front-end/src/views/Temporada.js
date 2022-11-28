@@ -7,6 +7,7 @@ import fechas_srv from '../services/fechas_srv'
 import EjesMultiples from '../componentes/graficos/EjesMultiples'
 import EjesMultiplesApilados from '../componentes/graficos/EjesMultiplesApilados'
 import Tabla from '../componentes/tablas/Tabla'
+import Leyenda from '../componentes/auxiliares/Leyenda'
 import {
     DollarSign,
     Box,
@@ -55,6 +56,11 @@ const Temporada = () => {
 
   return (
     <>
+      <Row className='match-height'>
+        <Col sm='12'>
+          <Leyenda seccion={seccion} titulo='Última actualización:' />
+        </Col>
+      </Row>
       <Row className='match-height'>
         <Col sm='12'>
           <Filtro mismoMes fechas={fechas} canal={canal} setFechas={setFechas} setCanal={setCanal} />

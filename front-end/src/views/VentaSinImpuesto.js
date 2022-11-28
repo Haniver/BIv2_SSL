@@ -7,6 +7,7 @@ import EjesMultiples from '../componentes/graficos/EjesMultiples'
 import Tabla from '../componentes/tablas/Tabla'
 import tarjetasCombinadas from '../services/tarjetasCombinadas'
 import TarjetaEnFila from '../componentes/auxiliares/TarjetaEnFila'
+import Leyenda from '../componentes/auxiliares/Leyenda'
 // import userService from '../services/user.service'
 
 import {
@@ -42,6 +43,11 @@ const VentaSinImpuesto = () => {
 
   return (
     <>
+      <Row className='match-height'>
+        <Col sm='12'>
+          <Leyenda seccion={seccion} titulo='Última actualización:' />
+        </Col>
+      </Row>
       <Row className='match-height'>
         <Col sm='12'>
           <Filtro anio={anio} mes={mes} fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} setAnio={setAnio} setMes={setMes} setFechas={setFechas} setRegion={setRegion} setZona={setZona} setTienda={setTienda} setCanal={setCanal} setDepto={setDepto} setSubDepto={setSubDepto} />
