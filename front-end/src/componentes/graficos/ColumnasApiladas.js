@@ -18,7 +18,7 @@ require('highcharts/modules/export-data')(Highcharts)
 
 const ColumnasApiladas = ({ titulo, yLabel, seccion, formato, fechas, region, zona, tienda, proveedor, categoria, tipoEntrega, agrupador, periodo, tituloAPI, origen, ocultarTotales, provLogist }) => {
     const [hayError, setHayError] = useState(false)
-    const titulo_enviar = (tituloAPI !== undefined) ? tituloAPI : titulo
+    const tituloEnviar = (tituloAPI !== undefined) ? tituloAPI : titulo
     const [series, setSeries] = useState([])
     const [categorias, setCategorias] = useState([])
         const [estadoLoader, dispatchLoader] = useReducer((estadoLoader, accion) => {
@@ -61,7 +61,7 @@ const ColumnasApiladas = ({ titulo, yLabel, seccion, formato, fechas, region, zo
         dispatchLoader({tipo: 'llamarAPI'})
         const res = await axios({
           method: 'post',
-          url: `${CustomUrls.ApiUrl()}columnasApiladas/${seccion}?titulo=${titulo_enviar}`,
+          url: `${CustomUrls.ApiUrl()}columnasApiladas/${seccion}?titulo=${tituloEnviar}`,
           headers: authHeader(),
           data: {
             fechas,            

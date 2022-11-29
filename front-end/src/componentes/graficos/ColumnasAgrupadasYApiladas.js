@@ -16,7 +16,7 @@ require('highcharts/modules/export-data')(Highcharts)
 
 const ColumnasAgrupadasYApiladas = ({ titulo, tituloAPI, seccion, grupoDeptos, deptoAgrupado, subDeptoAgrupado, agrupador, periodo }) => {
     const [hayError, setHayError] = useState(false)
-    const titulo_enviar = (tituloAPI !== undefined) ? tituloAPI : titulo
+    const tituloEnviar = (tituloAPI !== undefined) ? tituloAPI : titulo
     const [series, setSeries] = useState([])
     const [categorias, setCategorias] = useState([])
         const [estadoLoader, dispatchLoader] = useReducer((estadoLoader, accion) => {
@@ -60,7 +60,7 @@ const ColumnasAgrupadasYApiladas = ({ titulo, tituloAPI, seccion, grupoDeptos, d
         // console.log("Vamos a mandar datos a la API desde ColumnasAgrupadasYApiladas")
         const res = await axios({
           method: 'post',
-          url: `${CustomUrls.ApiUrl()}columnasAgrupadasYApiladas/${seccion}?titulo=${titulo_enviar}`,
+          url: `${CustomUrls.ApiUrl()}columnasAgrupadasYApiladas/${seccion}?titulo=${tituloEnviar}`,
           headers: authHeader(),
           data: {
             grupoDeptos, 

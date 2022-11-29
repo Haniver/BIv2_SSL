@@ -44,7 +44,7 @@ const TarjetaEnFila = ({ cols, icono, titulo, tituloAPI, seccion, className, for
     }
   }, {contador: 0})
 
-  const titulo_enviar = (tituloAPI) ? tituloAPI : titulo // Como la API usa el título de la tarjeta para regresar su valor, había un problema cuando ese título es variable, como cuando incluye la fecha actual. Entonces, si desde la vista le mandas el prop tituloAPI, es ese el que se usa para la API. Si lo omites, se usa la variable titulo como estaba pensado originalmente
+  const tituloEnviar = (tituloAPI) ? tituloAPI : titulo // Como la API usa el título de la tarjeta para regresar su valor, había un problema cuando ese título es variable, como cuando incluye la fecha actual. Entonces, si desde la vista le mandas el prop tituloAPI, es ese el que se usa para la API. Si lo omites, se usa la variable titulo como estaba pensado originalmente
 
   const queCambiar = (resAPI === undefined) ? [fechas, region, zona, tienda, canal, depto, subDepto, mesRFM, anioRFM] : [resAPI]
 
@@ -96,14 +96,14 @@ const TarjetaEnFila = ({ cols, icono, titulo, tituloAPI, seccion, className, for
     let hayResultados = 'no'
     if (resAPI !== undefined) {
       if (resAPI !== 'cargando') {
-        resultado_tmp = resAPI.res[titulo_enviar]
+        resultado_tmp = resAPI.res[tituloEnviar]
         hayResultados = resAPI.hayResultados
       }
     } else {
       dispatchLoader({tipo: 'llamarAPI'})
       const res = await axios({
         method: 'post',
-        url: `${CustomUrls.ApiUrl()}tarjetasEnFila/${seccion}?titulo=${titulo_enviar}`,
+        url: `${CustomUrls.ApiUrl()}tarjetasEnFila/${seccion}?titulo=${tituloEnviar}`,
         headers: authHeader(),
         data: {
           fechas,

@@ -23,7 +23,7 @@ require('highcharts/modules/export-data')(Highcharts)
 
 const EjesMultiples = ({ titulo, yLabel, seccion, formato, fechas, region, zona, tienda, proveedor, categoria, tipoEntrega, tituloAPI, canal, mes, depto, subDepto, agrupador, periodo, nps, anioRFM, mesRFM, anio, provLogist }) => {
     const [hayError, setHayError] = useState(false)
-    const titulo_enviar = (tituloAPI) ? tituloAPI : titulo // Como la API usa el título de la gráfica para regresar su valor, había un problema cuando ese título es variable, como cuando incluye la fecha actual. Entonces, si desde la vista le mandas el prop tituloAPI, es ese el que se usa para la API. Si lo omites, se usa la variable titulo como estaba pensado originalmente
+    const tituloEnviar = (tituloAPI) ? tituloAPI : titulo // Como la API usa el título de la gráfica para regresar su valor, había un problema cuando ese título es variable, como cuando incluye la fecha actual. Entonces, si desde la vista le mandas el prop tituloAPI, es ese el que se usa para la API. Si lo omites, se usa la variable titulo como estaba pensado originalmente
     const [estadoLoader, dispatchLoader] = useReducer((estadoLoader, accion) => {
         switch (accion.tipo) {
           case 'llamarAPI':
@@ -84,7 +84,7 @@ const EjesMultiples = ({ titulo, yLabel, seccion, formato, fechas, region, zona,
         dispatchLoader({tipo: 'llamarAPI'})
         const res = await axios({
           method: 'post',
-          url: `${CustomUrls.ApiUrl()}ejesMultiples/${seccion}?titulo=${titulo_enviar}`,
+          url: `${CustomUrls.ApiUrl()}ejesMultiples/${seccion}?titulo=${tituloEnviar}`,
           headers: authHeader(),
           data: {
             fechas,            

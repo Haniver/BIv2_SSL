@@ -45,7 +45,7 @@ const BarrasApiladas = ({ titulo, tituloAPI, yLabel, porcentaje, sinCantidad, se
     
     drilldown(Highcharts)
 
-    const titulo_enviar = (tituloAPI !== undefined) ? tituloAPI : titulo
+    const tituloEnviar = (tituloAPI !== undefined) ? tituloAPI : titulo
     let stacking = ''
     let pointFormat = ''
     if (porcentaje !== undefined && porcentaje) {
@@ -75,7 +75,7 @@ const BarrasApiladas = ({ titulo, tituloAPI, yLabel, porcentaje, sinCantidad, se
         dispatchLoader({tipo: 'llamarAPI'})
         const res = await axios({
           method: 'post',
-          url: `${CustomUrls.ApiUrl()}barrasApiladas/${seccion}?titulo=${titulo_enviar}`,
+          url: `${CustomUrls.ApiUrl()}barrasApiladas/${seccion}?titulo=${tituloEnviar}`,
           headers: authHeader(),
           data: {
             fechas,            
