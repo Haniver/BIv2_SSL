@@ -142,7 +142,7 @@ class fechas_srv {
     }
     fechaYHoraActual() {
         const hoy = new Date()
-        return `${hoy.getDate()}/${hoy.getMonth()}/${hoy.getFullYear()} @ ${hoy.getHours()}:${hoy.getMinutes()}`
+        return `${hoy.getDate()}/${hoy.getMonth() + 1}/${hoy.getFullYear()} @ ${hoy.getHours()}:${hoy.getMinutes()}`
     }
 }
   
