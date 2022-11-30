@@ -12,6 +12,7 @@ import random
 import string
 import pyodbc
 from argon2 import PasswordHasher
+from argon2.exceptions import VerifyMismatchError
 
 from fastapi import Depends, FastAPI, HTTPException, status, Body
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
@@ -179,7 +180,8 @@ async def cambiarPassword(objetoCambiarPassword: claseCambiarPassword):
     query = f"""UPDATE DJANGO.php.usuarios
         SET hash = '{hash}'
         WHERE token_resetear_password = '{objetoCambiarPassword.token}' 
-        and expiracion_trp > '{ahora}''"""
+        and expiracion_trp > '{ahora}'"""
+    print(f"query desde Login -> CambiarPassword: {query}")
     try:
         cnxn = conexion_sql()
         cursor = cnxn.cursor()
@@ -236,11 +238,21 @@ async def cambiarPerfil(objetoCambiarPassword: claseCambiarPassword, user: dict 
     # mensaje = f'Usuario es {str(user)}, password vieja es {objetoCambiarPassword.passwordVieja} y password nueva es {objetoCambiarPassword.password}'
     # print(mensaje)
     if (objetoCambiarPassword.password != ''):
-        if (user.password == objetoCambiarPassword.passwordVieja):
-            ph = PasswordHasher()
-            hash = ph.hash(objetoCambiarPassword.password)
-            query = f"UPDATE DJANGO.php.usuarios SET hash = '{hash}' WHERE usuario = '{user.usuario}'"
+        # Aquí tienes que checar el hash de la bd contra la validación de la password vieja
+        query = f"""SELECT hash from DJANGO.php.usuarios WHERE usuario = '{user.usuario}'"""
+        cnxn = conexion_sql('DJANGO')
+        cursor = cnxn.cursor().execute(query)
+        arreglo = crear_diccionario(cursor)
+        hashAnterior = arreglo[0]['hash']
+        ph = PasswordHasher()
+        try:
+            esValida = ph.verify(hashAnterior, objetoCambiarPassword.passwordVieja)
+        except VerifyMismatchError:
+            esValida = False
+        if esValida:
             try:
+                hashNueva = ph.hash(objetoCambiarPassword.password)
+                query = f"UPDATE DJANGO.php.usuarios SET hash = '{hashNueva}' WHERE usuario = '{user.usuario}'"
                 cnxn = conexion_sql('DJANGO')
                 cursor = cnxn.cursor()
                 cursor.execute(query)
