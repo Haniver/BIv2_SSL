@@ -11,6 +11,7 @@ from dateutil.relativedelta import relativedelta
 import random
 import string
 import pyodbc
+from argon2 import PasswordHasher
 
 from fastapi import Depends, FastAPI, HTTPException, status, Body
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
@@ -173,10 +174,15 @@ async def cambiarPasswordActivo(token_resetear_password: str):
 async def cambiarPassword(objetoCambiarPassword: claseCambiarPassword):
     ahora = datetime.now()
     ahora = ahora.strftime("%Y-%m-%d %H:%M:%S")
-    cnxn = conexion_sql()
-    cursor = cnxn.cursor()
-    query = f"UPDATE DJANGO.php.usuarios SET password = '{objetoCambiarPassword.password}' WHERE token_resetear_password = '{objetoCambiarPassword.token}' and expiracion_trp > '{ahora}'"
+    ph = PasswordHasher()
+    hash = ph.hash(objetoCambiarPassword.password)
+    query = f"""UPDATE DJANGO.php.usuarios
+        SET hash = '{hash}'
+        WHERE token_resetear_password = '{objetoCambiarPassword.token}' 
+        and expiracion_trp > '{ahora}''"""
     try:
+        cnxn = conexion_sql()
+        cursor = cnxn.cursor()
         cursor.execute(query)
         cnxn.commit()
     except pyodbc.Error as e:
@@ -231,10 +237,12 @@ async def cambiarPerfil(objetoCambiarPassword: claseCambiarPassword, user: dict 
     # print(mensaje)
     if (objetoCambiarPassword.password != ''):
         if (user.password == objetoCambiarPassword.passwordVieja):
-            cnxn = conexion_sql('DJANGO')
-            cursor = cnxn.cursor()
-            query = f"UPDATE DJANGO.php.usuarios SET password = '{objetoCambiarPassword.password}' WHERE usuario = '{user.usuario}'"
+            ph = PasswordHasher()
+            hash = ph.hash(objetoCambiarPassword.password)
+            query = f"UPDATE DJANGO.php.usuarios SET hash = '{hash}' WHERE usuario = '{user.usuario}'"
             try:
+                cnxn = conexion_sql('DJANGO')
+                cursor = cnxn.cursor()
                 cursor.execute(query)
                 cnxn.commit()
             except pyodbc.Error as e:
