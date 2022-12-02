@@ -8,7 +8,6 @@ def loguearConsulta(grafico, usuario, seccion, titulo, filtros = None, ip='?'):
         else:
             arr_filtros = []
         file.write(f"\n{datetime.now().strftime('%d/%m/%Y %H:%M:%S')} Desde IP {ip} | consultó {seccion} -> {grafico} -> {titulo} | con Filtros: {str(arr_filtros)}\n")
-        # print(f"\n{datetime.now().strftime('%d/%m/%Y %H:%M:%S')} Consulta {grafico}->{seccion}->{titulo} | Filtros: {str(arr_filtros)}\n")
         file.close()
 
 def loguearError(grafico, usuario, seccion, titulo, error, filtros = None, ip='?'):
@@ -18,8 +17,20 @@ def loguearError(grafico, usuario, seccion, titulo, error, filtros = None, ip='?
         else:
             arr_filtros = []
         file.write(f"\n{datetime.now().strftime('%d/%m/%Y %H:%M:%S')} {usuario} con IP {ip} | consultó {seccion} -> {grafico} -> {titulo} | con Filtros: {str(arr_filtros)}\n | Y obtuvo el error: {error}")
-        # print(f"\n{datetime.now().strftime('%d/%m/%Y %H:%M:%S')} Consulta {grafico}->{seccion}->{titulo} | Filtros: {str(arr_filtros)}\n")
         file.close()
 
+def loguearAcceso(ip, usuario):
+    with open(f"{rutaLogs()}{usuario}.log", "a+") as file:
+        file.write(f"\n{datetime.now().strftime('%d/%m/%Y %H:%M:%S')} Acceso exitoso Desde IP {ip}\n")
+        file.close()
 
+def intentoFallidoDeAcceso(ip, usuario, razon):
+    if razon == 'usuario no encontrado':
+        with open(f"{rutaLogs()}Errores.log", "a+") as file:
+            file.write(f"\n{datetime.now().strftime('%d/%m/%Y %H:%M:%S')} Intento fallido de acceso desde la IP {ip}. Usuario no existe: {usuario} \n")
+            file.close()
+    else:
+        with open(f"{rutaLogs()}{usuario}.log", "a+") as file:
+            file.write(f"\n{datetime.now().strftime('%d/%m/%Y %H:%M:%S')} Desde IP {ip} | Intento fallido de acceso: {razon}.\n")
+            file.close()    
 

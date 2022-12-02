@@ -13,6 +13,7 @@ import string
 import pyodbc
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
+from app.servicios.logs import loguearAcceso, intentoFallidoDeAcceso
 
 from fastapi import Depends, FastAPI, HTTPException, status, Body
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
@@ -28,8 +29,8 @@ router = APIRouter()
 ################### Endpoints Públicos ######################
 
 @router.post("/token", response_model=Token)
-async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
-    user = authenticate_user(buscar_usuario_en_bd(form_data.username), form_data.username, form_data.password)
+async def login_for_access_token(request: Request, form_data: OAuth2PasswordRequestForm = Depends()):
+    user = authenticate_user(buscar_usuario_en_bd(form_data.username, request.client.host), form_data.username, form_data.password, request.client.host)
     # Si no hay usuario (o sea las credenciales son incorrectas), regresar error.
     if not user:
         raise HTTPException(
@@ -71,6 +72,7 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     arreglo = crear_diccionario(cursor)
     # print(f"El estatus del usuario (desde login.py) es: {arreglo[0]['estatus']}")
     if arreglo[0]['estatus'] != 'activo':
+        intentoFallidoDeAcceso(request.client.host, user.usuario, 'El usuario no está activo')
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Nombre de usuario o contraseña incorrectos",
@@ -83,6 +85,8 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(
     WHERE usuario='{user.usuario}'"""
     cursor.execute(query)
     cnxn.commit()
+    # Crear log de que el usuario accedió correctamente
+    loguearAcceso(request.client.host, user.usuario)
     # Crear token
     medianoche = datetime.combine(hoy, time.max)
     diferencia = medianoche - ahorita

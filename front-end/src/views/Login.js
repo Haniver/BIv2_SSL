@@ -77,7 +77,7 @@ const Login = () => {
                 Acceder
               </Button.Ripple>
               {errorVisible && <Alert color="danger">
-                Nombre de usuario o contraseña incorrectos. Si el problema persiste, contacta al administrador.
+                Acceso fallido. Si el problema persiste, contacta al administrador.
               </Alert>}
             </Form>
             <Link to='/registro'>

@@ -12,6 +12,7 @@ from pydantic import BaseModel
 from starlette.middleware.cors import CORSMiddleware
 import json
 from argon2 import PasswordHasher
+from app.servicios.logs import intentoFallidoDeAcceso
 
 router = APIRouter()
 # to get a string like this run:
@@ -60,24 +61,30 @@ class claseCambiarPassword(BaseModel):
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-def buscar_usuario_en_bd(usuario):
+def buscar_usuario_en_bd(usuario, ip = '?'):
     respuesta = []
     cnxn = conectar_sql.conexion_sql('DJANGO')
     cursor = cnxn.cursor()
     # $w 1 aquí lee la password de la BD
-    cursor.execute(f"""select u.id, u.usuario, u.nivel, u.nombre, u.hash, u.idTienda, ct.region, ct.zona, ct.regionNombre, ct.zonaNombre, ct.tiendaNombre
+    cursor.execute(f"""select u.id, u.nivel, u.nombre, u.hash, u.idTienda, ct.region, ct.zona, ct.regionNombre, ct.zonaNombre, ct.tiendaNombre
     from DJANGO.php.usuarios u
     left join DWH.artus.catTienda ct on  u.idTienda =ct.tienda
     where usuario = '{usuario}'""")
     resultados = conectar_sql.crear_diccionario(cursor)
-    usuario = resultados[0]['usuario']
-    # id_rol = resultados[0]['id_rol']
-    # $w 2 aquí pepena la password para meterla en el usuario
-    # password = resultados[0]['password']
+    # Verificaciones de que el usuario se haya encontrado sin problemas:
+    if not resultados:
+        intentoFallidoDeAcceso(ip, usuario, 'usuario no encontrado')
+        return None
+    if resultados[0]['nivel'] is not None and resultados[0]['nivel'] != '':
+        nivel = resultados[0]['nivel']
+    else:
+        intentoFallidoDeAcceso(ip, usuario, 'El usuario no tiene un nivel asignado en la BD')
+        return None
+    if resultados[0]['tiendaNombre'] is None or resultados[0]['tiendaNombre'] == '':
+        intentoFallidoDeAcceso(ip, usuario, 'El usuario no tiene una tienda asignada en la BD')
+        return None
     hash = resultados[0]['hash']
     nombre = resultados[0]['nombre']
-    # rol = resultados[0]['rol']
-    nivel = resultados[0]['nivel']
     id = resultados[0]['id']
     tienda = resultados[0]['idTienda']
     region = resultados[0]['region']
@@ -144,12 +151,15 @@ def buscar_usuario_en_bd(usuario):
     return respuesta
 
 def get_user(db, usuario: str):
-    if usuario in db:
+    if db is not None and usuario is not None and usuario in db:
         user_dict = db[usuario]
         # $w 4 aquí solicita la password que generó buscar_usuario_en_bd, porque la requiere UserInDB ()
         return UserInDB(**user_dict)
+    # Regresar error si el usuario no está en la BD
+    else:
+        return None
 
-def authenticate_user(fake_db, usuario: str, password: str):
+def authenticate_user(fake_db, usuario: str, password: str, ip: str):
     user = get_user(fake_db, usuario)
     if not user:
         return False
@@ -158,6 +168,7 @@ def authenticate_user(fake_db, usuario: str, password: str):
     try:
         ph.verify(user.hash, password)
     except:
+        intentoFallidoDeAcceso(ip, usuario, 'Contaseña incorrecta')
         return False
     # if password != user.password:
     #     return False
