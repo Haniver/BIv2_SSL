@@ -53,7 +53,8 @@ class Leyendas():
             # print(f"arreglo desde ejesMultiplesApilados: {str(arreglo)}")
             if len(arreglo) > 0:
                 hayResultados = "si"
-                res = arreglo[0]['ultima_actualizacion'].strftime("%d/%m/%Y %H:%M")
+                menos_dos = arreglo[0]['ultima_actualizacion'] - timedelta(hours=6)
+                res = menos_dos.strftime("%d/%m/%Y %H:%M")
         return {'hayResultados':hayResultados, 'res': res, 'pipeline': query}
 
 @router.get("/{seccion}")
