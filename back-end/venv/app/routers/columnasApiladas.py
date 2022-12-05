@@ -1326,7 +1326,7 @@ class ColumnasApiladas():
                 # LLenamos los arreglos que alimentarán el gráfico
                 categorias = [tituloAnterior+'-DHL', tituloElegida+'-DHL', tituloAnterior+'-Domicilio', tituloElegida+'-Domicilio', tituloAnterior+'-Tienda', tituloElegida+'-Tienda']
                 arrEleg = arreglo[0]
-                arrAnt = arreglo[0]
+                arrAnt = arreglo[1]
                 if arrEleg == [] or arrAnt == []:
                     return {'hayResultados':'no','categories':[], 'series':[], 'pipeline': '', 'lenArreglo':0}
                 serie1 = [
