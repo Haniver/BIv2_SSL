@@ -742,7 +742,7 @@ class ColumnasApiladas():
                 else:
                     mes_anterior = 12
                     anio_anterior = anio_elegido - 1
-                condicion_anterior = [
+                condicion_elegido = [
                     {'$eq': [
                         anio_elegido,
                         {'$year': '$fecha'}
@@ -752,8 +752,8 @@ class ColumnasApiladas():
                         {'$month': '$fecha'}
                     ]}
                 ]
-                match1.extend(condicion_anterior)
-                cond_periodo.extend(condicion_anterior)
+                match1.extend(condicion_elegido)
+                cond_periodo.extend(condicion_elegido)
                 match2.extend([
                     {'$eq': [
                         anio_anterior,
@@ -781,14 +781,14 @@ class ColumnasApiladas():
                 semana_anterior_txt = '0' + str(semana_anterior) if semana_anterior < 10 else str(semana_anterior)
                 semana_elegida_txt = int(str(anio_elegido) + semana_elegida_txt)
                 semana_anterior_txt = int(str(anio_anterior) + semana_anterior_txt)
-                condicion_anterior = [
+                condicion_elegido = [
                     {'$eq': [
                         semana_elegida_txt,
                         '$idSemDS'
                     ]}
                 ]
-                match1.extend(condicion_anterior)
-                cond_periodo.extend(condicion_anterior)
+                match1.extend(condicion_elegido)
+                cond_periodo.extend(condicion_elegido)
                 match2.extend([
                     {'$eq': [
                         semana_anterior_txt,
@@ -812,7 +812,7 @@ class ColumnasApiladas():
                         mes_anterior = 12
                         anio_anterior = anio_elegido - 1
                     dia_anterior = monthrange(anio_anterior, mes_anterior)[1] # La lógica de esto está aquí: https://stackoverflow.com/questions/42950/how-to-get-the-last-day-of-the-month
-                condicion_anterior = [
+                condicion_elegido = [
                     {'$eq': [
                         anio_elegido,
                         {'$year': '$fecha'}
@@ -826,8 +826,8 @@ class ColumnasApiladas():
                         {'$dayOfMonth': '$fecha'}
                     ]}
                 ]
-                match1.extend(condicion_anterior)
-                cond_periodo.extend(condicion_anterior)
+                match1.extend(condicion_elegido)
+                cond_periodo.extend(condicion_elegido)
                 match2.extend([
                     {'$eq': [
                         anio_anterior,
@@ -866,7 +866,7 @@ class ColumnasApiladas():
                 # LLenamos los arreglos que alimentarán el gráfico
                 categorias = [tituloAnterior+'-DHL', tituloElegida+'-DHL', tituloAnterior+'-Domicilio', tituloElegida+'-Domicilio', tituloAnterior+'-Tienda', tituloElegida+'-Tienda']
                 arrEleg = arreglo[0]
-                arrAnt = arreglo[0]
+                arrAnt = arreglo[1]
                 if arrEleg == [] or arrAnt == []:
                     return {'hayResultados':'no','categories':[], 'series':[], 'pipeline': '', 'lenArreglo':0}
                 serie1 = [
@@ -1202,7 +1202,7 @@ class ColumnasApiladas():
                 else:
                     mes_anterior = 12
                     anio_anterior = anio_elegido - 1
-                condicion_anterior = [
+                condicion_elegido = [
                     {'$eq': [
                         anio_elegido,
                         {'$year': '$fecha'}
@@ -1212,8 +1212,8 @@ class ColumnasApiladas():
                         {'$month': '$fecha'}
                     ]}
                 ]
-                match1.extend(condicion_anterior)
-                cond_periodo.extend(condicion_anterior)
+                match1.extend(condicion_elegido)
+                cond_periodo.extend(condicion_elegido)
                 match2.extend([
                     {'$eq': [
                         anio_anterior,
@@ -1241,14 +1241,14 @@ class ColumnasApiladas():
                 semana_anterior_txt = '0' + str(semana_anterior) if semana_anterior < 10 else str(semana_anterior)
                 semana_elegida_txt = int(str(anio_elegido) + semana_elegida_txt)
                 semana_anterior_txt = int(str(anio_anterior) + semana_anterior_txt)
-                condicion_anterior = [
+                condicion_elegido = [
                     {'$eq': [
                         semana_elegida_txt,
                         '$idSemDS'
                     ]}
                 ]
-                match1.extend(condicion_anterior)
-                cond_periodo.extend(condicion_anterior)
+                match1.extend(condicion_elegido)
+                cond_periodo.extend(condicion_elegido)
                 match2.extend([
                     {'$eq': [
                         semana_anterior_txt,
@@ -1272,7 +1272,7 @@ class ColumnasApiladas():
                         mes_anterior = 12
                         anio_anterior = anio_elegido - 1
                     dia_anterior = monthrange(anio_anterior, mes_anterior)[1] # La lógica de esto está aquí: https://stackoverflow.com/questions/42950/how-to-get-the-last-day-of-the-month
-                condicion_anterior = [
+                condicion_elegido = [
                     {'$eq': [
                         anio_elegido,
                         {'$year': '$fecha'}
@@ -1286,8 +1286,8 @@ class ColumnasApiladas():
                         {'$dayOfMonth': '$fecha'}
                     ]}
                 ]
-                match1.extend(condicion_anterior)
-                cond_periodo.extend(condicion_anterior)
+                match1.extend(condicion_elegido)
+                cond_periodo.extend(condicion_elegido)
                 match2.extend([
                     {'$eq': [
                         anio_anterior,
