@@ -13,7 +13,7 @@ import string
 import pyodbc
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
-from app.servicios.logs import loguearAcceso, intentoFallidoDeAcceso
+from app.servicios.logs import loguearAcceso, intentoFallidoDeAcceso, errorUltimoLogin, reducirArchivoLogs
 
 from fastapi import Depends, FastAPI, HTTPException, status, Body
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
@@ -83,8 +83,13 @@ async def login_for_access_token(request: Request, form_data: OAuth2PasswordRequ
     query = f"""UPDATE DJANGO.php.usuarios
     SET fecha_ultimo_login='{ahorita_sql}' 
     WHERE usuario='{user.usuario}'"""
-    cursor.execute(query)
-    cnxn.commit()
+    try:
+        cursor.execute(query)
+        cnxn.commit()
+    except:
+        errorUltimoLogin(request.client.host, user.usuario)
+    # Reducir el tamaño del archivo de logs si excede el tamaño permitido
+    reducirArchivoLogs(user.usuario)
     # Crear log de que el usuario accedió correctamente
     loguearAcceso(request.client.host, user.usuario)
     # Crear token
