@@ -81,6 +81,7 @@ class TarjetasEnFila():
             )
             group by hora
         """
+        # print(f"Query desde TarjetasEnFila -> Temporada: {query}")
         cnxn = conexion_sql('DWH')
         cursor = cnxn.cursor().execute(query)
         arreglo = crear_diccionario(cursor)
@@ -244,7 +245,7 @@ class TarjetasEnFila():
                     query += f""" and cd.idDepto = {self.filtros.depto} """
             query += " group by dt.anio order by dt.anio "
 
-            # print(f"Query para {variante} en TarjetasCombinadas:\n{query}")
+            # print(f"-- Query para {variante} en TarjetasEnFila:\n{query}")
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(query)
             arreglo = crear_diccionario(cursor)

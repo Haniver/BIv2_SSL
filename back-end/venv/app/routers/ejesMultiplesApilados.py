@@ -202,7 +202,7 @@ class EjesMultiplesApilados():
                 and format(a.fecha,'yyyyMM')=co.nMes
                 order by fecha
             """
-            # print (f"query desde ejesMultiplesApilados->Temporada->Pedidos por día: {str(query)}")
+            print (f"query desde ejesMultiplesApilados->Temporada->Pedidos por día: {str(query)}")
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(query)
             arreglo = crear_diccionario(cursor)

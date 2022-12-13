@@ -210,6 +210,7 @@ class EjesMultiples():
                 else:
                     pipeline += f""" and cd.idDepto = {self.filtros.depto} """
             pipeline += f" group by dt.descrip_fecha order by dt.descrip_fecha "
+            # print(f"Query desde EjesMultiples -> VentaSinImpuesto -> {self.titulo}: {pipeline}")
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)
@@ -280,6 +281,7 @@ class EjesMultiples():
                 else:
                     pipeline += f""" and cd.idDepto = {self.filtros.depto} """
             pipeline += f" group by ct.{campo_siguiente_lugar} "
+            # print(f"Query desde EjesMultiples -> VentaSinImpuesto -> {self.titulo}: {pipeline}")
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)
@@ -600,6 +602,7 @@ class EjesMultiples():
                         '$sort': {'_id.periodo': 1}
                     }
                 ])
+                # print(f"Pipeline desde EjesMultiples -> PedidoPerfecto -> {self.titulo}: {str(pipeline)}")
                 cursor = collection.aggregate(pipeline)
                 arreglo = await cursor.to_list(length=1000)
                 if len(arreglo) >0:
@@ -1059,8 +1062,7 @@ class EjesMultiples():
                     ])
                     tituloElegida = str(dia_elegido) + ' ' + mesTexto(mes_elegido) + ' ' + str(anio_elegido)
                     tituloAnterior = str(dia_anterior) + ' ' + mesTexto(mes_anterior) + ' ' + str(anio_anterior)
-                # Agregamos los facets al pipeline:
-                # print(str(pipeline))
+                # print(f"Pipeline desde EjesMultiples -> PedidoPerfecto -> {self.titulo}: {str(pipeline)}")
                 # Ejecutamos el query:
                 cursor = collection.aggregate(pipeline)
                 arreglo = await cursor.to_list(length=1000)
@@ -1512,7 +1514,7 @@ class EjesMultiples():
                     ])
                     tituloElegida = str(dia_elegido) + ' ' + mesTexto(mes_elegido) + ' ' + str(anio_elegido)
                     tituloAnterior = str(dia_anterior) + ' ' + mesTexto(mes_anterior) + ' ' + str(anio_anterior)
-                # print(str(pipeline))
+                # print(f"Query desde EjesMultiples -> PedidoPerfecto -> {self.titulo}: {str(pipeline)}")
                 # Ejecutamos el query:
                 cursor = collection.aggregate(pipeline)
                 arreglo = await cursor.to_list(length=1000)
@@ -2981,7 +2983,7 @@ class EjesMultiples():
             group by ncp.descripcion
             order by min(ncp.id)
                 """
-            # print("query desde ejes multiples nps: "+pipeline)
+            # print("query ejesmultiples -> percepción del servicio (n): "+pipeline)
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)
@@ -3053,7 +3055,7 @@ class EjesMultiples():
             order by min(ncp.id) 
             """
 
-            # print("query desde ejes multiples nps: "+pipeline)
+            # print("query ejesmultiples -> percepción del servicio (%): "+pipeline)
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)
@@ -3109,7 +3111,7 @@ class EjesMultiples():
             group by ncp.descripcion
             order by min(ncp.id)
                 """
-            # print("query desde ejes multiples nps: "+pipeline)
+            # print("Percepción del servicio (n) $categoria: "+pipeline)
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)
@@ -3191,7 +3193,7 @@ class EjesMultiples():
             order by min(ncp.id) 
             """
 
-            # print("query desde ejes multiples nps: "+pipeline)
+            # print("Percepción del servicio (%) $categoria: "+pipeline)
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)
@@ -3391,7 +3393,7 @@ class EjesMultiples():
             group by ds.formato_tienda
             """
 
-            # print("query desde ejes multiples nps: "+pipeline)
+            # print(f"query desde ejes multiples {self.titulo}: "+pipeline)
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)

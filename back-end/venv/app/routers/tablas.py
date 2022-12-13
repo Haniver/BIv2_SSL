@@ -501,6 +501,7 @@ class Tablas():
             }}, {'$sort': 
                 {'Consigna': 1}
             }])
+            # print(f"Pipeline desde Tablas -> PedidosPendientes -> {self.titulo}: {pipeline}")
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=1000)
             data = []
@@ -612,6 +613,7 @@ class Tablas():
                 }},
                 {'$sort': {'fechaOrdenar': 1, 'regionNombre': 1, 'zonaNombre': 1, 'tiendaNombre': 1}}
             ])
+            # print(f"Pipeline desde Tablas -> PedidosPendientes -> {self.titulo}: {pipeline}")
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=1000)
             data = []
@@ -699,6 +701,7 @@ class Tablas():
                 }},
                 {'$sort': {'fechaOrdenar': 1, 'regionNombre': 1, 'zonaNombre': 1, 'tiendaNombre': 1}}
             ])
+            print(f"Pipeline desde Tablas -> PedidosPendientes -> {self.titulo}: {pipeline}")
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=1000)
             data = []
@@ -936,7 +939,7 @@ class Tablas():
                     pipeline += f""" and cd.idDepto = {self.filtros.depto} """
             pipeline += """ group by ct.regionNombre, ct.zonaNombre, ct.tiendaNombre, vd.idTienda 
             order by ct.regionNombre, ct.zonaNombre, ct.tiendaNombre, vd.idTienda """
-            # print(f"Query desde Venta anual por tienda: $anioActual vs. $anioAnterior y Objetivo: {pipeline}")
+            print(f"Query desde Venta anual por tienda: $anioActual vs. $anioAnterior y Objetivo: {pipeline}")
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)
@@ -1603,7 +1606,7 @@ class Tablas():
                             {'$dayOfMonth': '$fecha'}
                         ]}
                     ])
-                # print(f"Pipeline desde Tablas -> PedidoPerfecto: {str(pipeline)}")
+                # print(f"Pipeline desde Tablas -> PedidoPerfecto -> {self.titulo}: {str(pipeline)}")
                 # Ejecutamos el query:
                 cursor = collection.aggregate(pipeline)
                 arreglo = await cursor.to_list(length=5000)
@@ -1872,7 +1875,7 @@ class Tablas():
                             {'$dayOfMonth': '$fechaPP'}
                         ]}
                     ])
-                print(f"Pipeline desde tabla de $tienda en PedidoPerfecto: {str(pipeline)}")
+                print(f"Pipeline desde Tablas -> PedidoPerfecto -> {self.titulo}: {str(pipeline)}")
                 # Ejecutamos el query:
                 cursor = collection.aggregate(pipeline)
                 arreglo = await cursor.to_list(length=None)
@@ -4008,7 +4011,7 @@ class Tablas():
             order by case when (sum(case when nd.calificacion in (9,10) then 1 else 0 end)-sum(case when nd.calificacion<=6 then 1 else 0 end))=0 then 0 else
             (sum(case when nd.calificacion in (9,10) then 1 else 0 end)-sum(case when nd.calificacion<=6 then 1 else 0 end))*100/cast(count(1) as float) end"""
 
-            # print("query desde tablas NPS: "+pipeline)
+            # print(f"query desde tablas NPS {self.titulo}: "+pipeline)
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)
@@ -4094,7 +4097,7 @@ class Tablas():
             and {agrupador_where} {lugar_where} {clauseCatProveedor}
             order by fecha_encuesta desc,calificacion"""
 
-            # print("query desde tablas NPS: "+pipeline)
+            print(f"query desde tablas NPS {self.titulo}: "+pipeline)
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)

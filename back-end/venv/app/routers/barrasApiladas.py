@@ -174,6 +174,7 @@ class BarrasApiladas():
                     ]}
                 ])
                 modTitulo = 'Quejas por lugar ' + str(dia) + ' ' + mesTexto(mes) + ' ' + str(anio)
+            # print(f"Pipeline desde BarrasApiladas -> PedidoPerfecto -> {self.titulo}: {str(pipeline)}")
             # Ejecutamos el query:
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=1000)
@@ -219,7 +220,6 @@ class BarrasApiladas():
                 }
             ])
 
-            # Esto es un copy/paste de ejesMultiples. Burra el comentario cuando termines de modificarlo.
             match = pipeline[0]['$match']['$expr']['$and']
             
             # Modificamos el pipeline para el caso de que el agrupador sea por mes:
@@ -297,6 +297,7 @@ class BarrasApiladas():
                 ])
                 modTitulo = 'Quejas por lugar ' + str(dia_anterior) + ' ' + mesTexto(mes_anterior) + ' ' + str(anio_anterior)
             # Ejecutamos el query:
+            # print(f"Pipeline desde BarrasApiladas -> PedidoPerfecto -> {self.titulo}: {str(pipeline)}")
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=1000)
             if len(arreglo) >0:
