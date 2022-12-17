@@ -19,6 +19,7 @@ const VentaOmnicanalTab1 = () => {
   const [region, setRegion] = useState('')
   const [zona, setZona] = useState('')
   const [tienda, setTienda] = useState('')
+  const [botonEnviar, setBotonEnviar] = useState(0)
 
   const seccion = 'VentaOmnicanal'
 
@@ -26,7 +27,7 @@ const VentaOmnicanalTab1 = () => {
     <Fragment>
       <Row className='match-height'>
         <Col sm='12'>
-          <Filtro fechas={fechas} region={region} zona={zona} tienda={tienda} setFechas={setFechas} setRegion={setRegion} setZona={setZona} setTienda={setTienda} />
+          <Filtro fechas={fechas} region={region} zona={zona} tienda={tienda} setFechas={setFechas} setRegion={setRegion} setZona={setZona} setTienda={setTienda} botonEnviar={botonEnviar} setBotonEnviar={setBotonEnviar} />
         </Col>
       </Row>
       <Row className='match-height'>

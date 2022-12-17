@@ -12,6 +12,7 @@ const CatalogoArticulos = () => {
     const [deptoAgrupado, setDeptoAgrupado] = useState('')
     const [subDeptoAgrupado, setSubDeptoAgrupado] = useState('')
     const [periodo, setPeriodo] = useState({})
+    const [botonEnviar, setBotonEnviar] = useState(0)
 
     const seccion = 'CatalogoArticulos'
 
@@ -26,7 +27,7 @@ const CatalogoArticulos = () => {
     <>
       <Row className='match-height'>
         <Col sm='12'>
-          <Filtro agrupador={agrupador} agrupadorSinDia periodo={periodo} grupoDeptos={grupoDeptos} deptoAgrupado={deptoAgrupado} subDeptoAgrupado={subDeptoAgrupado} setAgrupador={setAgrupador} setPeriodo={setPeriodo} setGrupoDeptos={setGrupoDeptos} setDeptoAgrupado={setDeptoAgrupado} setSubDeptoAgrupado={setSubDeptoAgrupado} />
+          <Filtro agrupador={agrupador} agrupadorSinDia periodo={periodo} grupoDeptos={grupoDeptos} deptoAgrupado={deptoAgrupado} subDeptoAgrupado={subDeptoAgrupado} setAgrupador={setAgrupador} setPeriodo={setPeriodo} setGrupoDeptos={setGrupoDeptos} setDeptoAgrupado={setDeptoAgrupado} setSubDeptoAgrupado={setSubDeptoAgrupado} botonEnviar={botonEnviar} setBotonEnviar={setBotonEnviar} />
         </Col>
       </Row>
       <Row className='match-height'>

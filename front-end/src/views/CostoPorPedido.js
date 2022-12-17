@@ -17,6 +17,7 @@ const CostoPorPedido = () => {
   const [filtCostosEnvio, setFiltCostosEnvio] = useState(0)
   const [filtCostosRHxPedido, setFiltCostosRHxPedido] = useState(0)
   const [filtCostosTotalxPedido, setFiltCostosTotalxPedido] = useState(0)
+  const [botonEnviar, setBotonEnviar] = useState(0)
 
   const seccion = 'CostoPorPedido'
 
@@ -24,7 +25,7 @@ const CostoPorPedido = () => {
     <>
       <Row className='match-height'>
         <Col sm='12'>
-          <Filtro anioOpcional={anio} mesOpcional={mes} region={region} zona={zona} tienda={tienda} metodoEnvio={metodoEnvio} setAnioOpcional={setAnio} setMesOpcional={setMes} setRegion={setRegion} setZona={setZona} setTienda={setTienda} setMetodoEnvio={setMetodoEnvio} />
+          <Filtro anioOpcional={anio} mesOpcional={mes} region={region} zona={zona} tienda={tienda} metodoEnvio={metodoEnvio} setAnioOpcional={setAnio} setMesOpcional={setMes} setRegion={setRegion} setZona={setZona} setTienda={setTienda} setMetodoEnvio={setMetodoEnvio} botonEnviar={botonEnviar} setBotonEnviar={setBotonEnviar} />
         </Col>
       </Row>
       {(metodoEnvio === '') && <Row className='match-height'>

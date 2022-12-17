@@ -36,6 +36,7 @@ const VentaSinImpuesto = () => {
   const [tarjetasCombinadasMes, setTarjetasCombinadasMes] = useState('cargando')
   const [tarjetasCombinadasAnio, setTarjetasCombinadasAnio] = useState('cargando')
   const [tarjetasCombinadasMesAlDia, setTarjetasCombinadasMesAlDia] = useState('cargando')
+  const [botonEnviar, setBotonEnviar] = useState(0)
 
   // console.log(`fechas_srv.ultimoDiaVencidoDelMesReal(anio, mes): ${fechas_srv.ultimoDiaVencidoDelMesReal(anio, mes)}`)
 
@@ -50,7 +51,7 @@ const VentaSinImpuesto = () => {
       </Row>
       <Row className='match-height'>
         <Col sm='12'>
-          <Filtro anio={anio} mes={mes} fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} setAnio={setAnio} setMes={setMes} setFechas={setFechas} setRegion={setRegion} setZona={setZona} setTienda={setTienda} setCanal={setCanal} setDepto={setDepto} setSubDepto={setSubDepto} />
+          <Filtro anio={anio} mes={mes} fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} setAnio={setAnio} setMes={setMes} setFechas={setFechas} setRegion={setRegion} setZona={setZona} setTienda={setTienda} setCanal={setCanal} setDepto={setDepto} setSubDepto={setSubDepto} botonEnviar={botonEnviar} setBotonEnviar={setBotonEnviar} />
         </Col>
       </Row>
       <Row className='match-height'>

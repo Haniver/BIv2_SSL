@@ -12,6 +12,7 @@ const PedidosPendientes = () => {
   const [zona, setZona] = useState('')
   const [tienda, setTienda] = useState('')
   const [origen, setOrigen] = useState('Vtex')
+  const [botonEnviar, setBotonEnviar] = useState(0)
 
   const seccion = 'PedidosPendientes'
 
@@ -24,7 +25,7 @@ const PedidosPendientes = () => {
       </Row>
       <Row className='match-height'>
         <Col sm='12'>
-          <Filtro region={region} zona={zona} tienda={tienda} tipoEntrega={tipoEntrega} origen={origen} setTipoEntrega={setTipoEntrega} setRegion={setRegion} setZona={setZona} setTienda={setTienda} setOrigen={setOrigen} />
+          <Filtro region={region} zona={zona} tienda={tienda} tipoEntrega={tipoEntrega} origen={origen} setTipoEntrega={setTipoEntrega} setRegion={setRegion} setZona={setZona} setTienda={setTienda} setOrigen={setOrigen} botonEnviar={botonEnviar} setBotonEnviar={setBotonEnviar} />
         </Col>
       </Row>
       <Row className='match-height'>

@@ -15,14 +15,15 @@ const Faltantes = () => {
     const [tienda, setTienda] = useState('')
     const [fechas, setFechas] = useState({fecha_ini: fechas_srv.primeroDelMesVencido(), fecha_fin: fechas_srv.actualVencida()})
     const [agrupador, setAgrupador] = useState('semana')
-    
+    const [botonEnviar, setBotonEnviar] = useState(0)
+
     const seccion = 'Faltantes'
 
   return (
     <>
       <Row className='match-height'>
         <Col sm='12'>
-          <Filtro fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} setFechas={setFechas} setRegion={setRegion} setZona={setZona} setTienda={setTienda} setAgrupador={setAgrupador} />
+          <Filtro fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} setFechas={setFechas} setRegion={setRegion} setZona={setZona} setTienda={setTienda} setAgrupador={setAgrupador} botonEnviar={botonEnviar} setBotonEnviar={setBotonEnviar} />
         </Col>
       </Row>
       <Row className='match-height'>

@@ -14,7 +14,7 @@ const PedidoPerfecto = () => {
     
     const [fechas, setFechas] = useState({fecha_ini: fechas_srv.primeroDelMesVencido(), fecha_fin: fechas_srv.actualVencida()})
     const [agrupador, setAgrupador] = useState('semana')
-    const [periodo, setPeriodo] = useState({})
+    const [periodo, setPeriodo] = useState(false)
     const [region, setRegion] = useState('')
     const [zona, setZona] = useState('')
     const [tienda, setTienda] = useState('')
@@ -25,6 +25,7 @@ const PedidoPerfecto = () => {
     const [provLogist, setProvLogist] = useState([])
     // const [sufijoTituloTabla, setSufijoTituloTabla] = useState('')
     // const [prefijoTituloTabla, setPrefijoTituloTabla] = useState('')
+    const [botonEnviar, setBotonEnviar] = useState(0)
 
     const seccion = 'PedidoPerfecto'
 
@@ -61,9 +62,9 @@ const PedidoPerfecto = () => {
     }, [sibling])
 
     useEffect(() => {
-      console.log(`provLogist:`)
-      console.log(provLogist)
-    }, [provLogist])
+      console.log(`periodo:`)
+      console.log(periodo)
+    }, [periodo])
 
   return (
     <>
@@ -74,26 +75,26 @@ const PedidoPerfecto = () => {
       </Row>
       <Row className='match-height'>
         <Col sm='12'>
-          <Filtro fechas={fechas} provLogist={provLogist} agrupador={agrupador} periodo={periodo} region={region} zona={zona} tienda={tienda} sibling={sibling} setFechas={setFechas} setProvLogist={setProvLogist} setAgrupador={setAgrupador} setPeriodo={setPeriodo} setRegion={setRegion} setZona={setZona} setTienda={setTienda} setLabelTienda={setLabelTienda} />
+          <Filtro fechas={fechas} provLogist={provLogist} agrupador={agrupador} periodo={periodo} region={region} zona={zona} tienda={tienda} sibling={sibling} setFechas={setFechas} setProvLogist={setProvLogist} setAgrupador={setAgrupador} setPeriodo={setPeriodo} setRegion={setRegion} setZona={setZona} setTienda={setTienda} setLabelTienda={setLabelTienda} botonEnviar={botonEnviar} setBotonEnviar={setBotonEnviar} />
         </Col>
       </Row>
-      <Row className='match-height'>
+      {periodo && <Row className='match-height'>
         <Col sm='12' lg='6'>
           <EjesMultiples titulo='Pedidos Perfectos' fechas={fechas} provLogist={provLogist} region={region} zona={zona} tienda={tienda} agrupador={agrupador} seccion={seccion} />
         </Col>
         <Col sm='12' lg='6'>
           <EjesMultiples titulo='Evaluación por KPI Pedido Perfecto' fechas={fechas} provLogist={provLogist} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} />
         </Col>
-      </Row>
-      <Row className='match-height'>
+      </Row>}
+      {periodo && <Row className='match-height'>
       <Col sm='12' lg='6'>
           <ColumnasApiladas titulo='Evaluación de KPI Pedido Perfecto por Periodo' ocultarTotales fechas={fechas} provLogist={provLogist} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} formato='porcentaje' />
         </Col>
         <Col sm='12' lg='6'>
           <EjesMultiples titulo='Evaluación por KPI' fechas={fechas} provLogist={provLogist} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} />
         </Col>
-      </Row>
-      {!tienda && <Row className='match-height'>
+      </Row>}
+      {periodo && !tienda && <Row className='match-height'>
         <Col sm='12' lg='6'>
           <ColumnasApiladas titulo='Evaluación de KPI Pedido Perfecto por Lugar' ocultarTotales fechas={fechas} provLogist={provLogist} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} formato='porcentaje' />
         </Col>
@@ -101,15 +102,15 @@ const PedidoPerfecto = () => {
           <EjesMultiples titulo='Evaluación Pedido Perfecto por Lugar' fechas={fechas} provLogist={provLogist} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} />
         </Col>
       </Row>}
-      <Row className='match-height'>
+      {periodo && <Row className='match-height'>
         <Col sm='12' lg='6'>
           <EjesMultiples titulo='Motivos de Quejas' fechas={fechas} provLogist={provLogist} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} />
         </Col>
         <Col sm='12' lg='6'>
           <ColumnasApiladas titulo='Pedidos por Tipo de Entrega' fechas={fechas} provLogist={provLogist} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} formato='entero' />
         </Col>
-      </Row>
-      {!tienda && <Row className='match-height'>
+      </Row>}
+      {periodo && !tienda && <Row className='match-height'>
         <Col sm='12' lg='6'>
           <BarrasApiladas tituloAPI='Quejas por lugar $periodo1' fechas={fechas} provLogist={provLogist} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} formato='entero' />
         </Col>
@@ -117,12 +118,12 @@ const PedidoPerfecto = () => {
           <BarrasApiladas tituloAPI='Quejas por lugar $periodo2' fechas={fechas} provLogist={provLogist} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} formato='entero' />
         </Col>
       </Row>}
-      <Row className='match-height'>
+      {periodo && <Row className='match-height'>
         <Col sm='12'>
           <Tabla titulo='Tiendas por % Pedido Perfecto más bajo' fechas={fechas} provLogist={provLogist} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} setSibling={setSibling} quitarBusqueda={quitarBusqueda} quitarPaginacion={quitarPaginacion} />
         </Col>
-      </Row>
-      {sibling && <Row className='match-height'>
+      </Row>}
+      {periodo && sibling && <Row className='match-height'>
         <Col sm='12'>
           <Tabla tituloAPI='$Tienda' titulo={labelTienda} fechas={fechas} provLogist={provLogist} region={sibling.region.value} zona={sibling.zona.value} tienda={sibling.tienda.value} agrupador={agrupador} periodo={periodo} seccion={seccion} />
         </Col>

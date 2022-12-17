@@ -16,20 +16,21 @@ import {
 const VentaOmnicanalTab2 = () => {
   const [fechas, setFechas] = useState({fecha_ini: fechas_srv.primeroDelMesVencido(), fecha_fin: fechas_srv.actualVencida()})
   const [proveedor, setProveedor] = useState(0)
+  const [botonEnviar, setBotonEnviar] = useState(0)
 
   const seccion = 'VentaOmnicanal'
     // Para debugging
-//   useEffect(() => {
-//     console.log(`fecha_ini: ${fecha_ini}`)
-//     console.log(`fecha_fin: ${fecha_fin}`)
-//     console.log(`proveedor: ${proveedor}`)
-//   }, [fechas, proveedor])
+  // useEffect(() => {
+  //   console.log(`fecha_ini: ${fecha_ini}`)
+  //   console.log(`fecha_fin: ${fecha_fin}`)
+  //   console.log(`proveedor: ${proveedor}`)
+  // }, [fechas, proveedor])
 
   return (
     <Fragment>
       <Row className='match-height'>
         <Col sm='12'>
-          <Filtro fechas={fechas} proveedor={proveedor} setFechas={setFechas} setProveedor={setProveedor} />
+          <Filtro fechas={fechas} proveedor={proveedor} setFechas={setFechas} setProveedor={setProveedor} botonEnviar={botonEnviar} setBotonEnviar={setBotonEnviar} />
         </Col>
       </Row>
       <Row className='match-height'>

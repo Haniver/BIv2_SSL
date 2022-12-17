@@ -150,9 +150,11 @@ class EjesMultiples():
             if len(arreglo) > 0:
                 hayResultados = "si"
                 for i in range(len(arreglo)):
+                    aAnterior = round((arreglo[i]['AAnterior']), 2) if arreglo[i]['AAnterior'] is not None else 0
+                    aActual = round((arreglo[i]['AActual']), 2) if arreglo[i]['AActual'] is not None else 0
                     categories.append(arreglo[i]['categoria'])
-                    serie1.append(round((arreglo[i]['AAnterior']), 2))
-                    serie2.append(round((arreglo[i]['AActual']), 2))
+                    serie1.append(aAnterior)
+                    serie2.append(aActual)
                     # if arreglo[i]['AAnterior'] != 0:
                     # # if i != 0:
                     #     serie4.append(round(((arreglo[i]['AActual'] / arreglo[i]['AAnterior'])-1), 4))
@@ -2983,7 +2985,7 @@ class EjesMultiples():
             group by ncp.descripcion
             order by min(ncp.id)
                 """
-            # print("query ejesmultiples -> percepción del servicio (n): "+pipeline)
+            print("query ejesmultiples -> percepción del servicio (n): "+pipeline)
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)

@@ -28,6 +28,7 @@ const Temporada = () => {
     const [subClase, setSubClase] = useState('')
     const [fuenteDataStudio, setFuenteDataStudio] = useState('')
     const hora = new Date().getHours()
+    const [botonEnviar, setBotonEnviar] = useState(0)
 
     // useEffect(() => {
     //   console.log(`canal=${canal}`)
@@ -63,7 +64,7 @@ const Temporada = () => {
       </Row>
       <Row className='match-height'>
         <Col sm='12'>
-          <Filtro mismoMes fechas={fechas} canal={canal} setFechas={setFechas} setCanal={setCanal} />
+          <Filtro mismoMes fechas={fechas} canal={canal} setFechas={setFechas} setCanal={setCanal} botonEnviar={botonEnviar} setBotonEnviar={setBotonEnviar} />
         </Col>
       </Row>
       {hora >= 8 && <Row className='match-height'>

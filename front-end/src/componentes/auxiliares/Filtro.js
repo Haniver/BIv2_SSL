@@ -296,6 +296,8 @@ const Filtro = (props) => {
   const [formatoValue, setFormatoValue] = useState({value:'', label:''})
   const [npsValue, setNpsValue] = useState({value:'', label:''})
   const [skuValue, setSkuValue] = useState('')
+  // Hook para bloquear el botón Enviar si el filtro no está listo
+  const [bloqueadoBotonEnviar, setBloqueadoBotonEnviar] = useState(true)
   // Hooks para valores temporales de fecha_ini y fin
   const [fecha_ini_tmp, setFecha_ini_tmp] = useState(() => {
     if (props.fechas !== undefined) {
@@ -328,6 +330,7 @@ const Filtro = (props) => {
       const [Periodo_tmp, setPeriodo_tmp] = useState(props.periodo)
       const [Fechas_tmp, setFechas_tmp] = useState(props.fechas)
       const [Agrupador_tmp, setAgrupador_tmp] = useState(props.agrupador)
+      const [LabelTienda_tmp, setLabelTienda_tmp] = useState(props.labelTienda)
       const [Sku_tmp, setSku_tmp] = useState(props.sku)
       const [Detalle_tmp, setDetalle_tmp] = useState(props.detalle)
       const [TipoEntrega_tmp, setTipoEntrega_tmp] = useState(props.tipoEntrega)
@@ -347,6 +350,8 @@ const Filtro = (props) => {
       const [AnioOpcional_tmp, setAnioOpcional_tmp] = useState(props.anioOpcional)
       const [Mes_tmp, setMes_tmp] = useState(props.mes)
       const [MesOpcional_tmp, setMesOpcional_tmp] = useState(props.mesOpcional)
+      const [PeriodoLabel_tmp, setPeriodoLabel_tmp] = useState(props.periodoLabel)
+      const [Nps_tmp, setNps_tmp] = useState(props.nps)
   // Funciones para rellenar combos dependiendo de los valores de otros combos
   const handleRegionChange = async (e) => {
     setIsTiendaDisabled(true)
@@ -443,7 +448,8 @@ const Filtro = (props) => {
         setTienda_tmp(e.value)
       }
       if (props.setLabelTienda !== undefined) {
-        props.setLabelTienda(e.label)
+        // props.setLabelTienda(e.label)
+        setLabelTienda_tmp(e.label)
       }
     } else {
       setTiendaValue({label: '', value: ''})
@@ -589,15 +595,12 @@ const Filtro = (props) => {
 
   const resetPeriodo = async () => {
     setPeriodoValue({label: '', value: {}})
-    if (props.botonEnviar === undefined) {
-      props.setPeriodo({})
-    } else {
-      setPeriodo_tmp({})
-    }
+    // props.setPeriodo({})
   }
 
   const cambiaFecha_ini = async (value) => {
     if (props.periodo !== undefined) {
+      setBloqueadoBotonEnviar(true)
       resetPeriodo()
     }
     // To calculate the time difference of two dates
@@ -651,6 +654,7 @@ const Filtro = (props) => {
   
   const cambiaFecha_fin = async (value) => {
     if (props.periodo !== undefined) {
+      setBloqueadoBotonEnviar(true)
       resetPeriodo()
     }
     // To calculate the time difference of two dates
@@ -702,22 +706,69 @@ const Filtro = (props) => {
     setFecha_fin_tmp(value)
   }
   
+  // Este es la variable que indica si es la primera vez que cambia el periodo
+  const [primeraCargaPeriodo, setPrimeraCargaPeriodo] = useState(true)
+  // Esta es la función helper para hacer el cambio de Periodo. Si es la primera vez que se cambia el periodo o no hay botonEnviar, se cambia el prop. Si no, se pone en una variable temporal.
+  const cambiaPeriodo  = (e = undefined) => {
+    if (e !== undefined) {
+      const valor = (e) ? e.value : ''
+      setPeriodo_tmp(valor)
+      if (props.setPeriodoLabel !== undefined) {
+        // props.setPeriodoLabel(e.label.substring(0, e.label.length - 5))
+        setPeriodoLabel_tmp(e.label.substring(0, e.label.length - 5))
+      }
+      setPeriodoValue(e)
+    } else {
+      // console.log("Entró a cambiarPeriodo con e === undefined")
+      // if (primeraCargaPeriodo) {
+      if (props.setPeriodoLabel !== undefined) {
+        const label_tmp = nthElement(comboPeriodo, -1).label
+        // props.setPeriodoLabel(label_tmp.substring(0, label_tmp.length - 5))
+        setPeriodoLabel_tmp(label_tmp.substring(0, label_tmp.length - 5))
+      }
+      if (comboPeriodo.length > 0 && comboPeriodo[comboPeriodo.length - 1].value !== '') {
+        // console.log("comboPeriodo.length > 0:")
+        // console.log(comboPeriodo)
+        let posicionElemento = -1
+        if (props.agrupador === 'semana') {
+          posicionElemento = -2
+        }
+        if (primeraCargaPeriodo) {
+          // console.log("Es la primera carga de periodo")
+          if (props.setPeriodoLabel !== undefined) {
+            // props.setPeriodoLabel(e.label.substring(0, e.label.length - 5))
+            props.setPeriodoLabel(nthElement(comboPeriodo, posicionElemento).label.substring(0, nthElement(comboPeriodo, posicionElemento).label.length - 5))
+            setPeriodoLabel_tmp(nthElement(comboPeriodo, posicionElemento).label.substring(0, nthElement(comboPeriodo, posicionElemento).label.length - 5))
+          }
+          props.setPeriodo(nthElement(comboPeriodo, posicionElemento).value)
+          setPeriodo_tmp(nthElement(comboPeriodo, posicionElemento).value)
+          setPrimeraCargaPeriodo(false)
+        } else {
+          // console.log("No es la primera carga de periodo")
+          setPeriodo_tmp(nthElement(comboPeriodo, posicionElemento).value)
+        }
+        setPeriodoValue(nthElement(comboPeriodo, posicionElemento))
+      }
+    }
+    setBloqueadoBotonEnviar(false)
+  }
   const cambiaAgrupador = async (e) => {
     if (props.periodo !== undefined) {
-      resetPeriodo()
+      setBloqueadoBotonEnviar(true)
     }
+    resetPeriodo()
     setAgrupadorValue(e)
-    if (props.botonEnviar === undefined) {
-      props.setAgrupador(e.value)
-    } else {
-      setAgrupador_tmp(e.value)
-    }
+    setAgrupador_tmp(e.value)
+    // cambiaPeriodo()
   }
   
-  useEffect(async () => { // Cargar el combo periodo
+  // Cargar el combo periodo
+  useEffect(async () => {
     if (props.periodo !== undefined) {
       if (props.fechas !== undefined) {
-        const comboPeriodo_temp = await CargarFiltros.cargarPeriodo(props.agrupador, props.fechas)
+        // console.log(`Va a cambiar comboPeriodo por lo correspondiente a ${Agrupador_tmp} con fechas:`)
+        // console.log(Fechas_tmp)
+        const comboPeriodo_temp = await CargarFiltros.cargarPeriodo(Agrupador_tmp, Fechas_tmp)
         setComboPeriodo(comboPeriodo_temp)
       } else {
         let fechas_tmp = {}
@@ -728,43 +779,23 @@ const Filtro = (props) => {
         } else if (props.agrupador === 'mes') {
           fechas_tmp = {fecha_ini: new Date('2000-01-01'), fecha_fin: new Date(currentDate.setMonth(currentDate.getMonth() - 1))} 
         }
-        const comboPeriodo_temp = await CargarFiltros.cargarPeriodo(props.agrupador, fechas_tmp)
+        const comboPeriodo_temp = await CargarFiltros.cargarPeriodo(Agrupador_tmp, fechas_tmp)
         setComboPeriodo(comboPeriodo_temp)
       }
     }    
-  }, [props.agrupador, props.fechas])
+  }, [Agrupador_tmp, fecha_ini_tmp, fecha_fin_tmp])
 
+  // Esto es lo que pasa cada vez que cambia comboPeriodo. Se manda a llamar cambiaPeriodo sin evento.
   useEffect(() => {
-    if (props.periodo !== undefined) {
-      if (comboPeriodo.length > 1 && props.fechas === undefined && (props.agrupador === 'semana')) { // Esto es el caso específico del dashboard CatalogoArticulos donde se muestra la semana o mes corriente, pero por default se elige la vencida
-        setPeriodoValue(nthElement(comboPeriodo, -2))
-      } else {
-        setPeriodoValue(nthElement(comboPeriodo, -1))
-      }
-      if (props.botonEnviar === undefined) {
-        if (comboPeriodo.length > 1 && props.fechas === undefined && (props.agrupador === 'semana')) {
-          // console.log(`estás trantando de poner el periodo en el penúltimo de:`)
-          // console.log(comboPeriodo)
-          props.setPeriodo(nthElement(comboPeriodo, -2).value)
-        } else {
-          // console.log(`estás trantando de poner el periodo en el último de:`)
-          // console.log(comboPeriodo)
-          props.setPeriodo(nthElement(comboPeriodo, -1).value)
-        }
-        if (props.setPeriodoLabel !== undefined) {
-          const label_tmp = nthElement(comboPeriodo, -1).label
-          props.setPeriodoLabel(label_tmp.substring(0, label_tmp.length - 5))
-        }
-      } else {
-        setPeriodo_tmp(nthElement(comboPeriodo, -1).value)
-      }
-    }
+    cambiaPeriodo()
   }, [comboPeriodo])
+
 
   useEffect(() => {
     if (props.nps !== undefined) {
       setNpsValue(comboNps[0])
       props.setNps(comboNps[0].value)
+      setNps_tmp(comboNps[0].value)
     }
   }, [comboNps])
 
@@ -802,7 +833,8 @@ const Filtro = (props) => {
           setTienda_tmp(UserService.getTienda())
         }
         if (props.setLabelTienda !== undefined) {
-          props.setLabelTienda(UserService.getLugarNombre())
+          // props.setLabelTienda(UserService.getLugarNombre())
+          setLabelTienda_tmp(UserService.getLugarNombre())
         }
       }
       if (props.proveedor !== undefined) {
@@ -1068,19 +1100,7 @@ const Filtro = (props) => {
               classNamePrefix='select'
               options={comboPeriodo}
               // isDisabled={isPeriodoDisabled}
-              isClearable
-              onChange={e => {
-                const valor = (e) ? e.value : ''
-                if (props.botonEnviar === undefined) {
-                  props.setPeriodo(valor)
-                } else {
-                  setPeriodo_tmp(valor)
-                }
-                if (props.setPeriodoLabel !== undefined) {
-                  props.setPeriodoLabel(e.label.substring(0, e.label.length - 5))
-                }
-                setPeriodoValue(e)
-              }}
+              onChange={e => cambiaPeriodo(e)}
               value={periodoValue}
             />
           </Col>}
@@ -1183,7 +1203,7 @@ const Filtro = (props) => {
                   provLogistValue_tmp.push(elemento.value)
                   provLogistCompleto_tmp.push(elemento)
                 })
-                props.setProvLogist(provLogistValue_tmp)
+                setProvLogist_tmp(provLogistValue_tmp)
                 setProvLogistValue(provLogistCompleto_tmp)
               }}
             />
@@ -1350,7 +1370,7 @@ const Filtro = (props) => {
                 }
               }}
             />
-            <p>{props.botonEnviar === undefined ? props.proveedor : props_tmp.proveedor}</p>
+            <p>{props.botonEnviar === undefined ? props.proveedor : Proveedor_tmp}</p>
           </Col>}
           {props.categoria !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
             <Label>🚩 Categoría</Label>
@@ -1547,8 +1567,12 @@ const Filtro = (props) => {
               isClearable
               onChange={e => {
                 const valor = (e) ? e.value : ''
-                props.setNps(valor)
                 setNpsValue(e)
+                if (props.botonEnviar === undefined) {
+                  props.setNps(valor)
+                } else {
+                  setNps_tmp(valor)
+                }
               }}
               value={npsValue}
             />
@@ -1585,6 +1609,7 @@ const Filtro = (props) => {
           {props.botonEnviar !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm} style={{marginTop: '23px'}}>
           <Button
             color='primary'
+            disabled={bloqueadoBotonEnviar}
             onClick={async (e) => {
               props.setBotonEnviar(props.botonEnviar + 1)
               for (const [key, value] of Object.entries(props)) {

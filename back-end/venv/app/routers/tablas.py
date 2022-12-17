@@ -874,17 +874,20 @@ class Tablas():
                 hayResultados = "si"
                 for fila in arreglo:
                     # print(f"fila: {fila}")
-                    varActual = round(((fila['AActual'] / fila['AAnterior'])-1), 4) if fila['AAnterior'] != 0 else '--'
-                    varObjetivo = (round(((fila['AActual'] / fila['objetivo'])-1), 4)) if fila['objetivo'] != 0 else '--'
+                    aActual = fila['AActual'] if fila['AActual'] is not None else 0
+                    aAnterior = fila['AAnterior'] if fila['AAnterior'] is not None else 0
+                    varActual = round((( aActual/ aAnterior)-1), 4) if aAnterior != 0 else '--'
+                    objetivo = fila['objetivo'] if fila['objetivo'] is not None else 0
+                    varObjetivo = (round(((aActual / objetivo)-1), 4)) if objetivo != 0 else '--'
                     objeto = {
                         'Mes': fila['categoria'],
-                        'VentaAnioAnterior': round((fila['AAnterior']), 2),
-                        'VentaAnioActual': round((fila['AActual']), 2),
+                        'VentaAnioAnterior': round(aAnterior, 2),
+                        'VentaAnioActual': round(aActual, 2),
                         'VarActual': varActual
 
                     }
                     if self.filtros.canal == '1' or self.filtros.canal == '35' or self.filtros.canal == '36':
-                        objeto['Objetivo'] = (round((fila['objetivo']), 2))
+                        objeto['Objetivo'] = (round(objetivo, 2))
                     else:
                         objeto['Objetivo'] = 0
                     if fila['objetivo'] != 0:
@@ -1359,7 +1362,7 @@ class Tablas():
                 hayResultados = "si"
                 # Populamos con ceros el arreglo que tiene dos dimensiones: justificaciones x periodos
                 # tabla = [[0]*len(arreglo_periodos)]*len(arreglo_justificaciones) # Esto no porque todos los apuntadores de la segunda dimensión apuntan al mismo arreglo
-                tabla = zeros((len(arreglo_departamentos), len(arreglo_periodos) + 1)) # Esto no porque todos los apuntadores de la segunda dimensión apuntan al mismo arreglo
+                tabla = zeros((len(arreglo_departamentos), len(arreglo_periodos) + 1))
                 # Para cada resultado del query principal, ponemos en nuestro arreglo-tabla los valores que sí tengamos:
                 # print('len(arreglo_resultados) = '+str(len(arreglo_resultados)))
                 for dato in arreglo_resultados:
@@ -1373,8 +1376,9 @@ class Tablas():
                     elif self.filtros.agrupador == 'dia':
                         y = arreglo_periodos.index(str(dato['_id']['periodo']['dia'])+' '+mesTexto(dato['_id']['periodo']['mes'])+' '+str(dato['_id']['periodo']['anio']))
                     # print('y = '+str(y))
-                    # print('tabla['+str(x)+']['+str(y)+'] = '+str(dato['cantidad']))
-                    tabla[x][y] = (dato['cantidad'])
+                    # print('Desde tablas -> Faltantes, tabla['+str(x)+']['+str(y)+'] = '+str(dato['cantidad']))
+                    if x != '--':
+                        tabla[x][y] = (dato['cantidad'])
                 # Agregamos al final de cada fila de nuestro arreglo la suma de toda la fila, y además obtenemos una variable que es la suma de todas esas sumas:
                 # print(tabla)
                 granTotal = 0
@@ -4097,7 +4101,7 @@ class Tablas():
             and {agrupador_where} {lugar_where} {clauseCatProveedor}
             order by fecha_encuesta desc,calificacion"""
 
-            print(f"query desde tablas NPS {self.titulo}: "+pipeline)
+            # print(f"query desde tablas NPS {self.titulo}: "+pipeline)
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)

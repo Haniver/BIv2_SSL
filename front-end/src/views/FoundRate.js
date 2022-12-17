@@ -27,7 +27,8 @@ const FoundRate = () => {
   const [tienda, setTienda] = useState('')
   const [tarjetasOriginalYFinal, setTarjetasOriginalYFinal] = useState({res: {'Monto Original': '', 'Monto Final': '', '% Variación': ''}})
   const [tarjetasFoundYFulfillment, setTarjetasFoundYFulfillment] = useState({res: {'Found Rate': '', 'Fulfillment Rate': ''}})
-  
+  const [botonEnviar, setBotonEnviar] = useState(0)
+
   const seccion = 'FoundRate'
   
   useEffect(async () => {
@@ -56,7 +57,7 @@ const FoundRate = () => {
       </Row>} */}
       <Row className='match-height'>
         <Col sm='12'>
-          <Filtro fechas={fechas} region={region} zona={zona} tienda={tienda} setFechas={setFechas} setRegion={setRegion} setZona={setZona} setTienda={setTienda} />
+          <Filtro fechas={fechas} region={region} zona={zona} tienda={tienda} setFechas={setFechas} setRegion={setRegion} setZona={setZona} setTienda={setTienda} botonEnviar={botonEnviar} setBotonEnviar={setBotonEnviar} />
         </Col>
       </Row>
       <Row className='match-height'>

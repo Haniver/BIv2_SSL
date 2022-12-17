@@ -20,20 +20,24 @@ const Nps = () => {
     const [periodoLabel, setPeriodoLabel] = useState('')
     const [provLogist, setProvLogist] = useState([])
     const [nps, setNps] = useState('')
+    const [botonEnviar, setBotonEnviar] = useState(0)
 
     const seccion = 'Nps'
 
-    // useEffect(() => {
-    //   console.log(`******provLogist:`)
-    //   console.log(provLogist)
-    // }, [provLogist])
-    
+    useEffect(() => {
+      console.log(`provLogist:`)
+      console.log(provLogist)
+      console.log(`periodo.mes:`)
+      console.log(periodo.mes)
+      console.log(`periodo.semana:`)
+      console.log(periodo.semana)
+    }, [provLogist, periodo])
 
   return (
     <>
       <Row className='match-height'>
         <Col sm='12'>
-          <Filtro fechas={fechas} provLogist={provLogist} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} periodoLabel={periodoLabel} nps={nps} setFechas={setFechas}  setProvLogist={setProvLogist} setRegion={setRegion} setZona={setZona} setTienda={setTienda} setAgrupador={setAgrupador} setPeriodo={setPeriodo} setPeriodoLabel={setPeriodoLabel} setNps={setNps} />
+          <Filtro fechas={fechas} provLogist={provLogist} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} periodoLabel={periodoLabel} nps={nps} setFechas={setFechas}  setProvLogist={setProvLogist} setRegion={setRegion} setZona={setZona} setTienda={setTienda} setAgrupador={setAgrupador} setPeriodo={setPeriodo} setPeriodoLabel={setPeriodoLabel} setNps={setNps} botonEnviar={botonEnviar} setBotonEnviar={setBotonEnviar} />
         </Col>
       </Row>
       <Row className='match-height'>
@@ -73,10 +77,10 @@ const Nps = () => {
       </Row>
       <Row className='match-height'>
         <Col sm='12' lg='6'>
-          {(periodo.mes !== undefined || periodo.semana !== undefined) && <EjesMultiples tituloAPI='Percepción del servicio (n) $categoria' titulo={`Percepción del servicio (n) 🌒 ${periodoLabel} 🔈 ${nps}`} fechas={fechas} provLogist={provLogist} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} nps={nps} seccion={seccion} />}
+          {(periodo.mes !== undefined || periodo.semana !== undefined) && nps && <EjesMultiples tituloAPI='Percepción del servicio (n) $categoria' titulo={`Percepción del servicio (n) 🌒 ${periodoLabel} 🔈 ${nps}`} fechas={fechas} provLogist={provLogist} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} nps={nps} seccion={seccion} />}
         </Col>
         <Col sm='12' lg='6'>
-          {(periodo.mes !== undefined || periodo.semana !== undefined) && <EjesMultiples tituloAPI='Percepción del servicio (%) $categoria' titulo={`Percepción del servicio (%) 🌒 ${periodoLabel} 🔈 ${nps}`} fechas={fechas} provLogist={provLogist} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} nps={nps} seccion={seccion} />}
+          {(periodo.mes !== undefined || periodo.semana !== undefined) && nps && <EjesMultiples tituloAPI='Percepción del servicio (%) $categoria' titulo={`Percepción del servicio (%) 🌒 ${periodoLabel} 🔈 ${nps}`} fechas={fechas} provLogist={provLogist} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} nps={nps} seccion={seccion} />}
         </Col>
       </Row>
       <Row className='match-height'>
