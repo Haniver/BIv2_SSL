@@ -115,7 +115,8 @@ class ColumnasApiladas():
                 pipeline.append({'$match': {'categoria': self.filtros.categoria}})
             if self.filtros.tipoEntrega != None and self.filtros.tipoEntrega != "False" and self.filtros.tipoEntrega != "" and self.filtros.tipoEntrega != None:
                 pipeline.append({'$match': {'tipoEntrega': self.filtros.tipoEntrega}})
-            pipeline.append({'$group':{'_id':'$sucursal.'+siguiente_nivel, 'cancelados': {'$sum': '$pedidoCancelado'}, 'no_cancelados': {'$sum': '$pedidoNoCancelado'}}})
+            # pipeline.append({'$group':{'_id':'$sucursal.'+siguiente_nivel, 'cancelados': {'$sum': '$pedidoCancelado'}, 'no_cancelados': {'$sum': '$pedidoNoCancelado'}}})
+            # print(f"Pipeline desde ColumnasApiladas -> NivelesDeServicio -> {self.titulo}: {pipeline}")
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=1000)
             if len(arreglo) >0:
