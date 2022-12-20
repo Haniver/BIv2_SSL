@@ -10,6 +10,7 @@ import { isNumeric } from "validator"
 import { nthElement } from '../../services/funcionesAdicionales'
 import UserService from '../../services/user.service'
 import { Users } from 'react-feather'
+import Lupita from './Lupita'
 
 const Filtro = (props) => {
   // console.log(`Tienda en Filtro=${props.tienda}`)
@@ -1610,6 +1611,7 @@ const Filtro = (props) => {
           <Button
             color='primary'
             disabled={bloqueadoBotonEnviar}
+            className='botonEnviar'
             onClick={async (e) => {
               props.setBotonEnviar(props.botonEnviar + 1)
               for (const [key, value] of Object.entries(props)) {
@@ -1628,7 +1630,7 @@ const Filtro = (props) => {
               }
             }}
           >
-            
+            <Lupita />
           </Button>
 
           </Col>}
