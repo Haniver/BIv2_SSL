@@ -40,7 +40,7 @@ const Login = () => {
           <img src={Logo}/>
           <h2 className='brand-text text-primary ml-1'>BI Omnicanal</h2>
         </Link>
-        <Col className='d-none d-lg-flex align-items-center p-5' lg='8' sm='12'>
+        <Col className='d-none d-lg-flex align-items-center p-5 fondo-negro' lg='8' sm='12'>
           <div className='w-100 d-lg-flex align-items-center justify-content-center px-5'>
             <img className='img-fluid' src={source} alt='Login V2' />
           </div>

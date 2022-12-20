@@ -10,7 +10,7 @@ import { isNumeric } from "validator"
 import { nthElement } from '../../services/funcionesAdicionales'
 import UserService from '../../services/user.service'
 import { Users } from 'react-feather'
-import Lupita from './Lupita'
+import Lupita from '@src/assets/images/lupita.png'
 
 const Filtro = (props) => {
   // console.log(`Tienda en Filtro=${props.tienda}`)
@@ -1630,7 +1630,7 @@ const Filtro = (props) => {
               }
             }}
           >
-            <Lupita />
+            <img src={Lupita} />
           </Button>
 
           </Col>}
