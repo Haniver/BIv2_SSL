@@ -89,14 +89,14 @@ code[class^='language-'], code[class*=' language-']{
 }
 
 // Y este para el logo
-.main-menu .navbar-header .navbar-brand .brand-logo img {
-  // width: 60px;
-  // height: 42px;
-  // max-width: 60px;
-  width: 55px;
-  height: 38px;
-  max-width: 55px;
-}
+// .main-menu .navbar-header .navbar-brand .brand-logo img {
+//   // width: 60px;
+//   // height: 42px;
+//   // max-width: 60px;
+//   width: 55px;
+//   height: 38px;
+//   max-width: 55px;
+// }
 
 // Texto de elementos de menú que no están seleccionados
 .main-menu.menu-light .navigation li a {
@@ -106,6 +106,7 @@ code[class^='language-'], code[class*=' language-']{
 // Elemento seleccionado del menú de navegación
 .main-menu.menu-light .navigation > li ul .active {
   box-shadow: none;
+  background-color: $primary;
 }
 
 .main-menu .navbar-header .navbar-brand {
