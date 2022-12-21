@@ -74,12 +74,12 @@ code[class^='language-'], code[class*=' language-']{
 }
 
 .fondo-negro {
-  background-color: #1c1c1c;
+  background-color: #231F20;
 }
 
 // Esto es un terrible parche para cambiar el color del menú lateral que no usa las buenas prácticas de la documentación de Vuexy
 .scrollbar-container, .main-menu.menu-light .navigation, .navbar-header {
-  background-color: #1c1c1c !important;
+  background-color: #231F20 !important;
 }
 
 // Y esto es otro para cambiar el color del texto del título principal
@@ -101,4 +101,9 @@ code[class^='language-'], code[class*=' language-']{
 // Texto de elementos de menú que no están seleccionados
 .main-menu.menu-light .navigation li a {
   color: #F7F7F7;
+}
+
+// Elemento seleccionado del menú de navegación
+.main-menu.menu-light .navigation > li ul .active {
+  box-shadow: none;
 }

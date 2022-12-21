@@ -5,7 +5,6 @@ import { Facebook, Twitter, Mail, GitHub } from 'react-feather'
 import InputPasswordToggle from '@components/input-password-toggle'
 import { Row, Col, CardTitle, CardText, Form, FormGroup, Label, Input, CustomInput, Button, Alert } from 'reactstrap'
 import '@styles/base/pages/page-auth.scss'
-import Logo from '@src/assets/images/logo/logo.svg'
 import AuthService from "@src/services/auth.service"
 
 const Login = () => {
@@ -15,7 +14,7 @@ const Login = () => {
   const [errorVisible, setErrorVisible] = useState(false)
 
   // const illustration = skin === 'dark' ? 'login-v2-dark.svg' : 'login-v2.svg',
-  const illustration = 'login.svg',
+  const illustration = 'login.png',
     source = require(`@src/assets/images/pages/${illustration}`).default
 
   const handleLogin = (e) => {
