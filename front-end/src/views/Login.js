@@ -36,10 +36,10 @@ const Login = () => {
   return (
     <div className='auth-wrapper auth-v2'>
       <Row className='auth-inner m-0'>
-        <Link className='brand-logo' to='/'>
+        {/* <Link className='brand-logo' to='/'>
           <img src={Logo}/>
           <h2 className='brand-text text-primary ml-1'>BI Omnicanal</h2>
-        </Link>
+        </Link> */}
         <Col className='d-none d-lg-flex align-items-center p-5 fondo-negro' lg='8' sm='12'>
           <div className='w-100 d-lg-flex align-items-center justify-content-center px-5'>
             <img className='img-fluid' src={source} alt='Login V2' />

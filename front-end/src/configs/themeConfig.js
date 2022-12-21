@@ -3,7 +3,7 @@
 //Template config options
 const themeConfig = {
   app: {
-    appName: 'Omnicanal',
+    appName: 'OMNICANAL',
     appLogoImage: require('@src/assets/images/logo/logo.svg').default
   },
   layout: {
