@@ -107,3 +107,7 @@ code[class^='language-'], code[class*=' language-']{
 .main-menu.menu-light .navigation > li ul .active {
   box-shadow: none;
 }
+
+.main-menu .navbar-header .navbar-brand {
+  margin-top: 0;
+}
