@@ -116,3 +116,22 @@ code[class^='language-'], code[class*=' language-']{
 .main-menu .shadow-bottom {
   background: linear-gradient(#272F44 41%, rgba(35, 31, 32, 0.11) 95%, rgba(35, 31, 32, 0));
 }
+
+.titulo {
+  font-family:'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Verdana, Geneva, sans-serif;
+  // font-family:Verdana, Geneva, Tahoma, sans-serif;
+  font-weight: bold;
+}
+
+.subtitulo {
+  margin-bottom: 10px;
+}
+
+.hrTitulo {
+  border: 3px solid #666666;
+  margin: 0;
+}
+
+.tituloFiltro {
+  margin-top: 20px;
+}

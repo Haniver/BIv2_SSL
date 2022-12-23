@@ -5,6 +5,7 @@ import Tabla from '../componentes/tablas/Tabla'
 import ColumnasApiladas from '../componentes/graficos/ColumnasApiladas'
 import Pie from '../componentes/graficos/Pie'
 import Leyenda from '../componentes/auxiliares/Leyenda'
+import Titulo from '../componentes/auxiliares/Titulo'
 
 const PedidosPendientes = () => {
   const [tipoEntrega, setTipoEntrega] = useState('')
@@ -20,12 +21,17 @@ const PedidosPendientes = () => {
     <Fragment>
       <Row className='match-height'>
         <Col sm='12'>
-          <Leyenda seccion={seccion} titulo='Última actualización:' />
+          <Titulo titulo='Pedidos Pendientes' subtitulo='Información de pedidos pendientes de entrega a cliente' />
         </Col>
       </Row>
       <Row className='match-height'>
         <Col sm='12'>
           <Filtro region={region} zona={zona} tienda={tienda} tipoEntrega={tipoEntrega} origen={origen} setTipoEntrega={setTipoEntrega} setRegion={setRegion} setZona={setZona} setTienda={setTienda} setOrigen={setOrigen} botonEnviar={botonEnviar} setBotonEnviar={setBotonEnviar} />
+        </Col>
+      </Row>
+      <Row className='match-height'>
+        <Col sm='12'>
+          <Leyenda seccion={seccion} titulo='Última actualización:' />
         </Col>
       </Row>
       <Row className='match-height'>

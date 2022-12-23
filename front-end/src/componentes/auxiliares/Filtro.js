@@ -927,12 +927,16 @@ const Filtro = (props) => {
   
   // Layout
   return (
-    <Card>
-      {userData !== null && userData !== undefined && userData !== false && (props.usuario === null || props.usuario === undefined || props.usuario === false) && <CardHeader>
-        <CardTitle tag='h4'>Filtros</CardTitle>
-      </CardHeader>}
+    <>
+    {/* <Card> */}
+      {/* {userData !== null && userData !== undefined && userData !== false && (props.usuario === null || props.usuario === undefined || props.usuario === false) && <CardHeader>
+      <CardTitle tag='h4'>Filtros</CardTitle>
+      </CardHeader>} */}
+      {userData !== null && userData !== undefined && userData !== false && (props.usuario === null || props.usuario === undefined || props.usuario === false) && <h4 className='tituloFiltro'>
+        Filtros
+      </h4>}
 
-      <CardBody>
+      {/* <CardBody> */}
         <Row>
           {props.sku !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
             <Label>🏷 SKU</Label>
@@ -1637,8 +1641,9 @@ const Filtro = (props) => {
           {bootstrap.espacio && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
           </Col>}
         </Row>
-      </CardBody>
-    </Card>
+      {/* </CardBody>
+    </Card> */}
+    </>
   )
 }
 export default Filtro
