@@ -8,16 +8,18 @@ import CustomUrls from '../../services/customUrls'
 import LoadingGif from '../auxiliares/LoadingGif'
 import fechas_srv from '../../services/fechas_srv'
 
-const Titulo = ({titulo, subtitulo}) => {
+const CardDoble = ({titulo, subtitulo}) => {
   const [hayError, setHayError] = useState(false)
 
   return (
-    <>
+    <Card className='text-center'>
+      <CardBody className='leyenda'>
         <h3 className='titulo'>{titulo.toUpperCase()}</h3>
         <p className='subtitulo'>{subtitulo}</p>
         <hr className='hrTitulo' />
-    </>
+      </CardBody>
+    </Card>
   )
 }
 
-export default Titulo
+export default CardDoble

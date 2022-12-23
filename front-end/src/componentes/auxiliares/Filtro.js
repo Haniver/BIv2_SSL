@@ -1641,6 +1641,9 @@ const Filtro = (props) => {
           {bootstrap.espacio && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
           </Col>}
         </Row>
+        <Row className='match-height'>
+          <Col>&nbsp;</Col>
+        </Row>
       {/* </CardBody>
     </Card> */}
     </>
