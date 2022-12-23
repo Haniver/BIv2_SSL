@@ -145,9 +145,13 @@ code[class^='language-'], code[class*=' language-']{
 }
 
 .content.app-content {
-  padding: 6rem 3rem 0 !important;
+  padding: 2rem 3rem 0 !important;
 }
 
 .header-navbar.floating-nav {
   position: absolute;
+}
+
+.navbar-floating .header-navbar-shadow {
+  background: none;
 }
