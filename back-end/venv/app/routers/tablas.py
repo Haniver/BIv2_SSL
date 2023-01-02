@@ -3793,7 +3793,7 @@ class Tablas():
                 for fila in arreglo:
                     if self.filtros.agrupador == "dia":
                         fila['rango'] = fila['rango'].strftime('%d/%m/%Y')
-                    if fila['rango'] not in rangos:
+                    if fila['rango'] not in rangos and fila['rangos'] is not None:
                         rangos.append(fila['rango'])
                 tabla_presentacion = [["Contactados", "Respuestas", "% Tasa", "Promotores", "Pasivos", "Detractores", "% NPS"]]
                 # Declarar las variables para la última columna de totales

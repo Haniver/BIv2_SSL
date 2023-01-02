@@ -722,12 +722,12 @@ const Filtro = (props) => {
     } else {
       // console.log("Entró a cambiarPeriodo con e === undefined")
       // if (primeraCargaPeriodo) {
-      if (props.setPeriodoLabel !== undefined) {
-        const label_tmp = nthElement(comboPeriodo, -1).label
-        // props.setPeriodoLabel(label_tmp.substring(0, label_tmp.length - 5))
-        setPeriodoLabel_tmp(label_tmp.substring(0, label_tmp.length - 5))
-      }
       if (comboPeriodo.length > 0 && comboPeriodo[comboPeriodo.length - 1].value !== '') {
+        if (props.setPeriodoLabel !== undefined) {
+          const label_tmp = nthElement(comboPeriodo, -1).label
+          // props.setPeriodoLabel(label_tmp.substring(0, label_tmp.length - 5))
+          setPeriodoLabel_tmp(label_tmp.substring(0, label_tmp.length - 5))
+        }
         // console.log("comboPeriodo.length > 0:")
         // console.log(comboPeriodo)
         let posicionElemento = -1

@@ -116,7 +116,7 @@ async def cargar_periodo(filtros: Filtro, user: dict = Depends(get_current_activ
         group['semana'] = '$idSemDS'
         group['semana_descrip'] = '$nSemDS'
         sort['_id.semana'] = 1
-    # print(pipeline)
+    # print(f"Pipeline desde CargarFiltros -> cargarPeriodo en report.catTiempo: {pipeline}")
     collection = conexion_mongo('report').catTiempo
     cursor = collection.aggregate(pipeline)
     arreglo = await cursor.to_list(length=1000)
