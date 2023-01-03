@@ -160,8 +160,61 @@ code[class^='language-'], code[class*=' language-']{
   background: none;
 }
 
-div:has(.extenderDerecha) {
-  padding-right: 0;
+@media screen and (max-width: 1199px) {
+
+  div:has(.extenderDerecha) {
+    padding-bottom: 0;
+  }
+  
+  div:has(.extenderIzquierda) {
+    padding-top: 0;
+  }
+  
+  .extenderDerecha {
+    border-bottom: lighten($dark, 70%);
+    border-bottom-style: dashed;
+    border-bottom-width: thin;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    margin-bottom: 0;
+  }
+  
+  .extenderIzquierda {
+    border-top: lighten($dark, 70%);
+    border-top-style: dashed;
+    border-top-width: thin;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  }  
+}
+
+@media screen and (min-width: 1200px) {
+
+  div:has(.extenderDerecha) {
+    padding-right: 0;
+  }
+  
+  div:has(.extenderIzquierda) {
+    padding-left: 0;
+  }
+  
+  .extenderDerecha {
+    border-right: lighten($dark, 70%);
+    // border-right: $dark;
+    // filter: brightness(85%);
+    border-right-style: dashed;
+    border-right-width: thin;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+  
+  .extenderIzquierda {
+    border-left: lighten($dark, 70%);
+    border-left-style: dashed;
+    border-left-width: thin;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
 }
 
 .header-navbar .navbar-container ul.navbar-nav li > a.nav-link:first-child {
