@@ -13,7 +13,7 @@ require('highcharts/modules/data')(Highcharts)
 require('highcharts/modules/exporting')(Highcharts)
 require('highcharts/modules/export-data')(Highcharts)
 
-const Pie = ({ titulo, seccion, formato, fechas, region, zona, tienda, tipoEntrega, origen, coloresPedidosPendientes, categoria }) => {
+const Pie = ({ titulo, seccion, formato, fechas, region, zona, tienda, tipoEntrega, origen, coloresPedidosPendientes, categoria, extenderDerecha }) => {
     const [hayError, setHayError] = useState(false)
     const [datos, setDatos] = useState([{name: 'Sin Resultados', y: 0}])
     const [total, setTotal] = useState('')
@@ -202,7 +202,7 @@ const Pie = ({ titulo, seccion, formato, fechas, region, zona, tienda, tipoEntre
           }
     }
     return (
-        <Card>
+        <Card className={extenderDerecha && 'extenderDerecha'}>
             <CardBody>
                 {hayError && <p classname='texto-rojo'>{`Error en la carga del componente "${tituloEnviar}" el ${fechas_srv.fechaYHoraActual()}`}</p>}
                 {!hayError && estadoLoader.contador === 0 && <HighchartsReact

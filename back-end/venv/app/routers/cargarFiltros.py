@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, time
 from fastapi import APIRouter, Depends, HTTPException, Request
 
 from app.auth import get_current_active_user
@@ -97,8 +97,9 @@ async def cargar_proveedor(user: dict = Depends(get_current_active_user)):
 
 @router.post("/cargarPeriodo")
 async def cargar_periodo(filtros: Filtro, user: dict = Depends(get_current_active_user)):
+    print(f"fecha_ini desde cargarFiltros -> cargarPeriodo: {filtros.fechas['fecha_ini']}")
     pipeline = [
-        {'$match': {'fecha': {'$gte': datetime.strptime(filtros.fechas['fecha_ini'], '%Y-%m-%dT%H:%M:%S.%fZ'), '$lte': datetime.strptime(filtros.fechas['fecha_fin'], '%Y-%m-%dT%H:%M:%S.%fZ')}}},
+        {'$match': {'fecha': {'$gte': datetime.combine(datetime.strptime(filtros.fechas['fecha_ini'], '%Y-%m-%dT%H:%M:%S.%fZ'),time.min), '$lte': datetime.combine(datetime.strptime(filtros.fechas['fecha_fin'], '%Y-%m-%dT%H:%M:%S.%fZ'),time.max)}}},
         {'$group': {'_id': {}}},
         {'$sort': {}}
     ]
@@ -116,7 +117,7 @@ async def cargar_periodo(filtros: Filtro, user: dict = Depends(get_current_activ
         group['semana'] = '$idSemDS'
         group['semana_descrip'] = '$nSemDS'
         sort['_id.semana'] = 1
-    # print(f"Pipeline desde CargarFiltros -> cargarPeriodo en report.catTiempo: {pipeline}")
+    print(f"Pipeline desde CargarFiltros -> cargarPeriodo en report.catTiempo: {pipeline}")
     collection = conexion_mongo('report').catTiempo
     cursor = collection.aggregate(pipeline)
     arreglo = await cursor.to_list(length=1000)

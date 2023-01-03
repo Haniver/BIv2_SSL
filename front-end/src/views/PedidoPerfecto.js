@@ -70,12 +70,12 @@ const PedidoPerfecto = () => {
     <>
       <Row className='match-height'>
         <Col sm='12'>
-          <Leyenda seccion={seccion} titulo='Última actualización:' />
+          <Filtro fechas={fechas} provLogist={provLogist} agrupador={agrupador} periodo={periodo} region={region} zona={zona} tienda={tienda} sibling={sibling} setFechas={setFechas} setProvLogist={setProvLogist} setAgrupador={setAgrupador} setPeriodo={setPeriodo} setRegion={setRegion} setZona={setZona} setTienda={setTienda} setLabelTienda={setLabelTienda} botonEnviar={botonEnviar} setBotonEnviar={setBotonEnviar} />
         </Col>
       </Row>
       <Row className='match-height'>
         <Col sm='12'>
-          <Filtro fechas={fechas} provLogist={provLogist} agrupador={agrupador} periodo={periodo} region={region} zona={zona} tienda={tienda} sibling={sibling} setFechas={setFechas} setProvLogist={setProvLogist} setAgrupador={setAgrupador} setPeriodo={setPeriodo} setRegion={setRegion} setZona={setZona} setTienda={setTienda} setLabelTienda={setLabelTienda} botonEnviar={botonEnviar} setBotonEnviar={setBotonEnviar} />
+          <Leyenda seccion={seccion} titulo='Última actualización:' />
         </Col>
       </Row>
       {periodo && <Row className='match-height'>

@@ -155,3 +155,12 @@ code[class^='language-'], code[class*=' language-']{
 .navbar-floating .header-navbar-shadow {
   background: none;
 }
+
+div:has(.extenderDerecha) {
+  padding-right: 0;
+}
+
+.header-navbar .navbar-container ul.navbar-nav li > a.nav-link:first-child {
+  // margin-left: -2rem;
+  margin-top: -2rem;
+}
