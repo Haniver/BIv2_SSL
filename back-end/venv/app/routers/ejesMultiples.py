@@ -2985,7 +2985,7 @@ class EjesMultiples():
             group by ncp.descripcion
             order by min(ncp.id)
                 """
-            print("query ejesmultiples -> percepción del servicio (n): "+pipeline)
+            # print("query ejesmultiples -> percepción del servicio (n): "+pipeline)
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)

@@ -3781,10 +3781,11 @@ class Tablas():
             pipeline += clauseCatProveedor
             pipeline += f" group by nd.calificacion, {rango} {', (dt.anio * 100 + dt.num_mes)' if esMes else ''} order by {rango if not esMes else '(dt.anio * 100 + dt.num_mes) '}"
 
-            # print('Query Evaluación NPS por Día desde Tabla: '+str(pipeline))
+            print('Query Evaluación NPS por Día desde Tabla: '+str(pipeline))
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)
+            print(f"Arreglo desde Tablas -> {self.titulo}: {str(arreglo)}")
 
             if len(arreglo) > 0:
                 hayResultados = "si"
@@ -3793,7 +3794,7 @@ class Tablas():
                 for fila in arreglo:
                     if self.filtros.agrupador == "dia":
                         fila['rango'] = fila['rango'].strftime('%d/%m/%Y')
-                    if fila['rango'] not in rangos and fila['rangos'] is not None:
+                    if fila['rango'] not in rangos and fila['rango'] is not None:
                         rangos.append(fila['rango'])
                 tabla_presentacion = [["Contactados", "Respuestas", "% Tasa", "Promotores", "Pasivos", "Detractores", "% NPS"]]
                 # Declarar las variables para la última columna de totales
