@@ -144,8 +144,12 @@ code[class^='language-'], code[class*=' language-']{
   background: none;
 }
 
+// .content.app-content {
+//   padding: 2rem 3rem 0 !important;
+// }
+
 .content.app-content {
-  padding: 2rem 3rem 0 !important;
+  padding-top: 4rem !important;
 }
 
 .header-navbar.floating-nav {

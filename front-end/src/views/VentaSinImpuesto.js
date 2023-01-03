@@ -46,12 +46,12 @@ const VentaSinImpuesto = () => {
     <>
       <Row className='match-height'>
         <Col sm='12'>
-          <Leyenda seccion={seccion} titulo='Última actualización:' />
+          <Filtro anio={anio} mes={mes} fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} setAnio={setAnio} setMes={setMes} setFechas={setFechas} setRegion={setRegion} setZona={setZona} setTienda={setTienda} setCanal={setCanal} setDepto={setDepto} setSubDepto={setSubDepto} botonEnviar={botonEnviar} setBotonEnviar={setBotonEnviar} />
         </Col>
       </Row>
       <Row className='match-height'>
         <Col sm='12'>
-          <Filtro anio={anio} mes={mes} fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} setAnio={setAnio} setMes={setMes} setFechas={setFechas} setRegion={setRegion} setZona={setZona} setTienda={setTienda} setCanal={setCanal} setDepto={setDepto} setSubDepto={setSubDepto} botonEnviar={botonEnviar} setBotonEnviar={setBotonEnviar} />
+          <Leyenda seccion={seccion} titulo='Última actualización:' />
         </Col>
       </Row>
       <Row className='match-height'>
