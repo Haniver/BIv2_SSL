@@ -51,3 +51,8 @@ def reducirArchivoLogs(usuario):
         with open(f"{rutaLogs()}{usuario}.log", 'w') as f:
             f.write(new_text)
     return
+
+def logUpdateFaltantes(ip, usuario, fecha, tienda, sku, motivo):
+    with open(f"{rutaLogs()}updateFaltantes.log", "a+") as file:
+        file.write(f"\n{datetime.now().strftime('%d/%m/%Y %H:%M:%S')} Desde IP {ip} \nUsuario: {usuario}\nFecha: {fecha}\nTienda: {tienda}\nSKU: {sku}\nMotivo: {motivo}\n-------")
+        file.close()    

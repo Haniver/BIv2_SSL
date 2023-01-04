@@ -8,7 +8,7 @@ from pydantic import BaseModel
 from typing import Optional
 from datetime import datetime, timedelta, date
 from app.servicios.permisos import tienePermiso
-from app.servicios.logs import loguearConsulta, loguearError
+from app.servicios.logs import loguearConsulta, loguearError, logUpdateFaltantes
 import traceback
 from inspect import stack
 
@@ -44,15 +44,20 @@ async def cargar_motivos_faltantes():
     return res
 
 @router.post("/updateMotivosFaltantes")
-async def update_motivos_faltantes(producto: Producto):
+async def update_motivos_faltantes(producto: Producto, request: Request, user: dict = Depends(get_current_active_user)):
     query = f"""update fs set fs.id_respuesta={str(producto.motivo)} from DWH.report.faltante_sku fs where fecha='{producto.fecha}' and store_num = {str(producto.tienda)} and sku={str(producto.sku)}"""
-    # print("Query desde updateMotivosFaltantes: " + query)
+    query2 = f"""SELECT respuesta from DJANGO.php.motivo_faltante_respuesta where id_respuesta = {str(producto.motivo)}"""
     cnxn = conexion_sql('DWH')
     try:
         cnxn.cursor().execute(query)
         cnxn.commit()
     except Exception:
         return {'exito': False}
+    cursor = cnxn.cursor().execute(query2)
+    arreglo = crear_diccionario(cursor)
+    motivoTxt = arreglo[0]['respuesta']
+    print(f"MotivoTxt: {motivoTxt}")
+    logUpdateFaltantes(request.client.host, user.usuario, producto.fecha, producto.tienda, producto.sku, motivoTxt)
     return {'exito': True}
 
 @router.post("/updateEstatusUsuario")
