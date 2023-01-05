@@ -6,6 +6,8 @@ import ColumnasApiladas from '../componentes/graficos/ColumnasApiladas'
 import Pie from '../componentes/graficos/Pie'
 import Leyenda from '../componentes/auxiliares/Leyenda'
 import Titulo from '../componentes/auxiliares/Titulo'
+import {ErrorBoundary} from 'react-error-boundary'
+import ErrorHandling from '../componentes/auxiliares/ErrorHandling'
 
 const PedidosPendientes = () => {
   const [tipoEntrega, setTipoEntrega] = useState('')
@@ -31,7 +33,15 @@ const PedidosPendientes = () => {
       </Row>
       <Row className='match-height'>
         <Col sm='12'>
-          <Leyenda seccion={seccion} titulo='Última actualización:' />
+          <ErrorBoundary 
+            FallbackComponent={ErrorHandling.ErrorFallback} 
+            // onError={ErrorHandling.myErrorHandler} 
+            // onReset={() => {
+            //   // reset the state of the app
+            // }}
+          >
+            <Leyenda seccion={seccion} titulo='Última actualización:' />
+          </ErrorBoundary>
         </Col>
       </Row>
       <Row className='match-height'>

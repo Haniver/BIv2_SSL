@@ -40,6 +40,7 @@ const Leyenda = ({seccion, titulo}) => {
     } else {
       setHayError(true)
     }
+    // throw new Error('Esto es un error')
   }, [])
 
   return (

@@ -279,6 +279,14 @@ const Routes = [
       publicRoute: false
       // menuCollapsed: false
     }
+  },
+  {
+    path: '/testView',
+    component: lazy(() => import('../../views/TestView')),
+    meta: {
+      publicRoute: true
+      // menuCollapsed: false
+    }
   }
 ]
 
