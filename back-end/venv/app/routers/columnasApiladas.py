@@ -1465,7 +1465,7 @@ class ColumnasApiladas():
                 {queryLugar}
                 group by {lugar}
                 """
-            print(f"query desde tablas->CostoPorPedido->{self.titulo}->General: {str(pipeline)}")
+            # print(f"query desde tablas->CostoPorPedido->{self.titulo}->General: {str(pipeline)}")
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)

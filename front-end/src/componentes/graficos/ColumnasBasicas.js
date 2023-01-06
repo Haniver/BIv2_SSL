@@ -18,6 +18,8 @@ require('highcharts/modules/export-data')(Highcharts)
 const ColumnasBasicas = ({ titulo, yLabel, seccion, formato, fechas, region, zona, tienda, proveedor, categoria, tipoEntrega, tituloAPI, periodo, agrupador, anioRFM, mesRFM }) => {
     const [hayError, setHayError] = useState(false)
     const [series, setSeries] = useState([])
+    const [datos, setDatos] = useState([{name: 'Sin Resultados', y: 0}])
+    const [total, setTotal] = useState('')
     const [categorias, setCategorias] = useState([])
         const [estadoLoader, dispatchLoader] = useReducer((estadoLoader, accion) => {
         switch (accion.tipo) {
@@ -41,6 +43,7 @@ const ColumnasBasicas = ({ titulo, yLabel, seccion, formato, fechas, region, zon
     const [colorFondo, setColorFondo] = useState(colorFondoLight)
     const [colorTexto, setColorTexto] = useState(colorTextoLight)
     const { colors } = useContext(ThemeColors)
+    const tituloEnviar = (tituloAPI) ? tituloAPI : titulo // Como la API usa el título de la gráfica para regresar su valor, había un problema cuando ese título es variable, como cuando incluye la fecha actual. Entonces, si desde la vista le mandas el prop tituloAPI, es ese el que se usa para la API. Si lo omites, se usa la variable titulo como estaba pensado originalmente
     
     drilldown(Highcharts)
 
@@ -58,7 +61,6 @@ const ColumnasBasicas = ({ titulo, yLabel, seccion, formato, fechas, region, zon
     useEffect(async () => {
         dispatchLoader({tipo: 'llamarAPI'})
         // console.log(`Periodo desde ColumnasBasicas = ${periodo}`)
-        const tituloEnviar = (tituloAPI) ? tituloAPI : titulo // Como la API usa el título de la gráfica para regresar su valor, había un problema cuando ese título es variable, como cuando incluye la fecha actual. Entonces, si desde la vista le mandas el prop tituloAPI, es ese el que se usa para la API. Si lo omites, se usa la variable titulo como estaba pensado originalmente
         const res = await axios({
           method: 'post',
           url: `${CustomUrls.ApiUrl()}columnasBasicas/${seccion}?titulo=${tituloEnviar}`,
@@ -78,10 +80,21 @@ const ColumnasBasicas = ({ titulo, yLabel, seccion, formato, fechas, region, zon
           }
         })
         dispatchLoader({tipo: 'recibirDeAPI'})
+        // console.log(res.data)
+        const datos_tmp = (res.data.series[0] !== undefined) ? res.data.series[0].data : false
         if (res.data.hayResultados === 'error') {
             setHayError(true)
         } else if (res.data.hayResultados === 'si') {
-        setHayError(false)
+            setHayError(false)
+            if (datos_tmp) {
+                let total_tmp = 0
+                datos_tmp.forEach(dato => {
+                    total_tmp += dato
+                })
+                total_tmp = total_tmp.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                setDatos(datos_tmp)
+                setTotal(total_tmp)
+            }
             const series_tmp = []
             setCategorias(res.data.categorias)
             res.data.series.forEach(elemento => {
@@ -101,6 +114,22 @@ const ColumnasBasicas = ({ titulo, yLabel, seccion, formato, fechas, region, zon
         }
       }, [fechas, region, zona, tienda, proveedor, categoria, tipoEntrega, periodo, agrupador, anioRFM, mesRFM])
     
+    // Lo que sigue es para borrar y volver a crear el label de Total, según https://www.highcharts.com/forum/viewtopic.php?t=38132
+    const objectIsEmpty = (obj) => {
+        return Object.keys(obj).length === 0 && obj.constructor === Object
+    }
+
+    const addLabel = (chart) => {
+        chart.myLabel = chart.renderer.label(`Total: ${total}`, 20, 8).css({
+            fontSize: '1rem',
+            color: '#272F44'
+        }).add()
+    }
+    const removeLabel = (chart) => {
+        if (chart.myLabel && !objectIsEmpty(chart.myLabel)) {
+            chart.myLabel.destroy()
+        }
+    }
     const options = {
         chart: {
             type: 'column',
@@ -139,11 +168,11 @@ const ColumnasBasicas = ({ titulo, yLabel, seccion, formato, fechas, region, zon
             }
         },
         plotOptions: {
-            column: {
-                dataLabels: {
-                    enabled: true
-                }
-            },
+            // column: {
+            //     dataLabels: {
+            //         enabled: true
+            //     }
+            // },
             series: {
                 dataLabels: {
                     enabled: true,
@@ -164,7 +193,8 @@ const ColumnasBasicas = ({ titulo, yLabel, seccion, formato, fechas, region, zon
                     //     color: colorTexto,
                     //     textOutline: colorFondo
                     // }
-                }
+                },
+                type: 'column'
             }
         },
         tooltip: {
@@ -188,7 +218,16 @@ const ColumnasBasicas = ({ titulo, yLabel, seccion, formato, fechas, region, zon
         series,
         credits: {
             enabled: false
-        }
+        },
+        // Label de Total personalizado
+        chart: {
+            events: {
+              render() {
+                removeLabel(this)
+                addLabel(this)
+              }
+            }
+          }
     }
 
     return (

@@ -251,7 +251,7 @@ class ColumnasBasicas():
                 {queryLugar}
                 group by {lugar}
                 """
-            print(f"query desde ColumnasBasicas->PedidosPorPicker->{self.titulo}->General: {str(pipeline)}")
+            # print(f"query desde ColumnasBasicas->PedidosPorPicker->{self.titulo}->General: {str(pipeline)}")
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)
@@ -265,7 +265,7 @@ class ColumnasBasicas():
                     {query2Anio} 
                     {query2Mes} 
                     {queryLugar}"""
-                    print(f"query desde columnasBasicas->PedidosPorPicker->{self.titulo}->Picker: {str(query)}")
+                    # print(f"query desde columnasBasicas->PedidosPorPicker->{self.titulo}->Picker: {str(query)}")
                     cursor = cnxn.cursor().execute(query)
                     arregloSub = crear_diccionario(cursor)
                     pedidos = float(row['pedidos'])
@@ -312,7 +312,7 @@ class ColumnasBasicas():
                 {queryLugar}
                 group by {lugar}
                 """
-            print(f"query desde tablas->CostoPorPedido->{self.titulo}->General: {str(pipeline)}")
+            # print(f"query desde tablas->CostoPorPedido->{self.titulo}->General: {str(pipeline)}")
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)
@@ -344,6 +344,20 @@ class ColumnasBasicas():
             else:
                 hayResultados = 'no'
                 series = []
+
+        if self.titulo == 'Prueba':
+            hayResultados = 'si'
+            pipeline = []
+            categorias = ['mexicanos', 'al', 'grito', 'de', 'guerra', 'acero']
+            series = [
+                {
+                    'name': 'Costo de RH por Pedido',
+                    'data': [5,3,7,9,4,5],
+                    'type': 'column',
+                    'formato_tooltip':'moneda', 
+                    'color':'secondary'
+                }
+            ]
         return {'hayResultados':hayResultados,'categorias':categorias, 'series':series, 'pipeline': pipeline, 'categoria':self.filtros.categoria}
 
 @router.post("/{seccion}")

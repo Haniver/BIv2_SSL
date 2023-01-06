@@ -45,6 +45,9 @@ const CostoPorPedido = () => {
         <Col sm='12'>
           <ColumnasBasicas titulo='Costo de RH por pedido' seccion={seccion} formato='moneda' mes={mes} anio={anio} region={region} zona={zona} tienda={tienda} metodoEnvio={metodoEnvio} />
         </Col>
+        <Col sm='12'>
+          <ColumnasBasicas titulo='Prueba' seccion={seccion} formato='moneda' mes={mes} anio={anio} region={region} zona={zona} tienda={tienda} metodoEnvio={metodoEnvio} />
+        </Col>
       </Row>
     </>
   )
