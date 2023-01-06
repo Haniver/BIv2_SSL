@@ -86,7 +86,7 @@ class EjesMultiples():
         return  {'hayResultados':hayResultados,'categories':categories, 'series':series, 'pipeline': pipeline, 'lenArreglo':len(arreglo)}
 
     async def VentaSinImpuesto(self):
-        # print(f"Fecha desde filtro: {self.filtros.fechas['fecha_fin']}")
+        print(f"Fecha desde filtro en ejesMultiples -> {self.titulo}: {self.filtros.fechas['fecha_fin']}")
         fecha_fin = datetime.strptime(self.filtros.fechas['fecha_fin'], '%Y-%m-%dT%H:%M:%S.%fZ')
         # print(f"Fecha como datetime: {str(fecha_fin)}")
         anioElegido = fecha_fin.year

@@ -1436,12 +1436,7 @@ const Filtro = (props) => {
                 } else {
                   setAnio_tmp(e.value)
                 }
-                const mes = (mesValue.value + 1 < 10) ? `0${mesValue.value + 1}` : `${mesValue.value + 1}`
-                if (props.botonEnviar === undefined) {
-                  props.setFechas({fecha_ini: props.fechas.fecha_ini, fecha_fin: new Date(`${e.value}-${mes}-${fechas_srv.ultimoDiaVencidoDelMesReal(e.value, mesValue.value)}`)})
-                } else {
-                  setFechas_tmp({fecha_ini: Fechas_tmp.fecha_ini, fecha_fin: new Date(`${e.value}-${mes}-${fechas_srv.ultimoDiaVencidoDelMesReal(e.value, mesValue.value)}`)})
-                }
+                setFecha_fin_tmp(new Date(`${e.value}-${mesValue.value}-${fechas_srv.ultimoDiaVencidoDelMesReal(e.value, mesValue.value)}`))
               }}
             />
           </Col>}
@@ -1484,11 +1479,7 @@ const Filtro = (props) => {
                   setMes_tmp(e.value)
                 }
                 const mes = (e.value < 10) ? `0${e.value + 1}` : `${e.value + 1}`
-                if (props.botonEnviar === undefined) {
-                  props.setFechas({fecha_ini: props.fechas.fecha_ini, fecha_fin: new Date(`${anioValue.value}-${mes}-${fechas_srv.ultimoDiaVencidoDelMesReal(anioValue.value, e.value)}`)})
-                } else {
-                  setFechas_tmp({fecha_ini: Fechas_tmp.fecha_ini, fecha_fin: new Date(`${anioValue.value}-${mes}-${fechas_srv.ultimoDiaVencidoDelMesReal(anioValue.value, e.value)}`)})
-                }
+                setFecha_fin_tmp(new Date(`${anioValue.value}-${mes}-${fechas_srv.ultimoDiaVencidoDelMesReal(anioValue.value, mes)}`))
               }}
             />
           </Col>}
@@ -1618,6 +1609,10 @@ const Filtro = (props) => {
                       props.setFechas({fecha_ini: '', fecha_fin: fecha_fin_tmp})
                     } else if (getter === 'Fechas' && props.fechas.fecha_fin === '') {
                       props.setFechas({fecha_ini: fecha_ini_tmp, fecha_fin: ''})
+                    } else if ((getter === 'Anio' || getter === 'Mes') && props.fechas.fecha_ini === '') {
+                      console.log(`fecha_fin_tmp desde el final de filtros al moverle al anio:`)
+                      console.log(fecha_fin_tmp)
+                      props.setFechas({fecha_fin: fecha_fin_tmp, fecha_ini: ''})
                     } else {
                       eval(`props[key](${getter}_tmp)`)
                     }

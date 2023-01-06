@@ -42,6 +42,11 @@ const VentaSinImpuesto = () => {
 
   const seccion = 'VentaSinImpuesto'
 
+  useEffect(() => {
+    console.log("Fechas desde el useEffect:")
+    console.log(fechas)
+  }, [fechas])
+
   return (
     <>
       <Row className='match-height'>
