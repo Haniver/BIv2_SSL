@@ -2,6 +2,8 @@ from fastapi import Depends, FastAPI
 from starlette.middleware.cors import CORSMiddleware
 from app.routers import barras, columnasApiladas, columnasBasicas, columnasDrilldown, ejesMultiples, cargarFiltros, pie, tablas, tarjetas, login, tarjetasCombinadas, barrasApiladas, cargarMotivosFaltantes, ColumnasNps, spiderweb, columnasSuperpuestas, burbuja3d, areaBasica, distribucion3d, sankey, columnasAgrupadasYApiladas, markdown, ejesMultiplesApilados, tarjetasEnFila, tablasExpandibles, checarHash, leyendas
 import app.servicios.urls as urls
+from app.servicios.tareasDiarias import buscarExpirados, reducirArchivosLogs
+from fastapi_utils.tasks import repeat_every
 
 # app = FastAPI(dependencies=[Depends(get_query_token)])
 app = FastAPI()
@@ -58,3 +60,10 @@ app.include_router(leyendas.router)
 @app.get("/")
 async def root():
     return {"message": "Nada por aquí."}
+
+@app.on_event("startup")
+@repeat_every(seconds=60 * 60 * 24)  # 1 día
+# @repeat_every(seconds=30)  # 30 segundos (para debugging)
+def remove_expired_tokens_task() -> None:
+    buscarExpirados()
+    reducirArchivosLogs()

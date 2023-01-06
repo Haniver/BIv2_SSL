@@ -40,30 +40,8 @@ async def login_for_access_token(request: Request, form_data: OAuth2PasswordRequ
         )
     hoy = date.today()
     ahorita = datetime.now()
-    haceUnMes = ahorita - relativedelta(months=1)
-    haceUnMes = haceUnMes.strftime('%Y-%m-%d %H:%M:%S')
-    # Bloquear al usuario si no se ha logueado en un mes.
     cnxn = conexion_sql('DJANGO')
     cursor = cnxn.cursor()
-    query = f"""SELECT nombre, usuario FROM DJANGO.php.usuarios
-    WHERE fecha_ultimo_login is not null
-    AND fecha_ultimo_login < '{haceUnMes}'"""
-    cursor.execute(query)
-    arreglo = crear_diccionario(cursor)
-    if len(arreglo) > 0:
-        print("Sí hubo alguien a quien poner como expirado:")
-        query = f"""UPDATE DJANGO.php.usuarios
-        SET estatus='expirado', fecha_ultimo_login=null
-        WHERE fecha_ultimo_login is not null
-        AND fecha_ultimo_login < '{haceUnMes}'"""
-        cursor.execute(query)
-        cnxn.commit()
-        for row in arreglo:
-            print (row['nombre'])
-            cuerpo = f"<html><head></head><body><p>{row['nombre']},<p><p>Tu usuario en el BI ha expirado debido a inactividad. Si quieres recuperarlo, crea una nueva contraseña en:</p><p><a href='{frontendUrlHttp()}/recuperar'>{frontendUrlHttp()}/recuperar</a></p><span style='color:#1A2976;'>Saludos,<br />BI Omnicanal<br />Grupo Comercial Chedraui <img src='https://i.ibb.co/qyc21cy/logo-Email.png'></span></p></body></html>"
-            receivers = [row['usuario']]
-            titulo = "Tu usuario de BI Omnicanal ha expirado"
-            enviarEmail(titulo, receivers, cuerpo)    
     # Mandar error si el usuario no está activo
     query = f"""SELECT estatus
     from DJANGO.php.usuarios
