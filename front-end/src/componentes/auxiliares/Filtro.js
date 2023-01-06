@@ -187,16 +187,14 @@ const Filtro = (props) => {
 
   const comboAnio = []
   const comboAnioOpcional = []
-  const comboAnioRFM = [
-    {label: `${fechas_srv.anioActual()}`, value: fechas_srv.anioActual()}
-  ]
+  const comboAnioRFM = [{label: `${fechas_srv.anioActual()}`, value: fechas_srv.anioActual()}]
   const meterMasAnios = Math.abs(2022 - fechas_srv.anioActual())
   for (let i = 0; i <= meterMasAnios; i++) {
     comboAnio.push({label: `${fechas_srv.anioActual() - i}`, value: fechas_srv.anioActual() - i})
     comboAnioOpcional.push({label: `${fechas_srv.anioActual() - 1}`, value: fechas_srv.anioActual() - 1})
     comboAnioRFM.push({label: `${fechas_srv.anioActual() - i - 1}`, value: fechas_srv.anioActual() - i - 1})
   }
-  
+
   const comboMes = []
   for (let i = 0; i < 12; i++) {
     comboMes.push({label: `${fechas_srv.mesTexto(i, true)}`, value: i})
