@@ -41,7 +41,13 @@ def errorUltimoLogin(ip, usuario):
         file.close()    
 
 def reducirArchivoLogs(usuario):
-    size = os.path.getsize(f"{rutaLogs()}{usuario}.log")
+    try:
+        size = os.path.getsize(f"{rutaLogs()}{usuario}.log")
+    except:
+        with open(f"{rutaLogs()}{usuario}.log", "a+") as file:
+            file.write("Creando el archivo de logs para usuario...\r\n")
+            file.close()
+            return
     if size > 5000000:
         with open(f"{rutaLogs()}{usuario}.log", "r") as f:
             text = f.read()
