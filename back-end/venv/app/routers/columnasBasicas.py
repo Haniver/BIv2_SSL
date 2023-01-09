@@ -330,17 +330,15 @@ class ColumnasBasicas():
                 data = sorted(data)
                 # Extraes los datos para las series y las categories
                 for tupla in data:
-                    series.append(tupla[0])
-                    categorias.append(tupla[1])
-                series = [
+                    series.append(
                     {
-                        'name': 'Costo de RH por Pedido',
-                        'data': series,
+                        'name': tupla[1],
+                        'y': tupla[0],
                         'type': 'column',
                         'formato_tooltip':'moneda', 
                         'color':'secondary'
                     }
-                ]
+                    )
             else:
                 hayResultados = 'no'
                 series = []
@@ -349,16 +347,30 @@ class ColumnasBasicas():
             hayResultados = 'si'
             pipeline = []
             categorias = ['mexicanos', 'al', 'grito', 'de', 'guerra', 'acero']
-            series = [
-                {
-                    'name': 'Costo de RH por Pedido',
-                    'data': [5,3,7,9,4,5],
+            series = []
+            #     {
+            #         'name': 'Costo de RH por Pedido',
+            #         'data': [5,3,7,9,4,5],
+            #         'type': 'column',
+            #         'formato_tooltip':'moneda', 
+            #         'color':'secondary'
+            #     }
+            # ]
+            data = [3,5,1, 9,6,3]
+            for i in range(6):
+                if i % 3 == 0:
+                    color = 'success'
+                elif i % 3 == 1:
+                    color = '#FFFFFF'
+                else:
+                    color = 'danger'
+                series.append( {
+                    'y': data[i],
                     'type': 'column',
-                    'formato_tooltip':'moneda', 
-                    'color':'secondary'
-                }
-            ]
-        return {'hayResultados':hayResultados,'categorias':categorias, 'series':series, 'pipeline': pipeline, 'categoria':self.filtros.categoria}
+                    'formato_tooltip':'entero', 
+                    'color': color
+                })
+        return {'hayResultados':hayResultados, 'series':series, 'categorias': categorias, 'pipeline': pipeline}
 
 @router.post("/{seccion}")
 async def columnas_basicas (filtros: Filtro, titulo: str, seccion: str, request: Request, user: dict = Depends(get_current_active_user)):

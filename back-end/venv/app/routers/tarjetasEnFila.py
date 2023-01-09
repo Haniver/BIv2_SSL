@@ -214,7 +214,7 @@ class TarjetasEnFila():
             if variante == 'MesAlDia':
                 query = f"""select dt.anio, sum(ventaSinImpuestos) venta, sum(objetivo) objetivo,
                 sum(case when anio={self.anioElegido} and dt.fecha <= '{self.anioElegido}-{self.mesElegido}-{self.diaElegido}' then objetivo else 0 end) objetivoDia,
-                sum(case when DAY(dt.fecha) <= {self.diaElegido} then ventaSinImpuestos else 0 end) ventaDia
+                sum(case when DAY(dt.fecha) <= {self.diaElegido} then isnull (ventaSinImpuestos, 0) else 0 end) ventaDia
                 from DWH.artus.ventaDiaria vd
                 left join DWH.dbo.dim_tiempo dt on vd.fecha =dt.id_fecha
                 left join DWH.artus.catTienda ct on vd.idTienda =ct.tienda

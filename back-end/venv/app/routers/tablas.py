@@ -768,8 +768,8 @@ class Tablas():
                 campo_depto = 'deptoDescrip'
                 titulo_nivel_producto = 'Departamento'
             pipeline = f"""select cd.{campo_depto} '{titulo_nivel_producto}',
-                sum(case when anio={anioElegido-1} and dt.fecha < convert(date,DATEADD(yy,-1,(GETDATE()))) then ventaSinImpuestos else 0 end) AAnterior,
-                sum(case when anio={anioElegido} then ventaSinImpuestos else 0 end) AActual,
+                sum(case when anio={anioElegido-1} and dt.fecha < convert(date,DATEADD(yy,-1,(GETDATE()))) then isnull (ventaSinImpuestos, 0) else 0 end) AAnterior,
+                sum(case when anio={anioElegido} then isnull (ventaSinImpuestos, 0) else 0 end) AActual,
                 sum(case when anio={anioElegido} then objetivo else 0 end) objetivo,
                 sum(case when anio=2022 and dt.fecha <= '{fechaElegida}' then objetivo else 0 end) objetivoDia
                 from DWH.artus.ventaDiaria vd
@@ -841,8 +841,8 @@ class Tablas():
             
 
             pipeline = f"""select dt.abrev_mes categoria,
-            sum(case when anio={anioElegido-1} then ventaSinImpuestos else 0 end) AAnterior,
-            sum(case when anio={anioElegido} then ventaSinImpuestos else 0 end) AActual,
+            sum(case when anio={anioElegido-1} then isnull (ventaSinImpuestos, 0) else 0 end) AAnterior,
+            sum(case when anio={anioElegido} then isnull (ventaSinImpuestos, 0) else 0 end) AActual,
             sum(case when anio={anioElegido} then objetivo else 0 end) objetivo
             from DWH.artus.ventaDiaria vd
             left join DWH.dbo.dim_tiempo dt on vd.fecha=dt.id_fecha
@@ -916,8 +916,8 @@ class Tablas():
             
 
             pipeline = f"""select vd.idTienda, ct.regionNombre, ct.zonaNombre, ct.tiendaNombre,
-            sum(case when anio={anioElegido-1} then ventaSinImpuestos else 0 end) AAnterior,
-            sum(case when anio={anioElegido} then ventaSinImpuestos else 0 end) AActual,
+            sum(case when anio={anioElegido-1} then isnull (ventaSinImpuestos, 0) else 0 end) AAnterior,
+            sum(case when anio={anioElegido} then isnull (ventaSinImpuestos, 0) else 0 end) AActual,
             sum(case when anio={anioElegido} then objetivo else 0 end) objetivo
             from DWH.artus.ventaDiaria vd
             left join DWH.dbo.dim_tiempo dt on vd.fecha=dt.id_fecha

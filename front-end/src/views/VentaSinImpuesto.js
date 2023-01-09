@@ -43,8 +43,8 @@ const VentaSinImpuesto = () => {
   const seccion = 'VentaSinImpuesto'
 
   useEffect(() => {
-    console.log("Fechas desde el useEffect:")
-    console.log(fechas)
+    // console.log("Fechas desde el useEffect:")
+    // console.log(fechas)
   }, [fechas])
 
   return (

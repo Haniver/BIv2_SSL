@@ -86,7 +86,6 @@ class EjesMultiples():
         return  {'hayResultados':hayResultados,'categories':categories, 'series':series, 'pipeline': pipeline, 'lenArreglo':len(arreglo)}
 
     async def VentaSinImpuesto(self):
-        print(f"Fecha desde filtro en ejesMultiples -> {self.titulo}: {self.filtros.fechas['fecha_fin']}")
         fecha_fin = datetime.strptime(self.filtros.fechas['fecha_fin'], '%Y-%m-%dT%H:%M:%S.%fZ')
         # print(f"Fecha como datetime: {str(fecha_fin)}")
         anioElegido = fecha_fin.year
@@ -118,8 +117,8 @@ class EjesMultiples():
             
 
             pipeline = f"""select dt.abrev_mes categoria,
-            sum(case when anio={anioElegido-1} then ventaSinImpuestos else 0 end) AAnterior,
-            sum(case when anio={anioElegido} then ventaSinImpuestos else 0 end) AActual,
+            sum(case when anio={anioElegido-1} then isnull (ventaSinImpuestos, 0) else 0 end) AAnterior,
+            sum(case when anio={anioElegido} then isnull (ventaSinImpuestos, 0) else 0 end) AActual,
             sum(case when anio={anioElegido} then objetivo else 0 end) objetivo
             from DWH.artus.ventaDiaria vd
             left join DWH.dbo.dim_tiempo dt on vd.fecha=dt.id_fecha
@@ -187,8 +186,8 @@ class EjesMultiples():
             serie5 = []
 
             pipeline = f"""select dt.descrip_fecha categoria,
-            sum(case when anio={anioElegido-1} then ventaSinImpuestos else 0 end) AAnterior,
-            sum(case when anio={anioElegido} then ventaSinImpuestos else 0 end) AActual,
+            sum(case when anio={anioElegido-1} then isnull (ventaSinImpuestos, 0) else 0 end) AAnterior,
+            sum(case when anio={anioElegido} then isnull (ventaSinImpuestos, 0) else 0 end) AActual,
             sum(case when anio={anioElegido} then objetivo else 0 end) objetivo
             from DWH.artus.ventaDiaria vd
             left join DWH.dbo.dim_tiempo dt on vd.fecha=dt.id_fecha
@@ -267,8 +266,8 @@ class EjesMultiples():
                 campo_siguiente_lugar = 'regionNombre'
 
             pipeline = f"""select ct.{campo_siguiente_lugar} categoria,
-            sum(case when anio={anioElegido-1} then ventaSinImpuestos else 0 end) AAnterior,
-            sum(case when anio={anioElegido} then ventaSinImpuestos else 0 end) AActual,
+            sum(case when anio={anioElegido-1} then isnull (ventaSinImpuestos, 0) else 0 end) AAnterior,
+            sum(case when anio={anioElegido} then isnull (ventaSinImpuestos, 0) else 0 end) AActual,
             sum(case when anio={anioElegido} then objetivo else 0 end) objetivo
             from DWH.artus.ventaDiaria vd
             left join DWH.dbo.dim_tiempo dt on vd.fecha=dt.id_fecha
@@ -338,8 +337,8 @@ class EjesMultiples():
                 campo_siguiente_lugar = 'regionNombre'
 
             pipeline = f"""select ct.{campo_siguiente_lugar} categoria,
-                sum(case when anio={anioElegido-1} then ventaSinImpuestos else 0 end) AAnterior,
-                sum(case when anio={anioElegido} then ventaSinImpuestos else 0 end) AActual,
+                sum(case when anio={anioElegido-1} then isnull (ventaSinImpuestos, 0) else 0 end) AAnterior,
+                sum(case when anio={anioElegido} then isnull (ventaSinImpuestos, 0) else 0 end) AActual,
                 sum(case when anio={anioElegido} then objetivo else 0 end) objetivo
                 from DWH.artus.ventaDiaria vd
                 left join DWH.dbo.dim_tiempo dt on vd.fecha=dt.id_fecha
@@ -355,7 +354,7 @@ class EjesMultiples():
                 else:
                     pipeline += f""" and cd.idDepto = {self.filtros.depto} """
             pipeline += f" group by ct.{campo_siguiente_lugar} "
-            # print(f"Query desde EjesMultiples -> Venta  Mensual Por Lugar: {pipeline}")
+            # print(f"Query desde EjesMultiples -> Venta Sin impuesto -> Venta  Mensual Por Lugar: {pipeline}")
 
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)

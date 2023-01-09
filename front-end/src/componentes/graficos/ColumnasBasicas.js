@@ -17,7 +17,7 @@ require('highcharts/modules/export-data')(Highcharts)
 
 const ColumnasBasicas = ({ titulo, yLabel, seccion, formato, fechas, region, zona, tienda, proveedor, categoria, tipoEntrega, tituloAPI, periodo, agrupador, anioRFM, mesRFM }) => {
     const [hayError, setHayError] = useState(false)
-    const [series, setSeries] = useState([])
+    const [seriesData, setSeriesData] = useState([])
     const [datos, setDatos] = useState([{name: 'Sin Resultados', y: 0}])
     const [total, setTotal] = useState('')
     const [categorias, setCategorias] = useState([])
@@ -80,7 +80,7 @@ const ColumnasBasicas = ({ titulo, yLabel, seccion, formato, fechas, region, zon
           }
         })
         dispatchLoader({tipo: 'recibirDeAPI'})
-        // console.log(res.data)
+        console.log(res.data)
         const datos_tmp = (res.data.series[0] !== undefined) ? res.data.series[0].data : false
         if (res.data.hayResultados === 'error') {
             setHayError(true)
@@ -95,22 +95,32 @@ const ColumnasBasicas = ({ titulo, yLabel, seccion, formato, fechas, region, zon
                 setDatos(datos_tmp)
                 setTotal(total_tmp)
             }
-            const series_tmp = []
+            const series_data_tmp = []
             setCategorias(res.data.categorias)
+            const paleta = ['primary', 'secondary', 'success', 'info', 'warning', 'danger', 'light', 'dark']
             res.data.series.forEach(elemento => {
-                series_tmp.push({
+                let color = ''
+                if (elemento.color === undefined) {
+                    color = colors.primary.main
+                } else if (paleta.includes(elemento.color)) {
+                    color = colors[elemento.color].main
+                } else {
+                    color = elemento.color
+                }
+                series_data_tmp.push({
                     name: elemento.name,
-                    data: procesarSerie(elemento.data, formato),
-                    color: colors[elemento.color].main
+                    // data: procesarSerie(elemento.data, formato),
+                    y: elemento.y,
+                    color
                 })
             })
             // console.log(`Data desde Columnas Básicas para ${titulo}:`)
-            // console.log(series_tmp)
-            setSeries(series_tmp)
+            console.log(series_data_tmp)
+            setSeriesData(series_data_tmp)
             // console.log(JSON.stringify(res.data.pipeline))
         } else {
             setCategorias([])
-            setSeries([])
+            setSeriesData([])
         }
       }, [fechas, region, zona, tienda, proveedor, categoria, tipoEntrega, periodo, agrupador, anioRFM, mesRFM])
     
@@ -132,7 +142,8 @@ const ColumnasBasicas = ({ titulo, yLabel, seccion, formato, fechas, region, zon
     }
     const options = {
         chart: {
-            type: 'column',
+            zoomType: 'xy',
+            // type: 'column',
             backgroundColor: colorFondo
         },
         title: {
@@ -167,47 +178,18 @@ const ColumnasBasicas = ({ titulo, yLabel, seccion, formato, fechas, region, zon
                 }
             }
         },
-        plotOptions: {
-            // column: {
-            //     dataLabels: {
-            //         enabled: true
-            //     }
-            // },
-            series: {
-                dataLabels: {
-                    enabled: true,
-                    // format: '${point.y:,.2f}',
-                    formatter(tooltip) {
-                        if (formato === 'moneda') {
-                            return `$${Highcharts.numberFormat(this.point.y, 2, '.', ',')}`
-                        } else if (formato === 'entero') {
-                            return `${Highcharts.numberFormat(this.point.y, 0, '.', ',')}`
-                        } else if (formato === 'porcentaje') {
-                            return `${Highcharts.numberFormat(this.point.y, 2, '.', ',')}%`
-                        }
-                    },
-                    color: colorTexto,
-                    textOutline: colorTexto
-                    // style: {
-                    //     fontWeight: 'bold',
-                    //     color: colorTexto,
-                    //     textOutline: colorFondo
-                    // }
-                },
-                type: 'column'
-            }
-        },
         tooltip: {
             headerFormat: '<b>{point.x}</b><br/>',
-            formatter(tooltip) {
-                if (formato === 'moneda') {
-                    return `${this.series.name}: $${Highcharts.numberFormat(this.point.y, 2, '.', ',')}`
-                } else if (formato === 'entero') {
-                    return `${this.series.name}: ${Highcharts.numberFormat(this.point.y, 0, '.', ',')}`
-                } else if (formato === 'porcentaje') {
-                    return `${this.series.name}: ${Highcharts.numberFormat(this.point.y, 2, '.', ',')}%`
-                }
-            }
+            pointFormat: '{point.y:,1f}<br/>'
+            // formatter(tooltip) {
+            //     if (formato === 'moneda') {
+            //         return `${this.series.name}: $${Highcharts.numberFormat(this.point.y, 2, '.', ',')}`
+            //     } else if (formato === 'entero') {
+            //         return `${this.series.name}: ${Highcharts.numberFormat(this.point.y, 0, '.', ',')}`
+            //     } else if (formato === 'porcentaje') {
+            //         return `${this.series.name}: ${Highcharts.numberFormat(this.point.y, 2, '.', ',')}%`
+            //     }
+            // }
         },
         legend: {
             itemStyle: {
@@ -215,7 +197,13 @@ const ColumnasBasicas = ({ titulo, yLabel, seccion, formato, fechas, region, zon
                 fontWeight: 'bold'
             }
         },
-        series,
+        series: [
+            {
+                name: tituloEnviar,
+                data: seriesData,
+                type: 'column'
+            }
+        ],
         credits: {
             enabled: false
         },

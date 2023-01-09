@@ -1610,8 +1610,8 @@ const Filtro = (props) => {
                     } else if (getter === 'Fechas' && props.fechas.fecha_fin === '') {
                       props.setFechas({fecha_ini: fecha_ini_tmp, fecha_fin: ''})
                     } else if ((getter === 'Anio' || getter === 'Mes') && props.fechas.fecha_ini === '') {
-                      console.log(`fecha_fin_tmp desde el final de filtros al moverle al anio:`)
-                      console.log(fecha_fin_tmp)
+                      // console.log(`fecha_fin_tmp desde el final de filtros al moverle al anio:`)
+                      // console.log(fecha_fin_tmp)
                       props.setFechas({fecha_fin: fecha_fin_tmp, fecha_ini: ''})
                     } else {
                       eval(`props[key](${getter}_tmp)`)
