@@ -13,7 +13,7 @@ require('highcharts/modules/data')(Highcharts)
 require('highcharts/modules/exporting')(Highcharts)
 require('highcharts/modules/export-data')(Highcharts)
 
-const Pie = ({ titulo, seccion, formato, fechas, region, zona, tienda, tipoEntrega, origen, coloresPedidosPendientes, categoria, extenderDerecha, extenderIzquierda }) => {
+const Pie = ({ titulo, seccion, formato, fechas, region, zona, tienda, tipoEntrega, origen, coloresPedidosPendientes, categoria, extenderDerecha, extenderIzquierda, ocultarTotal }) => {
     const [hayError, setHayError] = useState(false)
     const [datos, setDatos] = useState([{name: 'Sin Resultados', y: 0}])
     const [total, setTotal] = useState('')
@@ -196,16 +196,18 @@ const Pie = ({ titulo, seccion, formato, fechas, region, zona, tienda, tipoEntre
         ],
         credits: {
             enabled: false
-        },
-        // Label de Total personalizado
-        chart: {
+        }
+    }
+    // Label de Total personalizado
+    if (!ocultarTotal) {
+        options.chart = {
             events: {
               render() {
                 removeLabel(this)
                 addLabel(this)
               }
             }
-          }
+        }
     }
     return (
         <Card className={claseCSS}>
