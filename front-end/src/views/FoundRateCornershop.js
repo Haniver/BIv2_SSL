@@ -45,10 +45,10 @@ const FoundRateCornershop = () => {
         </Col>
       </Row>}
       <Row className='match-height'>
-        <Col sm='12' lg='5'>
+        <Col sm='12' lg='6'>
           <Tabla titulo='Detalle Found Rate por Departamento' quitarBusqueda quitarPaginacion quitarExportar fechas={fechas} region={region} zona={zona} tienda={tienda} seccion={seccion} />
         </Col>
-        <Col sm='12' lg='7'>
+        <Col sm='12' lg='6'>
           <EjesMultiples titulo='Found Rate Cornershop Vs. Chedraui Por Día' fechas={fechas} region={region} zona={zona} tienda={tienda} seccion={seccion} />
         </Col>
       </Row>

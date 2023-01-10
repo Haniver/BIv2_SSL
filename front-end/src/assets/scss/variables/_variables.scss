@@ -4,10 +4,10 @@
 
 $primary:       #F58221;
 $secondary:     #0074C8;
-$success:       #26b873;
-$info:          #0DCAF0;
-$warning:       #FFC107;
-$danger:        #ff3d51;
+$success:       #336600;
+$info:          #01416e;
+$warning:       #FFCC00;
+$danger:        #990000;
 $light:         #868785;
 $dark:          #231F20;
 
@@ -220,4 +220,15 @@ code[class^='language-'], code[class*=' language-']{
 .header-navbar .navbar-container ul.navbar-nav li > a.nav-link:first-child {
   // margin-left: -2rem;
   margin-top: -2rem;
+}
+
+// Elementos del filtro
+.mb-1 {
+  padding: 0.5rem;
+  padding-bottom: 0;
+  width: 100%;
+}
+// Botón del filtro
+button.botonEnviar.btn.btn-primary {
+  width: 100%;
 }

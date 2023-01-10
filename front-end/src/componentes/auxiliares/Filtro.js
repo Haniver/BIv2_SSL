@@ -79,7 +79,7 @@ const Filtro = (props) => {
         espacio: false,
         xl: 6,
         lg: 6,
-        sm: 12
+        sm: 6
       }
     } else if (numElementos === 3) {
       bootstrap = {
@@ -92,50 +92,50 @@ const Filtro = (props) => {
       bootstrap = {
         espacio: false,
         xl: 3,
-        lg: 6,
-        sm: 12
+        lg: 3,
+        sm: 6
       }
     } else if (numElementos === 5) {
       bootstrap = {
         espacio: true,
         xl: 2,
-        lg: 6,
+        lg: 2,
         sm: 12
       }
     } else if (numElementos === 6) {
       bootstrap = {
         espacio: false,
-        xl: 4,
-        lg: 4,
-        sm: 12
+        xl: 2,
+        lg: 2,
+        sm: 6
       }
     } else if (numElementos === 7) {
       bootstrap = {
         espacio: true,
-        xl: 3,
+        xl: 1,
         lg: 3,
         sm: 12
       }
     } else if (numElementos === 8) {
       bootstrap = {
         espacio: false,
-        xl: 3,
+        xl: 1,
         lg: 3,
-        sm: 12
+        sm: 6
       } 
     } else if (numElementos === 9) {
       bootstrap = {
         espacio: false,
-        xl: 4,
-        lg: 4,
+        xl: 1,
+        lg: 2,
         sm: 12
       } 
     } else if (numElementos === 10) {
       bootstrap = {
         espacio: true,
-        xl: 3,
-        lg: 3,
-        sm: 12
+        xl: 1,
+        lg: 2,
+        sm: 6
       } 
     }
   
@@ -1628,11 +1628,9 @@ const Filtro = (props) => {
           {bootstrap.espacio && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
           </Col>}
         </Row>
-        <Row className='match-height'>
+        {/* <Row className='match-height'>
           <Col>&nbsp;</Col>
-        </Row>
-      {/* </CardBody>
-    </Card> */}
+        </Row> */}
     </>
   )
 }

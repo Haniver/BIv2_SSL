@@ -28,11 +28,11 @@ const PedidosPendientes = () => {
       </Row>
       <Row className='match-height'>
         <Col sm='12'>
-          <Filtro region={region} zona={zona} tienda={tienda} tipoEntrega={tipoEntrega} origen={origen} setTipoEntrega={setTipoEntrega} setRegion={setRegion} setZona={setZona} setTienda={setTienda} setOrigen={setOrigen} botonEnviar={botonEnviar} setBotonEnviar={setBotonEnviar} />
+          <Filtro region={region} zona={zona} tienda={tienda} tipoEntrega={tipoEntrega} setTipoEntrega={setTipoEntrega} setRegion={setRegion} setZona={setZona} setTienda={setTienda} botonEnviar={botonEnviar} setBotonEnviar={setBotonEnviar} />
         </Col>
       </Row>
       <Row className='match-height'>
-        <Col sm='12'>
+        {/* <Col sm='12'>
           <ErrorBoundary 
             FallbackComponent={ErrorHandling.ErrorFallback} 
             // onError={ErrorHandling.myErrorHandler} 
@@ -42,7 +42,7 @@ const PedidosPendientes = () => {
           >
             <Leyenda seccion={seccion} titulo='Última actualización:' />
           </ErrorBoundary>
-        </Col>
+        </Col> */}
       </Row>
       <Row className='match-height'>
         <Col xl={tipoEntrega ? '12' : '6'} sm='12'>
