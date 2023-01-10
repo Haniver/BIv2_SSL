@@ -48,6 +48,10 @@ const ColumnasBasicas = ({ titulo, yLabel, seccion, formato, fechas, region, zon
     drilldown(Highcharts)
 
     useEffect(() => {
+        console.log(`Total: ${total}`)
+    }, [total])
+
+    useEffect(() => {
         // Aquí también cambiar los colores dependiendo del skin, según líneas 18-19
         if (skin === 'dark') {
             setColorFondo(colorFondoDark)
@@ -81,7 +85,7 @@ const ColumnasBasicas = ({ titulo, yLabel, seccion, formato, fechas, region, zon
         })
         dispatchLoader({tipo: 'recibirDeAPI'})
         console.log(res.data)
-        const datos_tmp = (res.data.series[0] !== undefined) ? res.data.series[0].data : false
+        const datos_tmp = (res.data.series[0] !== undefined) ? res.data.series : false
         if (res.data.hayResultados === 'error') {
             setHayError(true)
         } else if (res.data.hayResultados === 'si') {
@@ -89,7 +93,7 @@ const ColumnasBasicas = ({ titulo, yLabel, seccion, formato, fechas, region, zon
             if (datos_tmp) {
                 let total_tmp = 0
                 datos_tmp.forEach(dato => {
-                    total_tmp += dato
+                    total_tmp += dato.y
                 })
                 total_tmp = total_tmp.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                 setDatos(datos_tmp)
