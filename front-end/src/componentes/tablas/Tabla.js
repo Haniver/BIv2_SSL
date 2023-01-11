@@ -574,6 +574,7 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
                     // Algunas filas vienen con una propiedad "esTotal = true" desde el back end. Si lo tienen, usarlo para darle formato de Total a esa fila:
                     conditionalRowStyles={conditionalRowStyles}
                 />
+                {quitarPaginacion && <><br /><br /></>}
                 <Export onExport={() => downloadCSV(data)} /></>}
                 {!hayError && estadoLoader.contador !== 0 && <LoadingGif />}
             </CardBody>
