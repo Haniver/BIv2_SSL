@@ -4,7 +4,7 @@ import axios from 'axios'
 import CustomUrls from '../../services/customUrls'
 import { ThemeColors } from '@src/utility/context/ThemeColors'
 import { useSkin } from '@hooks/useSkin'
-import { Card, CardBody, Input, Button } from 'reactstrap'
+import { Card, CardBody, Input, Button, CardTitle } from 'reactstrap'
 import { Link } from 'react-router-dom'
 import DataTable from 'react-data-table-component'
 import LoadingGif from '../auxiliares/LoadingGif'
@@ -539,8 +539,10 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
         <Card>
             <CardBody>
                 {hayError && <p classname='texto-rojo'>{`Error en la carga del componente "${tituloEnviar}" el ${fechas_srv.fechaYHoraActual()}`}</p>}
-                {!hayError && estadoLoader.contador === 0 && <DataTable
-                    title={titulo}
+                {!hayError && estadoLoader.contador === 0 && <>
+                <CardTitle className='centrado'>{titulo}</CardTitle>
+                <DataTable
+                    title=''
                     columns={columns}
                     data={filteredItems}
                     // data={data}
@@ -557,7 +559,7 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
                     highlightOnHover
                     // Algunas filas vienen con una propiedad "esTotal = true" desde el back end. Si lo tienen, usarlo para darle formato de Total a esa fila:
                     conditionalRowStyles={conditionalRowStyles}
-                />}
+                /></>}
                 {!hayError && estadoLoader.contador !== 0 && <LoadingGif />}
             </CardBody>
         </Card>
