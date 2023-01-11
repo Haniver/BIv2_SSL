@@ -11,6 +11,8 @@ $danger:        #990000;
 $light:         #868785;
 $dark:          #231F20;
 
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans&display=swap');
+
 .brand-logo {
   img {
     height: 25px;
@@ -237,4 +239,13 @@ div.mb-1:has(button.botonEnviar.btn.btn-primary) {
 // Botón del filtro
 button.botonEnviar.btn.btn-primary {
   width: 100%;
+}
+// Fuente de toda la aplicación
+body {
+  font-family: 'Noto Sans', Helvetica, Arial, serif;
+}
+// Que los títulos de los gráficos estén en mayúscula
+.card .card-title, .tituloFiltro {
+  text-transform: uppercase;
+  font-weight: bold;
 }

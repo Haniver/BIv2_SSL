@@ -6,7 +6,7 @@ import axios from 'axios'
 import CustomUrls from '../../services/customUrls'
 import { ThemeColors } from '@src/utility/context/ThemeColors'
 import { useSkin } from '@hooks/useSkin'
-import { Card, CardBody } from 'reactstrap'
+import { Card, CardBody, CardTitle } from 'reactstrap'
 import drilldown from 'highcharts/modules/drilldown'
 import LoadingGif from '../auxiliares/LoadingGif'
 import fechas_srv from '../../services/fechas_srv'
@@ -88,10 +88,7 @@ const ColumnasDrilldown = ({ titulo, yLabel, seccion, formato, fechas, region, z
             backgroundColor: colorFondo
         },
         title: {
-            text: titulo,
-            style: {
-                color: colorTexto
-            }
+            text: ''
         },
         subtitle: {
             text: 'Haz clic en una columna para ver el detalle'

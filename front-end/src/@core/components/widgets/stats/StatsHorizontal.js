@@ -1,6 +1,6 @@
 // ** Third Party Components
 import PropTypes from 'prop-types'
-import { Card, CardBody } from 'reactstrap'
+import { Card, CardBody, CardTitle } from 'reactstrap'
 
 const StatsHorizontal = ({ icon, color, stats, statTitle, className, ...rest }) => {
   return (

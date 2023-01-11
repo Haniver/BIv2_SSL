@@ -5,7 +5,7 @@ import Avatar from '@components/avatar'
 import PropTypes from 'prop-types'
 import classnames from 'classnames'
 import Chart from 'react-apexcharts'
-import { Card, CardBody } from 'reactstrap'
+import { Card, CardBody, CardTitle } from 'reactstrap'
 
 // ** Default Options
 import { areaChartOptions } from './ChartOptions'

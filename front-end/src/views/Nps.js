@@ -24,14 +24,14 @@ const Nps = () => {
 
     const seccion = 'Nps'
 
-    useEffect(() => {
-      console.log(`provLogist:`)
-      console.log(provLogist)
-      console.log(`periodo.mes:`)
-      console.log(periodo.mes)
-      console.log(`periodo.semana:`)
-      console.log(periodo.semana)
-    }, [provLogist, periodo])
+    // useEffect(() => {
+    //   console.log(`provLogist:`)
+    //   console.log(provLogist)
+    //   console.log(`periodo.mes:`)
+    //   console.log(periodo.mes)
+    //   console.log(`periodo.semana:`)
+    //   console.log(periodo.semana)
+    // }, [provLogist, periodo])
 
   return (
     <>

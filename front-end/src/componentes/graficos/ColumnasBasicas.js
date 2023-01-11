@@ -6,7 +6,7 @@ import axios from 'axios'
 import CustomUrls from '../../services/customUrls'
 import { ThemeColors } from '@src/utility/context/ThemeColors'
 import { useSkin } from '@hooks/useSkin'
-import { Card, CardBody } from 'reactstrap'
+import { Card, CardBody, CardTitle } from 'reactstrap'
 import drilldown from 'highcharts/modules/drilldown'
 import LoadingGif from '../auxiliares/LoadingGif'
 import fechas_srv from '../../services/fechas_srv'
@@ -47,9 +47,9 @@ const ColumnasBasicas = ({ titulo, yLabel, seccion, formato, fechas, region, zon
     
     drilldown(Highcharts)
 
-    useEffect(() => {
-        console.log(`Total: ${total}`)
-    }, [total])
+    // useEffect(() => {
+    //     console.log(`Total: ${total}`)
+    // }, [total])
 
     useEffect(() => {
         // Aquí también cambiar los colores dependiendo del skin, según líneas 18-19
@@ -84,7 +84,7 @@ const ColumnasBasicas = ({ titulo, yLabel, seccion, formato, fechas, region, zon
           }
         })
         dispatchLoader({tipo: 'recibirDeAPI'})
-        console.log(res.data)
+        // console.log(res.data)
         const datos_tmp = (res.data.series[0] !== undefined) ? res.data.series : false
         if (res.data.hayResultados === 'error') {
             setHayError(true)
@@ -119,7 +119,7 @@ const ColumnasBasicas = ({ titulo, yLabel, seccion, formato, fechas, region, zon
                 })
             })
             // console.log(`Data desde Columnas Básicas para ${titulo}:`)
-            console.log(series_data_tmp)
+            // console.log(series_data_tmp)
             setSeriesData(series_data_tmp)
             // console.log(JSON.stringify(res.data.pipeline))
         } else {
@@ -151,10 +151,10 @@ const ColumnasBasicas = ({ titulo, yLabel, seccion, formato, fechas, region, zon
             backgroundColor: colorFondo
         },
         title: {
-            text: titulo,
-            style: {
-                color: colorTexto
-            }
+            text: ''
+            // style: {
+            //     color: colorTexto
+            // }
         },
         xAxis: {
             categories: categorias,
@@ -229,6 +229,7 @@ const ColumnasBasicas = ({ titulo, yLabel, seccion, formato, fechas, region, zon
             <CardBody>
                 {hayError && <p classname='texto-rojo'>{`Error en la carga del componente "${tituloEnviar}" el ${fechas_srv.fechaYHoraActual()}`}</p>}
                 {!hayError && estadoLoader.contador === 0 && <>
+                    <CardTitle className='centrado'>{tituloEnviar}</CardTitle>
                     <HighchartsReact
                         highcharts={Highcharts}
                         options={options}

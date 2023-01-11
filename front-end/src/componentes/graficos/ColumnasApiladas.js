@@ -6,7 +6,7 @@ import axios from 'axios'
 import CustomUrls from '../../services/customUrls'
 import { ThemeColors } from '@src/utility/context/ThemeColors'
 import { useSkin } from '@hooks/useSkin'
-import { Card, CardBody } from 'reactstrap'
+import { Card, CardBody, CardTitle } from 'reactstrap'
 import drilldown from 'highcharts/modules/drilldown'
 import LoadingGif from '../auxiliares/LoadingGif'
 import fechas_srv from '../../services/fechas_srv'
@@ -107,10 +107,7 @@ const ColumnasApiladas = ({ titulo, yLabel, seccion, formato, fechas, region, zo
             backgroundColor: colorFondo
         },
         title: {
-            text: titulo,
-            style: {
-                color: colorTexto
-            }
+            text: ''
         },
         xAxis: {
             categories: categorias,
@@ -223,6 +220,7 @@ const ColumnasApiladas = ({ titulo, yLabel, seccion, formato, fechas, region, zo
             <CardBody>
                 {hayError && <p classname='texto-rojo'>{`Error en la carga del componente "${tituloEnviar}" el ${fechas_srv.fechaYHoraActual()}`}</p>}
                 {!hayError && estadoLoader.contador === 0 && <>
+                    <CardTitle className='centrado'>{titulo}</CardTitle>
                     <HighchartsReact
                         highcharts={Highcharts}
                         options={options}

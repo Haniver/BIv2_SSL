@@ -1,7 +1,7 @@
 // ** Third Party Components
 import PropTypes from 'prop-types'
 import Chart from 'react-apexcharts'
-import { Card, CardBody } from 'reactstrap'
+import { Card, CardBody, CardTitle } from 'reactstrap'
 
 const TinyChartStats = props => {
   // ** Props

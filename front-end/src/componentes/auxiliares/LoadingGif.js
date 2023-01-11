@@ -1,4 +1,4 @@
-import { Card, CardBody } from 'reactstrap'
+import { Card, CardBody, CardTitle } from 'reactstrap'
 import preloaderImg from '../../assets/images/hug.gif'
 
 const LoadingGif = (mini = false) => {

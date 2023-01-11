@@ -1,4 +1,4 @@
-import { Card, CardBody } from 'reactstrap'
+import { Card, CardBody, CardTitle } from 'reactstrap'
 import { useEffect } from 'react'
 
 const BuggyComponent = () => {

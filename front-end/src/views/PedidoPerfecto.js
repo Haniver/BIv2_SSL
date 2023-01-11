@@ -61,10 +61,10 @@ const PedidoPerfecto = () => {
       }
     }, [sibling])
 
-    useEffect(() => {
-      console.log(`periodo:`)
-      console.log(periodo)
-    }, [periodo])
+    // useEffect(() => {
+    //   console.log(`periodo:`)
+    //   console.log(periodo)
+    // }, [periodo])
 
   return (
     <>

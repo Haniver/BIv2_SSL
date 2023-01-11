@@ -2,7 +2,7 @@
 import Proptypes from 'prop-types'
 import classnames from 'classnames'
 import Chart from 'react-apexcharts'
-import { Card, CardBody } from 'reactstrap'
+import { Card, CardBody, CardTitle } from 'reactstrap'
 
 const StatisticsCards = props => {
   // ** Props

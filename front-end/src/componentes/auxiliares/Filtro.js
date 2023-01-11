@@ -122,15 +122,15 @@ const Filtro = (props) => {
     } else if (numElementos === 7) {
       bootstrap = {
         espacio: true,
-        xl: 3,
-        lg: 3,
+        xl: 2,
+        lg: 2,
         sm: 12
       }
     } else if (numElementos === 8) {
       bootstrap = {
         espacio: false,
-        xl: 3,
-        lg: 3,
+        xl: 2,
+        lg: 2,
         sm: 6
       } 
     } else if (numElementos === 9) {

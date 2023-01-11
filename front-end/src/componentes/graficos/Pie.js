@@ -6,7 +6,7 @@ import axios from 'axios'
 import CustomUrls from '../../services/customUrls'
 import { ThemeColors } from '@src/utility/context/ThemeColors'
 import { useSkin } from '@hooks/useSkin'
-import { Card, CardBody } from 'reactstrap'
+import { Card, CardBody, CardTitle } from 'reactstrap'
 import LoadingGif from '../auxiliares/LoadingGif'
 import fechas_srv from '../../services/fechas_srv'
 require('highcharts/modules/data')(Highcharts)
@@ -121,10 +121,7 @@ const Pie = ({ titulo, seccion, formato, fechas, region, zona, tienda, tipoEntre
             backgroundColor: colorFondo
         },
         title: {
-            text: titulo,
-            style: {
-                color: colorTexto
-            }
+            text: ''
         },
         xAxis: {
             labels: {
@@ -213,10 +210,13 @@ const Pie = ({ titulo, seccion, formato, fechas, region, zona, tienda, tipoEntre
         <Card className={claseCSS}>
             <CardBody>
                 {hayError && <p classname='texto-rojo'>{`Error en la carga del componente "${tituloEnviar}" el ${fechas_srv.fechaYHoraActual()}`}</p>}
-                {!hayError && estadoLoader.contador === 0 && <HighchartsReact
+                {!hayError && estadoLoader.contador === 0 && <>
+                <CardTitle className='centrado'>{titulo}</CardTitle>
+                <HighchartsReact
                     highcharts={Highcharts}
                     options={options}
-                />}
+                />
+                </>}
                 {!hayError && estadoLoader.contador !== 0 && <LoadingGif />}
             </CardBody>
         </Card>

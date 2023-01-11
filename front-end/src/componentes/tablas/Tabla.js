@@ -547,7 +547,7 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
                     actions={(quitarExportar) ? false : actionsMemo}
                     // Paginación
                     paginationResetDefaultPage={resetPaginationToggle} // optionally, a hook to reset pagination to page 1
-                    subHeader
+                    subHeader={false}
                     subHeaderComponent={subHeaderComponentMemo}
                     onColumnOrderChange={cols => console.log(cols)}
                     paginationComponentOptions={paginationComponentOptions}

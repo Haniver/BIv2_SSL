@@ -1,6 +1,6 @@
 // ** Third Party Components
 // import PropTypes from 'prop-types'
-import { Card, CardBody } from 'reactstrap'
+import { Card, CardBody, CardTitle } from 'reactstrap'
 import authHeader from '../../services/auth.header'
 import axios from 'axios'
 import { useState, useEffect, useReducer } from 'react'
