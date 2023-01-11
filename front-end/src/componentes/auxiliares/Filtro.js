@@ -20,52 +20,62 @@ const Filtro = (props) => {
   //     <p>No se encontró data de usuario</p>
   //   )
   // }
-  // Contar cuántos filtros se van a mostrar en el layout en Bootstrap
-  let numElementos = 0
+  // Contar cuántos filtros se van a mostrar en el layout en Bootstrap. Al principio pongo 2 porque el botón de enviar es uno, y al final todo se divide entre 2
+  let numElementos = 2
   let bootstrap = {}
   for (const prop in props) {
     if (props.hasOwnProperty(prop)) {
       numElementos += 1
     }
   }
+  // console.log(`numElementos (a) = ${numElementos}`)
   // Si están las dos fechas, se agregan dos elemento al layout, porque solo se está contando el prop de fechas, y son dos filtros, por dos (getter y setter)
   if (props.fechas !== undefined && props.fechas.fecha_ini !== '' && props.fechas.fecha_fin !== '') {
     numElementos += 2
   }
+  // console.log(`numElementos (b) = ${numElementos}`)
   // Restamos props en el caso de que se esté usando el filtro de año/mes en vez de fecha_ini/fecha_fin. Recuerda que si mandas año/mes, cambia fecha_fin, pero no usas fecha_ini
   if (props.anio !== undefined) {
     numElementos -= 4
   }
+  // console.log(`numElementos (c) = ${numElementos}`)
   if (props.anioOpcional !== undefined) {
     numElementos -= 2
   }
+  // console.log(`numElementos (d) = ${numElementos}`)
   // Rango Máximo de días es un prop que no se cuenta para el layout
   if (props.rango_max_dias !== undefined) {
     numElementos -= 1
   }
+  // console.log(`numElementos (e) = ${numElementos}`)
   // Periodo Label no se cuenta para el layout, y tiene getter y setter
   if (props.setPeriodoLabel !== undefined) {
     numElementos -= 2
   }
+  // console.log(`numElementos (f) = ${numElementos}`)
 
   if (props.cambiarLugar !== undefined) {
     numElementos -= 1
   }
+  // console.log(`numElementos (g) = ${numElementos}`)
   if (props.setLabelTienda !== undefined) {
     numElementos -= 1
   }
+  // console.log(`numElementos (h) = ${numElementos}`)
   if (props.agrupadorSinDia !== undefined) {
     numElementos -= 1
   }
+  // console.log(`numElementos (i) = ${numElementos}`)
   if (props.mismoMes !== undefined) {
     numElementos -= 1
   }
+  // console.log(`numElementos (j) = ${numElementos}`)
   if (props.usuario !== undefined) {
     numElementos -= 1
   }
   // Dividimos entre dos el número de elementos porque por cada filtro hay un getter y un setter, entonces se duplican los props
   numElementos = Math.round(numElementos / 2)
-
+  // console.log(`numElementos (k) = ${numElementos}`)
   // Variables del layout de Bootstrap
     if (numElementos === 1) {
       bootstrap = {
@@ -112,28 +122,28 @@ const Filtro = (props) => {
     } else if (numElementos === 7) {
       bootstrap = {
         espacio: true,
-        xl: 1,
+        xl: 3,
         lg: 3,
         sm: 12
       }
     } else if (numElementos === 8) {
       bootstrap = {
         espacio: false,
-        xl: 1,
+        xl: 3,
         lg: 3,
         sm: 6
       } 
     } else if (numElementos === 9) {
       bootstrap = {
         espacio: false,
-        xl: 1,
+        xl: 2,
         lg: 2,
         sm: 12
       } 
     } else if (numElementos === 10) {
       bootstrap = {
         espacio: true,
-        xl: 1,
+        xl: 2,
         lg: 2,
         sm: 6
       } 

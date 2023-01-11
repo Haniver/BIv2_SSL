@@ -226,7 +226,13 @@ code[class^='language-'], code[class*=' language-']{
 .mb-1 {
   padding: 0.5rem;
   padding-bottom: 0;
+  padding-top: 0;
   width: 100%;
+  margin-top: 0 !important;
+}
+// Div para el botón del filtro
+div.mb-1:has(button.botonEnviar.btn.btn-primary) {
+  padding-top: 1.7rem !important;
 }
 // Botón del filtro
 button.botonEnviar.btn.btn-primary {

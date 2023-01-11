@@ -203,6 +203,7 @@ const ColumnasBasicas = ({ titulo, yLabel, seccion, formato, fechas, region, zon
         },
         series: [
             {
+                showInLegend: false, 
                 name: tituloEnviar,
                 data: seriesData,
                 type: 'column'
