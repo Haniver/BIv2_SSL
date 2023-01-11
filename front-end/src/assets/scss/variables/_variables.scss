@@ -249,3 +249,10 @@ body {
   text-transform: uppercase;
   font-weight: bold;
 }
+// Poner el botón de Exportar a la izquierda-abajo de la tabla
+.bottom-left{
+  position:absolute;
+  bottom: 0.5rem;
+  left: 0.5rem;
+  width: 15rem;
+}

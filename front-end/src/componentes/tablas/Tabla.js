@@ -437,8 +437,22 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
         link.setAttribute('download', filename)
         link.click()
     }
-    const Export = ({ onExport }) => <Button color='primary' onClick={e => onExport(e.target.value)}>Exportar a Excel</Button>
-    const actionsMemo = <Export onExport={() => downloadCSV(data)} />
+    const Export = ({ onExport }) => {
+        return (
+          <div className="bottom-left">
+            <Button color='primary' className='bottom-left' onClick={e => onExport(e.target.value)}>Exportar a Excel</Button>
+          </div>
+        )
+      }
+      // Esto es para debugging
+    //   const CustomFooter = () => {
+    //     return (
+    //       <div className="bottom-left">
+    //         HELLO
+    //       </div>
+    //     )
+    //   }
+    // const actionsMemo = <Export onExport={() => downloadCSV(data)} />
 
     //Búsqueda
     const filteredItems = data.filter(item => {
@@ -546,7 +560,7 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
                     columns={columns}
                     data={filteredItems}
                     // data={data}
-                    actions={(quitarExportar) ? false : actionsMemo}
+                    // actions={(quitarExportar) ? false : actionsMemo}
                     // Paginación
                     paginationResetDefaultPage={resetPaginationToggle} // optionally, a hook to reset pagination to page 1
                     subHeader={false}
@@ -559,7 +573,8 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
                     highlightOnHover
                     // Algunas filas vienen con una propiedad "esTotal = true" desde el back end. Si lo tienen, usarlo para darle formato de Total a esa fila:
                     conditionalRowStyles={conditionalRowStyles}
-                /></>}
+                />
+                <Export onExport={() => downloadCSV(data)} /></>}
                 {!hayError && estadoLoader.contador !== 0 && <LoadingGif />}
             </CardBody>
         </Card>
