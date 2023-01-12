@@ -256,3 +256,34 @@ body {
   left: 0.5rem;
   width: 15rem;
 }
+// Subtítulos de columnasBasicas
+.colsApils-biggerDiv {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.colsApils-contenedorCentrado {
+  display: flex;
+}
+
+.colsApils-izquierda {
+  // width: 30%;
+  padding-right: 1.1rem;
+}
+
+.colsApils-derecha {
+  // width: 70%;
+  display: flex;
+  flex-direction: column;
+  padding-left: 0.1rem;
+}
+h1.subtitulo-columnasapiladas {
+  font-size: xx-large;
+}
+h2.subtitulo-columnasapiladas {
+  font-size: small;
+}
+h3.subtitulo-columnasapiladas {
+  font-size: smaller;
+}

@@ -3764,14 +3764,27 @@ class Tablas():
                 esMes = True
             else:
                 rango = "anio"
+            # pipeline = f"""SELECT COUNT(1) as cantidad, nd.calificacion, {rango} as rango {', (dt.anio * 100 + dt.num_mes) as mesNum' if esMes else ''}
+            # from DWH.limesurvey.nps_mail_pedido nmp
+            # left join DWH.limesurvey.nps_detalle nd on nmp.id_encuesta =nd.id_encuesta and nmp.nEncuesta=nd.nEncuesta
+            # left join DWH.artus.catTienda ct on nmp.idTienda =ct.tienda
+            # left join DWH.artus.catProveedores cp on cp.idTienda = nmp.idTienda """
             pipeline = f"""SELECT COUNT(1) as cantidad, nd.calificacion, {rango} as rango {', (dt.anio * 100 + dt.num_mes) as mesNum' if esMes else ''}
             from DWH.limesurvey.nps_mail_pedido nmp
             left join DWH.limesurvey.nps_detalle nd on nmp.id_encuesta =nd.id_encuesta and nmp.nEncuesta=nd.nEncuesta
             left join DWH.artus.catTienda ct on nmp.idTienda =ct.tienda
-            left join DWH.artus.catProveedores cp on cp.idTienda = nmp.idTienda """
+            left join DWH.artus.catProveedores cp on cp.idTienda = nmp.idTienda 
+            LEFT JOIN DWH.dbo.hecho_order ho
+            ON ho.order_number =nmp.pedido"""
             if self.filtros.agrupador != "dia":
                 pipeline += " left join DWH.dbo.dim_tiempo dt on nmp.fecha = dt.fecha "
-            pipeline += f""" where nmp.fecha BETWEEN '{self.fecha_ini}' AND '{self.fecha_fin}' """
+            # pipeline += f""" where nmp.fecha BETWEEN '{self.fecha_ini}' AND '{self.fecha_fin}' """
+            # AND cp.proveedor is not null
+            # AND ((cp.fecha_from = '2022-11-23' AND (cp.fecha_to is null OR cp.fecha_to <= '2023-01-10') OR (cp.fecha_from <= '2023-01-10' AND cp.fecha_to is null)))
+            pipeline += f""" where ho.fechaEntregaFinal BETWEEN '{self.fecha_ini}' AND '{self.fecha_fin}' 
+            AND cp.proveedor is not null
+            AND ((cp.fecha_from = '2022-11-23' AND (cp.fecha_to is null OR cp.fecha_to <= '2023-01-10') OR (cp.fecha_from <= '2023-01-10' AND cp.fecha_to is null)))
+            """
             if self.filtros.tienda != '' and self.filtros.tienda != None and self.filtros.tienda != 'False':
                 pipeline += f""" and ct.tienda ='{self.filtros.tienda}' """
             elif self.filtros.zona != '' and self.filtros.zona != None and self.filtros.zona != 'False':

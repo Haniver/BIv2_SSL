@@ -356,7 +356,7 @@ class ColumnasBasicas():
             #         'color':'secondary'
             #     }
             # ]
-            data = [3,5,1, 9,6,3]
+            data = [300,500,100, 900,600,300]
             for i in range(6):
                 if i % 3 == 0:
                     color = 'success'

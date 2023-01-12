@@ -15,7 +15,7 @@ require('highcharts/modules/data')(Highcharts)
 require('highcharts/modules/exporting')(Highcharts)
 require('highcharts/modules/export-data')(Highcharts)
 
-const ColumnasBasicas = ({ titulo, yLabel, seccion, formato, fechas, region, zona, tienda, proveedor, categoria, tipoEntrega, tituloAPI, periodo, agrupador, anioRFM, mesRFM, ocultarTotal }) => {
+const ColumnasBasicas = ({ titulo, yLabel, seccion, formato, fechas, region, zona, tienda, proveedor, categoria, tipoEntrega, tituloAPI, periodo, agrupador, anioRFM, mesRFM, ocultarTotal, subtitulo, subSubtitulo }) => {
     const [hayError, setHayError] = useState(false)
     const [seriesData, setSeriesData] = useState([])
     const [datos, setDatos] = useState([{name: 'Sin Resultados', y: 0}])
@@ -47,9 +47,9 @@ const ColumnasBasicas = ({ titulo, yLabel, seccion, formato, fechas, region, zon
     
     drilldown(Highcharts)
 
-    // useEffect(() => {
-    //     console.log(`Total: ${total}`)
-    // }, [total])
+    useEffect(() => {
+        console.log(`Total: ${total}`)
+    }, [total])
 
     useEffect(() => {
         // Aquí también cambiar los colores dependiendo del skin, según líneas 18-19
@@ -128,22 +128,6 @@ const ColumnasBasicas = ({ titulo, yLabel, seccion, formato, fechas, region, zon
         }
       }, [fechas, region, zona, tienda, proveedor, categoria, tipoEntrega, periodo, agrupador, anioRFM, mesRFM])
     
-    // Lo que sigue es para borrar y volver a crear el label de Total, según https://www.highcharts.com/forum/viewtopic.php?t=38132
-    const objectIsEmpty = (obj) => {
-        return Object.keys(obj).length === 0 && obj.constructor === Object
-    }
-
-    const addLabel = (chart) => {
-        chart.myLabel = chart.renderer.label(`Total: ${total}`, 20, 8).css({
-            fontSize: '1rem',
-            color: '#272F44'
-        }).add()
-    }
-    const removeLabel = (chart) => {
-        if (chart.myLabel && !objectIsEmpty(chart.myLabel)) {
-            chart.myLabel.destroy()
-        }
-    }
     const options = {
         chart: {
             zoomType: 'xy',
@@ -213,23 +197,21 @@ const ColumnasBasicas = ({ titulo, yLabel, seccion, formato, fechas, region, zon
             enabled: false
         }
     }
-    // Label de Total personalizado
-    if (!ocultarTotal) {
-        options.chart = {
-            events: {
-              render() {
-                removeLabel(this)
-                addLabel(this)
-              }
-            }
-        }
-    }
     return (
         <Card>
             <CardBody>
                 {hayError && <p classname='texto-rojo'>{`Error en la carga del componente "${tituloEnviar}" el ${fechas_srv.fechaYHoraActual()}`}</p>}
                 {!hayError && estadoLoader.contador === 0 && <>
                     <CardTitle className='centrado'>{tituloEnviar}</CardTitle>
+                    {subtitulo && <div className="colsApils-biggerDiv">
+                        <div className="colsApils-contenedorCentrado">
+                            {!ocultarTotal && <div className="colsApils-izquierda"><h1 className='subtitulo-columnasapiladas'>{parseFloat(total).toLocaleString()}</h1></div>}
+                            <div className="colsApils-derecha">
+                                <div className="colsApils-subTitulo"><h2 className='subtitulo-columnasapiladas'>{subtitulo}</h2></div>
+                                {subSubtitulo && <div className="colsApils-subSubTitulo"><h3 className='subtitulo-columnasapiladas'>{subSubtitulo}</h3></div>}
+                            </div>
+                        </div>
+                    </div>}
                     <HighchartsReact
                         highcharts={Highcharts}
                         options={options}
