@@ -225,7 +225,7 @@ code[class^='language-'], code[class*=' language-']{
 }
 
 // Elementos del filtro
-.mb-1 {
+.mb-1:has(label) {
   padding: 0.5rem;
   padding-bottom: 0;
   padding-top: 0;
