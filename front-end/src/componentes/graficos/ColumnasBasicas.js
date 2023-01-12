@@ -15,12 +15,13 @@ require('highcharts/modules/data')(Highcharts)
 require('highcharts/modules/exporting')(Highcharts)
 require('highcharts/modules/export-data')(Highcharts)
 
-const ColumnasBasicas = ({ titulo, yLabel, seccion, formato, fechas, region, zona, tienda, proveedor, categoria, tipoEntrega, tituloAPI, periodo, agrupador, anioRFM, mesRFM, ocultarTotal, subtitulo, subSubtitulo }) => {
+const ColumnasBasicas = ({ titulo, yLabel, seccion, formato, fechas, region, zona, tienda, proveedor, categoria, tipoEntrega, tituloAPI, periodo, agrupador, anioRFM, mesRFM, ocultarTotal, subtitulo, ocultarSubSubTitulo }) => {
     const [hayError, setHayError] = useState(false)
     const [seriesData, setSeriesData] = useState([])
     const [datos, setDatos] = useState([{name: 'Sin Resultados', y: 0}])
     const [total, setTotal] = useState('')
     const [categorias, setCategorias] = useState([])
+    const [subSubTitulo, setSubSubTitulo] = useState('')
         const [estadoLoader, dispatchLoader] = useReducer((estadoLoader, accion) => {
         switch (accion.tipo) {
           case 'llamarAPI':
@@ -47,9 +48,9 @@ const ColumnasBasicas = ({ titulo, yLabel, seccion, formato, fechas, region, zon
     
     drilldown(Highcharts)
 
-    useEffect(() => {
-        console.log(`Total: ${total}`)
-    }, [total])
+    // useEffect(() => {
+    //     console.log(`Total: ${total} (${parseFloat(total)})`)
+    // }, [total])
 
     useEffect(() => {
         // Aquí también cambiar los colores dependiendo del skin, según líneas 18-19
@@ -85,11 +86,14 @@ const ColumnasBasicas = ({ titulo, yLabel, seccion, formato, fechas, region, zon
         })
         dispatchLoader({tipo: 'recibirDeAPI'})
         // console.log(res.data)
-        const datos_tmp = (res.data.series[0] !== undefined) ? res.data.series : false
         if (res.data.hayResultados === 'error') {
             setHayError(true)
         } else if (res.data.hayResultados === 'si') {
+            const datos_tmp = (res.data.series[0] !== undefined) ? res.data.series : false
             setHayError(false)
+            if (!ocultarSubSubTitulo) {
+                setSubSubTitulo(res.data.subSubTitulo)
+            }
             if (datos_tmp) {
                 let total_tmp = 0
                 datos_tmp.forEach(dato => {
@@ -205,10 +209,10 @@ const ColumnasBasicas = ({ titulo, yLabel, seccion, formato, fechas, region, zon
                     <CardTitle className='centrado'>{tituloEnviar}</CardTitle>
                     {subtitulo && <div className="colsApils-biggerDiv">
                         <div className="colsApils-contenedorCentrado">
-                            {!ocultarTotal && <div className="colsApils-izquierda"><h1 className='subtitulo-columnasapiladas'>{parseFloat(total).toLocaleString()}</h1></div>}
+                            {!ocultarTotal && <div className="colsApils-izquierda"><h1 className='subtitulo-columnasapiladas'>{total}</h1></div>}
                             <div className="colsApils-derecha">
                                 <div className="colsApils-subTitulo"><h2 className='subtitulo-columnasapiladas'>{subtitulo}</h2></div>
-                                {subSubtitulo && <div className="colsApils-subSubTitulo"><h3 className='subtitulo-columnasapiladas'>{subSubtitulo}</h3></div>}
+                                {!ocultarSubSubTitulo && <div className="colsApils-subSubTitulo"><h3 className='subtitulo-columnasapiladas'>{subSubTitulo}</h3></div>}
                             </div>
                         </div>
                     </div>}

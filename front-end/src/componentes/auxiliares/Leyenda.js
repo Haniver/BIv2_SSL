@@ -44,15 +44,20 @@ const Leyenda = ({seccion, titulo}) => {
   }, [])
 
   return (
+    <>
+    {!hayError && estadoLoader.contador === 0 && 
     <Card className='text-center'>
       <CardBody className='leyenda'>
-        {hayError && <p></p>}
-        {!hayError && estadoLoader.contador === 0 && <>
           <p className='leyenda'>{titulo} {leyenda}</p>
-        </>}
-        {!hayError && estadoLoader.contador !== 0 && <LoadingGif mini />}
       </CardBody>
-    </Card>
+    </Card>}
+    {!hayError && estadoLoader.contador !== 0 &&
+    <Card className='text-center'>
+      <CardBody className='leyenda'>
+        <LoadingGif mini />
+      </CardBody>
+    </Card>}
+    </>
   )
 }
 

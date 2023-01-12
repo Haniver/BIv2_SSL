@@ -219,7 +219,7 @@ class ColumnasBasicas():
     async def CostoPorPedido(self):
         categorias = []
         series = []
-
+        subSubTitulo = ''
         queryMetodoEnvio = f"and cf.TiendaEnLinea = '{self.filtros.metodoEnvio}'" if self.filtros.metodoEnvio != '' and self.filtros.metodoEnvio != "False" and self.filtros.metodoEnvio != None else ''
         if self.filtros.anio != 0 and self.filtros.anio != None:
             query1Anio = f"and cf.Anio = {self.filtros.anio}"
@@ -385,7 +385,8 @@ class ColumnasBasicas():
                     'formato_tooltip':'entero', 
                     'color': color
                 })
-        return {'hayResultados':hayResultados, 'series':series, 'categorias': categorias, 'pipeline': pipeline}
+            subSubTitulo = f'Actualizado al {datetime.now().strftime("%d/%m/%Y a las %H:%M")}'
+        return {'hayResultados':hayResultados, 'series':series, 'categorias': categorias, 'subSubTitulo': subSubTitulo, 'pipeline': pipeline}
 
 @router.post("/{seccion}")
 async def columnas_basicas (filtros: Filtro, titulo: str, seccion: str, request: Request, user: dict = Depends(get_current_active_user)):
