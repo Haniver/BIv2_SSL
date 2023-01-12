@@ -518,7 +518,7 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
             <Card>
                 <CardBody>
                     {/* {estadoLoader.contador === 0 && buildContextMenuJSX() && <> */}
-                    {hayError && <p classname='texto-rojo'>{`Error en la carga del componente "${tituloEnviar}" el ${fechas_srv.fechaYHoraActual()}`}</p>}
+                    {hayError && <p classname='texto-rojo'>{`Error en la carga del componente "${titulo}" el ${fechas_srv.fechaYHoraActual()}`}</p>}
                 {!hayError && estadoLoader.contador === 0 && <>
                     <ContextMenuTrigger id={`context-${titulo}`} holdToDisplay={1000}>
                         <DataTable
@@ -563,7 +563,7 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
             <Card>
                 <CardBody>
                     {/* {estadoLoader.contador === 0 && buildContextMenuJSX() && <> */}
-                    {hayError && <p classname='texto-rojo'>{`Error en la carga del componente "${tituloEnviar}" el ${fechas_srv.fechaYHoraActual()}`}</p>}
+                    {hayError && <p classname='texto-rojo'>{`Error en la carga del componente "${titulo}" el ${fechas_srv.fechaYHoraActual()}`}</p>}
                 {!hayError && estadoLoader.contador === 0 && <DataTable
                         title={titulo}
                         columns={columns}

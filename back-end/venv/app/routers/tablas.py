@@ -3756,7 +3756,9 @@ class Tablas():
             fecha_fin = self.filtros.fechas['fecha_fin'][0:10]
             esMes = False
             if self.filtros.agrupador == 'dia':
+                # Rawa
                 rango = "nmp.fecha"
+                # rango = "ho.fechaEntregaFinal"
             elif self.filtros.agrupador == "semana":
                 rango = "n_sem_D_S"
             elif self.filtros.agrupador == "mes":
@@ -3764,27 +3766,32 @@ class Tablas():
                 esMes = True
             else:
                 rango = "anio"
-            # pipeline = f"""SELECT COUNT(1) as cantidad, nd.calificacion, {rango} as rango {', (dt.anio * 100 + dt.num_mes) as mesNum' if esMes else ''}
-            # from DWH.limesurvey.nps_mail_pedido nmp
-            # left join DWH.limesurvey.nps_detalle nd on nmp.id_encuesta =nd.id_encuesta and nmp.nEncuesta=nd.nEncuesta
-            # left join DWH.artus.catTienda ct on nmp.idTienda =ct.tienda
-            # left join DWH.artus.catProveedores cp on cp.idTienda = nmp.idTienda """
+            # Rawa
             pipeline = f"""SELECT COUNT(1) as cantidad, nd.calificacion, {rango} as rango {', (dt.anio * 100 + dt.num_mes) as mesNum' if esMes else ''}
             from DWH.limesurvey.nps_mail_pedido nmp
             left join DWH.limesurvey.nps_detalle nd on nmp.id_encuesta =nd.id_encuesta and nmp.nEncuesta=nd.nEncuesta
             left join DWH.artus.catTienda ct on nmp.idTienda =ct.tienda
-            left join DWH.artus.catProveedores cp on cp.idTienda = nmp.idTienda 
-            LEFT JOIN DWH.dbo.hecho_order ho
-            ON ho.order_number =nmp.pedido"""
+            left join DWH.artus.catProveedores cp on cp.idTienda = nmp.idTienda """
+            # pipeline = f"""SELECT COUNT(1) as cantidad, nd.calificacion, {rango} as rango {', (dt.anio * 100 + dt.num_mes) as mesNum' if esMes else ''}
+            # from DWH.limesurvey.nps_mail_pedido nmp
+            # left join DWH.limesurvey.nps_detalle nd on nmp.id_encuesta =nd.id_encuesta and nmp.nEncuesta=nd.nEncuesta
+            # left join DWH.artus.catTienda ct on nmp.idTienda =ct.tienda
+            # left join DWH.artus.catProveedores cp on cp.idTienda = nmp.idTienda 
+            # LEFT JOIN DWH.dbo.hecho_order ho
+            # ON ho.order_number =nmp.pedido"""
             if self.filtros.agrupador != "dia":
+                # Rawa
                 pipeline += " left join DWH.dbo.dim_tiempo dt on nmp.fecha = dt.fecha "
-            # pipeline += f""" where nmp.fecha BETWEEN '{self.fecha_ini}' AND '{self.fecha_fin}' """
-            # AND cp.proveedor is not null
-            # AND ((cp.fecha_from = '2022-11-23' AND (cp.fecha_to is null OR cp.fecha_to <= '2023-01-10') OR (cp.fecha_from <= '2023-01-10' AND cp.fecha_to is null)))
-            pipeline += f""" where ho.fechaEntregaFinal BETWEEN '{self.fecha_ini}' AND '{self.fecha_fin}' 
+                # pipeline += " left join DWH.dbo.dim_tiempo dt on ho.fechaEntregaFinal = dt.fecha "
+            # Rawa
+            pipeline += f""" where nmp.fecha BETWEEN '{self.fecha_ini}' AND '{self.fecha_fin}'
             AND cp.proveedor is not null
             AND ((cp.fecha_from = '2022-11-23' AND (cp.fecha_to is null OR cp.fecha_to <= '2023-01-10') OR (cp.fecha_from <= '2023-01-10' AND cp.fecha_to is null)))
             """
+            # pipeline += f""" where ho.fechaEntregaFinal BETWEEN '{self.fecha_ini}' AND '{self.fecha_fin}' 
+            # AND cp.proveedor is not null
+            # AND ((cp.fecha_from = '2022-11-23' AND (cp.fecha_to is null OR cp.fecha_to <= '2023-01-10') OR (cp.fecha_from <= '2023-01-10' AND cp.fecha_to is null)))
+            # """
             if self.filtros.tienda != '' and self.filtros.tienda != None and self.filtros.tienda != 'False':
                 pipeline += f""" and ct.tienda ='{self.filtros.tienda}' """
             elif self.filtros.zona != '' and self.filtros.zona != None and self.filtros.zona != 'False':
@@ -4013,6 +4020,7 @@ class Tablas():
             else:
                 lugar_where = ""
 
+            # Rawa
             pipeline = f"""select CONCAT(nmp.idtienda,' - ',nmp.descrip_tienda) tienda,nmp.region,nmp.zona,
             sum(case when nd.calificacion in (9,10) then 1 else 0 end) promotores,
             sum(case when nd.calificacion<=6 then 1 else 0 end) detractores,
@@ -4028,6 +4036,22 @@ class Tablas():
             group by CONCAT(nmp.idtienda,' - ',nmp.descrip_tienda),nmp.region,nmp.zona
             order by case when (sum(case when nd.calificacion in (9,10) then 1 else 0 end)-sum(case when nd.calificacion<=6 then 1 else 0 end))=0 then 0 else
             (sum(case when nd.calificacion in (9,10) then 1 else 0 end)-sum(case when nd.calificacion<=6 then 1 else 0 end))*100/cast(count(1) as float) end"""
+            # pipeline = f"""select CONCAT(nmp.idtienda,' - ',nmp.descrip_tienda) tienda,nmp.region,nmp.zona,
+            # sum(case when nd.calificacion in (9,10) then 1 else 0 end) promotores,
+            # sum(case when nd.calificacion<=6 then 1 else 0 end) detractores,
+            # sum(case when nd.calificacion in (7,8) then 1 else 0 end) pasivos,
+            # case when (sum(case when nd.calificacion in (9,10) then 1 else 0 end)-sum(case when nd.calificacion<=6 then 1 else 0 end))=0 then 0 else
+            # (sum(case when nd.calificacion in (9,10) then 1 else 0 end)-sum(case when nd.calificacion<=6 then 1 else 0 end))*100/cast(count(1) as float) end nps
+            # from DWH.limesurvey.nps_mail_pedido nmp
+            # inner join DWH.limesurvey.nps_detalle nd on nmp.id_encuesta =nd.id_encuesta and nd.nEncuesta=nmp.nEncuesta
+            # left join DWH.artus.catTienda ct on nmp.idTienda =ct.tienda
+            # LEFT JOIN DWH.dbo.hecho_order ho ON ho.order_number =nmp.pedido
+            # left join DWH.dbo.dim_tiempo dt on ho.fechaEntregaFinal=dt.fecha
+            # left join DWH.artus.catProveedores cp on cp.idTienda = nmp.idTienda 
+            # where {agrupador_where} {lugar_where} {clauseCatProveedor}
+            # group by CONCAT(nmp.idtienda,' - ',nmp.descrip_tienda),nmp.region,nmp.zona
+            # order by case when (sum(case when nd.calificacion in (9,10) then 1 else 0 end)-sum(case when nd.calificacion<=6 then 1 else 0 end))=0 then 0 else
+            # (sum(case when nd.calificacion in (9,10) then 1 else 0 end)-sum(case when nd.calificacion<=6 then 1 else 0 end))*100/cast(count(1) as float) end"""
 
             # print(f"query desde tablas NPS {self.titulo}: "+pipeline)
             cnxn = conexion_sql('DWH')
@@ -4082,6 +4106,7 @@ class Tablas():
             else:
                 lugar_where = ""
 
+            # Rawa Aquí necesitas ayuda!!
             pipeline = f"""select top 500 nd.calificacion,nmp.canal,concat(nmp.idtienda,'-',nmp.descrip_tienda) tienda,nmp.zona,nmp.region,nmp.pedido,
             b.timeslot_from,timeslot_to,MetodoEntrega,EstatusPedido, b.FechaEntrega,
             b.FechaDespacho,nmp.evaluacion as EvaluacionEntrega,b.Queja,nmp.estatus,
@@ -4115,7 +4140,7 @@ class Tablas():
             and {agrupador_where} {lugar_where} {clauseCatProveedor}
             order by fecha_encuesta desc,calificacion"""
 
-            # print(f"query desde tablas NPS {self.titulo}: "+pipeline)
+            print(f"query desde tablas NPS {self.titulo}: "+pipeline)
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)

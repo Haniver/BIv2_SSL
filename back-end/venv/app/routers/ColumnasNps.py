@@ -63,6 +63,7 @@ class ColumnasNps():
                 agrupador_select = "dt.anio, dt.num_mes"
                 agrupador_where = f" dt.num_mes={self.filtros.periodo['mes']} and dt.anio={self.filtros.periodo['anio']}"
 
+            # Rawa
             pipeline = f"""select nd.calificacion,count(1) reg, {agrupador_select}
             from DWH.limesurvey.nps_mail_pedido nmp
             inner join DWH.limesurvey.nps_detalle nd on nmp.id_encuesta =nd.id_encuesta and nd.nEncuesta=nmp.nEncuesta
@@ -70,6 +71,14 @@ class ColumnasNps():
             left join DWH.dbo.dim_tiempo dt on nmp.fecha = dt.fecha 
             left join DWH.artus.catProveedores cp on cp.idTienda = nmp.idTienda 
             where {agrupador_where} {clauseCatProveedor} """
+            # pipeline = f"""select nd.calificacion,count(1) reg, {agrupador_select}
+            # from DWH.limesurvey.nps_mail_pedido nmp
+            # inner join DWH.limesurvey.nps_detalle nd on nmp.id_encuesta =nd.id_encuesta and nd.nEncuesta=nmp.nEncuesta
+            # left join DWH.artus.catTienda ct on nmp.idTienda =ct.tienda
+            # LEFT JOIN DWH.dbo.hecho_order ho ON ho.order_number =nmp.pedido
+            # left join DWH.dbo.dim_tiempo dt on ho.fechaEntregaFinal = dt.fecha 
+            # left join DWH.artus.catProveedores cp on cp.idTienda = nmp.idTienda 
+            # where {agrupador_where} {clauseCatProveedor} """
             if self.filtros.tienda != '' and self.filtros.tienda != None and self.filtros.tienda != 'False':
                 pipeline += f""" and ct.tienda ='{self.filtros.tienda}' """
             elif self.filtros.zona != '' and self.filtros.zona != None and self.filtros.zona != 'False':

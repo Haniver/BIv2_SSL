@@ -183,7 +183,7 @@ const Barras = ({ titulo, yLabel, seccion, formato, fechas, region, zona, tienda
     return (
         <Card>
             <CardBody>
-                {hayError && <p classname='texto-rojo'>{`Error en la carga del componente "${tituloEnviar}" el ${fechas_srv.fechaYHoraActual()}`}</p>}
+                {hayError && <p classname='texto-rojo'>{`Error en la carga del componente "${titulo}" el ${fechas_srv.fechaYHoraActual()}`}</p>}
                 {!hayError && estadoLoader.contador === 0 && <>
                     <CardTitle className='centrado'>{titulo}</CardTitle>
                     <HighchartsReact

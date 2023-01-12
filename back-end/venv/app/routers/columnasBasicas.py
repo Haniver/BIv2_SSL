@@ -98,11 +98,19 @@ class ColumnasBasicas():
                 agrupador_select = "dt.anio, dt.num_mes"
                 agrupador_where = f" dt.num_mes={self.filtros.periodo['mes']} and dt.anio={self.filtros.periodo['anio']}"
 
+            # Rawa
+            # pipeline = f"""select nd.calificacion,count(1) reg, {agrupador_select}
+            # from DWH.limesurvey.nps_mail_pedido nmp
+            # inner join DWH.limesurvey.nps_detalle nd on nmp.id_encuesta =nd.id_encuesta and nd.nEncuesta=nmp.nEncuesta
+            # left join DWH.artus.catTienda ct on nmp.idTienda =ct.tienda
+            # left join DWH.dbo.dim_tiempo dt on nmp.fecha = dt.fecha 
+            # where {agrupador_where} """
             pipeline = f"""select nd.calificacion,count(1) reg, {agrupador_select}
             from DWH.limesurvey.nps_mail_pedido nmp
             inner join DWH.limesurvey.nps_detalle nd on nmp.id_encuesta =nd.id_encuesta and nd.nEncuesta=nmp.nEncuesta
             left join DWH.artus.catTienda ct on nmp.idTienda =ct.tienda
-            left join DWH.dbo.dim_tiempo dt on nmp.fecha = dt.fecha 
+            LEFT JOIN DWH.dbo.hecho_order ho ON ho.order_number =nmp.pedido
+            left join DWH.dbo.dim_tiempo dt on ho.fechaEntregaFinal = dt.fecha 
             where {agrupador_where} """
             if self.filtros.tienda != '' and self.filtros.tienda != None and self.filtros.tienda != 'False':
                 pipeline += f""" and ct.tienda ='{self.filtros.tienda}' """
@@ -155,12 +163,19 @@ class ColumnasBasicas():
             elif self.filtros.agrupador == "mes":
                 agrupador_select = "dt.anio, dt.num_mes"
                 agrupador_where = f" dt.num_mes={self.filtros.periodo['mes']} and dt.anio={self.filtros.periodo['anio']}"
-
+            # Rawa
+            # pipeline = f"""select nd.calificacion,count(1) reg, {agrupador_select}
+            # from DWH.limesurvey.nps_mail_pedido nmp
+            # inner join DWH.limesurvey.nps_detalle nd on nmp.id_encuesta =nd.id_encuesta and nd.nEncuesta=nmp.nEncuesta
+            # left join DWH.artus.catTienda ct on nmp.idTienda =ct.tienda
+            # left join DWH.dbo.dim_tiempo dt on nmp.fecha = dt.fecha 
+            # where {agrupador_where} """
             pipeline = f"""select nd.calificacion,count(1) reg, {agrupador_select}
             from DWH.limesurvey.nps_mail_pedido nmp
             inner join DWH.limesurvey.nps_detalle nd on nmp.id_encuesta =nd.id_encuesta and nd.nEncuesta=nmp.nEncuesta
             left join DWH.artus.catTienda ct on nmp.idTienda =ct.tienda
-            left join DWH.dbo.dim_tiempo dt on nmp.fecha = dt.fecha 
+            LEFT JOIN DWH.dbo.hecho_order ho ON ho.order_number =nmp.pedido
+            left join DWH.dbo.dim_tiempo dt on ho.fechaEntregaFinal = dt.fecha 
             where {agrupador_where} """
             if self.filtros.tienda != '' and self.filtros.tienda != None and self.filtros.tienda != 'False':
                 pipeline += f""" and ct.tienda ='{self.filtros.tienda}' """
