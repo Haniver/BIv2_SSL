@@ -234,7 +234,8 @@ code[class^='language-'], code[class*=' language-']{
 }
 // Div para el botón del filtro
 div.mb-1:has(button.botonEnviar.btn.btn-primary) {
-  padding-top: 1.7rem !important;
+  top: 0;
+  width: 100%;
 }
 // Botón del filtro
 button.botonEnviar.btn.btn-primary {
