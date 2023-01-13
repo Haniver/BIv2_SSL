@@ -438,6 +438,32 @@ class ColumnasApiladas():
             lugar = ''
             siguiente_lugar = 'regionNombre'
 
+        if self.filtros.periodo:
+            if self.filtros.agrupador == 'mes':
+                periodo = '$nMes'
+                anio_elegido = self.filtros.periodo['anio']
+                mes_elegido = self.filtros.periodo['mes']
+                fecha_fin = datetime(anio_elegido, mes_elegido, monthrange(anio_elegido, mes_elegido)[1])
+                if fecha_fin.month == 1:
+                    fecha_ini = datetime(fecha_fin.year - 1, 12, 1)
+                else:
+                    fecha_ini = datetime(fecha_fin.year, fecha_fin.month - 1, 1)
+            elif self.filtros.agrupador == 'semana':
+                periodo = '$idSemDS'
+                semana_elegida = int(str(self.filtros.periodo['semana'])[4:6])
+                anio_elegido = int(str(self.filtros.periodo['semana'])[0:4])
+                monday = datetime.strptime(f'{anio_elegido}-{semana_elegida}-1', "%Y-%W-%w")
+                fecha_fin = monday + timedelta(days=5)
+                fecha_ini = monday - timedelta(days=8)
+            elif self.filtros.agrupador == 'dia':
+                periodo = '$fecha'
+                anio_elegido = self.filtros.periodo['anio']
+                mes_elegido = self.filtros.periodo['mes']
+                dia_elegido = self.filtros.periodo['dia']
+                fecha_fin = datetime(anio_elegido, mes_elegido, dia_elegido)
+                fecha_ini = fecha_fin - timedelta(days=1)
+            fecha_fin = fecha_fin.replace(hour=23, minute=59, second=59, microsecond=999999)
+
         if self.titulo == 'Evaluación de KPI Pedido Perfecto por Lugar':
             pipeline = [
                 # {'$match': {
@@ -577,10 +603,10 @@ class ColumnasApiladas():
 
             pipeline.extend([
                 {'$match': {
-                    'fecha': {'$gte': self.fecha_ini_a12}
+                    'fecha': {'$gte': fecha_ini}
                 }},
                 {'$match': {
-                    'fecha': {'$lte': self.fecha_fin_a12}
+                    'fecha': {'$lte': fecha_fin}
                 }}
             ])
             # Modificamos el pipeline para el caso de que el agrupador sea por mes:

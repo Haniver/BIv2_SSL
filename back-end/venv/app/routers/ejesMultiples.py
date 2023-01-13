@@ -443,17 +443,43 @@ class EjesMultiples():
             pipeline.extend([
                 {'$match': {'sucursal.'+ nivel: lugar}}
             ])
+        if self.filtros.periodo:
+            if self.filtros.agrupador == 'mes':
+                periodo = '$nMes'
+                anio_elegido = self.filtros.periodo['anio']
+                mes_elegido = self.filtros.periodo['mes']
+                fecha_fin = datetime(anio_elegido, mes_elegido, monthrange(anio_elegido, mes_elegido)[1])
+                if fecha_fin.month == 1:
+                    fecha_ini = datetime(fecha_fin.year - 1, 12, 1)
+                else:
+                    fecha_ini = datetime(fecha_fin.year, fecha_fin.month - 1, 1)
+            elif self.filtros.agrupador == 'semana':
+                periodo = '$idSemDS'
+                semana_elegida = int(str(self.filtros.periodo['semana'])[4:6])
+                anio_elegido = int(str(self.filtros.periodo['semana'])[0:4])
+                monday = datetime.strptime(f'{anio_elegido}-{semana_elegida}-1', "%Y-%W-%w")
+                fecha_fin = monday + timedelta(days=5)
+                fecha_ini = monday - timedelta(days=8)
+            elif self.filtros.agrupador == 'dia':
+                periodo = '$fecha'
+                anio_elegido = self.filtros.periodo['anio']
+                mes_elegido = self.filtros.periodo['mes']
+                dia_elegido = self.filtros.periodo['dia']
+                fecha_fin = datetime(anio_elegido, mes_elegido, dia_elegido)
+                fecha_ini = fecha_fin - timedelta(days=1)
+            fecha_fin = fecha_fin.replace(hour=23, minute=59, second=59, microsecond=999999)
         collection = conexion_mongo('report').report_pedidoPerfecto
 
         if self.titulo == 'Pedidos Perfectos':
             # print("Entró a Pedidos Perfectos en Ejes Múltiples")
+            # print(f"Desde ejesMultiples -> 'Pedidos Perfectos': Fecha inicio: {self.fecha_ini_a12}. Fecha fin: {self.fecha_fin_a12}")
             serie1 = []
             serie2 = []
             pipeline.append(
                 {'$match': {
                     'fecha': {
-                        '$gte': self.fecha_ini_a12, 
-                        '$lt': self.fecha_fin_a12
+                        '$gte': fecha_ini, 
+                        '$lt': fecha_fin
                     }
                 }}
             )
@@ -519,44 +545,31 @@ class EjesMultiples():
                 hayResultados = "no"
 
         if self.titulo == 'Evaluación por KPI Pedido Perfecto':
-            # fecha_ini = self.fecha_ini_a12
-            # fecha_fin = self.fecha_fin_a12
-            if self.filtros.periodo:
-                # print(f"***************El periodo es: {str(self.filtros.periodo)}")
-                if self.filtros.agrupador == 'mes':
-                    periodo = '$nMes'
-                    anio_elegido = self.filtros.periodo['anio']
-                    mes_elegido = self.filtros.periodo['mes']
-                    fecha_fin = datetime(anio_elegido, mes_elegido, monthrange(anio_elegido, mes_elegido)[1])
-                    if fecha_fin.month == 1:
-                        fecha_ini = datetime(fecha_fin.year - 1, 12, 1)
-                    else:
-                        fecha_ini = datetime(fecha_fin.year, fecha_fin.month - 1, 1)
-                elif self.filtros.agrupador == 'semana':
-                    periodo = '$idSemDS'
-                    semana_elegida = int(str(self.filtros.periodo['semana'])[4:6])
-                    anio_elegido = int(str(self.filtros.periodo['semana'])[0:4])
-                    # d = datetime(anio_elegido, 1, 1)
-                    # if(d.weekday() > 0):
-                    #     d = d + timedelta(7 - d.weekday())
-                    # else:
-                    #     d = d - timedelta(d.weekday())
-                    # dlt = timedelta(days = (semana_elegida - 1) * 7)
-                    # fecha_fin = d + dlt + timedelta(days=6)
-                    monday = datetime.strptime(f'{anio_elegido}-{semana_elegida}-1', "%Y-%W-%w")
-                    fecha_fin = monday + timedelta(days=5)
-                    fecha_ini = monday - timedelta(days=8)
-                    # fecha_ini = fecha_fin - timedelta(days=13)
-                elif self.filtros.agrupador == 'dia':
-                    periodo = '$fecha'
-                    anio_elegido = self.filtros.periodo['anio']
-                    mes_elegido = self.filtros.periodo['mes']
-                    dia_elegido = self.filtros.periodo['dia']
-                    fecha_fin = datetime(anio_elegido, mes_elegido, dia_elegido)
-                    fecha_ini = fecha_fin - timedelta(days=1)
-                    # print(f"fecha_ini es {str(fecha_ini)} y fecha_fin es {str(fecha_fin)}")
-                # print(f"TIPO de FECHA_FIN: {type(fecha_fin)}")
-                fecha_fin = fecha_fin.replace(hour=23, minute=59, second=59, microsecond=999999)
+            # if self.filtros.periodo:
+            #     if self.filtros.agrupador == 'mes':
+            #         periodo = '$nMes'
+            #         anio_elegido = self.filtros.periodo['anio']
+            #         mes_elegido = self.filtros.periodo['mes']
+            #         fecha_fin = datetime(anio_elegido, mes_elegido, monthrange(anio_elegido, mes_elegido)[1])
+            #         if fecha_fin.month == 1:
+            #             fecha_ini = datetime(fecha_fin.year - 1, 12, 1)
+            #         else:
+            #             fecha_ini = datetime(fecha_fin.year, fecha_fin.month - 1, 1)
+            #     elif self.filtros.agrupador == 'semana':
+            #         periodo = '$idSemDS'
+            #         semana_elegida = int(str(self.filtros.periodo['semana'])[4:6])
+            #         anio_elegido = int(str(self.filtros.periodo['semana'])[0:4])
+            #         monday = datetime.strptime(f'{anio_elegido}-{semana_elegida}-1', "%Y-%W-%w")
+            #         fecha_fin = monday + timedelta(days=5)
+            #         fecha_ini = monday - timedelta(days=8)
+            #     elif self.filtros.agrupador == 'dia':
+            #         periodo = '$fecha'
+            #         anio_elegido = self.filtros.periodo['anio']
+            #         mes_elegido = self.filtros.periodo['mes']
+            #         dia_elegido = self.filtros.periodo['dia']
+            #         fecha_fin = datetime(anio_elegido, mes_elegido, dia_elegido)
+            #         fecha_ini = fecha_fin - timedelta(days=1)
+            #     fecha_fin = fecha_fin.replace(hour=23, minute=59, second=59, microsecond=999999)
 
                 pipeline = [{'$unwind': '$sucursal'},
                     {'$match': {

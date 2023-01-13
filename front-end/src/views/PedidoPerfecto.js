@@ -80,7 +80,7 @@ const PedidoPerfecto = () => {
       </Row>
       {periodo && <Row className='match-height'>
         <Col sm='12' lg='6'>
-          <EjesMultiples titulo='Pedidos Perfectos' fechas={fechas} provLogist={provLogist} region={region} zona={zona} tienda={tienda} agrupador={agrupador} seccion={seccion} />
+          <EjesMultiples titulo='Pedidos Perfectos' fechas={fechas} provLogist={provLogist} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} />
         </Col>
         <Col sm='12' lg='6'>
           <EjesMultiples titulo='Evaluación por KPI Pedido Perfecto' fechas={fechas} provLogist={provLogist} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} />
