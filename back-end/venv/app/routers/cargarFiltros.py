@@ -97,7 +97,7 @@ async def cargar_proveedor(user: dict = Depends(get_current_active_user)):
 
 @router.post("/cargarPeriodo")
 async def cargar_periodo(filtros: Filtro, user: dict = Depends(get_current_active_user)):
-    print(f"fecha_ini desde cargarFiltros -> cargarPeriodo: {filtros.fechas['fecha_ini']}")
+    # print(f"fecha_ini desde cargarFiltros -> cargarPeriodo: {filtros.fechas['fecha_ini']}")
     pipeline = [
         {'$match': {'fecha': {'$gte': datetime.combine(datetime.strptime(filtros.fechas['fecha_ini'], '%Y-%m-%dT%H:%M:%S.%fZ'),time.min), '$lte': datetime.combine(datetime.strptime(filtros.fechas['fecha_fin'], '%Y-%m-%dT%H:%M:%S.%fZ'),time.max)}}},
         {'$group': {'_id': {}}},

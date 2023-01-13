@@ -399,10 +399,11 @@ class EjesMultiples():
         hayResultados = 'no'
         # esta condición está aquí porque a veces los filtros no terminan de cargar y ya está cargando la gráfica. Hay que verificar que los filtros hagan sentido.
         if self.titulo != 'Pedidos Perfectos' and (not self.filtros.periodo or (self.filtros.agrupador == 'mes' and 'semana' in self.filtros.periodo) or (self.filtros.agrupador == 'semana' and not 'semana' in self.filtros.periodo) or (self.filtros.agrupador == 'dia' and not 'dia' in self.filtros.periodo)):
-            return {'hayResultados':'no','categories':[], 'series':[], 'pipeline': [], 'lenArreglo':0}
+            return {'hayResultados':'no','Fcategories':[], 'series':[], 'pipeline': [], 'lenArreglo':0}
         clauseCatProveedor = False
         if len(self.filtros.provLogist) == 1:
-            clauseCatProveedor = {'$match': {'sucursal.proveedor': self.filtros.provLogist[0]}}
+            print(f"provLogist[0] desde ejesMultiples -> PedidoPerfecto: {self.filtros.provLogist[0]}")
+            clauseCatProveedor = {'$match': {'sucursal.Delivery': self.filtros.provLogist[0]}}
         elif len(self.filtros.provLogist) > 1:
             clauseCatProveedor = {'$match': {
                 '$expr': {
@@ -412,7 +413,7 @@ class EjesMultiples():
             for prov in self.filtros.provLogist:
                 clauseCatProveedor['$match']['$expr']['$or'].append(
                     {'$eq': [
-                        '$sucursal.proveedor',
+                        '$sucursal.Delivery',
                         prov
                     ]}
                 )

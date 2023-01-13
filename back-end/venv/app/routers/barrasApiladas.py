@@ -48,7 +48,7 @@ class BarrasApiladas():
             return {'hayResultados':'no','categorias':[], 'series':[], 'pipeline': [], 'modTitulo': ''}
         clauseCatTienda = False
         if len(self.filtros.provLogist) == 1:
-            clauseCatTienda = {'$match': {'sucursal.proveedor': self.filtros.provLogist[0]}}
+            clauseCatTienda = {'$match': {'sucursal.Delivery': self.filtros.provLogist[0]}}
         elif len(self.filtros.provLogist) > 1:
             clauseCatTienda = {'$match': {
                 '$expr': {
@@ -58,7 +58,7 @@ class BarrasApiladas():
             for prov in self.filtros.provLogist:
                 clauseCatTienda['$match']['$expr']['$or'].append(
                     {'$eq': [
-                        '$sucursal.proveedor',
+                        '$sucursal.Delivery',
                         prov
                     ]}
                 )

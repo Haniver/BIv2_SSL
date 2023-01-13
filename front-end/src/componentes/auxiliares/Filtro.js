@@ -191,7 +191,7 @@ const Filtro = (props) => {
   const comboProvLogist = [
     {label: 'Zubale Delivery', value: 'Zubale Delivery'},
     {label: 'Zubale Delivery y Pickup', value: 'Zubale Delivery y Pickup'},
-    {label: 'Depto de Logística', value: 'Logística'},
+    // {label: 'Depto de Logística', value: 'Logística'},
     {label: 'Recursos Propios', value: 'Recursos Propios'}
   ]
 
@@ -247,8 +247,8 @@ const Filtro = (props) => {
 
   const comboMetodoEnvio = [
     {label: 'Zubale', value: 'Zubale'},
-    {label: 'Recursos Propios', value: 'No es Zubale'},
-    {label: 'Logística', value: 'Logística'}
+    {label: 'Recursos Propios', value: 'No es Zubale'}
+    // {label: 'Logística', value: 'Logística'}
   ]
 
   // Hooks para mensajes

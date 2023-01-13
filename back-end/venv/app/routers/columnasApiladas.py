@@ -408,7 +408,7 @@ class ColumnasApiladas():
             return {'hayResultados':'no','categorias':[], 'series':[], 'pipeline': []}
         clauseCatTienda = False
         if len(self.filtros.provLogist) == 1:
-            clauseCatTienda = {'$match': {'sucursal.proveedor': self.filtros.provLogist[0]}}
+            clauseCatTienda = {'$match': {'sucursal.Delivery': self.filtros.provLogist[0]}}
         elif len(self.filtros.provLogist) > 1:
             clauseCatTienda = {'$match': {
                 '$expr': {
@@ -418,7 +418,7 @@ class ColumnasApiladas():
             for prov in self.filtros.provLogist:
                 clauseCatTienda['$match']['$expr']['$or'].append(
                     {'$eq': [
-                        '$sucursal.proveedor',
+                        '$sucursal.Delivery',
                         prov
                     ]}
                 )
