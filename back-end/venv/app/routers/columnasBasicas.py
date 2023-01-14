@@ -388,6 +388,88 @@ class ColumnasBasicas():
             subSubTitulo = f'Actualizado al {datetime.now().strftime("%d/%m/%Y a las %H:%M")}'
         return {'hayResultados':hayResultados, 'series':series, 'categorias': categorias, 'subSubTitulo': subSubTitulo, 'pipeline': pipeline}
 
+    async def PedidosPendientes(self):
+        pipeline = []
+        data = []
+        categorias = []
+        subSubTitulo = ''
+        series = []
+        if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
+            filtro_lugar = True
+            if self.filtros.zona != '' and self.filtros.zona != "False" and self.filtros.zona != None:
+                if self.filtros.tienda != '' and self.filtros.tienda != "False" and self.filtros.tienda != None:
+                    nivel = 'idTienda'
+                    lugar = int(self.filtros.tienda)
+                else:
+                    nivel = 'zona'
+                    lugar = int(self.filtros.zona)
+            else:
+                nivel = 'region'
+                lugar = int(self.filtros.region)
+        else:
+            filtro_lugar = False
+            lugar = ''
+
+        collection = conexion_mongo('report').report_pedidoPendientes
+        pipeline.append({'$unwind': '$sucursal'})
+        if filtro_lugar:
+            pipeline.append({'$match': {'sucursal.'+ nivel: lugar}})
+        if self.filtros.tipoEntrega != None and self.filtros.tipoEntrega != "False" and self.filtros.tipoEntrega != "":
+            pipeline.append({'$match': {'metodoEntrega': self.filtros.tipoEntrega}})
+        if self.filtros.origen != None and self.filtros.origen != "False" and self.filtros.origen != "":
+            pipeline.append({'$match': {'origen': self.filtros.origen}})
+
+        if self.titulo == 'Pedidos pendientes de entrega':
+            # pipeline.append({'$project': {'2_DIAS': {'$cond': [{'$eq':['$prioridad', '2 DIAS']}, 1, 0]}, 'HOY_ATRASADO': {'$cond': [{'$eq':['$prioridad', 'HOY ATRASADO']}, 1, 0]}, '1_DIA': {'$cond': [{'$eq':['$prioridad', '1 DIA']}, 1, 0]}, 'HOY_A_TIEMPO': {'$cond': [{'$eq':['$prioridad', 'HOY A TIEMPO']}, 1, 0]}, 'ANTERIORES': {'$cond': [{'$eq':['$prioridad', 'ANTERIORES']}, 1, 0]}}})
+            # pipeline.append({'$group':{'_id':0, '2_DIAS':{'$sum':'$2_DIAS'}, 'HOY_ATRASADO':{'$sum':'$HOY_ATRASADO'}, '1_DIA':{'$sum':'$1_DIA'}, 'HOY_A_TIEMPO':{'$sum':'$HOY_A_TIEMPO'}, 'ANTERIORES':{'$sum':'$ANTERIORES'}}})
+            pipeline.append({
+                '$group': {
+                    '_id':'$prioridad', 
+                    'pedidos':{'$sum':1},
+                    'actualizacion': {'$max': '$fechaUpdate'}
+                }
+            })
+            print(f"Pipeline desde pie -> Pedidos Pendientes: {str(pipeline)}")
+            cursor = collection.aggregate(pipeline)
+            arreglo = await cursor.to_list(length=1000)
+            # print(str(arreglo))
+            if len(arreglo) <= 0:
+                # print("No hubo resultados")
+                hayResultados = "no"
+            else:
+                hayResultados = "si"
+                categorias = ['Hoy a Tiempo', 'Hoy Atrasado', '1 Día', '2 Días', 'Anteriores']
+                res = [
+                    {'name': 'ANTERIORES', 'y': 0},
+                    {'name': '2 DIAS', 'y': 0}, 
+                    {'name': '1 DIA', 'y': 0}, 
+                    {'name': 'HOY ATRASADO', 'y': 0}, 
+                    {'name': 'HOY A TIEMPO', 'y': 0}
+                ]
+                series = [None] * 5
+                for resultado in arreglo:
+                    indice = next((index for (index, d) in enumerate(res) if d["name"] == resultado['_id']), None) # https://stackoverflow.com/questions/4391697/find-the-index-of-a-dict-within-a-list-by-matching-the-dicts-value
+                    if indice is not None:
+                        # print(f"indice desde columnasBasicas -> PedidosPendientes -> {self.titulo}: {indice}")
+                        if indice == 0:
+                            color = 'warning'
+                        elif indice == 4:
+                            color = 'secondary'
+                        else:
+                            color = 'light'
+                        res[indice]['y'] = resultado['pedidos']
+                        series[indice] =  {
+                            'y': resultado['pedidos'],
+                            'type': 'column',
+                            'formato_tooltip':'entero',
+                            'color': color
+                        }
+                actualizacion = arreglo[0]['actualizacion'] - timedelta(hours=6)
+                actualizacion = actualizacion.strftime("%d/%m/%Y a las %H:%M:%S")
+                subSubTitulo = f"Actualizado al {actualizacion} hrs."
+
+        return {'hayResultados':hayResultados, 'series':series, 'categorias': categorias, 'subSubTitulo': subSubTitulo, 'pipeline': pipeline}
+
 @router.post("/{seccion}")
 async def columnas_basicas (filtros: Filtro, titulo: str, seccion: str, request: Request, user: dict = Depends(get_current_active_user)):
     loguearConsulta(stack()[0][3], user.usuario, seccion, titulo, filtros, request.client.host)

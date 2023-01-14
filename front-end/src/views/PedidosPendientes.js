@@ -4,10 +4,8 @@ import Filtro from '../componentes/auxiliares/Filtro'
 import Tabla from '../componentes/tablas/Tabla'
 import ColumnasApiladas from '../componentes/graficos/ColumnasApiladas'
 import Pie from '../componentes/graficos/Pie'
-import Leyenda from '../componentes/auxiliares/Leyenda'
 import Titulo from '../componentes/auxiliares/Titulo'
-import {ErrorBoundary} from 'react-error-boundary'
-import ErrorHandling from '../componentes/auxiliares/ErrorHandling'
+import ColumnasBasicas from '../componentes/graficos/ColumnasBasicas'
 
 const PedidosPendientes = () => {
   const [tipoEntrega, setTipoEntrega] = useState('')
@@ -46,7 +44,7 @@ const PedidosPendientes = () => {
       </Row>
       <Row className='match-height'>
         <Col xl={tipoEntrega ? '12' : '6'} sm='12'>
-          <Pie extenderDerecha titulo='Estatus Pedidos No Entregados' seccion={seccion} formato='entero' yLabel='Pedidos' tipoEntrega={tipoEntrega} region={region} zona={zona} tienda={tienda} origen={origen} coloresPedidosPendientes />
+          <ColumnasBasicas extenderDerecha subtitulo = 'Pedidos Pendientes de Entrega Hoy' titulo='Pedidos pendientes de entrega' seccion={seccion} formato='entero' yLabel='Pedidos' tipoEntrega={tipoEntrega} region={region} zona={zona} tienda={tienda} origen={origen} coloresPedidosPendientes />
         </Col>
         {!tipoEntrega && <Col xl='6' sm='12'>
           <Pie titulo='Pedidos Por Tipo de Entrega' seccion={seccion} formato='entero' yLabel='Pedidos' tipoEntrega={tipoEntrega} region={region} zona={zona} tienda={tienda} origen={origen} extenderIzquierda />
