@@ -617,7 +617,7 @@ class EjesMultiples():
                         '$sort': {'_id.periodo': 1}
                     }
                 ])
-                # print(f"Pipeline desde EjesMultiples -> PedidoPerfecto -> {self.titulo}: {str(pipeline)}")
+                print(f"Pipeline desde EjesMultiples -> PedidoPerfecto -> {self.titulo}: {str(pipeline)}")
                 cursor = collection.aggregate(pipeline)
                 arreglo = await cursor.to_list(length=1000)
                 if len(arreglo) >0:

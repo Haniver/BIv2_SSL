@@ -176,6 +176,30 @@ const ColumnasBasicas = ({ titulo, yLabel, seccion, formato, fechas, region, zon
                 }
             }
         },
+        plotOptions: {
+            series: {
+                dataLabels: {
+                    enabled: true,
+                    // format: '${point.y:,.2f}',
+                    formatter(tooltip) {
+                        if (formato === 'moneda') {
+                            return `$${Highcharts.numberFormat(this.point.y, 2, '.', ',')}`
+                        } else if (formato === 'entero') {
+                            return `${Highcharts.numberFormat(this.point.y, 0, '.', ',')}<br />${Highcharts.numberFormat(100 * parseFloat(this.point.y) / parseFloat(total.replace(",", "")), 2, '.', ',')}%`
+                        } else if (formato === 'porcentaje') {
+                            return `${Highcharts.numberFormat(this.point.y, 2, '.', ',')}%`
+                        }
+                    },
+                    color: colorTexto,
+                    textOutline: colorTexto
+                    // style: {
+                    //     fontWeight: 'bold',
+                    //     color: colorTexto,
+                    //     textOutline: colorFondo
+                    // }
+                }
+            }
+        },
         tooltip: {
             headerFormat: '<b>{point.x}</b><br/>',
             pointFormat: '{point.y:,1f}<br/>'

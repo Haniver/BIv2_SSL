@@ -48,7 +48,7 @@ const Home = () => {
       <Fragment>
         <Row className='match-height'>
           <Col xl='6' sm='12'>
-            <ColumnasApiladas titulo='Pedidos del Día' seccion={seccion} formato='entero' yLabel='Pedidos' fechas={fechas_dia} region={region} zona={zona} tienda={tienda} />
+            <ColumnasApiladas titulo='Entrega de pedidos por ventana de tiempo' seccion={seccion} formato='entero' yLabel='Pedidos' fechas={fechas_dia} region={region} zona={zona} tienda={tienda} />
           </Col>
           <Col xl='6' sm='12'>
             <Pie titulo='Estatus de Entrega y No Entrega' seccion={seccion} formato='entero' yLabel='Pedidos' fechas={fechas_dia} region={region} zona={zona} tienda={tienda} />

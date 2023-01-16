@@ -432,38 +432,29 @@ class ColumnasBasicas():
             print(f"Pipeline desde columnasBasicas -> Pedidos Pendientes: {str(pipeline)}")
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=1000)
-            # print(str(arreglo))
+            print(str(arreglo))
             if len(arreglo) <= 0:
                 # print("No hubo resultados")
                 hayResultados = "no"
             else:
                 hayResultados = "si"
-                categorias = ['Hoy a Tiempo', 'Hoy Atrasado', '1 Día', '2 Días', 'Anteriores']
-                res = [
-                    {'name': 'ANTERIORES', 'y': 0},
-                    {'name': '2 DIAS', 'y': 0}, 
-                    {'name': '1 DIA', 'y': 0}, 
-                    {'name': 'HOY ATRASADO', 'y': 0}, 
-                    {'name': 'HOY A TIEMPO', 'y': 0}
-                ]
-                series = [None] * 5
-                for resultado in arreglo:
-                    indice = next((index for (index, d) in enumerate(res) if d["name"] == resultado['_id']), None) # https://stackoverflow.com/questions/4391697/find-the-index-of-a-dict-within-a-list-by-matching-the-dicts-value
-                    if indice is not None:
-                        # print(f"indice desde columnasBasicas -> PedidosPendientes -> {self.titulo}: {indice}")
-                        if indice == 0:
-                            color = 'warning'
-                        elif indice == 4:
-                            color = 'secondary'
-                        else:
-                            color = 'light'
-                        # res[indice]['y'] = resultado['pedidos']
-                        series[indice] =  {
-                            'y': resultado['pedidos'],
-                            'type': 'column',
-                            'formato_tooltip':'entero',
-                            'color': color
-                        }
+                estatus = ['ANTERIORES', '2 DIAS', '1 DIA', 'HOY ATRASADO', 'HOY A TIEMPO']
+                categorias = [elemento.title() for elemento in estatus]
+                valores = [next(item for item in arreglo if item["_id"] == key)["pedidos"] for key in estatus]
+                for i in range(len(estatus)):
+                    if i == 0:
+                        color = 'danger'
+                    elif i == 4:
+                        color = 'secondary'
+                    else:
+                        color = 'light'
+                    # res[indice]['y'] = resultado['pedidos']
+                    series.append({
+                        'y': valores[i],
+                        'type': 'column',
+                        'formato_tooltip':'entero',
+                        'color': color
+                    })
                 actualizacion = arreglo[0]['actualizacion'] - timedelta(hours=6)
                 actualizacion = actualizacion.strftime("%d/%m/%Y a las %H:%M:%S")
                 subSubTitulo = f"Actualizado al {actualizacion} hrs."

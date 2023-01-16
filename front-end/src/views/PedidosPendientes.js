@@ -43,19 +43,19 @@ const PedidosPendientes = () => {
         </Col> */}
       </Row>
       <Row className='match-height'>
-        <Col xl={tipoEntrega ? '12' : '6'} sm='12'>
+        <Col xl='6' sm='12'>
           <ColumnasBasicas extenderDerecha subtitulo = 'Pedidos Pendientes de Entrega Hoy' titulo='Pedidos pendientes de entrega' seccion={seccion} formato='entero' yLabel='Pedidos' tipoEntrega={tipoEntrega} region={region} zona={zona} tienda={tienda} origen={origen} coloresPedidosPendientes />
         </Col>
-        {!tipoEntrega && <Col xl='6' sm='12'>
-          <Pie titulo='Pedidos Por Tipo de Entrega' seccion={seccion} formato='entero' yLabel='Pedidos' tipoEntrega={tipoEntrega} region={region} zona={zona} tienda={tienda} origen={origen} extenderIzquierda />
-        </Col>}
+        <Col xl='6' sm='12'>
+          <ColumnasApiladas extenderIzquierda titulo='Entrega de pedidos por ventana de tiempo' seccion={seccion} formato='entero' yLabel='Pedidos' tipoEntrega={tipoEntrega} region={region} zona={zona} tienda={tienda} origen={origen} />
+        </Col>
       </Row>
       <Row className='match-height'>
-        <Col xl='6' sm='12'>
-          <ColumnasApiladas titulo='Estatus Pedidos por Área' seccion={seccion} formato='entero' yLabel='Pedidos' tipoEntrega={tipoEntrega} region={region} zona={zona} tienda={tienda} origen={origen} />
-        </Col>
-        <Col xl='6' sm='12'>
-          <ColumnasApiladas titulo='Pedidos del Día' seccion={seccion} formato='entero' yLabel='Pedidos' tipoEntrega={tipoEntrega} region={region} zona={zona} tienda={tienda} origen={origen} />
+        {!tipoEntrega && <Col xl='6' sm='12'>
+          <Pie titulo='Pedidos Por Tipo de Entrega' seccion={seccion} formato='entero' yLabel='Pedidos' tipoEntrega={tipoEntrega} region={region} zona={zona} tienda={tienda} origen={origen} />
+        </Col>}
+        <Col xl={tipoEntrega ? '12' : '6'} sm='12'>
+          <ColumnasApiladas titulo='Pedidos Por Región' seccion={seccion} formato='entero' yLabel='Pedidos' tipoEntrega={tipoEntrega} region={region} zona={zona} tienda={tienda} origen={origen} />
         </Col>
       </Row>
       <Row className='match-height'>

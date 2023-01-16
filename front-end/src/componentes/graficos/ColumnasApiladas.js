@@ -16,7 +16,7 @@ require('highcharts/modules/data')(Highcharts)
 require('highcharts/modules/exporting')(Highcharts)
 require('highcharts/modules/export-data')(Highcharts)
 
-const ColumnasApiladas = ({ titulo, yLabel, seccion, formato, fechas, region, zona, tienda, proveedor, categoria, tipoEntrega, agrupador, periodo, tituloAPI, origen, ocultarTotales, provLogist }) => {
+const ColumnasApiladas = ({ titulo, yLabel, seccion, formato, fechas, region, zona, tienda, proveedor, categoria, tipoEntrega, agrupador, periodo, tituloAPI, origen, ocultarTotales, provLogist, extenderDerecha, extenderIzquierda }) => {
     const [hayError, setHayError] = useState(false)
     const tituloEnviar = (tituloAPI !== undefined) ? tituloAPI : titulo
     const [series, setSeries] = useState([])
@@ -32,7 +32,13 @@ const ColumnasApiladas = ({ titulo, yLabel, seccion, formato, fechas, region, zo
         }
       }, {contador: 0})
 
-
+      let claseCSS = ''
+      if (extenderDerecha) {
+          claseCSS = 'extenderDerecha'
+      } else if (extenderIzquierda) {
+          claseCSS = 'extenderIzquierda'
+      }
+    
     //Skins
     const [skin, setSkin] = useSkin()
     const colorTextoDark = '#CDCCCF'
@@ -216,7 +222,7 @@ const ColumnasApiladas = ({ titulo, yLabel, seccion, formato, fechas, region, zo
     }
 
     return (
-        <Card>
+        <Card className={claseCSS}>
             <CardBody>
                 {hayError && <p classname='texto-rojo'>{`Error en la carga del componente "${titulo}" el ${fechas_srv.fechaYHoraActual()}`}</p>}
                 {!hayError && estadoLoader.contador === 0 && <>

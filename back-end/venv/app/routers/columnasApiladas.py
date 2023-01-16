@@ -311,7 +311,7 @@ class ColumnasApiladas():
         if self.filtros.origen != None and self.filtros.origen != "False" and self.filtros.origen != "":
                 pipeline.append({'$match': {'origen': self.filtros.origen}})
 
-        if self.titulo == 'Estatus Pedidos por Área':
+        if self.titulo == 'Pedidos Por Región':
             pipeline.append({'$match': {'estatus': 'pendientes'}})
             pipeline.append({'$project': {'lugar': '$sucursal.'+siguiente_nivel, '2_DIAS': {'$cond': [{'$eq':['$prioridad', '2 DIAS']}, 1, 0]}, 'HOY_ATRASADO': {'$cond': [{'$eq':['$prioridad', 'HOY ATRASADO']}, 1, 0]}, '1_DIA': {'$cond': [{'$eq':['$prioridad', '1 DIA']}, 1, 0]}, 'HOY_A_TIEMPO': {'$cond': [{'$eq':['$prioridad', 'HOY A TIEMPO']}, 1, 0]}, 'ANTERIORES': {'$cond': [{'$eq':['$prioridad', 'ANTERIORES']}, 1, 0]}}})
             pipeline.append({'$group':{'_id':'$lugar', '2_DIAS':{'$sum':'$2_DIAS'}, 'HOY_ATRASADO':{'$sum':'$HOY_ATRASADO'}, '1_DIA':{'$sum':'$1_DIA'}, 'HOY_A_TIEMPO':{'$sum':'$HOY_A_TIEMPO'}, 'ANTERIORES':{'$sum':'$ANTERIORES'}}})
@@ -338,7 +338,7 @@ class ColumnasApiladas():
             else:
                 hayResultados = "no"
 
-        if self.titulo == 'Pedidos del Día':
+        if self.titulo == 'Entrega de pedidos por ventana de tiempo':
             pipeline.append({'$match': {'prioridad': {'$in': ['ENTREGADO', 'HOY ATRASADO', 'HOY A TIEMPO']}}})
             pipeline.append({'$project': {'rango': '$rango', 'ENTREGADO': {'$cond': [{'$eq':['$prioridad', 'ENTREGADO']}, 1, 0]}, 'HOY_ATRASADO': {'$cond': [{'$eq':['$prioridad', 'HOY ATRASADO']}, 1, 0]}, 'HOY_A_TIEMPO': {'$cond': [{'$eq':['$prioridad', 'HOY A TIEMPO']}, 1, 0]}}})
             pipeline.append({'$group':{'_id':'$rango', 'ENTREGADO':{'$sum':'$ENTREGADO'}, 'HOY_ATRASADO':{'$sum':'$HOY_ATRASADO'}, 'HOY_A_TIEMPO':{'$sum':'$HOY_A_TIEMPO'}}})
@@ -1177,7 +1177,7 @@ class ColumnasApiladas():
                         }
                     }},
                 {'$project': {
-                    'itemsFound': '$entrega.domicilioATiempo',
+                    'domicilioATiempo': '$entrega.domicilioATiempo',
                     'DHLATiempo': '$entrega.DHLATiempo',
                     'tiendaATiempo': '$entrega.tiendaATiempo',
                     'domicilioFueraTiempo': '$entrega.domicilioFueraTiempo',
@@ -1405,7 +1405,7 @@ class ColumnasApiladas():
             filtro_lugar = False
             lugar = ''
 
-        if self.titulo == 'Pedidos del Día':
+        if self.titulo == 'Entrega de pedidos por ventana de tiempo':
             collection = conexion_mongo('report').report_pedidoPendientes
             if filtro_lugar:
                 pipeline = [{'$unwind': '$sucursal'}]
