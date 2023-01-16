@@ -15,7 +15,7 @@ require('highcharts/modules/data')(Highcharts)
 require('highcharts/modules/exporting')(Highcharts)
 require('highcharts/modules/export-data')(Highcharts)
 
-const ColumnasBasicas = ({ titulo, yLabel, seccion, formato, fechas, region, zona, tienda, proveedor, categoria, tipoEntrega, tituloAPI, periodo, agrupador, anioRFM, mesRFM, ocultarTotal, subtitulo, ocultarSubSubTitulo }) => {
+const ColumnasBasicas = ({ titulo, yLabel, seccion, formato, fechas, region, zona, tienda, proveedor, categoria, tipoEntrega, tituloAPI, periodo, agrupador, anioRFM, mesRFM, ocultarTotal, subtitulo, ocultarSubSubTitulo, extenderDerecha, extenderIzquierda }) => {
     const [hayError, setHayError] = useState(false)
     const [seriesData, setSeriesData] = useState([])
     const [datos, setDatos] = useState([{name: 'Sin Resultados', y: 0}])
@@ -33,7 +33,13 @@ const ColumnasBasicas = ({ titulo, yLabel, seccion, formato, fechas, region, zon
         }
       }, {contador: 0})
 
-
+      let claseCSS = ''
+      if (extenderDerecha) {
+          claseCSS = 'extenderDerecha'
+      } else if (extenderIzquierda) {
+          claseCSS = 'extenderIzquierda'
+      }
+   
     //Skins
     const [skin, setSkin] = useSkin()
     const colorTextoDark = '#CDCCCF'
@@ -202,7 +208,7 @@ const ColumnasBasicas = ({ titulo, yLabel, seccion, formato, fechas, region, zon
         }
     }
     return (
-        <Card>
+        <Card className={claseCSS}>
             <CardBody>
                 {hayError && <p classname='texto-rojo'>{`Error en la carga del componente "${titulo}" el ${fechas_srv.fechaYHoraActual()}`}</p>}
                 {!hayError && estadoLoader.contador === 0 && <>

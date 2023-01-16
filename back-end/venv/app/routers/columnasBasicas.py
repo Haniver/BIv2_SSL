@@ -429,7 +429,7 @@ class ColumnasBasicas():
                     'actualizacion': {'$max': '$fechaUpdate'}
                 }
             })
-            print(f"Pipeline desde pie -> Pedidos Pendientes: {str(pipeline)}")
+            print(f"Pipeline desde columnasBasicas -> Pedidos Pendientes: {str(pipeline)}")
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=1000)
             # print(str(arreglo))
@@ -457,7 +457,7 @@ class ColumnasBasicas():
                             color = 'secondary'
                         else:
                             color = 'light'
-                        res[indice]['y'] = resultado['pedidos']
+                        # res[indice]['y'] = resultado['pedidos']
                         series[indice] =  {
                             'y': resultado['pedidos'],
                             'type': 'column',
