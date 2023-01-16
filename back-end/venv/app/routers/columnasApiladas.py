@@ -717,7 +717,7 @@ class ColumnasApiladas():
                         }
                     }},
                 {'$project': {
-                    'itemsFound': '$entrega.domicilioATiempo',
+                    'domicilioATiempo': '$entrega.domicilioATiempo',
                     'DHLATiempo': '$entrega.DHLATiempo',
                     'tiendaATiempo': '$entrega.tiendaATiempo',
                     'domicilioFueraTiempo': '$entrega.domicilioFueraTiempo',
@@ -872,7 +872,7 @@ class ColumnasApiladas():
                 ])
                 tituloElegida = str(dia_elegido) + ' ' + mesTexto(mes_elegido) + ' ' + str(anio_elegido)
                 tituloAnterior = str(dia_anterior) + ' ' + mesTexto(mes_anterior) + ' ' + str(anio_anterior)
-            # print(f"Pipeline desde ColumnasApiladas -> PedidoPerfecto -> {self.titulo}: {str(pipeline)}")
+            print(f"Pipeline desde ColumnasApiladas -> PedidoPerfecto -> {self.titulo}: {str(pipeline)}")
             # Ejecutamos el query:
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=1000)
