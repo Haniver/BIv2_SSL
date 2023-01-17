@@ -97,6 +97,7 @@ const ColumnasApiladas = ({ titulo, yLabel, seccion, formato, fechas, region, zo
                     data: procesarSerie(elemento.data, formato),
                     color: colors[elemento.color].main
                 })
+                console.log(`Color para ${elemento.name}: ${colors[elemento.color].main}`)
             })
             setSeries(series_tmp)
             // console.log('series:')

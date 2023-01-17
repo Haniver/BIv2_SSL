@@ -80,7 +80,7 @@ class Spiderweb():
                 pipeline += f" and ct.region ='{self.filtros.region}' "
             pipeline += f""" group by ncp.responsable, {agrupador_select}"""
 
-            # print("query desde spiderweb: "+pipeline)
+            print("query desde spiderweb: "+pipeline)
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)

@@ -471,7 +471,7 @@ class EjesMultiples():
         collection = conexion_mongo('report').report_pedidoPerfecto
 
         if self.titulo == 'Pedidos Perfectos Todo el Rango':
-            print("Entró a Pedidos Perfectos Todo el Rango en Ejes Múltiples")
+            # print("Entró a Pedidos Perfectos Todo el Rango en Ejes Múltiples")
             # print(f"Desde ejesMultiples -> 'Pedidos Perfectos': Fecha inicio: {self.fecha_ini_a12}. Fecha fin: {self.fecha_fin_a12}")
             serie1 = []
             serie2 = []
@@ -511,11 +511,11 @@ class EjesMultiples():
                 sort['_id.semana'] = 1
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=1000)
-            print(f"Pipeline desde EjesMultiples -> PedidoPerfecto -> {self.titulo}: {str(pipeline)}")
-            print(f"Arreglo desde EjesMultiples -> PedidoPerfecto -> {self.titulo}: {str(arreglo)}")
+            # print(f"Pipeline desde EjesMultiples -> PedidoPerfecto -> {self.titulo}: {str(pipeline)}")
+            # print(f"Arreglo desde EjesMultiples -> PedidoPerfecto -> {self.titulo}: {str(arreglo)}")
             if len(arreglo) >0:
                 hayResultados = "si"
-                print(f"Agrupador desde EjesMultiples -> PedidoPerfecto -> {self.titulo}: {str(self.filtros.agrupador)}")
+                # print(f"Agrupador desde EjesMultiples -> PedidoPerfecto -> {self.titulo}: {str(self.filtros.agrupador)}")
                 for i in range(len(arreglo)):
                     if self.filtros.agrupador == 'mes' or self.filtros.agrupador == 'dia':
                         anio = arreglo[i]['_id']['anio']
@@ -532,7 +532,7 @@ class EjesMultiples():
                             category = arreglo_semana[0]['nSemDS']
                         else:
                             category = 'Semana no encontrada'
-                            print(f"Category desde EjesMultiples -> PedidoPerfecto -> {self.titulo}: {str(category)}")
+                            # print(f"Category desde EjesMultiples -> PedidoPerfecto -> {self.titulo}: {str(category)}")
                     categories.append(category)
                     if arreglo[i]['totales'] > 0:
                         serie1.append(round((arreglo[i]['perfectos']/arreglo[i]['totales']), 4))
@@ -698,12 +698,12 @@ class EjesMultiples():
                 cursor = collection.aggregate(pipeline)
                 arreglo = await cursor.to_list(length=1000)
                 if len(arreglo) >0:
-                    if len(arreglo) > 2:
-                        print(f"Arreglo tiene más de dos registros: {str(arreglo)}")
-                        print(f"fecha_ini = {str(fecha_ini)}, fecha_fin = {str(fecha_fin)}, periodo = {periodo}")
+                    # if len(arreglo) > 2:
+                    #     print(f"Arreglo tiene más de dos registros: {str(arreglo)}")
+                    #     print(f"fecha_ini = {str(fecha_ini)}, fecha_fin = {str(fecha_fin)}, periodo = {periodo}")
                         
-                    if len(arreglo) <= 1:
-                        print(f"Arreglo tiene SOLO UN REGISTRO: {str(arreglo)}")
+                    # if len(arreglo) <= 1:
+                    #     print(f"Arreglo tiene SOLO UN REGISTRO: {str(arreglo)}")
                     hayResultados = "si"
                     series = [[], []]
                     titulos = [[], []]
@@ -1658,7 +1658,7 @@ class EjesMultiples():
             else:
                 hayResultados = "no"
                 # print("No hay resultados 1")
-        print(f"Se va a devolver desde EjesMultiples -> PedidoPerfecto -> {self.titulo}: {str({'hayResultados':hayResultados,'categories':str(categories), 'series':str(series), 'pipeline': str(pipeline), 'lenArreglo':str(len(arreglo))})}")
+        # print(f"Se va a devolver desde EjesMultiples -> PedidoPerfecto -> {self.titulo}: {str({'hayResultados':hayResultados,'categories':str(categories), 'series':str(series), 'pipeline': str(pipeline), 'lenArreglo':str(len(arreglo))})}")
         return  {'hayResultados':hayResultados,'categories':categories, 'series':series, 'pipeline': pipeline, 'lenArreglo':len(arreglo)}
 
     async def OnTimeInFull(self):
@@ -2941,17 +2941,6 @@ class EjesMultiples():
             else:
                 rango = "anio"
             # Rawa
-            pipeline = f"""select dt.{rango} as descrip_fecha,
-                case when (sum(case when nd.calificacion in (9,10) then 1 else 0 end)-sum(case when nd.calificacion<=6 then 1 else 0 end))=0 then 0 else
-                (sum(case when nd.calificacion in (9,10) then 1 else 0 end)-sum(case when nd.calificacion<=6 then 1 else 0 end))*100/cast(count(1) as float) end nps,
-            CONVERT(VARCHAR, MIN(dt.fecha), 20) as f_inicio_drilldown,
-            CONVERT(VARCHAR, MAX(dt.fecha), 120) as f_fin_drilldown
-            from DWH.limesurvey.nps_mail_pedido nmp
-            inner join DWH.limesurvey.nps_detalle nd on nmp.id_encuesta =nd.id_encuesta and nd.nEncuesta=nmp.nEncuesta
-            left join DWH.dbo.dim_tiempo dt on nmp.fecha =dt.fecha
-            left join DWH.artus.catTienda ct on nmp.idTienda =ct.tienda
-            left join DWH.artus.catProveedores cp on cp.idTienda = nmp.idTienda 
-            where nmp.fecha between '{fecha_ini}' and '{fecha_fin}' """
             # pipeline = f"""select dt.{rango} as descrip_fecha,
             #     case when (sum(case when nd.calificacion in (9,10) then 1 else 0 end)-sum(case when nd.calificacion<=6 then 1 else 0 end))=0 then 0 else
             #     (sum(case when nd.calificacion in (9,10) then 1 else 0 end)-sum(case when nd.calificacion<=6 then 1 else 0 end))*100/cast(count(1) as float) end nps,
@@ -2959,11 +2948,22 @@ class EjesMultiples():
             # CONVERT(VARCHAR, MAX(dt.fecha), 120) as f_fin_drilldown
             # from DWH.limesurvey.nps_mail_pedido nmp
             # inner join DWH.limesurvey.nps_detalle nd on nmp.id_encuesta =nd.id_encuesta and nd.nEncuesta=nmp.nEncuesta
-            # LEFT JOIN DWH.dbo.hecho_order ho ON ho.order_number =nmp.pedido
-            # left join DWH.dbo.dim_tiempo dt on ho.creation_date =dt.fecha
+            # left join DWH.dbo.dim_tiempo dt on nmp.fecha =dt.fecha
             # left join DWH.artus.catTienda ct on nmp.idTienda =ct.tienda
             # left join DWH.artus.catProveedores cp on cp.idTienda = nmp.idTienda 
-            # where ho.creation_date between '{fecha_ini}' and '{fecha_fin}' """
+            # where nmp.fecha between '{fecha_ini}' and '{fecha_fin}' """
+            pipeline = f"""select dt.{rango} as descrip_fecha,
+                case when (sum(case when nd.calificacion in (9,10) then 1 else 0 end)-sum(case when nd.calificacion<=6 then 1 else 0 end))=0 then 0 else
+                (sum(case when nd.calificacion in (9,10) then 1 else 0 end)-sum(case when nd.calificacion<=6 then 1 else 0 end))*100/cast(count(1) as float) end nps,
+            CONVERT(VARCHAR, MIN(dt.fecha), 20) as f_inicio_drilldown,
+            CONVERT(VARCHAR, MAX(dt.fecha), 120) as f_fin_drilldown
+            from DWH.limesurvey.nps_mail_pedido nmp
+            inner join DWH.limesurvey.nps_detalle nd on nmp.id_encuesta =nd.id_encuesta and nd.nEncuesta=nmp.nEncuesta
+            LEFT JOIN DWH.dbo.hecho_order ho ON ho.order_number =nmp.pedido
+            left join DWH.dbo.dim_tiempo dt on convert(date,ho.creation_date) =dt.fecha
+            left join DWH.artus.catTienda ct on nmp.idTienda =ct.tienda
+            left join DWH.artus.catProveedores cp on cp.idTienda = nmp.idTienda 
+            where ho.creation_date between '{fecha_ini}' and '{fecha_fin}' """
             if self.filtros.tienda != '' and self.filtros.tienda != None and self.filtros.tienda != 'False':
                 pipeline += f""" and ct.tienda ='{self.filtros.tienda}' """
             elif self.filtros.zona != '' and self.filtros.zona != None and self.filtros.zona != 'False':
@@ -3018,7 +3018,8 @@ class EjesMultiples():
             sum(case when nd.calificacion in (7,8) then 1 else 0 end) pasivos
             from DWH.limesurvey.nps_mail_pedido nmp
             inner join DWH.limesurvey.nps_detalle nd on nmp.id_encuesta =nd.id_encuesta and nd.nEncuesta=nmp.nEncuesta
-            left join DWH.dbo.dim_tiempo dt on nmp.fecha = dt.fecha 
+            LEFT JOIN DWH.dbo.hecho_order ho ON ho.order_number =nmp.pedido
+            left join DWH.dbo.dim_tiempo dt on convert(date,ho.creation_date) = dt.fecha 
             left join DWH.artus.catTienda ct on nmp.idTienda =ct.tienda
             left join DWH.artus.catProveedores cp on cp.idTienda = nmp.idTienda 
             where {agrupador_where} {lugar_where} {clauseCatProveedor}
@@ -3357,7 +3358,8 @@ class EjesMultiples():
             from DWH.limesurvey.nps_mail_pedido nmp
             inner join DWH.limesurvey.nps_detalle nd on nmp.id_encuesta =nd.id_encuesta and nd.nEncuesta=nmp.nEncuesta
             inner join DWH.dbo.dim_store ds on nmp.idtienda =ds.idtienda
-            left join DWH.dbo.dim_tiempo dt on nmp.fecha = dt.fecha 
+            LEFT JOIN DWH.dbo.hecho_order ho ON ho.order_number =nmp.pedido
+            left join DWH.dbo.dim_tiempo dt on convert(date,ho.creation_date) = dt.fecha 
             left join DWH.artus.catTienda ct on nmp.idtienda =ct.tienda
             left join DWH.artus.catProveedores cp on cp.idTienda = nmp.idTienda 
             where {agrupador_where} {lugar_where} {clauseCatProveedor}
@@ -3440,7 +3442,8 @@ class EjesMultiples():
             from DWH.limesurvey.nps_mail_pedido nmp
             inner join DWH.limesurvey.nps_detalle nd on nmp.id_encuesta =nd.id_encuesta and nd.nEncuesta=nmp.nEncuesta
             inner join DWH.dbo.dim_store ds on nmp.idtienda =ds.idtienda
-            left join DWH.dbo.dim_tiempo dt on nmp.fecha = dt.fecha 
+            LEFT JOIN DWH.dbo.hecho_order ho ON ho.order_number =nmp.pedido
+            left join DWH.dbo.dim_tiempo dt on convert(date,ho.creation_date) = dt.fecha 
             left join DWH.artus.catTienda ct on nmp.idtienda =ct.tienda
             left join DWH.artus.catProveedores cp on cp.idTienda = nmp.idTienda 
             where {agrupador_where} {lugar_where} {clauseCatProveedor}
@@ -3539,7 +3542,8 @@ class EjesMultiples():
             from DWH.limesurvey.nps_mail_pedido nmp
             inner join DWH.limesurvey.nps_detalle nd on nmp.id_encuesta =nd.id_encuesta and nd.nEncuesta=nmp.nEncuesta
             inner join DWH.dbo.dim_store ds on nmp.idtienda =ds.idtienda
-            left join DWH.dbo.dim_tiempo dt on nmp.fecha = dt.fecha 
+            LEFT JOIN DWH.dbo.hecho_order ho ON ho.order_number =nmp.pedido
+            left join DWH.dbo.dim_tiempo dt on convert(date,ho.creation_date) = dt.fecha 
             left join DWH.artus.catTienda ct on nmp.idtienda =ct.tienda
             left join DWH.artus.catProveedores cp on cp.idTienda = nmp.idTienda 
             where {agrupador_where} {lugar_where} {clauseCatProveedor}

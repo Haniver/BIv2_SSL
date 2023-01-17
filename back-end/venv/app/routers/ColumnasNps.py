@@ -47,12 +47,12 @@ class ColumnasNps():
             serie2 = []
 
             if self.filtros.agrupador == 'dia':
-                agrupador_select = "dt.fecha"
+                agrupador_select = "ho.creation_date"
                 mes = int(self.filtros.periodo['mes'])
                 mes = str(mes) if mes >= 10 else '0'+str(mes)
                 dia = int(self.filtros.periodo['dia'])
                 dia = str(dia) if dia >= 10 else '0'+str(dia)
-                agrupador_where = f" dt.fecha='{self.filtros.periodo['anio']}-{mes}-{dia}'"
+                agrupador_where = f" ho.creation_date='{self.filtros.periodo['anio']}-{mes}-{dia}'"
             elif self.filtros.agrupador == "semana":
                 agrupador_select = "dt.anio, dt.num_semana"
                 semana_completa = str(self.filtros.periodo['semana'])
@@ -64,21 +64,21 @@ class ColumnasNps():
                 agrupador_where = f" dt.num_mes={self.filtros.periodo['mes']} and dt.anio={self.filtros.periodo['anio']}"
 
             # Rawa
-            pipeline = f"""select nd.calificacion,count(1) reg, {agrupador_select}
-            from DWH.limesurvey.nps_mail_pedido nmp
-            inner join DWH.limesurvey.nps_detalle nd on nmp.id_encuesta =nd.id_encuesta and nd.nEncuesta=nmp.nEncuesta
-            left join DWH.artus.catTienda ct on nmp.idTienda =ct.tienda
-            left join DWH.dbo.dim_tiempo dt on nmp.fecha = dt.fecha 
-            left join DWH.artus.catProveedores cp on cp.idTienda = nmp.idTienda 
-            where {agrupador_where} {clauseCatProveedor} """
             # pipeline = f"""select nd.calificacion,count(1) reg, {agrupador_select}
             # from DWH.limesurvey.nps_mail_pedido nmp
             # inner join DWH.limesurvey.nps_detalle nd on nmp.id_encuesta =nd.id_encuesta and nd.nEncuesta=nmp.nEncuesta
             # left join DWH.artus.catTienda ct on nmp.idTienda =ct.tienda
-            # LEFT JOIN DWH.dbo.hecho_order ho ON ho.order_number =nmp.pedido
-            # left join DWH.dbo.dim_tiempo dt on ho.creation_date = dt.fecha 
+            # left join DWH.dbo.dim_tiempo dt on nmp.fecha = dt.fecha 
             # left join DWH.artus.catProveedores cp on cp.idTienda = nmp.idTienda 
             # where {agrupador_where} {clauseCatProveedor} """
+            pipeline = f"""select nd.calificacion,count(1) reg, {agrupador_select}
+            from DWH.limesurvey.nps_mail_pedido nmp
+            inner join DWH.limesurvey.nps_detalle nd on nmp.id_encuesta =nd.id_encuesta and nd.nEncuesta=nmp.nEncuesta
+            left join DWH.artus.catTienda ct on nmp.idTienda =ct.tienda
+            LEFT JOIN DWH.dbo.hecho_order ho ON ho.order_number =nmp.pedido
+            left join DWH.dbo.dim_tiempo dt on convert(date,ho.creation_date) = dt.fecha 
+            left join DWH.artus.catProveedores cp on cp.idTienda = nmp.idTienda 
+            where {agrupador_where} {clauseCatProveedor} """
             if self.filtros.tienda != '' and self.filtros.tienda != None and self.filtros.tienda != 'False':
                 pipeline += f""" and ct.tienda ='{self.filtros.tienda}' """
             elif self.filtros.zona != '' and self.filtros.zona != None and self.filtros.zona != 'False':
@@ -87,7 +87,7 @@ class ColumnasNps():
                 pipeline += f" and ct.region ='{self.filtros.region}' "
             pipeline += f" group by nd.calificacion, {agrupador_select} order by calificacion"
 
-            # print("query desde columnas básicas nps ahorita: "+pipeline)
+            print("query desde columnasnps -> {self.titulo}: "+pipeline)
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)

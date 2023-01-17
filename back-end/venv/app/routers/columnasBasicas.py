@@ -441,7 +441,7 @@ class ColumnasBasicas():
                 estatus = ['ANTERIORES', '2 DIAS', '1 DIA', 'HOY ATRASADO', 'HOY A TIEMPO']
                 categorias = [elemento.title() for elemento in estatus]
                 valores = [next((item.get("pedidos", 0) for item in arreglo if item["_id"] == key),0) for key in estatus]
-                print(f"Valores = {valores}")
+                # print(f"Valores = {valores}")
                 for i in range(len(estatus)):
                     if i == 0:
                         color = 'danger'
