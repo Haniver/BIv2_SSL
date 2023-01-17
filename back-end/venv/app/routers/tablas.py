@@ -3758,7 +3758,7 @@ class Tablas():
             if self.filtros.agrupador == 'dia':
                 # Rawa
                 rango = "nmp.fecha"
-                # rango = "ho.fechaEntregaFinal"
+                # rango = "ho.creation_date"
             elif self.filtros.agrupador == "semana":
                 rango = "n_sem_D_S"
             elif self.filtros.agrupador == "mes":
@@ -3782,13 +3782,13 @@ class Tablas():
             if self.filtros.agrupador != "dia":
                 # Rawa
                 pipeline += " left join DWH.dbo.dim_tiempo dt on nmp.fecha = dt.fecha "
-                # pipeline += " left join DWH.dbo.dim_tiempo dt on ho.fechaEntregaFinal = dt.fecha "
+                # pipeline += " left join DWH.dbo.dim_tiempo dt on ho.creation_date = dt.fecha "
             # Rawa
             pipeline += f""" where nmp.fecha BETWEEN '{self.fecha_ini}' AND '{self.fecha_fin}'
             AND cp.proveedor is not null
             AND ((cp.fecha_from = '2022-11-23' AND (cp.fecha_to is null OR cp.fecha_to <= '2023-01-10') OR (cp.fecha_from <= '2023-01-10' AND cp.fecha_to is null)))
             """
-            # pipeline += f""" where ho.fechaEntregaFinal BETWEEN '{self.fecha_ini}' AND '{self.fecha_fin}' 
+            # pipeline += f""" where ho.creation_date BETWEEN '{self.fecha_ini}' AND '{self.fecha_fin}' 
             # AND cp.proveedor is not null
             # AND ((cp.fecha_from = '2022-11-23' AND (cp.fecha_to is null OR cp.fecha_to <= '2023-01-10') OR (cp.fecha_from <= '2023-01-10' AND cp.fecha_to is null)))
             # """
@@ -4046,7 +4046,7 @@ class Tablas():
             # inner join DWH.limesurvey.nps_detalle nd on nmp.id_encuesta =nd.id_encuesta and nd.nEncuesta=nmp.nEncuesta
             # left join DWH.artus.catTienda ct on nmp.idTienda =ct.tienda
             # LEFT JOIN DWH.dbo.hecho_order ho ON ho.order_number =nmp.pedido
-            # left join DWH.dbo.dim_tiempo dt on ho.fechaEntregaFinal=dt.fecha
+            # left join DWH.dbo.dim_tiempo dt on ho.creation_date=dt.fecha
             # left join DWH.artus.catProveedores cp on cp.idTienda = nmp.idTienda 
             # where {agrupador_where} {lugar_where} {clauseCatProveedor}
             # group by CONCAT(nmp.idtienda,' - ',nmp.descrip_tienda),nmp.region,nmp.zona

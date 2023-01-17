@@ -76,7 +76,7 @@ class ColumnasNps():
             # inner join DWH.limesurvey.nps_detalle nd on nmp.id_encuesta =nd.id_encuesta and nd.nEncuesta=nmp.nEncuesta
             # left join DWH.artus.catTienda ct on nmp.idTienda =ct.tienda
             # LEFT JOIN DWH.dbo.hecho_order ho ON ho.order_number =nmp.pedido
-            # left join DWH.dbo.dim_tiempo dt on ho.fechaEntregaFinal = dt.fecha 
+            # left join DWH.dbo.dim_tiempo dt on ho.creation_date = dt.fecha 
             # left join DWH.artus.catProveedores cp on cp.idTienda = nmp.idTienda 
             # where {agrupador_where} {clauseCatProveedor} """
             if self.filtros.tienda != '' and self.filtros.tienda != None and self.filtros.tienda != 'False':

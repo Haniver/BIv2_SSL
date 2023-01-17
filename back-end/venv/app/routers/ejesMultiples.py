@@ -2883,10 +2883,10 @@ class EjesMultiples():
             # from DWH.limesurvey.nps_mail_pedido nmp
             # inner join DWH.limesurvey.nps_detalle nd on nmp.id_encuesta =nd.id_encuesta and nd.nEncuesta=nmp.nEncuesta
             # LEFT JOIN DWH.dbo.hecho_order ho ON ho.order_number =nmp.pedido
-            # left join DWH.dbo.dim_tiempo dt on ho.fechaEntregaFinal =dt.fecha
+            # left join DWH.dbo.dim_tiempo dt on ho.creation_date =dt.fecha
             # left join DWH.artus.catTienda ct on nmp.idTienda =ct.tienda
             # left join DWH.artus.catProveedores cp on cp.idTienda = nmp.idTienda 
-            # where ho.fechaEntregaFinal between '{fecha_ini}' and '{fecha_fin}' """
+            # where ho.creation_date between '{fecha_ini}' and '{fecha_fin}' """
             if self.filtros.tienda != '' and self.filtros.tienda != None and self.filtros.tienda != 'False':
                 pipeline += f""" and ct.tienda ='{self.filtros.tienda}' """
             elif self.filtros.zona != '' and self.filtros.zona != None and self.filtros.zona != 'False':
@@ -2954,7 +2954,7 @@ class EjesMultiples():
             # from DWH.limesurvey.nps_mail_pedido nmp
             # inner join DWH.limesurvey.nps_detalle nd on nmp.id_encuesta =nd.id_encuesta and nd.nEncuesta=nmp.nEncuesta
             # LEFT JOIN DWH.dbo.hecho_order ho ON ho.order_number =nmp.pedido
-            # left join DWH.dbo.dim_tiempo dt on ho.fechaEntregaFinal = dt.fecha 
+            # left join DWH.dbo.dim_tiempo dt on ho.creation_date = dt.fecha 
             # left join DWH.artus.catTienda ct on nmp.idTienda =ct.tienda
             # left join DWH.artus.catProveedores cp on cp.idTienda = nmp.idTienda 
             # where {agrupador_where} {lugar_where} {clauseCatProveedor}
@@ -3295,7 +3295,7 @@ class EjesMultiples():
             # inner join DWH.limesurvey.nps_detalle nd on nmp.id_encuesta =nd.id_encuesta and nd.nEncuesta=nmp.nEncuesta
             # inner join DWH.dbo.dim_store ds on nmp.idtienda =ds.idtienda
             # LEFT JOIN DWH.dbo.hecho_order ho ON ho.order_number =nmp.pedido
-            # left join DWH.dbo.dim_tiempo dt on ho.fechaEntregaFinal = dt.fecha 
+            # left join DWH.dbo.dim_tiempo dt on ho.creation_date = dt.fecha 
             # left join DWH.artus.catTienda ct on nmp.idtienda =ct.tienda
             # left join DWH.artus.catProveedores cp on cp.idTienda = nmp.idTienda 
             # where {agrupador_where} {lugar_where} {clauseCatProveedor}
@@ -3378,7 +3378,7 @@ class EjesMultiples():
             # inner join DWH.limesurvey.nps_detalle nd on nmp.id_encuesta =nd.id_encuesta and nd.nEncuesta=nmp.nEncuesta
             # inner join DWH.dbo.dim_store ds on nmp.idtienda =ds.idtienda
             # LEFT JOIN DWH.dbo.hecho_order ho ON ho.order_number =nmp.pedido
-            # left join DWH.dbo.dim_tiempo dt on ho.fechaEntregaFinal = dt.fecha 
+            # left join DWH.dbo.dim_tiempo dt on ho.creation_date = dt.fecha 
             # left join DWH.artus.catTienda ct on nmp.idtienda =ct.tienda
             # left join DWH.artus.catProveedores cp on cp.idTienda = nmp.idTienda 
             # where {agrupador_where} {lugar_where} {clauseCatProveedor}
@@ -3478,7 +3478,7 @@ class EjesMultiples():
             # inner join DWH.limesurvey.nps_detalle nd on nmp.id_encuesta =nd.id_encuesta and nd.nEncuesta=nmp.nEncuesta
             # inner join DWH.dbo.dim_store ds on nmp.idtienda =ds.idtienda
             # LEFT JOIN DWH.dbo.hecho_order ho ON ho.order_number =nmp.pedido
-            # left join DWH.dbo.dim_tiempo dt on ho.fechaEntregaFinal = dt.fecha 
+            # left join DWH.dbo.dim_tiempo dt on ho.creation_date = dt.fecha 
             # left join DWH.artus.catTienda ct on nmp.idtienda =ct.tienda
             # left join DWH.artus.catProveedores cp on cp.idTienda = nmp.idTienda 
             # where {agrupador_where} {lugar_where} {clauseCatProveedor}
