@@ -14,7 +14,7 @@ const PedidoPerfecto = () => {
     
     const [fechas, setFechas] = useState({fecha_ini: fechas_srv.primeroDelMesVencido(), fecha_fin: fechas_srv.actualVencida()})
     const [agrupador, setAgrupador] = useState('semana')
-    const [periodo, setPeriodo] = useState(false)
+    const [periodo, setPeriodo] = useState([])
     const [region, setRegion] = useState('')
     const [zona, setZona] = useState('')
     const [tienda, setTienda] = useState('')
@@ -78,9 +78,14 @@ const PedidoPerfecto = () => {
           <Leyenda seccion={seccion} titulo='Última actualización:' />
         </Col>
       </Row>
+      <Row className='match-height'>
+        <Col sm='12' lg='12'>
+          <EjesMultiples titulo='Pedidos Perfectos Todo el Rango' fechas={fechas} provLogist={provLogist} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} />
+        </Col>
+      </Row>
       {periodo && <Row className='match-height'>
         <Col sm='12' lg='6'>
-          <EjesMultiples titulo='Pedidos Perfectos' fechas={fechas} provLogist={provLogist} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} />
+          <EjesMultiples titulo='Pedidos Perfectos Periodo Seleccionado Vs Anterior' fechas={fechas} provLogist={provLogist} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} />
         </Col>
         <Col sm='12' lg='6'>
           <EjesMultiples titulo='Evaluación por KPI Pedido Perfecto' fechas={fechas} provLogist={provLogist} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} />

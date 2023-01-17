@@ -398,11 +398,11 @@ class EjesMultiples():
         arreglo = []
         hayResultados = 'no'
         # esta condición está aquí porque a veces los filtros no terminan de cargar y ya está cargando la gráfica. Hay que verificar que los filtros hagan sentido.
-        if self.titulo != 'Pedidos Perfectos' and (not self.filtros.periodo or (self.filtros.agrupador == 'mes' and 'semana' in self.filtros.periodo) or (self.filtros.agrupador == 'semana' and not 'semana' in self.filtros.periodo) or (self.filtros.agrupador == 'dia' and not 'dia' in self.filtros.periodo)):
+        if (self.titulo != 'Pedidos Perfectos Periodo Seleccionado Vs Anterior') and (not self.filtros.periodo or (self.filtros.agrupador == 'mes' and 'semana' in self.filtros.periodo) or (self.filtros.agrupador == 'semana' and not 'semana' in self.filtros.periodo) or (self.filtros.agrupador == 'dia' and not 'dia' in self.filtros.periodo)):
             return {'hayResultados':'no','Fcategories':[], 'series':[], 'pipeline': [], 'lenArreglo':0}
         clauseCatProveedor = False
         if len(self.filtros.provLogist) == 1:
-            print(f"provLogist[0] desde ejesMultiples -> PedidoPerfecto: {self.filtros.provLogist[0]}")
+            # print(f"provLogist[0] desde ejesMultiples -> PedidoPerfecto: {self.filtros.provLogist[0]}")
             clauseCatProveedor = {'$match': {'sucursal.Delivery': self.filtros.provLogist[0]}}
         elif len(self.filtros.provLogist) > 1:
             clauseCatProveedor = {'$match': {
@@ -470,7 +470,84 @@ class EjesMultiples():
             fecha_fin = fecha_fin.replace(hour=23, minute=59, second=59, microsecond=999999)
         collection = conexion_mongo('report').report_pedidoPerfecto
 
-        if self.titulo == 'Pedidos Perfectos':
+        if self.titulo == 'Pedidos Perfectos Todo el Rango':
+            print("Entró a Pedidos Perfectos Todo el Rango en Ejes Múltiples")
+            # print(f"Desde ejesMultiples -> 'Pedidos Perfectos': Fecha inicio: {self.fecha_ini_a12}. Fecha fin: {self.fecha_fin_a12}")
+            serie1 = []
+            serie2 = []
+            series = []
+            pipeline.append(
+                {'$match': {
+                    'fecha': {
+                        '$gte': self.fecha_ini_a12, 
+                        '$lt': self.fecha_fin_a12
+                    }
+                }}
+            )
+            # print(f"Fecha_ini: {fecha_ini}, Fecha_fin: {fecha_fin}")
+            if clauseCatProveedor:
+                pipeline.append(clauseCatProveedor)
+            pipeline.extend([
+                {'$group': {
+                    '_id': {},
+                    'totales': {'$sum': '$Total_Pedidos'},
+                    'perfectos': {'$sum': '$perfecto'}
+                }}, 
+                {'$sort': {'_id.anio': 1}}
+            ])
+            grupo = pipeline[-2]['$group']['_id']
+            sort = pipeline[-1]['$sort']
+            # print("Agrupador en Pedidos Perfectos en Ejes Múltiples = "+self.filtros.agrupador)
+            if self.filtros.agrupador == 'mes' or self.filtros.agrupador == 'dia' :
+                grupo['anio'] = {'$year': '$fecha'}
+                grupo['mes'] = {'$month': '$fecha'}
+                sort['_id.anio'] = 1
+                sort['_id.mes'] = 1
+                if self.filtros.agrupador == 'dia':
+                    grupo['dia'] = {'$dayOfMonth': '$fecha'}
+                    sort['_id.dia'] = 1
+            elif self.filtros.agrupador == 'semana':
+                grupo['semana'] = '$idSemDS'
+                sort['_id.semana'] = 1
+            cursor = collection.aggregate(pipeline)
+            arreglo = await cursor.to_list(length=1000)
+            print(f"Pipeline desde EjesMultiples -> PedidoPerfecto -> {self.titulo}: {str(pipeline)}")
+            print(f"Arreglo desde EjesMultiples -> PedidoPerfecto -> {self.titulo}: {str(arreglo)}")
+            if len(arreglo) >0:
+                hayResultados = "si"
+                print(f"Agrupador desde EjesMultiples -> PedidoPerfecto -> {self.titulo}: {str(self.filtros.agrupador)}")
+                for i in range(len(arreglo)):
+                    if self.filtros.agrupador == 'mes' or self.filtros.agrupador == 'dia':
+                        anio = arreglo[i]['_id']['anio']
+                        mes = arreglo[i]['_id']['mes']
+                        category = mesTexto(mes) + ' ' + str(anio)
+                        if self.filtros.agrupador == 'dia':
+                            category = str(arreglo[i]['_id']['dia']) + ' ' + category
+                    elif self.filtros.agrupador == 'semana':
+                        if arreglo[i]['_id']['semana'] != None:
+                            cursor_semana = conexion_mongo('report').catTiempo.find({
+                                'idSemDS': arreglo[i]['_id']['semana']
+                            })
+                            arreglo_semana = await cursor_semana.to_list(length=1)
+                            category = arreglo_semana[0]['nSemDS']
+                        else:
+                            category = 'Semana no encontrada'
+                            print(f"Category desde EjesMultiples -> PedidoPerfecto -> {self.titulo}: {str(category)}")
+                    categories.append(category)
+                    if arreglo[i]['totales'] > 0:
+                        serie1.append(round((arreglo[i]['perfectos']/arreglo[i]['totales']), 4))
+                    else:
+                        serie1.append(0)
+                    serie2.append(round((serie1[i]-serie1[i-1]), 4)) if i > 0 else serie2.append(0)
+                    
+                series.extend([
+                    {'name': '% Perfectos', 'data':serie1, 'type': 'column', 'formato_tooltip':'porcentaje', 'color':'secondary'},
+                    {'name': '% Dif', 'data':serie2, 'type': 'spline','formato_tooltip':'porcentaje', 'color':'dark'}
+                ])
+            else:
+                hayResultados = "no"
+
+        if self.titulo == 'Pedidos Perfectos Periodo Seleccionado Vs Anterior':
             # print("Entró a Pedidos Perfectos en Ejes Múltiples")
             # print(f"Desde ejesMultiples -> 'Pedidos Perfectos': Fecha inicio: {self.fecha_ini_a12}. Fecha fin: {self.fecha_fin_a12}")
             serie1 = []
@@ -617,7 +694,7 @@ class EjesMultiples():
                         '$sort': {'_id.periodo': 1}
                     }
                 ])
-                print(f"Pipeline desde EjesMultiples -> PedidoPerfecto -> {self.titulo}: {str(pipeline)}")
+                # print(f"Pipeline desde EjesMultiples -> PedidoPerfecto -> {self.titulo}: {str(pipeline)}")
                 cursor = collection.aggregate(pipeline)
                 arreglo = await cursor.to_list(length=1000)
                 if len(arreglo) >0:
@@ -1581,7 +1658,7 @@ class EjesMultiples():
             else:
                 hayResultados = "no"
                 # print("No hay resultados 1")
-        # print({'hayResultados':hayResultados,'categories':str(categories), 'series':str(series), 'pipeline': str(pipeline), 'lenArreglo':str(len(arreglo))})
+        print(f"Se va a devolver desde EjesMultiples -> PedidoPerfecto -> {self.titulo}: {str({'hayResultados':hayResultados,'categories':str(categories), 'series':str(series), 'pipeline': str(pipeline), 'lenArreglo':str(len(arreglo))})}")
         return  {'hayResultados':hayResultados,'categories':categories, 'series':series, 'pipeline': pipeline, 'lenArreglo':len(arreglo)}
 
     async def OnTimeInFull(self):
