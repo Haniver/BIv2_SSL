@@ -3781,7 +3781,7 @@ class Tablas():
             ON ho.order_number =nmp.pedido"""
             if self.filtros.agrupador != "dia":
                 # Rawa
-                pipeline += " left join DWH.dbo.dim_tiempo dt on nmp.fecha = dt.fecha "
+                pipeline += " left join DWH.dbo.dim_tiempo dt on convert(date,ho.creation_date) = dt.fecha "
                 # pipeline += " left join DWH.dbo.dim_tiempo dt on ho.creation_date = dt.fecha "
             # Rawa
             # pipeline += f""" where nmp.fecha BETWEEN '{self.fecha_ini}' AND '{self.fecha_fin}'
@@ -3801,7 +3801,7 @@ class Tablas():
             pipeline += clauseCatProveedor
             pipeline += f" group by nd.calificacion, {rango} {', (dt.anio * 100 + dt.num_mes)' if esMes else ''} order by {rango if not esMes else '(dt.anio * 100 + dt.num_mes) '}"
 
-            # print('Query Evaluación NPS por Día desde Tabla: '+str(pipeline))
+            print('Query Evaluación NPS por Día desde Tabla: '+str(pipeline))
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)
