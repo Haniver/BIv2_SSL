@@ -52,7 +52,7 @@ class ColumnasNps():
                 mes = str(mes) if mes >= 10 else '0'+str(mes)
                 dia = int(self.filtros.periodo['dia'])
                 dia = str(dia) if dia >= 10 else '0'+str(dia)
-                agrupador_where = f" ho.creation_date='{self.filtros.periodo['anio']}-{mes}-{dia}'"
+                agrupador_where = f" ho.creation_date between '{self.filtros.periodo['anio']}-{mes}-{dia} 00:00:00' and '{self.filtros.periodo['anio']}-{mes}-{dia} 23:59:59'"
             elif self.filtros.agrupador == "semana":
                 agrupador_select = "dt.anio, dt.num_semana"
                 semana_completa = str(self.filtros.periodo['semana'])
@@ -87,7 +87,7 @@ class ColumnasNps():
                 pipeline += f" and ct.region ='{self.filtros.region}' "
             pipeline += f" group by nd.calificacion, {agrupador_select} order by calificacion"
 
-            print("query desde columnasnps -> {self.titulo}: "+pipeline)
+            print(f"query desde columnasnps -> {self.titulo}: "+pipeline)
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)

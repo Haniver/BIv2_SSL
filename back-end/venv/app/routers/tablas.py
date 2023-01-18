@@ -30,7 +30,7 @@ class Tablas():
 
         if self.filtros.fechas != None:
             self.fecha_ini = datetime.combine(datetime.strptime(self.filtros.fechas['fecha_ini'], '%Y-%m-%dT%H:%M:%S.%fZ'), datetime.min.time()) if self.filtros.fechas['fecha_ini'] != None and self.filtros.fechas['fecha_ini'] != '' else None
-            self.fecha_fin = datetime.combine(datetime.strptime(self.filtros.fechas['fecha_fin'], '%Y-%m-%dT%H:%M:%S.%fZ'), datetime.min.time()) + timedelta(days=1) - timedelta(seconds=1) if self.filtros.fechas['fecha_fin'] != None and self.filtros.fechas['fecha_fin'] != '' else None
+            self.fecha_fin = datetime.combine(datetime.strptime(self.filtros.fechas['fecha_fin'], '%Y-%m-%dT%H:%M:%S.%fZ'), datetime.max.time()) + timedelta(days=1) - timedelta(seconds=1) if self.filtros.fechas['fecha_fin'] != None and self.filtros.fechas['fecha_fin'] != '' else None
         # print('self.fecha_ini = '+str(fecha_ini))
         # print('fecha_fin = '+str(fecha_fin))
         if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
@@ -3735,7 +3735,10 @@ class Tablas():
         pipeline = []
         data = []
         columns = []
-        fecha_fin = self.filtros.fechas['fecha_fin'][:10]
+        fecha_ini = self.filtros.fechas['fecha_ini'][0:10]
+        fecha_fin = self.filtros.fechas['fecha_fin'][0:10]
+        fecha_ini_datetime = fecha_ini + ' 00:00:00'
+        fecha_fin_datetime = fecha_fin + ' 23:59:59'
         clauseCatProveedor = " AND cp.proveedor is not null "
         if len(self.filtros.provLogist) > 0:
             clauseCatProveedor = " AND ("
@@ -3752,8 +3755,6 @@ class Tablas():
             data = []
             # self.fecha_ini = datetime.strptime(self.filtros.fechas['fecha_ini'], '%Y-%m-%dT%H:%M:%S.%fZ')
             # fecha_fin = datetime.strptime(self.filtros.fechas['fecha_fin'], '%Y-%m-%dT%H:%M:%S.%fZ')
-            self.fecha_ini = self.filtros.fechas['fecha_ini'][0:10]
-            fecha_fin = self.filtros.fechas['fecha_fin'][0:10]
             esMes = False
             if self.filtros.agrupador == 'dia':
                 # Rawa
@@ -3788,7 +3789,7 @@ class Tablas():
             # AND cp.proveedor is not null
             # AND ((cp.fecha_from = '2022-11-23' AND (cp.fecha_to is null OR cp.fecha_to <= '2023-01-10') OR (cp.fecha_from <= '2023-01-10' AND cp.fecha_to is null)))
             # """
-            pipeline += f""" where ho.creation_date BETWEEN '{self.fecha_ini}' AND '{self.fecha_fin}' 
+            pipeline += f""" where ho.creation_date BETWEEN '{fecha_ini_datetime}' AND '{fecha_fin_datetime}' 
             AND cp.proveedor is not null
             AND ((cp.fecha_from = '2022-11-23' AND (cp.fecha_to is null OR cp.fecha_to <= '2023-01-10') OR (cp.fecha_from <= '2023-01-10' AND cp.fecha_to is null)))
             """
@@ -3844,6 +3845,7 @@ class Tablas():
                     else:
                         tasa_promotores = tasa_pasivos = tasa_detractores = '--'
                         tasa_promotores_num = tasa_detractores_num = 0
+                    # print(f"Promotores: {promotores}. Detractores: {detractores}. Respuestas: {respuestas}. nps: {100 * (promotores - detractores) / respuestas}")
                     nps = f'{(100 * (promotores - detractores) / respuestas):.2f}%' if respuestas > 0 else '--'
                     tabla_presentacion.append([f'{(contactados):,}', f'{(respuestas):,}', tasa_respuesta, tasa_promotores, tasa_pasivos, tasa_detractores, nps])
                     total_contactados += contactados

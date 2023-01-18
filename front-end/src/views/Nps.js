@@ -45,7 +45,7 @@ const Nps = () => {
           <Tabla quitarPaginacion quitarBusqueda titulo='Evaluación NPS por Día' fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} seccion={seccion} provLogist={provLogist} />
         </Col>
         <Col sm='12' lg='6'>
-          {(periodo.mes !== undefined || periodo.semana !== undefined) && <EjesMultiples titulo='NPS por Día' fechas={fechas} provLogist={provLogist} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} />}
+          {(periodo.mes !== undefined || periodo.semana !== undefined) && <EjesMultiples titulo='NPS por Periodo' fechas={fechas} provLogist={provLogist} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} />}
         </Col>
       </Row>
       <Row className='match-height'>

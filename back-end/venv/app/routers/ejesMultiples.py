@@ -2880,7 +2880,10 @@ class EjesMultiples():
         series = []
         pipeline = []
         arreglo = []
-        fecha_fin = self.filtros.fechas['fecha_fin'][:10]
+        fecha_ini = self.filtros.fechas['fecha_ini'][0:10]
+        fecha_fin = self.filtros.fechas['fecha_fin'][0:10]
+        fecha_ini_datetime = fecha_ini + ' 00:00:00'
+        fecha_fin_datetime = fecha_fin + ' 23:59:59'
         clauseCatProveedor = " AND cp.proveedor is not null "
         if len(self.filtros.provLogist) > 0:
             clauseCatProveedor = " AND ("
@@ -2927,11 +2930,9 @@ class EjesMultiples():
             lugar = f"regionNombre"
             lugar_select = f"ct.region, ct.regionNombre"
 
-        if self.titulo == 'NPS por Día':
+        if self.titulo == 'NPS por Periodo':
             serie1 = []
             serie2 = []
-            fecha_ini = self.filtros.fechas['fecha_ini'][0:10]
-            fecha_fin = self.filtros.fechas['fecha_fin'][0:10]
             if self.filtros.agrupador == 'dia':
                 rango = "fecha"
             elif self.filtros.agrupador == "semana":
@@ -2963,7 +2964,7 @@ class EjesMultiples():
             left join DWH.dbo.dim_tiempo dt on convert(date,ho.creation_date) =dt.fecha
             left join DWH.artus.catTienda ct on nmp.idTienda =ct.tienda
             left join DWH.artus.catProveedores cp on cp.idTienda = nmp.idTienda 
-            where ho.creation_date between '{fecha_ini}' and '{fecha_fin}' """
+            where ho.creation_date between '{fecha_ini_datetime}' and '{fecha_fin_datetime}' """
             if self.filtros.tienda != '' and self.filtros.tienda != None and self.filtros.tienda != 'False':
                 pipeline += f""" and ct.tienda ='{self.filtros.tienda}' """
             elif self.filtros.zona != '' and self.filtros.zona != None and self.filtros.zona != 'False':
@@ -2973,7 +2974,6 @@ class EjesMultiples():
             pipeline += clauseCatProveedor
             pipeline += f" group by dt.{rango} order by f_inicio_drilldown"
 
-            # print("query desde ejes multiples nps: "+pipeline)
             cnxn = conexion_sql('DWH')
             # print('NPS por Día desde EjesMultiples: '+pipeline)
             cursor = cnxn.cursor().execute(pipeline)
