@@ -361,7 +361,7 @@ class ColumnasApiladas():
             else:
                 hayResultados = "no"
 
-        if self.titulo == 'Estatus Pedidos por Fecha':
+        if self.titulo == 'Entrega de pedidos por fecha':
             pipeline.append({'$match': {'estatus': 'pendientes'}})
             pipeline.append({'$project': {'fecha_interna': '$fechaEntrega', 'fecha_mostrar': {'$dateToString': {'format': '%d/%m/%Y', 'date': '$fechaEntrega'}}, '2_DIAS': {'$cond': [{'$eq':['$prioridad', '2 DIAS']}, 1, 0]}, 'HOY_ATRASADO': {'$cond': [{'$eq':['$prioridad', 'HOY ATRASADO']}, 1, 0]}, '1_DIA': {'$cond': [{'$eq':['$prioridad', '1 DIA']}, 1, 0]}, 'HOY_A_TIEMPO': {'$cond': [{'$eq':['$prioridad', 'HOY A TIEMPO']}, 1, 0]}, 'ANTERIORES': {'$cond': [{'$eq':['$prioridad', 'ANTERIORES']}, 1, 0]}}})
             pipeline.append({'$group':{'_id':{'fecha_interna':'$fecha_interna', 'fecha_mostrar': '$fecha_mostrar'}, '2_DIAS':{'$sum':'$2_DIAS'}, 'HOY_ATRASADO':{'$sum':'$HOY_ATRASADO'}, '1_DIA':{'$sum':'$1_DIA'}, 'HOY_A_TIEMPO':{'$sum':'$HOY_A_TIEMPO'}, 'ANTERIORES':{'$sum':'$ANTERIORES'}}})

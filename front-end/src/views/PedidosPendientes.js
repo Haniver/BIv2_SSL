@@ -60,7 +60,7 @@ const PedidosPendientes = () => {
       </Row>
       <Row className='match-height'>
         <Col xl='6' sm='12'>
-          <ColumnasApiladas titulo='Estatus Pedidos por Fecha' seccion={seccion} formato='entero' yLabel='Pedidos' tipoEntrega={tipoEntrega} region={region} zona={zona} tienda={tienda} origen={origen} />
+          <ColumnasApiladas titulo='Entrega de pedidos por fecha' seccion={seccion} formato='entero' yLabel='Pedidos' tipoEntrega={tipoEntrega} region={region} zona={zona} tienda={tienda} origen={origen} />
         </Col>
         {(tienda === '' || tienda === undefined || tienda === false) && <Col xl='6' sm='12'>
           <Tabla titulo='Tiendas con Pedidos Atrasados Mayores a 1 Día' seccion={seccion} region={region} zona={zona} tienda={tienda} origen={origen} tipoEntrega={tipoEntrega} />
