@@ -243,9 +243,18 @@ class Pie():
                 hayResultados = "si"
                 res = []
                 for resultado in arreglo:
+                    if resultado['_id'] == 'Tienda':
+                        color = 'black'
+                    elif resultado['_id'] == 'Domicilio':
+                        color = 'darkgray'
+                    elif resultado['_id'] == 'DHL':
+                        color = 'gray'
+                    else:
+                        color = 'lightgray'
                     res.append({
                         'name': resultado['_id'],
-                        'y': resultado['pedidos']
+                        'y': resultado['pedidos'],
+                        'color': color
                     })
         return {'hayResultados':hayResultados, 'res': res, 'pipeline':pipeline}
 

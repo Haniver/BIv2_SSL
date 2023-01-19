@@ -85,6 +85,9 @@ const Pie = ({ titulo, seccion, formato, fechas, region, zona, tienda, tipoEntre
             let total_tmp = 0
             datos_tmp.forEach(dato => {
                 total_tmp += dato.y
+                if (dato.color !== undefined && ['primary', 'secondary', 'success', 'info', 'warning', 'danger', 'light', 'dark'].includes(dato.color)) {
+                    dato.color = colors[dato.color].main
+                }
             })
             total_tmp = total_tmp.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
             setDatos(datos_tmp)
