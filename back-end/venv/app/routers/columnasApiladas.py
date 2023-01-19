@@ -329,11 +329,11 @@ class ColumnasApiladas():
                     serie4.append(row['2_DIAS'])
                     serie5.append(row['ANTERIORES'])
                 series.extend([
-                    {'name': 'Hoy a tiempo', 'data':serie1, 'color': 'info'},
-                    {'name': 'Hoy atrasado', 'data':serie2, 'color': 'dark'},
+                    {'name': 'Hoy a tiempo', 'data':serie1, 'color': 'secondary'},
+                    {'name': 'Hoy atrasado', 'data':serie2, 'color': 'danger'},
                     {'name': '1 día', 'data':serie3, 'color': 'warning'},
                     {'name': '2 días', 'data':serie4, 'color': 'primary'},
-                    {'name': 'Anteriores', 'data':serie5, 'color': 'danger'}
+                    {'name': 'Anteriores', 'data':serie5, 'color': '#FF3D51'}
                 ])
             else:
                 hayResultados = "no"
@@ -379,11 +379,11 @@ class ColumnasApiladas():
                     serie4.append(row['2_DIAS'])
                     serie5.append(row['ANTERIORES'])
                 series.extend([
-                    {'name': 'Hoy a tiempo', 'data':serie1, 'color': 'info'},
-                    {'name': 'Hoy atrasado', 'data':serie2, 'color': 'dark'},
+                    {'name': 'Hoy a tiempo', 'data':serie1, 'color': 'secondary'},
+                    {'name': 'Hoy atrasado', 'data':serie2, 'color': 'danger'},
                     {'name': '1 día', 'data':serie3, 'color': 'warning'},
                     {'name': '2 días', 'data':serie4, 'color': 'primary'},
-                    {'name': 'Anteriores', 'data':serie5, 'color': 'danger'}
+                    {'name': 'Anteriores', 'data':serie5, 'color': '#FF3D51'}
                 ])
             else:
                 hayResultados = "no"

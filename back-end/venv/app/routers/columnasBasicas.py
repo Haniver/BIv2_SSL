@@ -429,7 +429,7 @@ class ColumnasBasicas():
                     'actualizacion': {'$max': '$fechaUpdate'}
                 }
             })
-            print(f"Pipeline desde columnasBasicas -> Pedidos Pendientes: {str(pipeline)}")
+            # print(f"Pipeline desde columnasBasicas -> Pedidos Pendientes: {str(pipeline)}")
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=1000)
             print(str(arreglo))

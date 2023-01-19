@@ -92,10 +92,13 @@ const ColumnasApiladas = ({ titulo, yLabel, seccion, formato, fechas, region, zo
             setCategorias(res.data.categorias)
             // console.log(`pipeline ${titulo}: ${JSON.stringify(res.data.pipeline)}`)
             res.data.series.forEach(elemento => {
+                if (elemento.color !== undefined && ['primary', 'secondary', 'success', 'info', 'warning', 'danger', 'light', 'dark'].includes(elemento.color)) {
+                    elemento.color = colors[elemento.color].main
+                }
                 series_tmp.push({
                     name: elemento.name,
                     data: procesarSerie(elemento.data, formato),
-                    color: colors[elemento.color].main
+                    color: elemento.color
                 })
                 // console.log(`Color para ${elemento.name}: ${colors[elemento.color].main}`)
             })
