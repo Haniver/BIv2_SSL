@@ -574,6 +574,11 @@ class Tablas():
                 'Despachado': {'$cond': [{'$eq': ["$estatus","Despachado"]}, 1, 0]},
                 'AReprogramarEntrega': {'$cond': [{'$eq': ["$estatus","A reprogramar entrega"]}, 1, 0]},
                 'S/D': {'$cond': [{'$eq': ["$estatus","S/D"]}, 1, 0]},
+                'HoyATiempo': {'$cond': [{'$eq': ["$prioridad","HOY A TIEMPO"]}, 1, 0]},
+                'Atrasado': {'$cond': [{'$eq': ["$prioridad","HOY ATRASADO"]}, 1, 0]},
+                'UnDia': {'$cond': [{'$eq': ["$prioridad","1 DIA"]}, 1, 0]},
+                'DosDias': {'$cond': [{'$eq': ["$prioridad","2 DIAS"]}, 1, 0]},
+                'Anteriores': {'$cond': [{'$eq': ["$prioridad","ANTERIORES"]}, 1, 0]},
                 }},
                 {'$group': {
                     '_id': {
@@ -593,7 +598,12 @@ class Tablas():
                     'AuditoríaRechazada': {'$sum': '$AuditoríaRechazada'},
                     'Despachado': {'$sum': '$Despachado'},
                     'AReprogramarEntrega': {'$sum': '$AReprogramarEntrega'},
-                    'S/D': {'$sum': '$S/D'}
+                    'S/D': {'$sum': '$S/D'},
+                    'HoyATiempo': {'$sum': '$HoyATiempo'},
+                    'Atrasado': {'$sum': '$Atrasado'},
+                    'UnDia': {'$sum': '$UnDia'},
+                    'DosDias': {'$sum': '$DosDias'},
+                    'Anteriores': {'$sum': '$Anteriores'}
                 }},
                 {'$project': {
                     'fechaEntrega': '$_id.fechaEntrega',
@@ -616,11 +626,16 @@ class Tablas():
                     'AuditoríaRechazada': {'$sum': '$AuditoríaRechazada'},
                     'Despachado': {'$sum': '$Despachado'},
                     'AReprogramarEntrega': {'$sum': '$AReprogramarEntrega'},
-                    'S/D': {'$sum': '$S/D'}
+                    'S/D': {'$sum': '$S/D'},
+                    'HoyATiempo': {'$sum': '$HoyATiempo'},
+                    'Atrasado': {'$sum': '$Atrasado'},
+                    'UnDia': {'$sum': '$UnDia'},
+                    'DosDias': {'$sum': '$DosDias'},
+                    'Anteriores': {'$sum': '$Anteriores'}
                 }},
                 {'$sort': {'fechaOrdenar': 1, 'regionNombre': 1, 'zonaNombre': 1, 'tiendaNombre': 1}}
             ])
-            # print(f"Pipeline desde Tablas -> PedidosPendientes -> {self.titulo}: {pipeline}")
+            print(f"Pipeline desde Tablas -> PedidosPendientes -> {self.titulo}: {pipeline}")
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=1000)
             data = []
@@ -632,19 +647,25 @@ class Tablas():
                         'regionNombre': dato['_id']['regionNombre'],
                         'zonaNombre': dato['_id']['zonaNombre'],
                         'tiendaNombre': dato['_id']['tiendaNombre'],
-                        'Entregado': dato['Entregado'],
-                        'PagoPendiente': dato['PagoPendiente'],
-                        'PendienteDeAuditoria': dato['PendienteDeAuditoria'],
-                        'PickeadoPorFacturar': dato['PickeadoPorFacturar'],
-                        'EnPicking': dato['EnPicking'],
-                        'ListoParaRetirar': dato['ListoParaRetirar'],
-                        'ListoParaEnviar': dato['ListoParaEnviar'],
-                        'PendientePicking': dato['PendientePicking'],
-                        'AuditoríaRechazada': dato['AuditoríaRechazada'],
-                        'Despachado': dato['Despachado'],
-                        'AReprogramarEntrega': dato['AReprogramarEntrega'],
-                        'S/D': dato['S/D'],
-                        'Total': int(dato['Entregado']) + int(dato['PagoPendiente']) + int(dato['PendienteDeAuditoria']) + int(dato['PickeadoPorFacturar'] + int(dato['EnPicking']) + int(dato['ListoParaRetirar']) + int(dato['ListoParaEnviar']) + int(dato['PendientePicking']) + int(dato['AuditoríaRechazada']) + int(dato['Despachado']) + int(dato['AReprogramarEntrega']) + int(dato['S/D']))
+                        'Entregado': int(dato['Entregado']),
+                        'PagoPendiente': int(dato['PagoPendiente']),
+                        'PendienteDeAuditoria': int(dato['PendienteDeAuditoria']),
+                        'PickeadoPorFacturar': int(dato['PickeadoPorFacturar']),
+                        'EnPicking': int(dato['EnPicking']),
+                        'ListoParaRetirar': int(dato['ListoParaRetirar']),
+                        'ListoParaEnviar': int(dato['ListoParaEnviar']),
+                        'PendientePicking': int(dato['PendientePicking']),
+                        'AuditoríaRechazada': int(dato['AuditoríaRechazada']),
+                        'Despachado': int(dato['Despachado']),
+                        'AReprogramarEntrega': int(dato['AReprogramarEntrega']),
+                        'HoyATiempo': int(dato['HoyATiempo']),
+                        'Atrasado': int(dato['Atrasado']),
+                        'UnDia': int(dato['UnDia']),
+                        'DosDias': int(dato['DosDias']),
+                        'Anteriores': int(dato['Anteriores']),
+                        'S/D': int(dato['S/D']),
+                        # 'Total': int(dato['Entregado']) + int(dato['PagoPendiente']) + int(dato['PendienteDeAuditoria']) + int(dato['PickeadoPorFacturar'] + int(dato['EnPicking']) + int(dato['ListoParaRetirar']) + int(dato['ListoParaEnviar']) + int(dato['PendientePicking']) + int(dato['AuditoríaRechazada']) + int(dato['Despachado']) + int(dato['AReprogramarEntrega']) + int(dato['S/D']))
+                        'Total': int(dato['HoyATiempo']) + int(dato['Atrasado']) + int(dato['UnDia']) + int(dato['DosDias'] + int(dato['Anteriores']))
                     })
             else:
                 hayResultados = 'no'
@@ -653,6 +674,11 @@ class Tablas():
                     {'name': 'Región', 'selector':'regionNombre', 'formato':'texto', 'ancho': '240px'},
                     {'name': 'Zona', 'selector':'zonaNombre', 'formato':'texto', 'ancho': '240px'},
                     {'name': 'Tienda', 'selector':'tiendaNombre', 'formato':'texto', 'ancho': '360px'},
+                    {'name': 'Hoy a Tiempo', 'selector':'HoyATiempo', 'formato':'entero'},
+                    {'name': 'Atrasado', 'selector':'Atrasado', 'formato':'entero'},
+                    {'name': 'Un Día', 'selector':'UnDia', 'formato':'entero'},
+                    {'name': 'Dos Días', 'selector':'DosDias', 'formato':'entero'},
+                    {'name': 'Anteriores', 'selector':'Anteriores', 'formato':'entero'},
                     {'name': 'S/D', 'selector':'S/D', 'formato':'entero'},
                     {'name': 'Pago Pendiente', 'selector':'PagoPendiente', 'formato':'entero', 'ancho': '110px'},
                     {'name': 'Pendiente picking', 'selector':'PendientePicking', 'formato':'entero'},
@@ -741,6 +767,7 @@ class Tablas():
                     {'name': 'consigna', 'selector':'consigna', 'formato':'texto'},
                     {'name': 'Método Entrega', 'selector':'metodoEntrega', 'formato':'texto'},
                 ]
+        # print(f"Se va a regresar desde Tablas -> PedidosPendientes -> {self.titulo}: {str({'hayResultados':hayResultados, 'pipeline': pipeline, 'columns':columns, 'data':data})}")
         return {'hayResultados':hayResultados, 'pipeline': pipeline, 'columns':columns, 'data':data}
         # Return para debugging:
         # return {'hayResultados':'no', 'pipeline': [], 'columns':[], 'data':[]}

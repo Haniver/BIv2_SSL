@@ -442,7 +442,7 @@ class ColumnasBasicas():
             # print(f"Pipeline desde columnasBasicas -> Pedidos Pendientes: {str(pipeline)}")
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=1000)
-            print(str(arreglo))
+            # print(str(arreglo))
             if len(arreglo) <= 0:
                 # print("No hubo resultados")
                 hayResultados = "no"
