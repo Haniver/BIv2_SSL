@@ -78,7 +78,7 @@ const PedidosPendientes = () => {
       </Row>}
       {(tienda === '' || tienda === undefined || tienda === false) && <Row className='match-height'>
         <Col sm='12'>
-          <Tabla titulo='Pedidos No Entregados o No Cancelados' seccion={seccion} region={region} zona={zona} tienda={tienda} origen={origen} tipoEntrega={tipoEntrega} opcionesPaginacion={[20, 40, 60, 80, 100]} />
+          <Tabla titulo='Detalle Pedidos Pendientes por Tienda' seccion={seccion} region={region} zona={zona} tienda={tienda} origen={origen} tipoEntrega={tipoEntrega} opcionesPaginacion={[20, 40, 60, 80, 100]} />
         </Col>
       </Row>}
       {(tienda !== '' && tienda !== undefined && tienda !== false) && <Row className='match-height'>

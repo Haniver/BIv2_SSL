@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from app.auth import get_current_active_user
 from app.servicios.conectar_mongo import conexion_mongo
 from app.servicios.Filtro import Filtro
-from datetime import datetime, date, timedelta
+from datetime import datetime, date, timedelta, time
 from app.servicios.conectar_sql import conexion_sql, crear_diccionario
 from app.servicios.permisos import tienePermiso
 from app.servicios.logs import loguearConsulta, loguearError
@@ -394,6 +394,13 @@ class ColumnasBasicas():
         categorias = []
         subSubTitulo = ''
         series = []
+        filtroHoy = {
+            '$match': {
+                'fechaEntrega': {
+                    '$lte': datetime.combine(date.today(), time(hour=23, minute=59, second=59))
+                }
+            }
+        }
         if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
             filtro_lugar = True
             if self.filtros.zona != '' and self.filtros.zona != "False" and self.filtros.zona != None:
@@ -411,7 +418,10 @@ class ColumnasBasicas():
             lugar = ''
 
         collection = conexion_mongo('report').report_pedidoPendientes
-        pipeline.append({'$unwind': '$sucursal'})
+        pipeline.extend([
+            {'$unwind': '$sucursal'}, 
+            filtroHoy
+            ])
         if filtro_lugar:
             pipeline.append({'$match': {'sucursal.'+ nivel: lugar}})
         if self.filtros.tipoEntrega != None and self.filtros.tipoEntrega != "False" and self.filtros.tipoEntrega != "":

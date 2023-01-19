@@ -8,7 +8,7 @@ from app.servicios.conectar_sql import conexion_sql, crear_diccionario
 from app.servicios.Filtro import Filtro
 from app.servicios.formatoFechas import fechaAbrevEspanol
 from app.servicios.formatoFechas import mesTexto
-from datetime import datetime, date, timedelta
+from datetime import datetime, date, timedelta, time
 from calendar import monthrange
 import json
 from app.servicios.permisos import tienePermiso
@@ -302,8 +302,15 @@ class ColumnasApiladas():
             siguiente_nivel = 'regionNombre'
             lugar = ''
 
+        filtroHoy = {
+            '$match': {
+                'fechaEntrega': {
+                    '$lte': datetime.combine(date.today(), time(hour=23, minute=59, second=59))
+                }
+            }
+        }
         collection = conexion_mongo('report').report_pedidoPendientes
-        pipeline.append({'$unwind': '$sucursal'})
+        pipeline.extend([{'$unwind': '$sucursal'}, filtroHoy])
         if filtro_lugar:
             pipeline.append({'$match': {'sucursal.'+ nivel: lugar}})
         if self.filtros.tipoEntrega != None and self.filtros.tipoEntrega != "False" and self.filtros.tipoEntrega != "":

@@ -5,7 +5,7 @@ from app.auth import get_current_active_user
 from app.servicios.conectar_mongo import conexion_mongo
 from app.servicios.Filtro import Filtro
 from app.servicios.formatoFechas import ddmmyyyy
-from datetime import datetime, timedelta, date
+from datetime import datetime, timedelta, date, time
 from calendar import monthrange, monthcalendar
 from app.servicios.formatoFechas import mesTexto
 from app.servicios.conectar_sql import conexion_sql, crear_diccionario
@@ -426,6 +426,13 @@ class Tablas():
         pipeline = []
         data = []
         columns = []
+        filtroHoy = {
+            '$match': {
+                'fechaEntrega': {
+                    '$lte': datetime.combine(date.today(), time(hour=23, minute=59, second=59))
+                }
+            }
+        }
         if self.titulo == 'Tiendas con Pedidos Atrasados Mayores a 1 Día':
             if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
                 self.filtro_lugar = True
@@ -440,7 +447,7 @@ class Tablas():
                 self.lugar = ''
 
             collection = conexion_mongo('report').report_pedidoPendientes
-            pipeline.append({'$unwind': '$sucursal'})
+            pipeline.extend([{'$unwind': '$sucursal'}, filtroHoy])
             if self.filtro_lugar:
                 pipeline.append({'$match': {'sucursal.'+ nivel: self.lugar}})
             if self.filtros.tipoEntrega != None and self.filtros.tipoEntrega != "False" and self.filtros.tipoEntrega != "":
@@ -486,7 +493,7 @@ class Tablas():
 
         if self.titulo == 'Detalle de pedidos tienda $tienda':
             collection = conexion_mongo('report').report_pedidoPendientes
-            pipeline.append({'$unwind': '$sucursal'})
+            pipeline.extend([{'$unwind': '$sucursal'}, filtroHoy])
             pipeline.append({'$match': {'sucursal.idTienda': self.lugar}})
             if self.filtros.tipoEntrega != None and self.filtros.tipoEntrega != "False" and self.filtros.tipoEntrega != "":
                 pipeline.append({'$match': {'metodoEntrega': self.filtros.tipoEntrega}})
@@ -524,7 +531,7 @@ class Tablas():
                     {'name': 'Prioridad', 'selector':'Prioridad', 'formato':'texto', 'ancho': '150px'},
                     {'name': 'Fecha', 'selector':'FechaEntrega', 'formato':'texto', 'ancho': '110px'}
                 ]
-        if self.titulo == 'Pedidos No Entregados o No Cancelados':
+        if self.titulo == 'Detalle Pedidos Pendientes por Tienda':
             if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
                 self.filtro_lugar = True
                 if self.filtros.zona != '' and self.filtros.zona != "False" and self.filtros.zona != None:
