@@ -547,7 +547,7 @@ class Tablas():
             else:
                 self.filtro_lugar = False
                 self.lugar = ''
-            collection = conexion_mongo('report').report_pedidoPendientes48horas
+            collection = conexion_mongo('report').report_pedidoPendientes # este era 48 horas
             pipeline = [{'$unwind': '$sucursal'}]
             if self.filtro_lugar:
                 pipeline.append(
@@ -562,18 +562,18 @@ class Tablas():
                 'regionNombre': '$sucursal.regionNombre',
                 'zonaNombre': '$sucursal.zonaNombre',
                 'tiendaNombre': '$sucursal.tiendaNombre',
-                'Entregado': {'$cond': [{'$eq': ["$estatus","Entregado"]}, 1, 0]},
-                'PagoPendiente': {'$cond': [{'$eq': ["$estatus","Pago pendiente"]}, 1, 0]},
-                'PendienteDeAuditoria': {'$cond': [{'$eq': ["$estatus","Pendiente de auditoría"]}, 1, 0]},
-                'PickeadoPorFacturar': {'$cond': [{'$eq': ["$estatus","Pickeado por facturar"]}, 1, 0]},
-                'EnPicking': {'$cond': [{'$eq': ["$estatus","En picking"]}, 1, 0]},
-                'ListoParaRetirar': {'$cond': [{'$eq': ["$estatus","Listo para retirar"]}, 1, 0]},
-                'ListoParaEnviar': {'$cond': [{'$eq': ["$estatus","Listo para enviar"]}, 1, 0]},
-                'PendientePicking': {'$cond': [{'$eq': ["$estatus","Pendiente picking"]}, 1, 0]},
-                'AuditoríaRechazada': {'$cond': [{'$eq': ["$estatus","Auditoría rechazada"]}, 1, 0]},
-                'Despachado': {'$cond': [{'$eq': ["$estatus","Despachado"]}, 1, 0]},
-                'AReprogramarEntrega': {'$cond': [{'$eq': ["$estatus","A reprogramar entrega"]}, 1, 0]},
-                'S/D': {'$cond': [{'$eq': ["$estatus","S/D"]}, 1, 0]},
+                'Entregado': {'$cond': [{'$eq': ["$Estatus_Consigna","Entregado"]}, 1, 0]},
+                'PagoPendiente': {'$cond': [{'$eq': ["$Estatus_Consigna","Pago pendiente"]}, 1, 0]},
+                'PendienteDeAuditoria': {'$cond': [{'$eq': ["$Estatus_Consigna","Pendiente de auditoría"]}, 1, 0]},
+                'PickeadoPorFacturar': {'$cond': [{'$eq': ["$Estatus_Consigna","Pickeado por facturar"]}, 1, 0]},
+                'EnPicking': {'$cond': [{'$eq': ["$Estatus_Consigna","En picking"]}, 1, 0]},
+                'ListoParaRetirar': {'$cond': [{'$eq': ["$Estatus_Consigna","Listo para retirar"]}, 1, 0]},
+                'ListoParaEnviar': {'$cond': [{'$eq': ["$Estatus_Consigna","Listo para enviar"]}, 1, 0]},
+                'PendientePicking': {'$cond': [{'$eq': ["$Estatus_Consigna","Pendiente picking"]}, 1, 0]},
+                'AuditoríaRechazada': {'$cond': [{'$eq': ["$Estatus_Consigna","Auditoría rechazada"]}, 1, 0]},
+                'Despachado': {'$cond': [{'$eq': ["$Estatus_Consigna","Despachado"]}, 1, 0]},
+                'AReprogramarEntrega': {'$cond': [{'$eq': ["$Estatus_Consigna","A reprogramar entrega"]}, 1, 0]},
+                'SD': {'$cond': [{'$eq': ["$Estatus_Consigna","S/D"]}, 1, 0]},
                 'HoyATiempo': {'$cond': [{'$eq': ["$prioridad","HOY A TIEMPO"]}, 1, 0]},
                 'Atrasado': {'$cond': [{'$eq': ["$prioridad","HOY ATRASADO"]}, 1, 0]},
                 'UnDia': {'$cond': [{'$eq': ["$prioridad","1 DIA"]}, 1, 0]},
@@ -598,7 +598,7 @@ class Tablas():
                     'AuditoríaRechazada': {'$sum': '$AuditoríaRechazada'},
                     'Despachado': {'$sum': '$Despachado'},
                     'AReprogramarEntrega': {'$sum': '$AReprogramarEntrega'},
-                    'S/D': {'$sum': '$S/D'},
+                    'SD': {'$sum': '$SD'},
                     'HoyATiempo': {'$sum': '$HoyATiempo'},
                     'Atrasado': {'$sum': '$Atrasado'},
                     'UnDia': {'$sum': '$UnDia'},
@@ -626,7 +626,7 @@ class Tablas():
                     'AuditoríaRechazada': {'$sum': '$AuditoríaRechazada'},
                     'Despachado': {'$sum': '$Despachado'},
                     'AReprogramarEntrega': {'$sum': '$AReprogramarEntrega'},
-                    'S/D': {'$sum': '$S/D'},
+                    'SD': {'$sum': '$SD'},
                     'HoyATiempo': {'$sum': '$HoyATiempo'},
                     'Atrasado': {'$sum': '$Atrasado'},
                     'UnDia': {'$sum': '$UnDia'},
@@ -635,9 +635,10 @@ class Tablas():
                 }},
                 {'$sort': {'fechaOrdenar': 1, 'regionNombre': 1, 'zonaNombre': 1, 'tiendaNombre': 1}}
             ])
-            print(f"Pipeline desde Tablas -> PedidosPendientes -> {self.titulo}: {pipeline}")
+            # print(f"Pipeline desde Tablas -> PedidosPendientes -> {self.titulo}: {pipeline}")
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=1000)
+            # print(f"Arreglo desde Tablas -> PedidosPendientes -> {self.titulo}: {arreglo}")
             data = []
             if len(arreglo) >0:
                 hayResultados = "si"
@@ -663,8 +664,8 @@ class Tablas():
                         'UnDia': int(dato['UnDia']),
                         'DosDias': int(dato['DosDias']),
                         'Anteriores': int(dato['Anteriores']),
-                        'S/D': int(dato['S/D']),
-                        # 'Total': int(dato['Entregado']) + int(dato['PagoPendiente']) + int(dato['PendienteDeAuditoria']) + int(dato['PickeadoPorFacturar'] + int(dato['EnPicking']) + int(dato['ListoParaRetirar']) + int(dato['ListoParaEnviar']) + int(dato['PendientePicking']) + int(dato['AuditoríaRechazada']) + int(dato['Despachado']) + int(dato['AReprogramarEntrega']) + int(dato['S/D']))
+                        'SD': int(dato['SD']),
+                        # 'Total': int(dato['Entregado']) + int(dato['PagoPendiente']) + int(dato['PendienteDeAuditoria']) + int(dato['PickeadoPorFacturar'] + int(dato['EnPicking']) + int(dato['ListoParaRetirar']) + int(dato['ListoParaEnviar']) + int(dato['PendientePicking']) + int(dato['AuditoríaRechazada']) + int(dato['Despachado']) + int(dato['AReprogramarEntrega']) + int(dato['SD']))
                         'Total': int(dato['HoyATiempo']) + int(dato['Atrasado']) + int(dato['UnDia']) + int(dato['DosDias'] + int(dato['Anteriores']))
                     })
             else:
@@ -679,7 +680,7 @@ class Tablas():
                     {'name': 'Un Día', 'selector':'UnDia', 'formato':'entero'},
                     {'name': 'Dos Días', 'selector':'DosDias', 'formato':'entero'},
                     {'name': 'Anteriores', 'selector':'Anteriores', 'formato':'entero'},
-                    {'name': 'S/D', 'selector':'S/D', 'formato':'entero'},
+                    {'name': 'S/D', 'selector':'SD', 'formato':'entero'},
                     {'name': 'Pago Pendiente', 'selector':'PagoPendiente', 'formato':'entero', 'ancho': '110px'},
                     {'name': 'Pendiente picking', 'selector':'PendientePicking', 'formato':'entero'},
                     {'name': 'En Picking', 'selector':'EnPicking', 'formato':'entero'},
@@ -709,7 +710,7 @@ class Tablas():
             else:
                 self.filtro_lugar = False
                 self.lugar = ''
-            collection = conexion_mongo('report').report_pedidoPendientes48horas
+            collection = conexion_mongo('report').report_pedidoPendientes # este era 48 horas
             pipeline = [{'$unwind': '$sucursal'}]
             if self.filtro_lugar:
                 pipeline.append(
@@ -725,7 +726,7 @@ class Tablas():
                 'regionNombre': '$sucursal.regionNombre',
                 'zonaNombre': '$sucursal.zonaNombre',
                 'tiendaNombre': '$sucursal.tiendaNombre',
-                'estatus': '$estatus',
+                'Estatus_Consigna': '$Estatus_Consigna',
                 'pedido': '$pedido',
                 'consigna': '$consigna',
                 'metodoEntrega': '$metodoEntrega',
@@ -734,7 +735,7 @@ class Tablas():
                 }},
                 {'$sort': {'fechaOrdenar': 1, 'regionNombre': 1, 'zonaNombre': 1, 'tiendaNombre': 1}}
             ])
-            print(f"Pipeline desde Tablas -> PedidosPendientes -> {self.titulo}: {pipeline}")
+            # print(f"Pipeline desde Tablas -> PedidosPendientes -> {self.titulo}: {pipeline}")
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=1000)
             data = []
@@ -750,7 +751,7 @@ class Tablas():
                         'consigna': dato['consigna'],
                         'timeslot_from': dato['timeslot_from'],
                         'timeslot_to': dato['timeslot_to'],
-                        'estatus': dato['estatus'],
+                        'Estatus_Consigna': dato['Estatus_Consigna'],
                         'metodoEntrega': dato['metodoEntrega'],
                     })
             else:
@@ -761,7 +762,7 @@ class Tablas():
                     {'name': 'Zona', 'selector':'zonaNombre', 'formato':'texto', 'ancho': '240px'},
                     {'name': 'Tienda', 'selector':'tiendaNombre', 'formato':'texto', 'ancho': '360px'},
                     {'name': 'Pedido', 'selector':'pedido', 'formato':'entero'},
-                    {'name': 'Estatus', 'selector':'estatus', 'formato':'texto', 'ancho': '200px'},
+                    {'name': 'Estatus', 'selector':'Estatus_Consigna', 'formato':'texto', 'ancho': '200px'},
                     {'name': 'Timeslot From', 'selector':'timeslot_from', 'formato':'texto'},
                     {'name': 'Timeslot To', 'selector':'timeslot_to', 'formato':'texto'},
                     {'name': 'consigna', 'selector':'consigna', 'formato':'texto'},
@@ -2935,7 +2936,7 @@ class Tablas():
                     '_id.TipoDeEntrega': 1
                 }}
             ])
-            print(f"Pipeline desde Tablas -> PedidoDiario: {str(pipeline)}")
+            # print(f"Pipeline desde Tablas -> PedidoDiario: {str(pipeline)}")
             fechas = []
             for i in range(len(resultado_fechas)):
                 diaActual = resultado_fechas[i]['_id']

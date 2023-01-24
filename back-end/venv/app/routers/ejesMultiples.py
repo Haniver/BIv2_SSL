@@ -4,7 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 from app.auth import get_current_active_user
 from app.servicios.conectar_mongo import conexion_mongo
 from app.servicios.Filtro import Filtro
-from datetime import datetime, date, timedelta
+from datetime import datetime, date, timedelta, time
 from app.servicios.formatoFechas import mesTexto
 from app.servicios.conectar_sql import conexion_sql, crear_diccionario
 from copy import deepcopy
@@ -14,6 +14,7 @@ from app.servicios.permisos import tienePermiso
 from app.servicios.logs import loguearConsulta, loguearError
 import traceback
 from inspect import stack
+from app.servicios.formatoFechas import ddmmyyyy
 
 router = APIRouter(
     prefix="/ejesMultiples",
@@ -459,7 +460,7 @@ class EjesMultiples():
                 anio_elegido = int(str(self.filtros.periodo['semana'])[0:4])
                 monday = datetime.strptime(f'{anio_elegido}-{semana_elegida}-1', "%Y-%W-%w")
                 fecha_fin = monday + timedelta(days=5)
-                fecha_ini = monday - timedelta(days=8)
+                fecha_ini = monday - timedelta(days=7)
             elif self.filtros.agrupador == 'dia':
                 periodo = '$fecha'
                 anio_elegido = self.filtros.periodo['anio']
@@ -694,13 +695,13 @@ class EjesMultiples():
                         '$sort': {'_id.periodo': 1}
                     }
                 ])
-                # print(f"Pipeline desde EjesMultiples -> PedidoPerfecto -> {self.titulo}: {str(pipeline)}")
+                print(f"Pipeline desde EjesMultiples -> PedidoPerfecto -> {self.titulo}: {str(pipeline)}")
                 cursor = collection.aggregate(pipeline)
                 arreglo = await cursor.to_list(length=1000)
                 if len(arreglo) >0:
-                    # if len(arreglo) > 2:
-                    #     print(f"Arreglo tiene más de dos registros: {str(arreglo)}")
-                    #     print(f"fecha_ini = {str(fecha_ini)}, fecha_fin = {str(fecha_fin)}, periodo = {periodo}")
+                    if len(arreglo) > 2:
+                        print(f"Arreglo tiene más de dos registros: {str(arreglo)}")
+                        print(f"fecha_ini = {str(fecha_ini)}, fecha_fin = {str(fecha_fin)}, periodo = {periodo}")
                         
                     # if len(arreglo) <= 1:
                     #     print(f"Arreglo tiene SOLO UN REGISTRO: {str(arreglo)}")
@@ -4220,6 +4221,137 @@ class EjesMultiples():
                 series = []
         # print(f"parm: {str(parm)}")
         # print(str({'hayResultados':hayResultados,'categories':categories, 'series':series, 'pipeline': pipeline, 'lenArreglo':len(arreglo)}))
+        return  {'hayResultados':hayResultados,'categories':categories, 'series':series, 'pipeline': pipeline, 'lenArreglo':len(arreglo)}
+
+    async def PedidosPendientes(self):
+        anio = self.filtros.anio
+        mes = self.filtros.mes
+        categories = []
+        series = []
+        pipeline = []
+        arreglo = []
+        hayResultados = 'no'
+        if self.titulo == 'Pedidos Programados para Siguientes Días':
+            filtroFuturo = {
+                '$match': {
+                    'fechaEntrega': {
+                        '$lte': datetime.combine(date.today(), time(hour=23, minute=59, second=59))
+                    }
+                }
+            }
+            if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
+                self.filtro_lugar = True
+                if self.filtros.zona != '' and self.filtros.zona != "False" and self.filtros.zona != None:
+                    nivel = 'zona'
+                    self.lugar = int(self.filtros.zona)
+                else:
+                    nivel = 'region'
+                    self.lugar = int(self.filtros.region)
+            else:
+                self.filtro_lugar = False
+                self.lugar = ''
+
+            collection = conexion_mongo('report').report_pedidoPendientes
+            pipeline.extend([{'$unwind': '$sucursal'}, filtroFuturo])
+            if self.filtro_lugar:
+                pipeline.append({'$match': {'sucursal.'+ nivel: self.lugar}})
+            if self.filtros.tipoEntrega != None and self.filtros.tipoEntrega != "False" and self.filtros.tipoEntrega != "":
+                pipeline.append({'$match': {'metodoEntrega': self.filtros.tipoEntrega}})
+            if self.filtros.origen != None and self.filtros.origen != "False" and self.filtros.origen != "":
+                pipeline.append({'$match': {'origen': self.filtros.origen}})
+            # pipeline.append({'$match': {'estatus': 'pendientes'}})
+            # pipeline.append({'$match': {'prioridad': {'$in': ['2 DIAS','ANTERIORES']}}})
+            pipeline.append({
+                '$group': {
+                    '_id': "$fechaEntrega",
+                    'Tienda': {
+                        '$sum': {
+                            '$cond': [
+                                { '$eq': ["$metodoEntrega", "Tienda"] },
+                                1,
+                                0
+                            ]
+                        }
+                    },
+                    'Domicilio': {
+                        '$sum': {
+                            '$cond': [
+                                { '$eq': ["$metodoEntrega", "Domicilio"] },
+                                1,
+                                0
+                            ]
+                        }
+                    },
+                    'Flete': {
+                        '$sum': {
+                            '$cond': [
+                                { '$eq': ["$metodoEntrega", "Flete"] },
+                                1,
+                                0
+                            ]
+                        }
+                    },
+                    'DHL': {
+                        '$sum': {
+                            '$cond': [
+                                { '$eq': ["$metodoEntrega", "DHL"] },
+                                1,
+                                0
+                            ]
+                        }
+                    }
+                }
+            })
+            # print(f"Pipeline desde Tablas -> Tiendas con Pedidos Atrasados Mayores a 1 Día: {str(pipeline)}")
+            cursor = collection.aggregate(pipeline)
+            arreglo = await cursor.to_list(length=1000)
+            data = []
+            Tienda = []
+            Domicilio = []
+            Flete = []
+            DHL = []
+
+            if len(arreglo) >0:
+                hayResultados = "si"
+                for dato in arreglo:
+                    Tienda.append(dato['Tienda'])
+                    Domicilio.append(dato['Domicilio'])
+                    Flete.append(dato['Flete'])
+                    DHL.append(dato['DHL'])
+                series = [
+                    {
+                        'name': 'Tienda',
+                        'data': Tienda, 
+                        'type': 'column',
+                        'formato_tooltip':'entero', 
+                        'color':'black'
+                    },
+                    {
+                        'name': 'Domicilio',
+                        'data': Domicilio, 
+                        'type': 'column',
+                        'formato_tooltip':'entero', 
+                        'color':'darkgray'
+                    },
+                    {
+                        'name': 'Flete',
+                        'data': Flete, 
+                        'type': 'column',
+                        'formato_tooltip':'entero', 
+                        'color':'gray'
+                    },
+                    {
+                        'name': 'DHL',
+                        'data': DHL, 
+                        'type': 'column',
+                        'formato_tooltip':'entero', 
+                        'color':'lightgray'
+                    }
+                ]
+            else:
+                hayResultados = 'no'        
+
+        print(str({'hayResultados':hayResultados,'categories':categories, 'series':series, 'pipeline': pipeline, 'lenArreglo':len(arreglo)}))
         return  {'hayResultados':hayResultados,'categories':categories, 'series':series, 'pipeline': pipeline, 'lenArreglo':len(arreglo)}
 
 @router.post("/{seccion}")

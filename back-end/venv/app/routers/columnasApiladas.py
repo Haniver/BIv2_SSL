@@ -272,7 +272,7 @@ class ColumnasApiladas():
         return {'hayResultados':hayResultados,'categorias':categorias, 'series':series, 'pipeline': pipeline, 'categoria':self.filtros.categoria}
 
     async def PedidosPendientes(self):
-
+        hayResultados = "no"
         categorias = []
         pipeline = []
         series = []
@@ -461,7 +461,7 @@ class ColumnasApiladas():
                 anio_elegido = int(str(self.filtros.periodo['semana'])[0:4])
                 monday = datetime.strptime(f'{anio_elegido}-{semana_elegida}-1', "%Y-%W-%w")
                 fecha_fin = monday + timedelta(days=5)
-                fecha_ini = monday - timedelta(days=8)
+                fecha_ini = monday - timedelta(days=7)
             elif self.filtros.agrupador == 'dia':
                 periodo = '$fecha'
                 anio_elegido = self.filtros.periodo['anio']
