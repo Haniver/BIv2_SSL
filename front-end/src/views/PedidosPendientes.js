@@ -6,6 +6,7 @@ import ColumnasApiladas from '../componentes/graficos/ColumnasApiladas'
 import Pie from '../componentes/graficos/Pie'
 import Titulo from '../componentes/auxiliares/Titulo'
 import ColumnasBasicas from '../componentes/graficos/ColumnasBasicas'
+import EjesMultiples from '../componentes/graficos/EjesMultiples'
 
 const PedidosPendientes = () => {
   const [tipoEntrega, setTipoEntrega] = useState('')
@@ -62,9 +63,9 @@ const PedidosPendientes = () => {
         <Col xl='6' sm='12'>
           <ColumnasApiladas titulo='Entrega de pedidos por fecha' seccion={seccion} formato='entero' yLabel='Pedidos' tipoEntrega={tipoEntrega} region={region} zona={zona} tienda={tienda} origen={origen} />
         </Col>
-        <Col xl='6' sm='12'>
-          <ColumnasApiladas titulo='Pedidos Programados para Siguientes Días' seccion={seccion} formato='entero' yLabel='Pedidos' tipoEntrega={tipoEntrega} region={region} zona={zona} tienda={tienda} origen={origen} />
-        </Col>
+        {/* <Col xl='6' sm='12'>
+          <EjesMultiples titulo='Pedidos Programados para Siguientes Días' seccion={seccion} formato='entero' yLabel='Pedidos' tipoEntrega={tipoEntrega} region={region} zona={zona} tienda={tienda} origen={origen} />
+        </Col> */}
       </Row>
       {(tienda === '' || tienda === undefined || tienda === false) && <Row className='match-height'>
         <Col sm='12'>
@@ -78,12 +79,12 @@ const PedidosPendientes = () => {
       </Row>}
       {(tienda === '' || tienda === undefined || tienda === false) && <Row className='match-height'>
         <Col sm='12'>
-          <Tabla titulo='Detalle Pedidos Pendientes por Tienda' seccion={seccion} region={region} zona={zona} tienda={tienda} origen={origen} tipoEntrega={tipoEntrega} opcionesPaginacion={[20, 40, 60, 80, 100]} />
+          <Tabla titulo='Detalle Pedidos Pendientes por Tienda' seccion={seccion} region={region} zona={zona} tienda={tienda} origen={origen} tipoEntrega={tipoEntrega} />
         </Col>
       </Row>}
       {(tienda !== '' && tienda !== undefined && tienda !== false) && <Row className='match-height'>
         <Col sm='12'>
-          <Tabla titulo={`Pedidos No Entregados o No Cancelados Tienda ${tienda}`} tituloAPI='Pedidos No Entregados o No Cancelados Tienda $tienda' seccion={seccion} region={region} zona={zona} tienda={tienda} origen={origen} tipoEntrega={tipoEntrega} opcionesPaginacion={[5, 10, 20, 50, 100]} />
+          <Tabla titulo={`Pedidos No Entregados o No Cancelados Tienda ${tienda}`} tituloAPI='Pedidos No Entregados o No Cancelados Tienda $tienda' seccion={seccion} region={region} zona={zona} tienda={tienda} origen={origen} tipoEntrega={tipoEntrega} />
         </Col>
       </Row>}
     </Fragment>
