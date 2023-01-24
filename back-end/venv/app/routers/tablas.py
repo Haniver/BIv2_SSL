@@ -1493,6 +1493,8 @@ class Tablas():
         pipeline = []
         data = []
         columns = []
+        fecha_fin = self.filtros.fechas['fecha_fin'][0:10] + ' 23:59:59'
+        fecha_fin = datetime.strptime(fecha_fin, '%Y-%m-%d %H:%M:%S')
         if self.titulo == 'Tiendas por % Pedido Perfecto más bajo':
             if self.filtros.periodo != {}:
                 collection = conexion_mongo('report').report_pedidoPerfecto
@@ -1513,7 +1515,14 @@ class Tablas():
                     filtro_lugar = False
                     lugar = ''
                     # print('No hay filtro_lugar')
-                pipeline = [{'$unwind': '$sucursal'}]
+                pipeline = [
+                    {'$unwind': '$sucursal'},
+                    {'$match': {
+                        'fecha': {
+                            '$lte': fecha_fin
+                        }
+                    }}
+                ]
                 if filtro_lugar:
                     pipeline.append({'$match': {'sucursal.'+ nivel: lugar}})
                 else:
@@ -1645,7 +1654,7 @@ class Tablas():
                             {'$dayOfMonth': '$fecha'}
                         ]}
                     ])
-                # print(f"Pipeline desde Tablas -> PedidoPerfecto -> {self.titulo}: {str(pipeline)}")
+                print(f"Pipeline desde Tablas -> PedidoPerfecto -> {self.titulo}: {str(pipeline)}")
                 # Ejecutamos el query:
                 cursor = collection.aggregate(pipeline)
                 arreglo = await cursor.to_list(length=5000)
