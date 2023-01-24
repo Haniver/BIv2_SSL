@@ -459,7 +459,8 @@ class EjesMultiples():
                 semana_elegida = int(str(self.filtros.periodo['semana'])[4:6])
                 anio_elegido = int(str(self.filtros.periodo['semana'])[0:4])
                 monday = datetime.strptime(f'{anio_elegido}-{semana_elegida}-1', "%Y-%W-%w")
-                fecha_fin = monday + timedelta(days=5)
+                print(f"monday = {str(monday)}")
+                fecha_fin = monday + timedelta(days=6)
                 fecha_ini = monday - timedelta(days=7)
             elif self.filtros.agrupador == 'dia':
                 periodo = '$fecha'
@@ -467,8 +468,10 @@ class EjesMultiples():
                 mes_elegido = self.filtros.periodo['mes']
                 dia_elegido = self.filtros.periodo['dia']
                 fecha_fin = datetime(anio_elegido, mes_elegido, dia_elegido)
-                fecha_ini = fecha_fin - timedelta(days=1)
+                # fecha_ini = fecha_fin - timedelta(days=1)
+            print(f"fecha_fin en la primera línea desde {self.titulo}: {str(fecha_fin)}")
             fecha_fin = fecha_fin.replace(hour=23, minute=59, second=59, microsecond=999999)
+            print(f"fecha_fin en la segunda línea desde {self.titulo}: {str(fecha_fin)}")
         collection = conexion_mongo('report').report_pedidoPerfecto
 
         if self.titulo == 'Pedidos Perfectos Todo el Rango':
@@ -512,7 +515,7 @@ class EjesMultiples():
                 sort['_id.semana'] = 1
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=1000)
-            # print(f"Pipeline desde EjesMultiples -> PedidoPerfecto -> {self.titulo}: {str(pipeline)}")
+            print(f"Pipeline desde EjesMultiples -> PedidoPerfecto -> {self.titulo}: {str(pipeline)}")
             # print(f"Arreglo desde EjesMultiples -> PedidoPerfecto -> {self.titulo}: {str(arreglo)}")
             if len(arreglo) >0:
                 hayResultados = "si"
@@ -588,7 +591,7 @@ class EjesMultiples():
                 sort['_id.semana'] = 1
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=1000)
-            # print("Pipeline de Pedidos Perfectos en Ejes Múltiples: "+str(pipeline))
+            print(f"Pipeline desde EjesMultiples -> PedidoPerfecto -> {self.titulo}: {str(pipeline)}")
             if len(arreglo) >0:
                 hayResultados = "si"
                 # print("Arreglo de Pedidos Perfectos en Ejes Múltiples: "+str(arreglo))
