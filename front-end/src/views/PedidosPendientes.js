@@ -60,12 +60,12 @@ const PedidosPendientes = () => {
         </Col>
       </Row>
       <Row className='match-height'>
-        <Col xl='6' sm='12'>
+        <Col xl='12' sm='12'>
           <ColumnasApiladas titulo='Entrega de pedidos por fecha' seccion={seccion} formato='entero' yLabel='Pedidos' tipoEntrega={tipoEntrega} region={region} zona={zona} tienda={tienda} origen={origen} />
         </Col>
-        <Col xl='6' sm='12'>
+        {/* <Col xl='6' sm='12'>
           <EjesMultiples titulo='Pedidos Programados para Siguientes Días' seccion={seccion} formato='entero' yLabel='Pedidos' tipoEntrega={tipoEntrega} region={region} zona={zona} tienda={tienda} origen={origen} />
-        </Col>
+        </Col> */}
       </Row>
       {(tienda === '' || tienda === undefined || tienda === false) && <Row className='match-height'>
         <Col sm='12'>

@@ -4239,7 +4239,7 @@ class EjesMultiples():
             filtroFuturo = {
                 '$match': {
                     'fechaEntrega': {
-                        '$lte': datetime.combine(date.today(), time(hour=23, minute=59, second=59))
+                        '$gt': datetime.combine(date.today(), time(hour=23, minute=59, second=59))
                     }
                 }
             }
