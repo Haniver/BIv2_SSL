@@ -1923,7 +1923,7 @@ class Tablas():
                             {'$dayOfMonth': '$fechaPP'}
                         ]}
                     ])
-                # print(f"Pipeline desde Tablas -> PedidoPerfecto -> {self.titulo}: {str(pipeline)}")
+                print(f"Pipeline desde Tablas -> PedidoPerfecto -> {self.titulo}: {str(pipeline)}")
                 # Ejecutamos el query:
                 cursor = collection.aggregate(pipeline)
                 arreglo = await cursor.to_list(length=None)

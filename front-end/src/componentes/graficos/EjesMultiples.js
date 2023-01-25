@@ -126,7 +126,7 @@ const EjesMultiples = ({ titulo, yLabel, seccion, formato, fechas, region, zona,
                     data: procesarSerie(elemento.data, elemento.formato_tooltip),
                     type: elemento.type,
                     yAxis: yAxis_num,
-                    color: colors[elemento.color].main,
+                    color: (['primary', 'secondary', 'success', 'info', 'warning', 'danger', 'light', 'dark']).includes(elemento.color) ? colors[elemento.color].main : elemento.color,
                     tooltip: {
                         pointFormatter () {
                                 let valueDecimals = 2
