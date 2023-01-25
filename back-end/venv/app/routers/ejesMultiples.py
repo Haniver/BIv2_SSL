@@ -7,6 +7,7 @@ from app.servicios.Filtro import Filtro
 from datetime import datetime, date, timedelta, time
 from app.servicios.formatoFechas import mesTexto
 from app.servicios.conectar_sql import conexion_sql, crear_diccionario
+from app.servicios.formatoFechas import fechaAbrevEspanol
 from copy import deepcopy
 from calendar import monthrange
 import json
@@ -4323,7 +4324,7 @@ class EjesMultiples():
                     Domicilio.append(dato['Domicilio'])
                     Flete.append(dato['Flete'])
                     DHL.append(dato['DHL'])
-                    categories.append(datetime.strftime(dato['_id'], '%d/%m/%Y'))
+                    categories.append(fechaAbrevEspanol(dato['_id']))
                 series = [
                     {
                         'name': 'Tienda',
