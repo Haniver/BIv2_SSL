@@ -3303,7 +3303,7 @@ class EjesMultiples():
             order by min(ncp.id) 
             """
 
-            print("Percepción del servicio (%) $categoria: "+pipeline)
+            # print("Percepción del servicio (%) $categoria: "+pipeline)
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)

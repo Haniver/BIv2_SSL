@@ -3955,7 +3955,7 @@ class Tablas():
             group by ncp.responsable,ncp.descripcion,ncp2.descripcion
             order by sum(case when ncp.flujo='F2' then npr.cant else 0 end) desc"""
 
-            print("query desde tablas promotores: "+pipeline)
+            # print("query desde tablas promotores: "+pipeline)
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)

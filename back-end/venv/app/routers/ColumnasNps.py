@@ -49,7 +49,7 @@ class ColumnasNps():
             serie2 = []
 
             if self.filtros.agrupador == 'dia':
-                agrupador_select = "ho.creation_date"
+                agrupador_select = "CONVERT(date,ho.creation_date)"
                 mes = int(self.filtros.periodo['mes'])
                 mes = str(mes) if mes >= 10 else '0'+str(mes)
                 dia = int(self.filtros.periodo['dia'])
@@ -80,7 +80,7 @@ class ColumnasNps():
                 pipeline += f" and ct.region ='{self.filtros.region}' "
             pipeline += f" group by nd.calificacion, {agrupador_select} order by calificacion"
 
-            # print(f"query desde columnasnps -> {self.titulo}: "+pipeline)
+            print(f"query desde columnasnps -> {self.titulo}: "+pipeline)
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)
