@@ -29,18 +29,20 @@ class ColumnasNps():
         series = []
 
         fecha_fin = self.filtros.fechas['fecha_fin'][:10]
-        clauseCatProveedor = " AND cp.proveedor is not null "
+        clauseCatProveedor = ""
         if len(self.filtros.provLogist) > 0:
             clauseCatProveedor = " AND ("
             contador = 0
             for prov in self.filtros.provLogist:
-                clauseCatProveedor += f" cp.proveedor = '{prov}' "
+                if prov == 'Recursos Propios':
+                    clauseCatProveedor += f" ho.tercero IS NULL "
+                else:
+                    clauseCatProveedor += f" ho.tercero = '{prov}' "
                 if contador < len(self.filtros.provLogist) - 1:
                     clauseCatProveedor += f" OR "
                 else:
                     clauseCatProveedor += f") "
                 contador += 1
-        clauseCatProveedor += f" AND ((cp.fecha_from = '2022-11-23' AND (cp.fecha_to is null OR cp.fecha_to <= '{fecha_fin}') OR (cp.fecha_from <= '{fecha_fin}' AND cp.fecha_to is null)))"
 
         if self.titulo == 'Distribución de clientes por calificación':
             serie1 = []
@@ -63,21 +65,12 @@ class ColumnasNps():
                 agrupador_select = "dt.anio, dt.num_mes"
                 agrupador_where = f" dt.num_mes={self.filtros.periodo['mes']} and dt.anio={self.filtros.periodo['anio']}"
 
-            # Rawa
-            # pipeline = f"""select nd.calificacion,count(1) reg, {agrupador_select}
-            # from DWH.limesurvey.nps_mail_pedido nmp
-            # inner join DWH.limesurvey.nps_detalle nd on nmp.id_encuesta =nd.id_encuesta and nd.nEncuesta=nmp.nEncuesta
-            # left join DWH.artus.catTienda ct on nmp.idTienda =ct.tienda
-            # left join DWH.dbo.dim_tiempo dt on nmp.fecha = dt.fecha 
-            # left join DWH.artus.catProveedores cp on cp.idTienda = nmp.idTienda 
-            # where {agrupador_where} {clauseCatProveedor} """
             pipeline = f"""select nd.calificacion,count(1) reg, {agrupador_select}
             from DWH.limesurvey.nps_mail_pedido nmp
             inner join DWH.limesurvey.nps_detalle nd on nmp.id_encuesta =nd.id_encuesta and nd.nEncuesta=nmp.nEncuesta
             left join DWH.artus.catTienda ct on nmp.idTienda =ct.tienda
             LEFT JOIN DWH.dbo.hecho_order ho ON ho.order_number =nmp.pedido
             left join DWH.dbo.dim_tiempo dt on convert(date,ho.creation_date) = dt.fecha 
-            left join DWH.artus.catProveedores cp on cp.idTienda = nmp.idTienda 
             where {agrupador_where} {clauseCatProveedor} """
             if self.filtros.tienda != '' and self.filtros.tienda != None and self.filtros.tienda != 'False':
                 pipeline += f""" and ct.tienda ='{self.filtros.tienda}' """

@@ -29,18 +29,18 @@ class Spiderweb():
         series = []
 
         fecha_fin = self.filtros.fechas['fecha_fin'][:10]
-        clauseCatProveedor = " AND cp.proveedor is not null "
+        clauseCatProveedor_tmp = " AND cp.proveedor is not null "
         if len(self.filtros.provLogist) > 0:
-            clauseCatProveedor = " AND ("
+            clauseCatProveedor_tmp = " AND ("
             contador = 0
             for prov in self.filtros.provLogist:
-                clauseCatProveedor += f" cp.proveedor = '{prov}' "
+                clauseCatProveedor_tmp += f" cp.proveedor = '{prov}' "
                 if contador < len(self.filtros.provLogist) - 1:
-                    clauseCatProveedor += f" OR "
+                    clauseCatProveedor_tmp += f" OR "
                 else:
-                    clauseCatProveedor += f") "
+                    clauseCatProveedor_tmp += f") "
                 contador += 1
-        clauseCatProveedor += f" AND ((cp.fecha_from = '2022-11-23' AND (cp.fecha_to is null OR cp.fecha_to <= '{fecha_fin}') OR (cp.fecha_from <= '{fecha_fin}' AND cp.fecha_to is null)))"
+        clauseCatProveedor_tmp += f" AND ((cp.fecha_from = '2022-11-23' AND (cp.fecha_to is null OR cp.fecha_to <= '{fecha_fin}') OR (cp.fecha_from <= '{fecha_fin}' AND cp.fecha_to is null)))"
 
         if self.titulo == 'Respuestas por responsable':
             serie1 = []
@@ -71,7 +71,7 @@ class Spiderweb():
             left join DWH.artus.catTienda ct on npr.idTienda =ct.tienda
             left join DWH.artus.catProveedores cp on cp.idTienda = npr.idTienda 
             where ncp.tipo_respuesta = 'R2'
-            and {agrupador_where} {clauseCatProveedor} """
+            and {agrupador_where} {clauseCatProveedor_tmp} """
             if self.filtros.tienda != '' and self.filtros.tienda != None and self.filtros.tienda != 'False':
                 pipeline += f""" and ct.tienda ='{self.filtros.tienda}' """
             elif self.filtros.zona != '' and self.filtros.zona != None and self.filtros.zona != 'False':

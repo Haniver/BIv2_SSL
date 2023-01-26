@@ -2889,18 +2889,32 @@ class EjesMultiples():
         fecha_fin = self.filtros.fechas['fecha_fin'][0:10]
         fecha_ini_datetime = fecha_ini + ' 00:00:00'
         fecha_fin_datetime = fecha_fin + ' 23:59:59'
-        clauseCatProveedor = " AND cp.proveedor is not null "
+        clauseCatProveedor = ""
         if len(self.filtros.provLogist) > 0:
             clauseCatProveedor = " AND ("
             contador = 0
             for prov in self.filtros.provLogist:
-                clauseCatProveedor += f" cp.proveedor = '{prov}' "
+                if prov == 'Recursos Propios':
+                    clauseCatProveedor += f" ho.tercero IS NULL "
+                else:
+                    clauseCatProveedor += f" ho.tercero = '{prov}' "
                 if contador < len(self.filtros.provLogist) - 1:
                     clauseCatProveedor += f" OR "
                 else:
                     clauseCatProveedor += f") "
                 contador += 1
-        clauseCatProveedor += f" AND ((cp.fecha_from = '2022-11-23' AND (cp.fecha_to is null OR cp.fecha_to <= '{fecha_fin}') OR (cp.fecha_from <= '{fecha_fin}' AND cp.fecha_to is null)))"
+        clauseCatProveedor_tmp = " AND cp.proveedor is not null "
+        if len(self.filtros.provLogist) > 0:
+            clauseCatProveedor_tmp = " AND ("
+            contador = 0
+            for prov in self.filtros.provLogist:
+                clauseCatProveedor_tmp += f" cp.proveedor = '{prov}' "
+                if contador < len(self.filtros.provLogist) - 1:
+                    clauseCatProveedor_tmp += f" OR "
+                else:
+                    clauseCatProveedor_tmp += f") "
+                contador += 1
+        clauseCatProveedor_tmp += f" AND ((cp.fecha_from = '2022-11-23' AND (cp.fecha_to is null OR cp.fecha_to <= '{fecha_fin}') OR (cp.fecha_from <= '{fecha_fin}' AND cp.fecha_to is null)))"
         hayResultados = 'no'
         # print(f"Desde {titulo}, periodo = {self.filtros.periodo}")
         if self.filtros.agrupador == 'dia':
@@ -2946,18 +2960,6 @@ class EjesMultiples():
                 rango = "abrev_mes"
             else:
                 rango = "anio"
-            # Rawa
-            # pipeline = f"""select dt.{rango} as descrip_fecha,
-            #     case when (sum(case when nd.calificacion in (9,10) then 1 else 0 end)-sum(case when nd.calificacion<=6 then 1 else 0 end))=0 then 0 else
-            #     (sum(case when nd.calificacion in (9,10) then 1 else 0 end)-sum(case when nd.calificacion<=6 then 1 else 0 end))*100/cast(count(1) as float) end nps,
-            # CONVERT(VARCHAR, MIN(dt.fecha), 20) as f_inicio_drilldown,
-            # CONVERT(VARCHAR, MAX(dt.fecha), 120) as f_fin_drilldown
-            # from DWH.limesurvey.nps_mail_pedido nmp
-            # inner join DWH.limesurvey.nps_detalle nd on nmp.id_encuesta =nd.id_encuesta and nd.nEncuesta=nmp.nEncuesta
-            # left join DWH.dbo.dim_tiempo dt on nmp.fecha =dt.fecha
-            # left join DWH.artus.catTienda ct on nmp.idTienda =ct.tienda
-            # left join DWH.artus.catProveedores cp on cp.idTienda = nmp.idTienda 
-            # where nmp.fecha between '{fecha_ini}' and '{fecha_fin}' """
             pipeline = f"""select dt.{rango} as descrip_fecha,
                 case when (sum(case when nd.calificacion in (9,10) then 1 else 0 end)-sum(case when nd.calificacion<=6 then 1 else 0 end))=0 then 0 else
                 (sum(case when nd.calificacion in (9,10) then 1 else 0 end)-sum(case when nd.calificacion<=6 then 1 else 0 end))*100/cast(count(1) as float) end nps,
@@ -2968,7 +2970,6 @@ class EjesMultiples():
             LEFT JOIN DWH.dbo.hecho_order ho ON ho.order_number =nmp.pedido
             left join DWH.dbo.dim_tiempo dt on convert(date,ho.creation_date) =dt.fecha
             left join DWH.artus.catTienda ct on nmp.idTienda =ct.tienda
-            left join DWH.artus.catProveedores cp on cp.idTienda = nmp.idTienda 
             where ho.creation_date between '{fecha_ini_datetime}' and '{fecha_fin_datetime}' """
             if self.filtros.tienda != '' and self.filtros.tienda != None and self.filtros.tienda != 'False':
                 pipeline += f""" and ct.tienda ='{self.filtros.tienda}' """
@@ -3015,7 +3016,6 @@ class EjesMultiples():
                 hayResultados = 'no'
 
         if self.titulo == 'NPS por lugar':
-            # Rawa
             pipeline = f"""select {lugar_select}, case when (sum(case when nd.calificacion in (9,10) then 1 else 0 end)-sum(case when nd.calificacion<=6 then 1 else 0 end))=0 then 0 else
             (sum(case when nd.calificacion in (9,10) then 1 else 0 end)-sum(case when nd.calificacion<=6 then 1 else 0 end))*100/cast(count(1) as float) end nps,
             sum(case when nd.calificacion in (9,10) then 1 else 0 end) promotores,
@@ -3026,23 +3026,8 @@ class EjesMultiples():
             LEFT JOIN DWH.dbo.hecho_order ho ON ho.order_number =nmp.pedido
             left join DWH.dbo.dim_tiempo dt on convert(date,ho.creation_date) = dt.fecha 
             left join DWH.artus.catTienda ct on nmp.idTienda =ct.tienda
-            left join DWH.artus.catProveedores cp on cp.idTienda = nmp.idTienda 
             where {agrupador_where} {lugar_where} {clauseCatProveedor}
             group by {lugar_select}"""
-            # pipeline = f"""select {lugar_select}, case when (sum(case when nd.calificacion in (9,10) then 1 else 0 end)-sum(case when nd.calificacion<=6 then 1 else 0 end))=0 then 0 else
-            # (sum(case when nd.calificacion in (9,10) then 1 else 0 end)-sum(case when nd.calificacion<=6 then 1 else 0 end))*100/cast(count(1) as float) end nps,
-            # sum(case when nd.calificacion in (9,10) then 1 else 0 end) promotores,
-            # sum(case when nd.calificacion<=6 then 1 else 0 end) detractores,
-            # sum(case when nd.calificacion in (7,8) then 1 else 0 end) pasivos
-            # from DWH.limesurvey.nps_mail_pedido nmp
-            # inner join DWH.limesurvey.nps_detalle nd on nmp.id_encuesta =nd.id_encuesta and nd.nEncuesta=nmp.nEncuesta
-            # LEFT JOIN DWH.dbo.hecho_order ho ON ho.order_number =nmp.pedido
-            # left join DWH.dbo.dim_tiempo dt on ho.creation_date = dt.fecha 
-            # left join DWH.artus.catTienda ct on nmp.idTienda =ct.tienda
-            # left join DWH.artus.catProveedores cp on cp.idTienda = nmp.idTienda 
-            # where {agrupador_where} {lugar_where} {clauseCatProveedor}
-            # group by {lugar_select}"""
-
             # print("query desde ejes multiples nps: "+pipeline)
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
@@ -3101,7 +3086,7 @@ class EjesMultiples():
             left join DWH.dbo.dim_tiempo dt on npr.fecha = dt.fecha 
             left join DWH.artus.catTienda ct on npr.idtienda =ct.tienda
             left join DWH.artus.catProveedores cp on cp.idTienda = npr.idTienda 
-            where {agrupador_where} {lugar_where} {clauseCatProveedor}
+            where {agrupador_where} {lugar_where} {clauseCatProveedor_tmp}
             group by id_pregunta
             ) a on ncp.id_pregunta =a.id_pregunta
             where ncp.tipo_respuesta ='R1'
@@ -3151,7 +3136,7 @@ class EjesMultiples():
             inner join DWH.limesurvey.nps_cat_preguntas ncp on npr.id_pregunta =ncp.id_pregunta
             where ncp.tipo_respuesta ='R1' and ncp.flujo = 'F1'
             and {agrupador_where} 
-            {lugar_where} {clauseCatProveedor}
+            {lugar_where} {clauseCatProveedor_tmp}
             ) as float) F1,
             sum(case when flujo='F2' then a.cant else 0 end)*100/cast((select sum(cant) cant
             from DWH.limesurvey.nps_pregunta_respuesta npr
@@ -3161,7 +3146,7 @@ class EjesMultiples():
             left join DWH.artus.catProveedores cp on cp.idTienda = npr.idTienda 
             where ncp.tipo_respuesta ='R1' and ncp.flujo = 'F2'
             and {agrupador_where}
-            {lugar_where} {clauseCatProveedor}
+            {lugar_where} {clauseCatProveedor_tmp}
             ) as float) F2
             from DWH.limesurvey.nps_cat_preguntas ncp
             left join
@@ -3172,7 +3157,7 @@ class EjesMultiples():
             left join DWH.artus.catTienda ct on npr.idtienda =ct.tienda
             left join DWH.artus.catProveedores cp on cp.idTienda = npr.idTienda 
             where {agrupador_where} 
-            {lugar_where} {clauseCatProveedor}
+            {lugar_where} {clauseCatProveedor_tmp}
             group by id_pregunta
             ) a on ncp.id_pregunta =a.id_pregunta
             where ncp.tipo_respuesta ='R1'
@@ -3225,7 +3210,7 @@ class EjesMultiples():
             left join DWH.dbo.dim_tiempo dt on npr.fecha = dt.fecha 
             left join DWH.artus.catTienda ct on npr.idtienda =ct.tienda
             left join DWH.artus.catProveedores cp on cp.idTienda = npr.idTienda 
-            where {agrupador_where} {lugar_where} {clauseCatProveedor}
+            where {agrupador_where} {lugar_where} {clauseCatProveedor_tmp}
             group by id_pregunta
             ) a on ncp.id_pregunta =a.id_pregunta
             where ncp.tipo_respuesta ='R2'
@@ -3282,7 +3267,7 @@ class EjesMultiples():
             where descripcion = '{self.filtros.nps}' and tipo_respuesta = 'R1' and flujo='F1'
             )
             and {agrupador_where} 
-            {lugar_where} {clauseCatProveedor}
+            {lugar_where} {clauseCatProveedor_tmp}
             and tipo_respuesta = 'R2' and flujo='F1') as float) F1,
             isnull(sum(case when flujo='F2' then a.cant else 0 end),0)*100/cast((select sum(cant) cant
             from DWH.limesurvey.nps_pregunta_respuesta npr
@@ -3295,7 +3280,7 @@ class EjesMultiples():
             where descripcion = '{self.filtros.nps}' and tipo_respuesta = 'R1' and flujo='F2'
             )
             and {agrupador_where}
-            {lugar_where} {clauseCatProveedor}
+            {lugar_where} {clauseCatProveedor_tmp}
             and tipo_respuesta = 'R2' and flujo='F2') as float) F2
             from DWH.limesurvey.nps_cat_preguntas ncp
             left join
@@ -3306,7 +3291,7 @@ class EjesMultiples():
             left join DWH.artus.catTienda ct on npr.idtienda =ct.tienda
             left join DWH.artus.catProveedores cp on cp.idTienda = npr.idTienda 
             where {agrupador_where} 
-            {lugar_where} {clauseCatProveedor}
+            {lugar_where} {clauseCatProveedor_tmp}
             group by id_pregunta
             ) a on ncp.id_pregunta =a.id_pregunta
             where ncp.tipo_respuesta ='R2'
@@ -3318,7 +3303,7 @@ class EjesMultiples():
             order by min(ncp.id) 
             """
 
-            # print("Percepción del servicio (%) $categoria: "+pipeline)
+            print("Percepción del servicio (%) $categoria: "+pipeline)
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)
@@ -3353,7 +3338,6 @@ class EjesMultiples():
                 hayResultados = 'no'
 
         if self.titulo == '% NPS Con o Sin Aduana':
-            # Rawa
             pipeline = f"""select isnull(ds.proyecto,'Sin Aduana') Aduana,
             case when (sum(case when nd.calificacion in (9,10) then 1 else 0 end)-sum(case when nd.calificacion<=6 then 1 else 0 end))=0 then 0 else
             (sum(case when nd.calificacion in (9,10) then 1 else 0 end)-sum(case when nd.calificacion<=6 then 1 else 0 end))*100/cast(count(1) as float) end nps,
@@ -3366,24 +3350,8 @@ class EjesMultiples():
             LEFT JOIN DWH.dbo.hecho_order ho ON ho.order_number =nmp.pedido
             left join DWH.dbo.dim_tiempo dt on convert(date,ho.creation_date) = dt.fecha 
             left join DWH.artus.catTienda ct on nmp.idtienda =ct.tienda
-            left join DWH.artus.catProveedores cp on cp.idTienda = nmp.idTienda 
             where {agrupador_where} {lugar_where} {clauseCatProveedor}
             group by isnull(ds.proyecto,'Sin Aduana') """
-            # pipeline = f"""select isnull(ds.proyecto,'Sin Aduana') Aduana,
-            # case when (sum(case when nd.calificacion in (9,10) then 1 else 0 end)-sum(case when nd.calificacion<=6 then 1 else 0 end))=0 then 0 else
-            # (sum(case when nd.calificacion in (9,10) then 1 else 0 end)-sum(case when nd.calificacion<=6 then 1 else 0 end))*100/cast(count(1) as float) end nps,
-            # sum(case when nd.calificacion in (9,10) then 1 else 0 end) promotores,
-            # sum(case when nd.calificacion<=6 then 1 else 0 end) detractores,
-            # sum(case when nd.calificacion in (7,8) then 1 else 0 end) pasivos
-            # from DWH.limesurvey.nps_mail_pedido nmp
-            # inner join DWH.limesurvey.nps_detalle nd on nmp.id_encuesta =nd.id_encuesta and nd.nEncuesta=nmp.nEncuesta
-            # inner join DWH.dbo.dim_store ds on nmp.idtienda =ds.idtienda
-            # LEFT JOIN DWH.dbo.hecho_order ho ON ho.order_number =nmp.pedido
-            # left join DWH.dbo.dim_tiempo dt on ho.creation_date = dt.fecha 
-            # left join DWH.artus.catTienda ct on nmp.idtienda =ct.tienda
-            # left join DWH.artus.catProveedores cp on cp.idTienda = nmp.idTienda 
-            # where {agrupador_where} {lugar_where} {clauseCatProveedor}
-            # group by isnull(ds.proyecto,'Sin Aduana') """
 
             # print("query desde ejes multiples nps: "+pipeline)
             cnxn = conexion_sql('DWH')
@@ -3450,25 +3418,8 @@ class EjesMultiples():
             LEFT JOIN DWH.dbo.hecho_order ho ON ho.order_number =nmp.pedido
             left join DWH.dbo.dim_tiempo dt on convert(date,ho.creation_date) = dt.fecha 
             left join DWH.artus.catTienda ct on nmp.idtienda =ct.tienda
-            left join DWH.artus.catProveedores cp on cp.idTienda = nmp.idTienda 
             where {agrupador_where} {lugar_where} {clauseCatProveedor}
             group by isnull(ds.proyecto,'Sin Aduana') """
-            # pipeline = f"""select isnull(ds.proyecto,'Sin Aduana') Aduana,
-            # case when (sum(case when nd.calificacion in (9,10) then 1 else 0 end)-sum(case when nd.calificacion<=6 then 1 else 0 end))=0 then 0 else
-            # (sum(case when nd.calificacion in (9,10) then 1 else 0 end)-sum(case when nd.calificacion<=6 then 1 else 0 end))*100/cast(count(1) as float) end nps,
-            # sum(case when nd.calificacion in (9,10) then 1 else 0 end) promotores,
-            # sum(case when nd.calificacion<=6 then 1 else 0 end) detractores,
-            # sum(case when nd.calificacion in (7,8) then 1 else 0 end) pasivos
-            # from DWH.limesurvey.nps_mail_pedido nmp
-            # inner join DWH.limesurvey.nps_detalle nd on nmp.id_encuesta =nd.id_encuesta and nd.nEncuesta=nmp.nEncuesta
-            # inner join DWH.dbo.dim_store ds on nmp.idtienda =ds.idtienda
-            # LEFT JOIN DWH.dbo.hecho_order ho ON ho.order_number =nmp.pedido
-            # left join DWH.dbo.dim_tiempo dt on ho.creation_date = dt.fecha 
-            # left join DWH.artus.catTienda ct on nmp.idtienda =ct.tienda
-            # left join DWH.artus.catProveedores cp on cp.idTienda = nmp.idTienda 
-            # where {agrupador_where} {lugar_where} {clauseCatProveedor}
-            # group by isnull(ds.proyecto,'Sin Aduana') """
-
             # print("query desde ejes multiples nps: "+pipeline)
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
@@ -3521,23 +3472,6 @@ class EjesMultiples():
                 hayResultados = 'no'
                 
         if self.titulo == '% NPS por Formato Tienda':
-            # Este query no sé de dónde salió. No lo borro por si luego averiguo.
-            # pipeline = f"""select isnull(ds.proyecto,'Sin Aduana') Aduana,
-            # case when (sum(case when nd.calificacion in (9,10) then 1 else 0 end)-sum(case when nd.calificacion<=6 then 1 else 0 end))=0 then 0 else
-            # (sum(case when nd.calificacion in (9,10) then 1 else 0 end)-sum(case when nd.calificacion<=6 then 1 else 0 end))*100/cast(count(1) as float) end nps,
-            # sum(case when nd.calificacion in (9,10) then 1 else 0 end) promotores,
-            # sum(case when nd.calificacion<=6 then 1 else 0 end) detractores,
-            # sum(case when nd.calificacion in (7,8) then 1 else 0 end) pasivos
-            # from DWH.limesurvey.nps_mail_pedido nmp
-            # inner join DWH.limesurvey.nps_detalle nd on nmp.id_encuesta =nd.id_encuesta and nd.nEncuesta=nmp.nEncuesta
-            # inner join DWH.dbo.dim_store ds on nmp.idtienda =ds.idtienda
-            # left join DWH.dbo.dim_tiempo dt on nmp.fecha = dt.fecha 
-            # left join DWH.artus.catTienda ct on nmp.idtienda =ct.tienda
-            # left join DWH.artus.catProveedores cp on cp.idTienda = nmp.idTienda 
-            # where {agrupador_where} {lugar_where} {clauseCatProveedor}
-            # group by isnull(ds.proyecto,'Sin Aduana') """
-
-            # Rawa
             pipeline = f"""select ds.formato_tienda,
             case when (sum(case when nd.calificacion in (9,10) then 1 else 0 end)-sum(case when nd.calificacion<=6 then 1 else 0 end))=0 then 0 else
             (sum(case when nd.calificacion in (9,10) then 1 else 0 end)-sum(case when nd.calificacion<=6 then 1 else 0 end))*100/cast(count(1) as float) end nps,
@@ -3550,26 +3484,9 @@ class EjesMultiples():
             LEFT JOIN DWH.dbo.hecho_order ho ON ho.order_number =nmp.pedido
             left join DWH.dbo.dim_tiempo dt on convert(date,ho.creation_date) = dt.fecha 
             left join DWH.artus.catTienda ct on nmp.idtienda =ct.tienda
-            left join DWH.artus.catProveedores cp on cp.idTienda = nmp.idTienda 
             where {agrupador_where} {lugar_where} {clauseCatProveedor}
             group by ds.formato_tienda
             """
-            # pipeline = f"""select ds.formato_tienda,
-            # case when (sum(case when nd.calificacion in (9,10) then 1 else 0 end)-sum(case when nd.calificacion<=6 then 1 else 0 end))=0 then 0 else
-            # (sum(case when nd.calificacion in (9,10) then 1 else 0 end)-sum(case when nd.calificacion<=6 then 1 else 0 end))*100/cast(count(1) as float) end nps,
-            # sum(case when nd.calificacion in (9,10) then 1 else 0 end) promotores,
-            # sum(case when nd.calificacion<=6 then 1 else 0 end) detractores,
-            # sum(case when nd.calificacion in (7,8) then 1 else 0 end) pasivos
-            # from DWH.limesurvey.nps_mail_pedido nmp
-            # inner join DWH.limesurvey.nps_detalle nd on nmp.id_encuesta =nd.id_encuesta and nd.nEncuesta=nmp.nEncuesta
-            # inner join DWH.dbo.dim_store ds on nmp.idtienda =ds.idtienda
-            # LEFT JOIN DWH.dbo.hecho_order ho ON ho.order_number =nmp.pedido
-            # left join DWH.dbo.dim_tiempo dt on ho.creation_date = dt.fecha 
-            # left join DWH.artus.catTienda ct on nmp.idtienda =ct.tienda
-            # left join DWH.artus.catProveedores cp on cp.idTienda = nmp.idTienda 
-            # where {agrupador_where} {lugar_where} {clauseCatProveedor}
-            # group by ds.formato_tienda
-            # """
 
             # print(f"query desde ejes multiples {self.titulo}: "+pipeline)
             cnxn = conexion_sql('DWH')

@@ -76,6 +76,20 @@ class ColumnasBasicas():
     async def Nps(self):
         categorias = []
         series = []
+        clauseCatProveedor = ""
+        if len(self.filtros.provLogist) > 0:
+            clauseCatProveedor = " AND ("
+            contador = 0
+            for prov in self.filtros.provLogist:
+                if prov == 'Recursos Propios':
+                    clauseCatProveedor += f" ho.tercero IS NULL "
+                else:
+                    clauseCatProveedor += f" ho.tercero = '{prov}' "
+                if contador < len(self.filtros.provLogist) - 1:
+                    clauseCatProveedor += f" OR "
+                else:
+                    clauseCatProveedor += f") "
+                contador += 1
 
         if self.titulo == 'Distribución de clientes por calificación':
             serie1 = []
@@ -118,6 +132,7 @@ class ColumnasBasicas():
                 pipeline += f" and ct.zona='{self.filtros.zona}' "
             elif self.filtros.region != '' and self.filtros.region != None and self.filtros.region != 'False':
                 pipeline += f" and ct.region ='{self.filtros.region}' "
+            pipeline += clauseCatProveedor
             pipeline += f" group by nd.calificacion, {agrupador_select} order by calificacion"
 
             # print("query desde columnas básicas nps ahorita: "+pipeline)
@@ -183,6 +198,7 @@ class ColumnasBasicas():
                 pipeline += f" and ct.zona='{self.filtros.zona}' "
             elif self.filtros.region != '' and self.filtros.region != None and self.filtros.region != 'False':
                 pipeline += f" and ct.region ='{self.filtros.region}' "
+            pipeline += clauseCatProveedor
             pipeline += f" group by nd.calificacion, {agrupador_select} order by calificacion"
 
             # print("query desde columnas básicas nps ahorita: "+pipeline)
