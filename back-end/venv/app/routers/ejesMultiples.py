@@ -4155,8 +4155,8 @@ class EjesMultiples():
         if self.titulo == 'Pedidos Programados para Siguientes Días':
             filtroFuturo = {
                 '$match': {
-                    'fechaEntrega': {
-                        '$gt': datetime.combine(date.today(), time(hour=23, minute=59, second=59))
+                    'prioridad': {
+                        '$eq': 'Futuro'
                     }
                 }
             }

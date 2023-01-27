@@ -412,8 +412,8 @@ class ColumnasBasicas():
         series = []
         filtroHoy = {
             '$match': {
-                'fechaEntrega': {
-                    '$lte': datetime.combine(date.today(), time(hour=23, minute=59, second=59))
+                'prioridad': {
+                    '$ne': 'Futuro'
                 }
             }
         }
@@ -435,7 +435,7 @@ class ColumnasBasicas():
 
         collection = conexion_mongo('report').report_pedidoPendientes
         pipeline.extend([
-            {'$unwind': '$sucursal'}, 
+            {'$unwind': '$sucursal'},
             filtroHoy
             ])
         if filtro_lugar:

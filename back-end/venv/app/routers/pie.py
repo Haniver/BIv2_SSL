@@ -186,8 +186,8 @@ class Pie():
 
         filtroHoy = {
             '$match': {
-                'fechaEntrega': {
-                    '$lte': datetime.combine(date.today(), time(hour=23, minute=59, second=59))
+                'prioridad': {
+                    '$ne': 'Futuro'
                 }
             }
         }
