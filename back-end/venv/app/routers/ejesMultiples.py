@@ -469,7 +469,7 @@ class EjesMultiples():
                 mes_elegido = self.filtros.periodo['mes']
                 dia_elegido = self.filtros.periodo['dia']
                 fecha_fin = datetime(anio_elegido, mes_elegido, dia_elegido)
-                # fecha_ini = fecha_fin - timedelta(days=1)
+                fecha_ini = fecha_fin - timedelta(days=1)
             # print(f"fecha_fin en la primera línea desde {self.titulo}: {str(fecha_fin)}")
             fecha_fin = fecha_fin.replace(hour=23, minute=59, second=59, microsecond=999999)
             # print(f"fecha_fin en la segunda línea desde {self.titulo}: {str(fecha_fin)}")
