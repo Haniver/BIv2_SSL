@@ -45,7 +45,7 @@ const PedidosPendientes = () => {
       </Row>
       <Row className='match-height'>
         <Col xl='6' sm='12'>
-          <ColumnasBasicas extenderDerecha subtitulo = 'Pedidos Pendientes de Entrega Hoy' titulo='Pedidos pendientes de entrega' seccion={seccion} formato='entero' yLabel='Pedidos' tipoEntrega={tipoEntrega} region={region} zona={zona} tienda={tienda} origen={origen} coloresPedidosPendientes />
+          <ColumnasBasicas extenderDerecha titulo='Pedidos pendientes de entrega' subtitulo = 'Pedidos Pendientes de Entrega Hoy' seccion={seccion} formato='entero' yLabel='Pedidos' tipoEntrega={tipoEntrega} region={region} zona={zona} tienda={tienda} origen={origen} coloresPedidosPendientes />
         </Col>
         <Col xl='6' sm='12'>
           <ColumnasApiladas extenderIzquierda titulo='Entrega de pedidos por ventana de tiempo' seccion={seccion} formato='entero' yLabel='Pedidos' tipoEntrega={tipoEntrega} region={region} zona={zona} tienda={tienda} origen={origen} />

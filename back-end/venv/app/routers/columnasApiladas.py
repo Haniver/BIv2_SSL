@@ -362,7 +362,7 @@ class ColumnasApiladas():
                     serie3.append(row['HOY_ATRASADO'])
                 series.extend([
                     {'name': 'Entregado', 'data':serie1, 'color': 'success'},                                
-                    {'name': 'Hoy a tiempo', 'data':serie2, 'color': 'info'},
+                    {'name': 'Hoy a tiempo', 'data':serie2, 'color': 'secondary'},
                     {'name': 'Hoy atrasado', 'data':serie3, 'color': 'danger'}
                 ])
             else:
