@@ -1,3 +1,17 @@
+# Se envía un diccionario "res" que contiene:
+#     - Un arreglo 'series_outer' que contiene un solo diccionario con:
+#         * Un string 'name' con el título del eje x del primer nivel del gráfico
+#         * Un arreglo 'data' (ej. lista_deptos)con diccionarios que contienen:
+#             * Un string 'name' con el título de la barra de primer nivel
+#             * Un número 'y' con el valor de esa barra del primer nivel
+#             * Un número 'drilldown' que tiene el id de esa barra de primer nivel
+#     - Un arreglo 'drilldown_series' que contiene diccionarios con:
+#         * Un string 'name' con el título de la barra de primer nivel (otra vez), pero en esta ocasión para que sirva como título del eje x del segundo nivel del gráfico
+#         * Un número 'id' con el id de la barra de primer nivel (otra vez), para identificar el gráfico de 2o. nivel.
+#         * Un arreglo 'data' (ej. depto_data) que contiene, sin índices:
+#             * El nombre de la barra de segundo nivel
+#             * El valor o monto para esa barra
+
 from fastapi import APIRouter, Depends, HTTPException, Request
 
 from app.auth import get_current_active_user

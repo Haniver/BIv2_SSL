@@ -1,6 +1,6 @@
 from fastapi import Depends, FastAPI
 from starlette.middleware.cors import CORSMiddleware
-from app.routers import barras, columnasApiladas, columnasBasicas, columnasDrilldown, ejesMultiples, cargarFiltros, pie, tablas, tarjetas, login, tarjetasCombinadas, barrasApiladas, cargarMotivosFaltantes, ColumnasNps, spiderweb, columnasSuperpuestas, burbuja3d, areaBasica, distribucion3d, sankey, columnasAgrupadasYApiladas, markdown, ejesMultiplesApilados, tarjetasEnFila, tablasExpandibles, checarHash, leyendas
+from app.routers import barras, columnasApiladas, columnasBasicas, columnasDrilldown, ejesMultiples, cargarFiltros, pie, tablas, tarjetas, login, tarjetasCombinadas, barrasApiladas, cargarMotivosFaltantes, ColumnasNps, spiderweb, columnasSuperpuestas, burbuja3d, areaBasica, distribucion3d, sankey, columnasAgrupadasYApiladas, markdown, ejesMultiplesApilados, tarjetasEnFila, tablasExpandibles, checarHash, leyendas, columnasApiladasDrilldown
 import app.servicios.urls as urls
 from app.servicios.tareasDiarias import buscarExpirados, reducirArchivosLogs
 from fastapi_utils.tasks import repeat_every
@@ -56,6 +56,7 @@ app.include_router(tarjetasEnFila.router)
 app.include_router(tablasExpandibles.router)
 app.include_router(checarHash.router)
 app.include_router(leyendas.router)
+app.include_router(columnasApiladasDrilldown.router)
 
 @app.get("/")
 async def root():

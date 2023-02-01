@@ -1,3 +1,9 @@
+# ~ Se envía un arreglo "categorías" que contiene strings que corresponden al título de cada valor del eje x.
+# ~ También se envía un diccionario "series" que contiene diccionarios que corresponden a cada barrita que se va apilando en cada punto del gráfico:
+#     - Un string 'name' con el título de la barrita
+#     - Un arreglo 'data' con los valores (eje y) de esa barrita para cada punto.
+#     - Un string 'color' con el color de esa barrita, ya sea en formato "#FFCCDD" o "primary".
+
 from copy import deepcopy
 from time import strftime
 from fastapi import APIRouter, Depends, HTTPException, Request
@@ -347,7 +353,17 @@ class ColumnasApiladas():
 
         if self.titulo == 'Entrega de pedidos por ventana de tiempo':
             pipeline.append({'$match': {'prioridad': {'$in': ['ENTREGADO', 'HOY ATRASADO', 'HOY A TIEMPO']}}})
-            pipeline.append({'$project': {'rango': '$rango', 'ENTREGADO': {'$cond': [{'$eq':['$prioridad', 'ENTREGADO']}, 1, 0]}, 'HOY_ATRASADO': {'$cond': [{'$eq':['$prioridad', 'HOY ATRASADO']}, 1, 0]}, 'HOY_A_TIEMPO': {'$cond': [{'$eq':['$prioridad', 'HOY A TIEMPO']}, 1, 0]}}})
+            pipeline.append({'$project': {
+                'rango': '$rango',
+                'ENTREGADO': {'$cond': [
+                    {'$and': [
+                        {'$eq': ['$prioridad', 'ENTREGADO']},
+                        {'$eq': [{'$dateToString': {'format': '%Y-%m-%d', 'date': '$fechaEntrega'}}, {'$dateToString': {'format': '%Y-%m-%d', 'date': '$$NOW'}}]}
+                    ]}, 1, 0]
+                },
+                'HOY_ATRASADO': {'$cond': [{'$eq':['$prioridad', 'HOY ATRASADO']}, 1, 0]},
+                'HOY_A_TIEMPO': {'$cond': [{'$eq':['$prioridad', 'HOY A TIEMPO']}, 1, 0]}
+            }})
             pipeline.append({'$group':{'_id':'$rango', 'ENTREGADO':{'$sum':'$ENTREGADO'}, 'HOY_ATRASADO':{'$sum':'$HOY_ATRASADO'}, 'HOY_A_TIEMPO':{'$sum':'$HOY_A_TIEMPO'}}})
             pipeline.append({'$sort': {'_id': 1}})
             # print(f"Pipeline desde columnasApiladas->{self.titulo}-> {pipeline}")

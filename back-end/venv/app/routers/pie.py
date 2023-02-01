@@ -238,8 +238,19 @@ class Pie():
                 # ]
 
         if self.titulo == 'Pedidos Por Tipo de Entrega':
+            pipeline.append({
+                '$match': {
+                    '$or': [
+                        {'prioridad': {'$ne': 'ENTREGADO'}},
+                        {'fechaEntrega': {
+                            '$gte': datetime.combine(date.today(), time.min),
+                            '$lt': datetime.combine(date.today(), time.max)
+                        }}
+                    ]
+                }
+            })
             pipeline.append({'$group':{'_id':'$metodoEntrega', 'pedidos':{'$sum':1}}})
-            # print(f"Pipeline desde pie -> Pedidos Pendientes: {str(pipeline)}")
+            print(f"Pipeline desde pie -> Pedidos Pendientes: {str(pipeline)}")
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=1000)
             # print(str(arreglo))
@@ -357,7 +368,7 @@ class Pie():
             if self.filtros.categoria != None and self.filtros.categoria != "False" and self.filtros.categoria != "":
                 pipeline.append({'$match': {'tercero': self.filtros.categoria}})
             pipeline.append({'$group':{'_id':'$tipoEntrega', 'pedidos':{'$sum':'$pedidos'}}})
-            # print(f"Pipeline desde pie -> Pedidos Pendientes: {str(pipeline)}")
+            print(f"Pipeline desde pie -> Pedidos Pendientes: {str(pipeline)}")
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=1000)
             # print(str(arreglo))

@@ -3237,6 +3237,7 @@ class Tablas():
         })
         # Ejecutamos el query:
         collection = conexion_mongo('report').report_pedidoDevolucion
+        # print(f"pipeline desde PedidosDevolución: {str(pipeline)}")
         cursor = collection.aggregate(pipeline)
         arreglo = await cursor.to_list(length=1000)
         # print(str(arreglo))
