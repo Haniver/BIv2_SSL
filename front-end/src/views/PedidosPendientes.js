@@ -7,7 +7,7 @@ import Pie from '../componentes/graficos/Pie'
 import Titulo from '../componentes/auxiliares/Titulo'
 import ColumnasBasicas from '../componentes/graficos/ColumnasBasicas'
 import EjesMultiples from '../componentes/graficos/EjesMultiples'
-// import ColumnasApiladasDrilldown from '../componentes/graficos/ColumnasApiladasDrilldown'
+import ColumnasApiladasDrilldown from '../componentes/graficos/ColumnasApiladasDrilldown'
 
 const PedidosPendientes = () => {
   const [tipoEntrega, setTipoEntrega] = useState('')
@@ -46,7 +46,7 @@ const PedidosPendientes = () => {
       </Row>
       {/* <Row className='match-height'>
         <Col xl={tipoEntrega ? '12' : '6'} sm='12'>
-          <ColumnasApiladasDrilldown titulo='Pedidos Por Región' seccion={seccion} formato='entero' yLabel='Pedidos' tipoEntrega={tipoEntrega} region={region} zona={zona} tienda={tienda} origen={origen} />
+          <ColumnasApiladasDrilldown titulo='Ejemplo' seccion={seccion} formato='entero' yLabel='Pedidos' tipoEntrega={tipoEntrega} region={region} zona={zona} tienda={tienda} origen={origen} />
         </Col>
       </Row> */}
       <Row className='match-height'>

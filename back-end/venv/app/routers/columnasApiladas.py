@@ -358,7 +358,7 @@ class ColumnasApiladas():
                 'ENTREGADO': {'$cond': [
                     {'$and': [
                         {'$eq': ['$prioridad', 'ENTREGADO']},
-                        {'$eq': [{'$dateToString': {'format': '%Y-%m-%d', 'date': '$fechaEntrega'}}, {'$dateToString': {'format': '%Y-%m-%d', 'date': '$$NOW'}}]}
+                        {'$eq': [{'$dateToString': {'format': '%Y-%m-%d', 'date': '$fechaEntrega'}}, {'$dateToString': {'format': '%Y-%m-%d', 'date': datetime.now()}}]}
                     ]}, 1, 0]
                 },
                 'HOY_ATRASADO': {'$cond': [{'$eq':['$prioridad', 'HOY ATRASADO']}, 1, 0]},
@@ -366,7 +366,7 @@ class ColumnasApiladas():
             }})
             pipeline.append({'$group':{'_id':'$rango', 'ENTREGADO':{'$sum':'$ENTREGADO'}, 'HOY_ATRASADO':{'$sum':'$HOY_ATRASADO'}, 'HOY_A_TIEMPO':{'$sum':'$HOY_A_TIEMPO'}}})
             pipeline.append({'$sort': {'_id': 1}})
-            # print(f"Pipeline desde columnasApiladas->{self.titulo}-> {pipeline}")
+            print(f"Pipeline desde columnasApiladas->{self.titulo}-> {pipeline}")
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=1000)
             if len(arreglo) >0:
@@ -1434,7 +1434,21 @@ class ColumnasApiladas():
                 pipeline = [{'$unwind': '$sucursal'}]
                 pipeline.append({'$match': {f'sucursal.{nivel}': lugar}})
             pipeline.append({'$match': {'prioridad': {'$in': ['ENTREGADO', 'HOY ATRASADO', 'HOY A TIEMPO']}}})
-            pipeline.append({'$project': {'rango': '$rango', 'ENTREGADO': {'$cond': [{'$eq':['$prioridad', 'ENTREGADO']}, 1, 0]}, 'HOY_ATRASADO': {'$cond': [{'$eq':['$prioridad', 'HOY ATRASADO']}, 1, 0]}, 'HOY_A_TIEMPO': {'$cond': [{'$eq':['$prioridad', 'HOY A TIEMPO']}, 1, 0]}}})
+            pipeline.append({'$project': {
+                'rango': '$rango', 
+                'ENTREGADO': {'$cond': [
+                    {'$and': [
+                        {'$eq': ['$prioridad', 'ENTREGADO']},
+                        {'$eq': [{'$dateToString': {'format': '%Y-%m-%d', 'date': '$fechaEntrega'}}, {'$dateToString': {'format': '%Y-%m-%d', 'date': datetime.now()}}]}
+                    ]}, 1, 0]
+                },
+                'HOY_ATRASADO': {
+                    '$cond': [{'$eq':['$prioridad', 'HOY ATRASADO']}, 1, 0]
+                }, 
+                'HOY_A_TIEMPO': {
+                    '$cond': [{'$eq':['$prioridad', 'HOY A TIEMPO']}, 1, 0]
+                }
+            }})
             pipeline.append({'$group':{'_id':'$rango', 'ENTREGADO':{'$sum':'$ENTREGADO'}, 'HOY_ATRASADO':{'$sum':'$HOY_ATRASADO'}, 'HOY_A_TIEMPO':{'$sum':'$HOY_A_TIEMPO'}}})
             pipeline.append({'$sort': {'_id': 1}})
             # print(str(pipeline))
