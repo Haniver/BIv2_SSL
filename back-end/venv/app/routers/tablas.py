@@ -3901,24 +3901,26 @@ class Tablas():
                 total_nps_porcentaje = f'{(100 * (total_promotores - total_detractores) / total_respuestas):.2f}%' if total_respuestas != 0 else '--'
                 tabla_presentacion.append([f'{(total_contactados):,}', f'{(total_respuestas):,}', total_tasa, total_promotores_porcentaje, total_pasivos_porcentaje, total_detractores_porcentaje, total_nps_porcentaje])
 
-            columns = [
-                {'name': 'Concepto', 'selector':'Concepto', 'formato':'texto', 'ancho': '120px'}
-            ]
-            for rango in rangos:
-                columns.append({
-                    'name': rango, 'selector': '_'+rango.replace('/', '_'), 'formato': 'texto'
-                })
-            columns.extend([
-                {'name': 'Total', 'selector': 'Total', 'formato': 'texto'}
-            ])
-            for i in range(len(tabla_presentacion[0])):
-                diccionario = {'Concepto': tabla_presentacion[0][i]}
-                j = 1
+                columns = [
+                    {'name': 'Concepto', 'selector':'Concepto', 'formato':'texto', 'ancho': '120px'}
+                ]
                 for rango in rangos:
-                    diccionario['_'+rango.replace('/', '_')] = tabla_presentacion[j][i]
-                    j += 1
-                diccionario['Total'] = tabla_presentacion[j][i]
-                data.append(diccionario)
+                    columns.append({
+                        'name': rango, 'selector': '_'+rango.replace('/', '_'), 'formato': 'texto'
+                    })
+                columns.extend([
+                    {'name': 'Total', 'selector': 'Total', 'formato': 'texto'}
+                ])
+                for i in range(len(tabla_presentacion[0])):
+                    diccionario = {'Concepto': tabla_presentacion[0][i]}
+                    j = 1
+                    for rango in rangos:
+                        diccionario['_'+rango.replace('/', '_')] = tabla_presentacion[j][i]
+                        j += 1
+                    diccionario['Total'] = tabla_presentacion[j][i]
+                    data.append(diccionario)
+            else:
+                hayResultados = 'no'
 
         if self.titulo == 'Top 20 respuestas Promotores':
             if self.filtros.agrupador == 'dia':

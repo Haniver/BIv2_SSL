@@ -2981,7 +2981,7 @@ class EjesMultiples():
             pipeline += f" group by dt.{rango} order by f_inicio_drilldown"
 
             cnxn = conexion_sql('DWH')
-            # print('NPS por Día desde EjesMultiples: '+pipeline)
+            print('NPS por Periodo desde EjesMultiples: '+pipeline)
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)
 
