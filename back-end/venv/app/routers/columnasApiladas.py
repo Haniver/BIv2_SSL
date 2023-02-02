@@ -611,6 +611,11 @@ class ColumnasApiladas():
                 # print("No hay resultados 2")
 
         if self.titulo == 'Evaluación de KPI Pedido Perfecto por Periodo':
+            fecha_ini_periodo_completo = self.filtros.fechas['fecha_ini']
+            date_part, time_part = fecha_ini_periodo_completo.split("T")
+            date_time = datetime.fromisoformat(f"{date_part}T00:00:00")
+            fecha_ini_periodo_completo = datetime.combine(date_time.date(), datetime.min.time())
+            # print(f"fecha_ini_periodo_completo es {fecha_ini_periodo_completo}")
             pipeline = [
                 {'$unwind': '$sucursal'},
                 {'$match': {
@@ -626,7 +631,7 @@ class ColumnasApiladas():
 
             pipeline.extend([
                 {'$match': {
-                    'fecha': {'$gte': fecha_ini}
+                    'fecha': {'$gte': fecha_ini_periodo_completo}
                 }},
                 {'$match': {
                     'fecha': {'$lte': fecha_fin}

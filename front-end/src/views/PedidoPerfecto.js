@@ -92,16 +92,18 @@ const PedidoPerfecto = () => {
         </Col>
       </Row>}
       {periodo && <Row className='match-height'>
-      <Col sm='12' lg='6'>
+        <Col sm='12'>
           <ColumnasApiladas titulo='Evaluación de KPI Pedido Perfecto por Periodo' ocultarTotales fechas={fechas} provLogist={provLogist} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} formato='porcentaje' />
-        </Col>
-        <Col sm='12' lg='6'>
-          <EjesMultiples titulo='Evaluación por KPI' fechas={fechas} provLogist={provLogist} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} />
         </Col>
       </Row>}
       {periodo && !tienda && <Row className='match-height'>
-        <Col sm='12' lg='6'>
+        <Col sm='12'>
           <ColumnasApiladas titulo='Evaluación de KPI Pedido Perfecto por Lugar' ocultarTotales fechas={fechas} provLogist={provLogist} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} formato='porcentaje' />
+        </Col>
+      </Row>}
+      {periodo && <Row className='match-height'>
+        <Col sm='12' lg='6'>
+          <EjesMultiples titulo='Evaluación por KPI' fechas={fechas} provLogist={provLogist} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} />
         </Col>
         <Col sm='12' lg='6'>
           <EjesMultiples titulo='Evaluación Pedido Perfecto por Lugar' fechas={fechas} provLogist={provLogist} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} />
