@@ -43,10 +43,6 @@ const ColumnasApiladasDrilldown = ({ titulo, yLabel, seccion, formato, fechas, r
     
     drilldown(Highcharts)
 
-    useEffect(() => {
-        console.log("Drilldown series:")
-        console.log(drilldown_series)        
-    }, [drilldown_series])
 
     useEffect(async () => {
         // Aquí también cambiar los colores dependiendo del skin, según líneas 18-19
@@ -87,39 +83,88 @@ const ColumnasApiladasDrilldown = ({ titulo, yLabel, seccion, formato, fechas, r
             const subCategorias = res.data.subCategorias
             const dataN1 = res.data.dataN1
             const dataN2 = res.data.dataN2
+            console.log("tituloApiladas:")
+            console.log(tituloApiladas)
+            console.log("colores:")
+            console.log(colores)
+            console.log("categorias:")
+            console.log(categorias)
+            console.log("subCategorias:")
+            console.log(subCategorias)
+            console.log("dataN1:")
+            console.log(dataN1)
+            console.log("dataN2:")
+            console.log(dataN2)
             const series_outer_tmp = []
-            for (let bar = 0; bar < tituloApiladas.length; bar++) {
+            for (let stack = 0; stack < tituloApiladas.length; stack++) {
+                const data_tmp = []
                 for (let cat = 0; cat < categorias.length; cat++) {
-                    series_outer_tmp.push({
-                        name: tituloApiladas[bar],
-                        color: colores[bar],
-                        data: [
-                                {
-                                name: categorias[cat],
-                                y: dataN1[bar][cat],
-                                drilldown: true
-                            }
-                        ]
+                    data_tmp.push({
+                        name: categorias[cat],
+                        y: dataN1[stack][cat],
+                        drilldown: categorias[cat]
                     })
                 }
+                series_outer_tmp.push({
+                    name: tituloApiladas[stack],
+                    color: colores[stack],
+                    data: data_tmp
+                })
             }
+            console.log('series_outer:')
+            console.log(JSON.stringify(series_outer_tmp))
             setSeries_outer(series_outer_tmp)
+            // const drilldown_series_tmp = []
+            // for (let cat = 0; cat < categorias.length; cat++) {
+            //     const dataN2_tmp = []
+            //     for (let stack = 0; stack < tituloApiladas.length; stack++) {
+            //         const dataN2_2_tmp = []
+            //         for (let subCat = 0; subCat < subCategorias[cat].length; subCat++) {
+            //             dataN2_2_tmp.push({
+            //                 name: subCategorias[cat][subCat],
+            //                 y: dataN2[cat][subCat][stack]
+            //             })
+            //         }
+            //         dataN2_tmp.push({
+            //             name: tituloApiladas[stack],
+            //             color: colores[stack],
+            //             data: dataN2_2_tmp
+            //         })
+            //         drilldown_series_tmp.push({
+            //             name: tituloApiladas[stack],
+            //             id: categorias[cat],
+            //             color: colores[stack],
+            //             data: dataN2_tmp
+            //         })
+            //     }
+            // }
             const drilldown_series_tmp = []
             for (let cat = 0; cat < categorias.length; cat++) {
-                const data_tmp = []
-                for (let bar = 0; bar < tituloApiladas; bar++) {
-                    for (let subCat = 0; subCat < subCategorias.length; subCat++) {
-                        data_tmp.push([subCategorias[cat][subCat], dataN2[cat][bar][subCat]])
+                for (let stack = 0; stack < tituloApiladas.length; stack++) {
+                    const dataN2_tmp = []
+                    for (let subCat = 0; subCat < subCategorias[cat].length; subCat++) {
+                        const dataN2_2_tmp = []
+                        for (let stack = 0; stack < tituloApiladas.length; stack++) {
+                            dataN2_2_tmp.push({
+                                name: tituloApiladas[stack],
+                                y: dataN2[cat][subCat][stack]
+                            })
+                        }
+                        dataN2_tmp.push({
+                            name: subCategorias[cat][subCat],
+                            data: dataN2_2_tmp
+                        })
                     }
                     drilldown_series_tmp.push({
-                        [categorias[cat]]: {
-                            name: tituloApiladas[bar],
-                            color: colores[bar], 
-                            data: data_tmp
-                        }
+                        name: tituloApiladas[stack],
+                        id: categorias[cat],
+                        color: colores[stack],
+                        data: dataN2_tmp
                     })
                 }
             }
+            console.log("drilldown_series:")
+            console.log(JSON.stringify(drilldown_series_tmp))
             setDrilldown_series(drilldown_series_tmp)
         } else {
             setSeries_outer([])
@@ -223,6 +268,13 @@ const ColumnasApiladasDrilldown = ({ titulo, yLabel, seccion, formato, fechas, r
             enabled: false
         }
     }
+
+    useEffect(() => {
+        console.log("series_outer:")
+        console.log(series_outer)    
+        console.log("drilldown_series:")
+        console.log(drilldown_series)    
+    }, [drilldown_series])
 
     return (
         <Card>

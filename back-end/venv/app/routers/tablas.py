@@ -999,7 +999,7 @@ class Tablas():
                         'VarActual': varActual
 
                     }
-                    if self.filtros.canal == '1' or self.filtros.canal == '35' or self.filtros.canal == '36':
+                    if (self.filtros.canal == '1' or self.filtros.canal == '35' or self.filtros.canal == '36') and fila['objetivo'] is not None:
                         objeto['Objetivo'] = (round((fila['objetivo']), 2))
                     else:
                         objeto['Objetivo'] = 0

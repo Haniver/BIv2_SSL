@@ -187,38 +187,41 @@ class ColumnasApiladasDrilldown():
             print("Entró a ejemplo")
             hayResultados = 'si'
             pipeline = []
-            categorias = ['Izquierda', 'Centro', 'Derecha']
-            tituloApiladas = ['Arriba', 'Enmedio', 'Abajo']
+            categorias = ['2021', '2022', '2023']
+            tituloApiladas = ['Stack1', 'Stack2', 'Stack3']
             colores = ['#00FFFF', '#0000FF', '#808000'] # Color para las columnas que se apilan en cada punto del eje horizontal: arriba, enmedio y abajo, respectivamente
-            subCategorias = [ # Cada subarreglo corresponde a una categoría (p. ej., una región), y tiene las subcategorías de esa categoría (p. ej., zonas).
-                ['Izquierda1', 'Izquierda2', 'Izquierda3', 'Izquierda4'],
-                ['Centro1', 'Centro2', 'Centro3'],
-                ['Abajo1', 'Abajo2', 'Abajo3']
+            subCategorias = [ # Cada subarreglo corresponde a una categoría (p. ej., un año), y tiene las subcategorías de esa categoría (p. ej., meses).
+                ['Enero 2021', 'Febrero 2021', 'Marzo 2021', 'Abril 2021', 'Mayo 2021'],
+                ['Enero 2022', 'Febrero 2022', 'Marzo 2022', 'Abril 2022'],
+                ['Enero 2023', 'Febrero 2023', 'Marzo 2023']
             ]
-            dataArribaN1 = [1, 2, 3]
-            dataEnmedioN1 = [4, 5, 6]
-            dataAbajoN1 = [7, 8, 9]
-            DataIzquierdaArriba = [10, 11, 12, 4] # Fíjate cómo en este arreglo (y en los siguientes dos) hay 4 valores porque la categoría 'Izquierda' tiene 4 subcategorías
-            DataIzquierdaEnmedio = [13, 14, 15, 4]
-            DataIzquierdaAbajo = [16, 17, 18, 4]
-            DataCentroArriba = [19, 20, 21]
-            DataCentroEnmedio = [22, 23, 24]
-            DataCentroAbajo = [25, 26, 27]
-            DataDerechaArriba = [28, 29, 30]
-            DataDerechaEnmedio = [31, 32, 33]
-            DataDerechaAbajo = [34, 35, 36]
+            dataStack1N1 = [1, 2, 3]
+            dataStack2N1 = [4, 5, 6]
+            dataStack3N1 = [7, 8, 9]
+            DataStack1Ene = [10, 11, 12]
+            DataStack1Feb = [13, 14, 15]
+            DataStack1Mar= [16, 17, 18]
+            DataStack1Abr= [19, 20, 21]
+            DataStack1May= [19, 20, 21]
+            DataStack2Ene = [19, 20, 21]
+            DataStack2Feb = [22, 23, 24]
+            DataStack2Mar = [25, 26, 27]
+            DataStack2Abr = [25, 26, 27]
+            DataStack3Ene = [28, 29, 30]
+            DataStack3Feb = [31, 32, 33]
+            DataStack3Mar = [34, 35, 36]
 
-            dataN1 = [dataArribaN1, dataEnmedioN1, dataAbajoN1]
+            dataN1 = [dataStack1N1, dataStack2N1, dataStack3N1]
             dataN2 = [
                 [
-                    DataIzquierdaArriba, DataIzquierdaEnmedio, DataIzquierdaAbajo
+                    DataStack1Ene, DataStack1Feb, DataStack1Mar, DataStack1Abr, DataStack1May
                 ], [
-                    DataCentroArriba, DataCentroEnmedio, DataCentroAbajo
+                    DataStack2Ene, DataStack2Feb, DataStack2Mar, DataStack2Abr
                 ], [
-                    DataDerechaArriba, DataDerechaEnmedio, DataDerechaAbajo
+                    DataStack3Ene, DataStack3Feb, DataStack3Mar
                 ]
             ]
-            # Entonces para acceder a un dato de dataN2, tienes que hacer dataN2[índice categoría][índice de barra][índice de subcategoría]
+            # Entonces para acceder a un dato de dataN2, tienes que hacer dataN2[índice categoría][índice de subcategoría][índice de stack]
 
         return {'hayResultados':hayResultados, 'categorias':categorias, 'subCategorias':subCategorias, 'tituloApiladas': tituloApiladas, 'colores': colores, 'dataN1': dataN1, 'dataN2': dataN2, 'pipeline': pipeline}
 

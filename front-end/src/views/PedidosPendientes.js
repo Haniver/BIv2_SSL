@@ -7,7 +7,6 @@ import Pie from '../componentes/graficos/Pie'
 import Titulo from '../componentes/auxiliares/Titulo'
 import ColumnasBasicas from '../componentes/graficos/ColumnasBasicas'
 import EjesMultiples from '../componentes/graficos/EjesMultiples'
-import ColumnasApiladasDrilldown from '../componentes/graficos/ColumnasApiladasDrilldown'
 
 const PedidosPendientes = () => {
   const [tipoEntrega, setTipoEntrega] = useState('')
@@ -32,23 +31,7 @@ const PedidosPendientes = () => {
         </Col>
       </Row>
       <Row className='match-height'>
-        {/* <Col sm='12'>
-          <ErrorBoundary 
-            FallbackComponent={ErrorHandling.ErrorFallback} 
-            // onError={ErrorHandling.myErrorHandler} 
-            // onReset={() => {
-            //   // reset the state of the app
-            // }}
-          >
-            <Leyenda seccion={seccion} titulo='Última actualización:' />
-          </ErrorBoundary>
-        </Col> */}
       </Row>
-      {/* <Row className='match-height'>
-        <Col xl={tipoEntrega ? '12' : '6'} sm='12'>
-          <ColumnasApiladasDrilldown titulo='Ejemplo' seccion={seccion} formato='entero' yLabel='Pedidos' tipoEntrega={tipoEntrega} region={region} zona={zona} tienda={tienda} origen={origen} />
-        </Col>
-      </Row> */}
       <Row className='match-height'>
         <Col xl='6' sm='12'>
           <ColumnasBasicas extenderDerecha titulo='Pedidos pendientes de entrega' subtitulo = 'Pedidos Pendientes de Entrega Hoy' seccion={seccion} formato='entero' yLabel='Pedidos' tipoEntrega={tipoEntrega} region={region} zona={zona} tienda={tienda} origen={origen} coloresPedidosPendientes />
