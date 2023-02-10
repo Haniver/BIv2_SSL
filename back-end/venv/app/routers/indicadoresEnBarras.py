@@ -1,3 +1,13 @@
+# Regresa un arreglo de diccionarios con:
+# titulo: el título de la sección
+# formatoBarras: El formato del valor de las barras (moneda, entero, etc.)
+# data: Un arreglo que contiene diccionarios con cada uno de los indicadores en la sección, ya sean barras o los indicadores que aparecen a un lado de las barras. Cada diccionario contiene:
+  # titulo: La etiqueta de la barra
+  # valor: El valor numérico del indicador
+  # posicion: 'barra' o 'lado', dependiendo de cómo se muestre el indicador
+  # color: El color de la barra o texto (en el caso de que el indicador esté a un lado)
+  # formato: Solo para indicadores a un lado, indica el formato (moneda, porcentaje, entero, etc.)
+
 from fastapi import APIRouter, Depends, HTTPException, Request
 
 from app.auth import get_current_active_user
@@ -13,12 +23,12 @@ from inspect import stack
 from app.servicios.formatoFechas import mesTexto, ultimoDiaVencidoDelMesReal
 
 router = APIRouter(
-    prefix="/tarjetasEnFila",
+    prefix="/indicadoresEnBarras",
     # dependencies=[Depends(get_current_active_user)],
     responses={404: {"description": "Not found"}},
 )
 
-class TarjetasEnFila():
+class IndicadoresEnBarras():
     def __init__(self, filtros: Filtro, titulo: str):
         self.filtros = filtros
         # self.titulo = titulo
@@ -166,7 +176,7 @@ class TarjetasEnFila():
         cnxn = conexion_sql('DWH')
         cursor = cnxn.cursor().execute(query)
         arreglo = crear_diccionario(cursor)
-        # print(f"arreglo desde tarjetasEnFila: {str(arreglo)}")
+        print(f"arreglo desde tarjetasEnFila: {str(arreglo)}")
         if arreglo[0]['pedidos'] != 0 and arreglo[0]['pedidos'] is not None and arreglo[0]['venta'] is not None:
             valor = float(arreglo[0]['venta']/arreglo[0]['pedidos'])
         else:
@@ -303,105 +313,101 @@ class TarjetasEnFila():
         # print(f'Respuesta desde TarjetasCombinadas que realmente son tarjetasEnFila: {res_tmp}')
         res = [
             {
-                'titulo': f'Venta {self.anioElegido}',
-                'valor': res_tmp['Venta $anio'],
-                'icon': 'DollarSign',
-                'formato': 'moneda'
-            },
-            {
-                'titulo': f'Venta {self.anioElegido - 1} al {self.diaVencido} de {self.mesTexto}',
-                'valor': res_tmp['Venta $anioPasado al $dia de $mes'],
-                'icon': 'Calendar',
-                'formato': 'moneda'
-            },
-            {
-                'titulo': f'Objetivo {self.anioElegido} al {self.diaVencido} de {self.mesTexto}',
-                'valor': res_tmp['Objetivo $anioActual al $dia de $mes'],
-                'icon': 'Target',
-                'formato': 'moneda'
-            },
-            {
-                'titulo': f'Variación {self.anioElegido} vs. {self.anioElegido - 1}',
-                'valor': res_tmp['Variación $anioActual vs. $anioAnterior'],
-                'icon': 'Divide',
-                'formato': 'porcentaje'
-            },
-            {
-                'titulo': f'Variación Objetivo {self.anioElegido}',
-                'valor': res_tmp['Variación Objetivo $anioActual'],
-                'icon': 'DivideCircle',
-                'formato': 'porcentaje'
-            },
-            {
-                'titulo': f'Venta {self.mesTexto} {self.anioElegido}',
-                'valor': res_tmp['Venta $mes $anio'],
-                'icon': 'DollarSign',
-                'formato': 'moneda'
-            },
-            {
-                'titulo': f'Objetivo {self.mesTexto} {self.anioElegido}',
-                'valor': res_tmp['Objetivo $mes $anio'],
-                'icon': 'Target',
-                'formato': 'moneda'
-            },
-            {
-                'titulo': f'Proyección {self.mesTexto} {self.anioElegido}',
-                'valor': res_tmp['Proyección $mes $anio'],
-                'icon': 'FastForward',
-                'formato': 'moneda'
-            },
-            {
-                'titulo': f'Avance {self.mesTexto} {self.anioElegido}',
-                'valor': res_tmp['Avance $mes $anio'],
-                'icon': 'Navigation2',
-                'formato': 'porcentaje'
-            },
-            {
-                'titulo': f'Alcance {self.mesTexto} {self.anioElegido}',
-                'valor': res_tmp['Alcance $mes $anio'],
-                'icon': 'PieChart',
-                'formato': 'porcentaje'
-            },
-            {
-                'titulo': f'Venta 1 al {self.diaVencido} {self.mesTexto} {self.anioElegido}',
-                'valor': res_tmp['Venta 1 al $dia $mes $anioActual'],
-                'icon': 'DollarSign',
-                'formato': 'moneda'
-            },
-            {
-                'titulo': f'Objetivo 1 al {self.diaVencido} {self.mesTexto} {self.anioElegido}',
-                'valor': res_tmp['Objetivo 1 al $dia $mes $anio'],
-                'icon': 'Target',
-                'formato': 'moneda'
-            },
-            {
-                'titulo': f'Objetivo Vs. Venta al {self.diaVencido} {self.mesTexto} {self.anioElegido}',
-                'valor': res_tmp['Objetivo Vs. Venta al $dia $mes $anio'],
-                'icon': 'Navigation2',
-                'formato': 'porcentaje'
-            },
-            {
-                'titulo': f'Venta 1 al {self.diaVencido} {self.mesTexto} {self.anioElegido - 1}',
-                'valor': res_tmp['Venta 1 al $dia $mes $anioAnterior'],
-                'icon': 'Calendar',
-                'formato': 'moneda'
-            },
-            {
-                'titulo': f'Venta {self.anioElegido - 1} Vs. {self.anioElegido} al {self.diaVencido} {self.mesTexto}',
-                'valor': res_tmp['Venta $anioAnterior Vs. $anioActual al $dia $mes'],
-                'icon': 'DivideCircle',
-                'formato': 'porcentaje'
+                'titulo': f"<b>Anual</b>: {str(self.anioElegido)} al {str(self.diaElegido)} de {self.mesTexto}",
+                'formatoBarras': 'moneda',
+                'barras': [
+                    {
+                        # 'titulo': f'Venta {self.anioElegido}',
+                        # (1)
+                        'titulo': "Canal Propio",
+                        'valor': res_tmp['Venta $anio'],
+                        'color': 'secondary'
+                    },
+                    {
+                        # 'titulo': f'Objetivo {self.anioElegido} al {self.diaVencido} de {self.mesTexto}',
+                        # (2)
+                        'titulo': "Objetivo (a la fecha)",
+                        'valor': res_tmp['Objetivo $anioActual al $dia de $mes'],
+                        'color': 'light'
+                    },
+                    {
+                        # 'titulo': f'Venta {self.anioElegido - 1} al {self.diaVencido} de {self.mesTexto}',
+                        # (3)
+                        'titulo': "Año Anterior (a la fecha)",
+                        'valor': res_tmp['Venta $anioPasado al $dia de $mes'],
+                        'color': 'dark'
+                    }
+                ],
+                'laterales': [
+                    {
+                        # Parece que esto es Variación vs. Objetivo Anual (el que va solo)
+                        # 'titulo': f'Variación Objetivo {self.anioElegido}',
+                        # (4)
+                        'titulo': "Variación vs. Objetivo",
+                        'valor': res_tmp['Variación Objetivo $anioActual'],
+                        'formato': 'porcentaje'
+                    },
+                    {
+                        # 'titulo': f'Variación {self.anioElegido} vs. {self.anioElegido - 1}',
+                        # (9)
+                        'titulo': f'Variación vs. {self.anioElegido - 1}',
+                        'valor': res_tmp['Variación $anioActual vs. $anioAnterior'],
+                        'formato': 'porcentaje'
+                    },
+                ]
+            }, {
+                'titulo': f"<b>Mensual</b>: {self.mesTexto} {str(self.anioElegido)}",
+                'formatoBarras': 'moneda',
+                'barras': [
+                    {
+                        # 'titulo': f'Venta {self.mesTexto} {self.anioElegido}',
+                        # (5)
+                        'titulo': "Canal Propio",
+                        'valor': res_tmp['Venta $mes $anio'],
+                        'color': 'secondary'
+                    },
+                    {
+                        # 'titulo': f'Objetivo {self.mesTexto} {self.anioElegido}',
+                        # (6)
+                        'titulo': f'Objetivo mensual',
+                        'valor': res_tmp['Objetivo $mes $anio'],
+                        'color': 'light'
+                    },
+                    {
+                        # 'titulo': f'Venta 1 al {self.diaVencido} {self.mesTexto} {self.anioElegido - 1}',
+                        # (7)
+                        'titulo': f'Año Anterior (a la fecha)',
+                        'valor': res_tmp['Venta 1 al $dia $mes $anioAnterior'],
+                        'color': 'dark'
+                    }
+                ],
+                'laterales': [
+                    {
+                        # 'titulo': f'Objetivo Vs. Venta al {self.diaVencido} {self.mesTexto} {self.anioElegido}',
+                        # (8)
+                        'titulo': f'Variación vs. Objetivo Mensual',
+                        'valor': res_tmp['Objetivo Vs. Venta al $dia $mes $anio'],
+                        'color': 'danger'
+                    },
+                    {
+                        # 'titulo': f'Venta {self.anioElegido - 1} Vs. {self.anioElegido} al {self.diaVencido} {self.mesTexto}',
+                        # (10)
+                        'titulo': f'Variación vs. {str({self.anioElegido - 1})}',
+                        'valor': res_tmp['Venta $anioAnterior Vs. $anioActual al $dia $mes'],
+                        'color': 'danger'
+                    }
+                ]
             }
         ]
         return {'res': res, 'pipeline': query}
 
 @router.post("/{seccion}")
-async def tarjetasEnFila (filtros: Filtro, titulo: str, seccion: str, request: Request, user: dict = Depends(get_current_active_user)):
+async def indicadoresEnBarras (filtros: Filtro, titulo: str, seccion: str, request: Request, user: dict = Depends(get_current_active_user)):
     # print("El usuario desde tarjetas .py es: {str(user)}")
     loguearConsulta(stack()[0][3], user.usuario, seccion, titulo, filtros, request.client.host)
     if tienePermiso(user.id, seccion):
         try:
-            objeto = TarjetasEnFila(filtros, titulo)
+            objeto = IndicadoresEnBarras(filtros, titulo)
             funcion = getattr(objeto, seccion)
             diccionario = await funcion()
         except:

@@ -53,7 +53,7 @@ class EjesMultiplesApilados():
             group by hora, estatus
             order by hora, estatus
             """
-            # print(f"Query desde EjesMultiplesApilados -> Temporada: {query}")
+            # print(f"Query desde EjesMultiplesApilados -> Temporada -> {self.titulo}: {query}")
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(query)
             arreglo = crear_diccionario(cursor)
@@ -202,7 +202,7 @@ class EjesMultiplesApilados():
                 and format(a.fecha,'yyyyMM')=co.nMes
                 order by fecha
             """
-            print (f"query desde ejesMultiplesApilados->Temporada->Pedidos por día: {str(query)}")
+            # print (f"query desde ejesMultiplesApilados->Temporada->Pedidos por día: {str(query)}")
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(query)
             arreglo = crear_diccionario(cursor)

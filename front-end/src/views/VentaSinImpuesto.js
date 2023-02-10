@@ -5,8 +5,8 @@ import Tarjeta from '../componentes/auxiliares/Tarjeta'
 import fechas_srv from '../services/fechas_srv'
 import EjesMultiples from '../componentes/graficos/EjesMultiples'
 import Tabla from '../componentes/tablas/Tabla'
-import tarjetasCombinadas from '../services/tarjetasCombinadas'
 import TarjetaEnFila from '../componentes/auxiliares/TarjetaEnFila'
+import IndicadoresEnBarras from '../componentes/auxiliares/IndicadoresEnBarras'
 import Leyenda from '../componentes/auxiliares/Leyenda'
 // import userService from '../services/user.service'
 
@@ -61,7 +61,8 @@ const VentaSinImpuesto = () => {
       </Row>
       <Row className='match-height'>
         <Col sm='12'>
-          <TarjetaEnFila seccion={seccion} formato='moneda' titulo='Indicadores' cols={{ xl: '4', sm: '6' }} fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto}/>
+          {/* <IndicadoresEnBarras seccion={seccion} formato='moneda' titulo='Indicadores de Venta' cols={{ xl: '4', sm: '6' }} fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto}/> */}
+          <TarjetaEnFila seccion={seccion} formato='moneda' titulo='Indicadores de Venta' cols={{ xl: '4', sm: '6' }} fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto}/>
         </Col>
       </Row>
       <Row className='match-height'>
