@@ -4,7 +4,7 @@ import axios from 'axios'
 import CustomUrls from '../../services/customUrls'
 import { ThemeColors } from '@src/utility/context/ThemeColors'
 import { useSkin } from '@hooks/useSkin'
-import { Card, CardBody, Input, Button, CardTitle } from 'reactstrap'
+import { Card, CardBody, Input, Button, CardTitle, CardSubtitle } from 'reactstrap'
 import { Link } from 'react-router-dom'
 import DataTable from 'react-data-table-component'
 import LoadingGif from '../auxiliares/LoadingGif'
@@ -29,7 +29,7 @@ const FilterComponent = ({ filterText, onFilter, onClear }) => (
     </>
 )
 
-const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quitarPaginacion, fechas, region, zona, tienda, proveedor, tipoEntrega, depto, subDepto, mes, canal, agrupador, periodo, reload, setProducto, setUsuario, setEstatus, tipoEntrega2, tipoEntrega3, detalle, estatus, formato, sku, e3, canal2, opcionesPaginacion = [5, 10, 15], setSibling, botonEnviar, mesRFM, anioRFM, fromSibling, origen, anio, metodoEnvio, provLogist}) => {
+const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quitarPaginacion, fechas, region, zona, tienda, proveedor, tipoEntrega, depto, subDepto, mes, canal, agrupador, periodo, reload, setProducto, setUsuario, setEstatus, tipoEntrega2, tipoEntrega3, detalle, estatus, formato, sku, e3, canal2, opcionesPaginacion = [5, 10, 15], setSibling, botonEnviar, mesRFM, anioRFM, fromSibling, origen, anio, metodoEnvio, provLogist, subtitulo}) => {
     const tituloEnviar = (tituloAPI !== undefined) ? tituloAPI : titulo
     // Skins
     const [skin, setSkin] = useSkin()
@@ -555,6 +555,7 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
                 {hayError && <p classname='texto-rojo'>{`Error en la carga del componente "${titulo}" el ${fechas_srv.fechaYHoraActual()}`}</p>}
                 {!hayError && estadoLoader.contador === 0 && <>
                 <CardTitle className='centrado'>{titulo}</CardTitle>
+                {subtitulo && <CardSubtitle className='centrado'>{subtitulo}</CardSubtitle>}
                 <DataTable
                     title=''
                     columns={columns}

@@ -5,9 +5,8 @@ from app.auth import get_current_active_user
 from app.servicios.conectar_mongo import conexion_mongo
 from app.servicios.Filtro import Filtro
 from datetime import datetime, date, timedelta, time
-from app.servicios.formatoFechas import mesTexto
 from app.servicios.conectar_sql import conexion_sql, crear_diccionario
-from app.servicios.formatoFechas import fechaAbrevEspanol
+from app.servicios.formatoFechas import fechaAbrevEspanol, ddmmyyyy, mesTexto
 from copy import deepcopy
 from calendar import monthrange
 import json
@@ -15,7 +14,6 @@ from app.servicios.permisos import tienePermiso
 from app.servicios.logs import loguearConsulta, loguearError
 import traceback
 from inspect import stack
-from app.servicios.formatoFechas import ddmmyyyy
 
 router = APIRouter(
     prefix="/ejesMultiples",
@@ -179,7 +177,7 @@ class EjesMultiples():
                 categories = []
                 series = []
 
-        if self.titulo == 'Venta mensual por día: $anioActual vs. $anioAnterior y Objetivo':
+        if self.titulo == 'Venta mensual por día: $anioActual vs. $anioAnterior (fecha comparable) y Objetivo':
             mod_titulo_serie = f"{mesTexto(mesElegido)} "
             serie1 = []
             serie2 = []
@@ -187,32 +185,65 @@ class EjesMultiples():
             serie4 = []
             serie5 = []
 
-            pipeline = f"""select dt.descrip_fecha categoria,
-            sum(case when anio={anioElegido-1} then isnull (ventaSinImpuestos, 0) else 0 end) AAnterior,
-            sum(case when anio={anioElegido} then isnull (ventaSinImpuestos, 0) else 0 end) AActual,
-            sum(case when anio={anioElegido} then objetivo else 0 end) objetivo
-            from DWH.artus.ventaDiaria vd
-            left join DWH.dbo.dim_tiempo dt on vd.fecha=dt.id_fecha
-            left join DWH.artus.catTienda ct on vd.idTienda =ct.tienda
-            left join DWH.artus.catCanal cc on vd.idCanal =cc.idCanal
-            left join DWH.artus.cat_departamento cd on vd.subDepto = cd.idSubDepto
-            where dt.anio in ({anioElegido},{anioElegido-1})
-            and dt.abrev_mes = '{mesTexto(mesElegido)}'
-            and cc.tipo in ({canal}) """
+            filtrosAdicionales = ''
             if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
                 if self.filtros.zona != '' and self.filtros.zona != "False" and self.filtros.zona != None:
                     if self.filtros.tienda != '' and self.filtros.tienda != "False" and self.filtros.tienda != None:
-                        pipeline += f""" and ct.tienda = {self.filtros.tienda} """
+                        filtrosAdicionales += f""" and ct.tienda = {self.filtros.tienda} """
                     else:
-                        pipeline += f""" and ct.zona = {self.filtros.zona} """
+                        filtrosAdicionales += f""" and ct.zona = {self.filtros.zona} """
                 else:
-                    pipeline += f""" and ct.region = {self.filtros.region} """
+                    filtrosAdicionales += f""" and ct.region = {self.filtros.region} """
             if self.filtros.depto != '' and self.filtros.depto != "False" and self.filtros.depto != None:
                 if self.filtros.subDepto != '' and self.filtros.subDepto != "False" and self.filtros.subDepto != None:
-                    pipeline += f""" and cd.idSubDepto = {self.filtros.subDepto} """
+                    filtrosAdicionales += f""" and cd.idSubDepto = {self.filtros.subDepto} """
                 else:
-                    pipeline += f""" and cd.idDepto = {self.filtros.depto} """
-            pipeline += f" group by dt.descrip_fecha order by dt.descrip_fecha "
+                    filtrosAdicionales += f""" and cd.idDepto = {self.filtros.depto} """
+
+            pipeline = f"""
+                SELECT  dt.fecha
+                    ,b.a AAnterior
+                    ,convert(date,CONVERT (varchar,dt.fechaComparacion)) fechaComparacion
+                    ,SUM(case WHEN anio = {anioElegido} THEN isnull (ventaSinImpuestos,0) else 0 end) AActual
+                    ,SUM(case WHEN anio = {anioElegido} THEN objetivo else 0 end) objetivo
+                FROM
+                (
+                    SELECT  dt2.id_fecha f
+                        ,SUM(case WHEN anio = {anioElegido} THEN isnull (ventaSinImpuestos,0) else 0 end) a
+                    FROM DWH.artus.ventaDiaria vd2
+                    LEFT JOIN DWH.dbo.dim_tiempo dt2
+                    ON dt2.fechaComparacion = vd2.fecha
+                    LEFT JOIN DWH.artus.catTienda ct2
+                    ON vd2.idTienda = ct2.tienda
+                    LEFT JOIN DWH.artus.catCanal cc2
+                    ON vd2.idCanal = cc2.idCanal
+                    LEFT JOIN DWH.artus.cat_departamento cd2
+                    ON vd2.subDepto = cd2.idSubDepto
+                    WHERE dt2.anio IN ({anioElegido})
+                    {filtrosAdicionales}
+                    AND dt2.abrev_mes = '{mesTexto(mesElegido)}'
+                    AND cc2.tipo IN ({canal})
+                    GROUP BY  dt2.id_fecha
+                ) b
+                LEFT JOIN DWH.artus.ventaDiaria vd
+                ON b.f = vd.fecha
+                LEFT JOIN DWH.dbo.dim_tiempo dt
+                ON vd.fecha = dt.id_fecha
+                LEFT JOIN DWH.artus.catTienda ct
+                ON vd.idTienda = ct.tienda
+                LEFT JOIN DWH.artus.catCanal cc
+                ON vd.idCanal = cc.idCanal
+                LEFT JOIN DWH.artus.cat_departamento cd
+                ON vd.subDepto = cd.idSubDepto
+                WHERE dt.anio IN ({anioElegido}, {anioElegido - 1})
+                {filtrosAdicionales}
+                AND dt.abrev_mes = '{mesTexto(mesElegido)}'
+                AND cc.tipo IN ({canal})
+                GROUP BY  dt.fecha
+                        ,b.a
+                        ,convert(date,CONVERT (varchar,dt.fechaComparacion))
+                ORDER BY dt.fecha
+            """
             # print(f"Query desde EjesMultiples -> VentaSinImpuesto -> {self.titulo}: {pipeline}")
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
@@ -221,7 +252,7 @@ class EjesMultiples():
             if len(arreglo) > 0:
                 hayResultados = "si"
                 for i in range(len(arreglo)):
-                    categories.append(arreglo[i]['categoria'])
+                    categories.append(fechaAbrevEspanol(arreglo[i]['fecha']))
                     serie1.append(round((arreglo[i]['AAnterior']), 2))
                     serie2.append(round((arreglo[i]['AActual']), 2))
                     if arreglo[i]['AAnterior'] != 0:

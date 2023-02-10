@@ -43,17 +43,6 @@ const IndicadoresEnBarras = ({ cols, icono, titulo, tituloAPI, seccion, classNam
   const { colors } = useContext(ThemeColors)
 
   const [bloques, setBloques] = useState([{highcharts: Highcharts, options: {}, laterales: []}])
-  const updateBloques = async (opcionesFila, lateralesTmp) => {
-    await setBloques(prevBloques => [
-      ...prevBloques,
-      {
-        highcharts: Highcharts,
-        options: opcionesFila,
-        laterales: lateralesTmp
-      }
-    ])
-  }
-  
 
   useEffect(() => {
     console.log("bloques:")
@@ -94,7 +83,7 @@ const IndicadoresEnBarras = ({ cols, icono, titulo, tituloAPI, seccion, classNam
       })
       resultado_tmp = res.data.res
       dispatchLoader({tipo: 'recibirDeAPI'})
-      let visitado  = false
+      // let visitado  = false
       // Iteramos sobre el resultado y obtenemos cada bloque de indicadores:
       resultado_tmp.forEach(fila => {
         // Empezamos con el gráfico de barras
@@ -171,42 +160,42 @@ const IndicadoresEnBarras = ({ cols, icono, titulo, tituloAPI, seccion, classNam
           }
         }
         // Seguimos con los indicadores laterales (los que vienen sueltos)
-        // const laterales_tmp = []
-        // fila.laterales.forEach(indicador => {
-        //   let formato = ''
-        //   if (indicador.formato === 'moneda') {
-        //     formato = new Intl.NumberFormat('es-MX', {
-        //       style: 'currency',
-        //       currency: 'MXN'
-        //     })
-        //   } else if (indicador.formato === 'porcentaje') {
-        //     formato = new Intl.NumberFormat('es-MX', {
-        //       style: 'percent',
-        //       minimumFractionDigits: 2,
-        //       maximumFractionDigits: 2
-        //     })
-        //   } else {
-        //     formato = new Intl.NumberFormat('es-MX', {
-        //       maximumFractionDigits: 0
-        //     })
-        //   }
-        //   laterales_tmp.push({
-        //     valor: formato.format(indicador.valor),
-        //     color: ((indicador.valor) < 0) ? colors['danger'].main : colors['dark'].main,
-        //     titulo: indicador.titulo
-        //   })
-        // })
-        // console.log("laterales:")
-        // console.log(laterales_tmp)
-        // console.log("Uno")
+        const laterales_tmp = []
+        fila.laterales.forEach(indicador => {
+          let formato = ''
+          if (indicador.formato === 'moneda') {
+            formato = new Intl.NumberFormat('es-MX', {
+              style: 'currency',
+              currency: 'MXN'
+            })
+          } else if (indicador.formato === 'porcentaje') {
+            formato = new Intl.NumberFormat('es-MX', {
+              style: 'percent',
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2
+            })
+          } else {
+            formato = new Intl.NumberFormat('es-MX', {
+              maximumFractionDigits: 0
+            })
+          }
+          laterales_tmp.push({
+            valor: formato.format(indicador.valor),
+            color: ((indicador.valor) < 0) ? colors['danger'].main : colors['dark'].main,
+            titulo: indicador.titulo
+          })
+        })
+        console.log("laterales:")
+        console.log(laterales_tmp)
+        console.log("Uno")
         // if (!visitado) {
         //   // setBloques([{highcharts: Highcharts, options: opciones_fila, laterales: laterales_tmp}])
         //   await updateBloques(opciones_fila, laterales_tmp)
         // } else {
-        //   // setBloques([...bloques, {highcharts: Highcharts, options: opciones_fila, laterales: laterales_tmp}])
-        //   await updateBloques(opciones_fila, laterales_tmp)
+          setBloques([...bloques, {highcharts: Highcharts, options: opciones_fila, laterales: laterales_tmp}])
+          // await updateBloques(opciones_fila, laterales_tmp)
         // }
-        visitado = true
+        // visitado = true
         console.log("Dos")
       })
       console.log("Tres")

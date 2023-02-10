@@ -77,7 +77,7 @@ const VentaSinImpuesto = () => {
       </Row>}
       <Row className='match-height'>
         <Col sm='12'>
-          <EjesMultiples titulo={`Venta mensual por día: ${anio} vs. ${anio - 1} y Objetivo`} tituloAPI='Venta mensual por día: $anioActual vs. $anioAnterior y Objetivo' formato='moneda' yLabel='Pesos' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} mes={mes} seccion={seccion} />
+          <EjesMultiples titulo={`Venta mensual por día: ${anio} vs. ${anio - 1} (fecha comparable) y Objetivo`} tituloAPI='Venta mensual por día: $anioActual vs. $anioAnterior (fecha comparable) y Objetivo' formato='moneda' yLabel='Pesos' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} mes={mes} seccion={seccion} quitarCategoriaDeTooltip />
         </Col>
       </Row>
       {(tienda === false || tienda === '') && <Row className='match-height'>
@@ -92,7 +92,7 @@ const VentaSinImpuesto = () => {
       </Row>}
       <Row className='match-height'>
         <Col sm='12'>
-          <Tabla quitarBusqueda={true} titulo='Venta sin impuesto por Departamento o Sub Departamento' formato='moneda' yLabel='Pesos' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} mes={mes} seccion={seccion} />
+          <Tabla quitarBusqueda={true} titulo='Venta sin impuesto por Departamento o Sub Departamento' subtitulo='Acumulado del mes' formato='moneda' yLabel='Pesos' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} mes={mes} seccion={seccion} />
         </Col>
       </Row>
       {(tienda === false || tienda === '') && <Row className='match-height'>

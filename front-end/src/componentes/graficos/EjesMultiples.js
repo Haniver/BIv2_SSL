@@ -21,7 +21,7 @@ require('highcharts/modules/data')(Highcharts)
 require('highcharts/modules/exporting')(Highcharts)
 require('highcharts/modules/export-data')(Highcharts)
 
-const EjesMultiples = ({ titulo, yLabel, seccion, formato, fechas, region, zona, tienda, proveedor, categoria, tipoEntrega, tituloAPI, canal, mes, depto, subDepto, agrupador, periodo, nps, anioRFM, mesRFM, anio, provLogist }) => {
+const EjesMultiples = ({ titulo, yLabel, seccion, formato, fechas, region, zona, tienda, proveedor, categoria, tipoEntrega, tituloAPI, canal, mes, depto, subDepto, agrupador, periodo, nps, anioRFM, mesRFM, anio, provLogist, quitarCategoriaDeTooltip }) => {
     const [hayError, setHayError] = useState(false)
     const tituloEnviar = (tituloAPI) ? tituloAPI : titulo // Como la API usa el título de la gráfica para regresar su valor, había un problema cuando ese título es variable, como cuando incluye la fecha actual. Entonces, si desde la vista le mandas el prop tituloAPI, es ese el que se usa para la API. Si lo omites, se usa la variable titulo como estaba pensado originalmente
     const [estadoLoader, dispatchLoader] = useReducer((estadoLoader, accion) => {
@@ -141,7 +141,8 @@ const EjesMultiples = ({ titulo, yLabel, seccion, formato, fechas, region, zona,
                                 }
                                 const punto = this.options.y
                             return `${this.series.name}: <b>${valuePrefix}${Highcharts.numberFormat(punto, valueDecimals, '.', ',')}${valueSuffix}</b>`
-                        }
+                        },
+                        headerFormat: (quitarCategoriaDeTooltip) ? '' : '{point.key}<br>'
                     }
                 })
             })
