@@ -392,7 +392,7 @@ class IndicadoresEnBarras():
                     {
                         # 'titulo': f'Venta {self.anioElegido - 1} Vs. {self.anioElegido} al {self.diaVencido} {self.mesTexto}',
                         # (10)
-                        'titulo': f'Variación vs. {str({self.anioElegido - 1})}',
+                        'titulo': f'Variación vs. {str(self.anioElegido - 1)}',
                         'valor': res_tmp['Venta $anioAnterior Vs. $anioActual al $dia $mes'],
                         'formato': 'porcentaje'
                     }
