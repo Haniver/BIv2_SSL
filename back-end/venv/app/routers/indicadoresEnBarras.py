@@ -343,7 +343,7 @@ class IndicadoresEnBarras():
                         # Parece que esto es Variación vs. Objetivo Anual (el que va solo)
                         # 'titulo': f'Variación Objetivo {self.anioElegido}',
                         # (4)
-                        'titulo': "Variación vs. Objetivo",
+                        'titulo': "Variación vs. Objetivo Anual",
                         'valor': res_tmp['Variación Objetivo $anioActual'],
                         'formato': 'porcentaje'
                     },
