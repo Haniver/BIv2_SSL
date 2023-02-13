@@ -61,8 +61,8 @@ const VentaSinImpuesto = () => {
       </Row>
       <Row className='match-height'>
         <Col sm='12'>
-          {/* <IndicadoresEnBarras seccion={seccion} formato='moneda' titulo='Indicadores de Venta' cols={{ xl: '4', sm: '6' }} fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto}/> */}
-          <TarjetaEnFila seccion={seccion} formato='moneda' titulo='Indicadores de Venta' cols={{ xl: '4', sm: '6' }} fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto}/>
+          <IndicadoresEnBarras seccion={seccion} formato='moneda' titulo='Indicadores de Venta' cols={{ xl: '4', sm: '6' }} fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto}/>
+          {/* <TarjetaEnFila seccion={seccion} formato='moneda' titulo='Indicadores de Venta' cols={{ xl: '4', sm: '6' }} fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto}/> */}
         </Col>
       </Row>
       <Row className='match-height'>

@@ -387,14 +387,14 @@ class IndicadoresEnBarras():
                         # (8)
                         'titulo': f'Variación vs. Objetivo Mensual',
                         'valor': res_tmp['Objetivo Vs. Venta al $dia $mes $anio'],
-                        'color': 'danger'
+                        'formato': 'porcentaje'
                     },
                     {
                         # 'titulo': f'Venta {self.anioElegido - 1} Vs. {self.anioElegido} al {self.diaVencido} {self.mesTexto}',
                         # (10)
                         'titulo': f'Variación vs. {str({self.anioElegido - 1})}',
                         'valor': res_tmp['Venta $anioAnterior Vs. $anioActual al $dia $mes'],
-                        'color': 'danger'
+                        'formato': 'porcentaje'
                     }
                 ]
             }

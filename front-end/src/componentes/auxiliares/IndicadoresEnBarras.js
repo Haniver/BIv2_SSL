@@ -11,7 +11,6 @@ import { useSkin } from '@hooks/useSkin'
 require('highcharts/modules/data')(Highcharts)
 require('highcharts/modules/exporting')(Highcharts)
 require('highcharts/modules/export-data')(Highcharts)
-import useBloques from './useBloques'
 
 // ** Custom Components
 import Avatar from '@components/avatar'
@@ -43,18 +42,20 @@ const IndicadoresEnBarras = ({ cols, icono, titulo, tituloAPI, seccion, classNam
   const { colors } = useContext(ThemeColors)
 
   const [bloques, setBloques] = useState([{highcharts: Highcharts, options: {}, laterales: []}])
-
-  useEffect(() => {
-    console.log("bloques:")
-    console.log(bloques)
-    console.log(`bloques[0].laterales = ${bloques[0].laterales} ~ bloques[0].laterales.length = ${bloques[0].laterales.length}`)
-    if (bloques.length > 1) {
-      console.log(`bloques[1].laterales = ${bloques[1].laterales} ~ bloques[1].laterales.length = ${bloques[1].laterales.length}`)
-    } else {
-      console.log("Y no hay bloques[1]")
-    }
-  }, [bloques])
-  useEffect(async () => {
+  const updateBloques = async (opcionesFila, lateralesTmp) => {
+    return new Promise((resolve, reject) => {
+      setBloques(prevBloques => [
+        ...prevBloques,
+        {
+          highcharts: Highcharts,
+          options: opcionesFila,
+          laterales: lateralesTmp
+        }
+      ])
+      resolve()
+    })
+  }
+  const fetchData = async () => {
     let resultado_tmp = 3.1416
     let hayResultados = 'no'
     if (resAPI !== undefined) {
@@ -85,14 +86,18 @@ const IndicadoresEnBarras = ({ cols, icono, titulo, tituloAPI, seccion, classNam
       dispatchLoader({tipo: 'recibirDeAPI'})
       // let visitado  = false
       // Iteramos sobre el resultado y obtenemos cada bloque de indicadores:
-      resultado_tmp.forEach(fila => {
+      let contador = 1
+      resultado_tmp.forEach(async fila => {
         // Empezamos con el gráfico de barras
+        contador += 1
         const seriesData_fila = []
+        let contador2 = 1
         fila.barras.forEach(indicador => {
+          contador2 += 1
           const color = (['primary', 'secondary', 'success', 'info', 'warning', 'danger', 'light', 'dark'].includes(indicador.color)) ? colors[indicador.color].main : indicador.color
           seriesData_fila.push({name: indicador.titulo, y: indicador.valor, color})
-        })
-        const opciones_fila = {
+        })  
+        const opcionesFila = {
           chart: {
               type: 'bar',
               height: 150
@@ -159,8 +164,9 @@ const IndicadoresEnBarras = ({ cols, icono, titulo, tituloAPI, seccion, classNam
             enabled: false
           }
         }
+        
         // Seguimos con los indicadores laterales (los que vienen sueltos)
-        const laterales_tmp = []
+        const lateralesTmp = []
         fila.laterales.forEach(indicador => {
           let formato = ''
           if (indicador.formato === 'moneda') {
@@ -179,51 +185,39 @@ const IndicadoresEnBarras = ({ cols, icono, titulo, tituloAPI, seccion, classNam
               maximumFractionDigits: 0
             })
           }
-          laterales_tmp.push({
+          lateralesTmp.push({
             valor: formato.format(indicador.valor),
             color: ((indicador.valor) < 0) ? colors['danger'].main : colors['dark'].main,
             titulo: indicador.titulo
           })
         })
-        console.log("laterales:")
-        console.log(laterales_tmp)
-        console.log("Uno")
-        // if (!visitado) {
-        //   // setBloques([{highcharts: Highcharts, options: opciones_fila, laterales: laterales_tmp}])
-        //   await updateBloques(opciones_fila, laterales_tmp)
-        // } else {
-          setBloques([...bloques, {highcharts: Highcharts, options: opciones_fila, laterales: laterales_tmp}])
-          // await updateBloques(opciones_fila, laterales_tmp)
-        // }
-        // visitado = true
-        console.log("Dos")
+        
+        await updateBloques(opcionesFila, lateralesTmp)
       })
-      console.log("Tres")
     }
-    console.log("Cuatro")
-    // setOptions(copiaOpciones)
+  }
+  useEffect(() => {
+    fetchData()
   }, [fechas, region, zona, tienda, canal, depto, subDepto, mesRFM, anioRFM])
 
   return (
     <Card>
       <CardBody className={className}>
       <CardTitle className='centrado'>{titulo}</CardTitle>
-      {/* {estadoLoader.contador === 0 && resAPI !== 'cargando' && bloques[0].laterales.length > 0 && bloques.map((bloque, index) => ( */}
-      {estadoLoader.contador === 0 && resAPI !== 'cargando' && bloques.map((bloque, index) => (
-        <Row key={index}>
+      {estadoLoader.contador === 0 && resAPI !== 'cargando' && bloques.filter(bloque => Object.keys(bloque.options).length > 0).map((bloque, index) => (
+        <Row key={index} style={{display: 'flex', alignItems: 'center'}}>
           <Col sm='12' lg={String(12 - (bloque.laterales.length * 2))}>
             <HighchartsReact
               highcharts={bloque.highcharts}
               options={bloque.options}
             />
           </Col>
-          { /*bloque.laterales.map((lateral, index2) => (
+          {bloque.laterales.map((lateral, index2) => (
             <Col sm='12' lg='2' className='centrado' key={(index * 100) + index2}>
-              <h1 style={`color: ${lateral.color}; font-weight: bold;`}>{lateral.valor}</h1>
+            <h1 style={{ color: lateral.color, fontWeight: 'bold' }}>{lateral.valor}</h1>
               <p>{lateral.titulo}</p>
-              <p>Algo por aquí</p>
             </Col>
-          )) */}
+          ))}
         </Row>
       ))}
       {/* {(estadoLoader.contador !== 0 || resAPI === 'cargando' || bloques[0].laterales.length > 0) && <LoadingGif />} */}
