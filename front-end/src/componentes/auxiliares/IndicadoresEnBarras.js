@@ -42,18 +42,25 @@ const IndicadoresEnBarras = ({ cols, icono, titulo, tituloAPI, seccion, classNam
   const { colors } = useContext(ThemeColors)
 
   const [bloques, setBloques] = useState([{highcharts: Highcharts, options: {}, laterales: []}])
-  const updateBloques = async (opcionesFila, lateralesTmp) => {
-    return new Promise((resolve, reject) => {
-      setBloques(prevBloques => [
-        ...prevBloques,
-        {
-          highcharts: Highcharts,
-          options: opcionesFila,
-          laterales: lateralesTmp
-        }
-      ])
-      resolve()
-    })
+  const updateBloques = async (opcionesFila, lateralesTmp, reset = false) => {
+    if (reset) {
+      return new Promise((resolve, reject) => {
+        setBloques([{highcharts: Highcharts, options: {}, laterales: []}])
+        resolve()
+      })
+    } else {
+      return new Promise((resolve, reject) => {
+        setBloques(prevBloques => [
+          ...prevBloques,
+          {
+            highcharts: Highcharts,
+            options: opcionesFila,
+            laterales: lateralesTmp
+          }
+        ])
+        resolve()
+      })
+    }
   }
   const fetchData = async () => {
     let resultado_tmp = 3.1416
@@ -85,15 +92,10 @@ const IndicadoresEnBarras = ({ cols, icono, titulo, tituloAPI, seccion, classNam
       resultado_tmp = res.data.res
       dispatchLoader({tipo: 'recibirDeAPI'})
       // let visitado  = false
-      // Iteramos sobre el resultado y obtenemos cada bloque de indicadores:
-      let contador = 1
       resultado_tmp.forEach(async fila => {
-        // Empezamos con el gráfico de barras
-        contador += 1
+        await updateBloques({}, [], true)
         const seriesData_fila = []
-        let contador2 = 1
         fila.barras.forEach(indicador => {
-          contador2 += 1
           const color = (['primary', 'secondary', 'success', 'info', 'warning', 'danger', 'light', 'dark'].includes(indicador.color)) ? colors[indicador.color].main : indicador.color
           seriesData_fila.push({name: indicador.titulo, y: indicador.valor, color})
         })  
