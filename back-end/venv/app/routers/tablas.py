@@ -1923,11 +1923,11 @@ class Tablas():
                             {'$dayOfMonth': '$fechaPP'}
                         ]}
                     ])
-                print(f"Pipeline desde Tablas -> PedidoPerfecto -> {self.titulo}: {str(pipeline)}")
+                # print(f"Pipeline desde Tablas -> PedidoPerfecto -> {self.titulo}: {str(pipeline)}")
                 # Ejecutamos el query:
                 cursor = collection.aggregate(pipeline)
                 arreglo = await cursor.to_list(length=None)
-                # print(str(arreglo))
+                print(f"Arreglo desde Tablas -> PedidoPerfecto -> {self.titulo}: {str(arreglo)}")
                 if len(arreglo) >0:
                     hayResultados = "si"
                     # Creamos los arreglos que alimentarán la tabla:
@@ -1995,7 +1995,7 @@ class Tablas():
                     hayResultados = 'no'
             else:
                 hayResultados = 'no'
-        print(f"Query desde tabla {self.titulo} en pedidoPerfecto: {str(pipeline)}")
+        # print(f"Query desde tabla {self.titulo} en pedidoPerfecto: {str(pipeline)}")
         return {'hayResultados':hayResultados, 'pipeline': pipeline, 'columns':columns, 'data':data}
         # Return para debugging:
         # return {'hayResultados':'no', 'pipeline': [], 'columns':[], 'data':[]}

@@ -11,6 +11,7 @@ import { nthElement } from '../../services/funcionesAdicionales'
 import UserService from '../../services/user.service'
 import { Users } from 'react-feather'
 import Lupita from '@src/assets/images/lupita.png'
+import LoadingGif from './LoadingGif'
 
 const Filtro = (props) => {
   // console.log(`Tienda en Filtro=${props.tienda}`)
@@ -268,8 +269,19 @@ const Filtro = (props) => {
   const [comboNps, setComboNps] = useState([{value:'', label:''}])
   const [comboCanal, setComboCanal] = useState([{value:'', label:''}])
   // Hooks para deshabilitar comboboxes
+  const [isRegionHidden, setIsRegionHidden] = useState(true)
   const [isZonaDisabled, setIsZonaDisabled] = useState(true)
-  const [isTiendaDisabled, setIsTiendaDisabled] = useState(true)
+  const [isZonaHidden, setIsZonaHidden] = useState(false)
+  const [isTiendaHidden, setIsTiendaHidden] = useState(true)
+  const [isProveedorHidden, setIsProveedorHidden] = useState(true)
+  const [isDeptoHidden, setIsDeptoHidden] = useState(true)
+  const [isSubDeptoHidden, setIsSubDeptoHidden] = useState(false)
+  const [isDeptoAgrupadoHidden, setIsDeptoAgrupadoHidden] = useState(true)
+  const [isSubDeptoAgrupadoHidden, setIsSubDeptoAgrupadoHidden] = useState(true)
+  const [isFormatoHidden, setIsFormatoHidden] = useState(true)
+  const [isNpsHidden, setIsNpsHidden] = useState(true)
+  const [isCanalHidden, setIsCanalHidden] = useState(true)
+  const [isPeriodoHidden, setIsPeriodoHidden] = useState(true)
   const [isSubDeptoDisabled, setIsSubDeptoDisabled] = useState(true)
   const [isSubDeptoAgrupadoDisabled, setIsSubDeptoAgrupadoDisabled] = useState(true)
   const [isDeptoAgrupadoDisabled, setIsDeptoAgrupadoDisabled] = useState(true)
@@ -357,7 +369,7 @@ const Filtro = (props) => {
       const [Nps_tmp, setNps_tmp] = useState(props.nps)
   // Funciones para rellenar combos dependiendo de los valores de otros combos
   const handleRegionChange = async (e) => {
-    setIsTiendaDisabled(true)
+    setIsTiendaHidden(true)
     if (e) {
       setRegionValue({label: e.label, value: e.value})
       if (props.botonEnviar === undefined) {
@@ -365,11 +377,15 @@ const Filtro = (props) => {
       } else {
         setRegion_tmp(e.value)
       }
+      setIsZonaHidden(true)
       const comboZona_temp = await CargarFiltros.cargarZona(e.value) // Se antoja meterle profileState.region en vez de e.value, el problema es que la actualización de estado en React es asíncrona
       setComboZona(comboZona_temp)
+      setIsZonaHidden(false)
       setIsZonaDisabled(false)
+      setIsTiendaHidden(true)
       const comboTienda_temp = await CargarFiltros.cargarTienda(e.value, undefined)
       setComboTienda(comboTienda_temp)
+      setIsTiendaHidden(false)
     } else {
       setTiendaValue({label: '', value: ''})
       if (props.botonEnviar === undefined) {
@@ -392,15 +408,16 @@ const Filtro = (props) => {
       } else {
         setRegion_tmp('')
       }
-      setIsZonaDisabled(true)
+      setIsTiendaHidden(true)
       const comboTienda_temp = await CargarFiltros.cargarTienda(undefined, undefined)
       setComboTienda(comboTienda_temp)
+      setIsTiendaHidden(false)
     }
-    setIsTiendaDisabled(false)
+    setIsTiendaHidden(false)
   }
 
   const handleZonaChange = async (e) => {
-    setIsTiendaDisabled(true)
+    setIsTiendaHidden(true)
     if (e) {
       if (props.botonEnviar === undefined) {
         // console.log("cambiando zona desde 2 con e:")
@@ -409,8 +426,10 @@ const Filtro = (props) => {
       } else {
         setZona_tmp(e.value)
       }
+      setIsTiendaHidden(true)
       const comboTienda_temp = await CargarFiltros.cargarTienda(props.region, e.value)
       setComboTienda(comboTienda_temp)
+      setIsTiendaHidden(false)
       setZonaValue({label: e.label, value: e.value})
     } else {
       if (props.botonEnviar === undefined) {
@@ -420,11 +439,14 @@ const Filtro = (props) => {
         setZona_tmp('')
       }
       setZonaValue({label: '', value: ''})
+      setIsTiendaHidden(true)
       const comboTienda_temp = await CargarFiltros.cargarTienda(props.region, undefined)
       setComboTienda(comboTienda_temp)
+      setIsTiendaHidden(false)
     }
     setTiendaValue({label: '', value: ''})
-    setIsTiendaDisabled(false)
+    setIsTiendaHidden(false)
+    setIsZonaDisabled(false)
     if (props.botonEnviar === undefined) {
       props.setTienda('')
     } else {
@@ -433,15 +455,16 @@ const Filtro = (props) => {
   }
 
   const handleTiendaChange = async (e) => {
-    setIsTiendaDisabled(false)
     if (e) {
       const regionYZona = await CargarFiltros.getRegionYZona(e.value)
-      if (props.region === undefined || props.region === '') {
+      if (regionValue.value === undefined || regionValue.value === '') {
         await handleRegionChange(regionYZona.data.region)
         setRegionValue({label: regionYZona.data.region.label, value: regionYZona.data.region.value})
+        setIsRegionHidden(false)
       }
-      if (props.zona === undefined || props.zona === '') {
+      if (zonaValue.value === undefined || zonaValue.value === '') {
         await handleZonaChange(regionYZona.data.zona)
+        setIsZonaHidden(false)
         setZonaValue({label: regionYZona.data.zona.label, value: regionYZona.data.zona.value})
       }
       setTiendaValue({label: e.label, value: e.value})
@@ -507,8 +530,10 @@ const Filtro = (props) => {
     // }
     if (e) {
       props.setGrupoDeptos(e.value)
+      setIsDeptoAgrupadoHidden(true)
       const comboDeptoAgrupado_temp = await CargarFiltros.cargarDeptoAgrupado(e.value)
       setComboDeptoAgrupado(comboDeptoAgrupado_temp)
+      setIsDeptoAgrupadoHidden(true)
       setIsDeptoAgrupadoDisabled(false)
     } else {
       setComboDeptoAgrupado([{value:'', label:''}])
@@ -526,9 +551,12 @@ const Filtro = (props) => {
     if (e) {
       props.setDeptoAgrupado(e.value)
       setDeptoAgrupadoValue({label: e.label, value: e.value})
+      setIsSubDeptoAgrupadoDisabled(true)
+      setIsSubDeptoAgrupadoHidden(true)
       const comboSubDeptoAgrupado_temp = await CargarFiltros.cargarSubDeptoAgrupado(e.value)
       setComboSubDeptoAgrupado(comboSubDeptoAgrupado_temp)
       setIsSubDeptoAgrupadoDisabled(false)
+      setIsSubDeptoAgrupadoHidden(false)
     } else {
       setDeptoAgrupadoValue({label: '', value: ''})
       setComboSubDeptoAgrupado([{value:'', label:''}])
@@ -557,8 +585,10 @@ const Filtro = (props) => {
       } else {
         setDepto_tmp(e.value)
       }
+      setIsSubDeptoHidden(true)
       const comboSubDepto_temp = await CargarFiltros.cargarSubDepto(e.value)
       setComboSubDepto(comboSubDepto_temp)
+      setIsSubDeptoHidden(false)
       setIsSubDeptoDisabled(false)
     } else {
       setComboSubDepto([{value:'', label:''}])
@@ -771,8 +801,10 @@ const Filtro = (props) => {
       if (props.fechas !== undefined) {
         // console.log(`Va a cambiar comboPeriodo por lo correspondiente a ${Agrupador_tmp} con fechas:`)
         // console.log(Fechas_tmp)
+        setIsPeriodoHidden(true)
         const comboPeriodo_temp = await CargarFiltros.cargarPeriodo(Agrupador_tmp, Fechas_tmp)
         setComboPeriodo(comboPeriodo_temp)
+        setIsPeriodoHidden(false)
       } else {
         let fechas_tmp = {}
         const currentDate = new Date()
@@ -782,8 +814,10 @@ const Filtro = (props) => {
         } else if (props.agrupador === 'mes') {
           fechas_tmp = {fecha_ini: new Date('2000-01-01'), fecha_fin: new Date(currentDate.setMonth(currentDate.getMonth() - 1))} 
         }
+        setIsPeriodoHidden(true)
         const comboPeriodo_temp = await CargarFiltros.cargarPeriodo(Agrupador_tmp, fechas_tmp)
         setComboPeriodo(comboPeriodo_temp)
+        setIsPeriodoHidden(false)
       }
     }    
   }, [Agrupador_tmp, fecha_ini_tmp, fecha_fin_tmp])
@@ -808,11 +842,14 @@ const Filtro = (props) => {
     if (props.usuario === undefined && (props.tiendaDefault === undefined || !props.tiendaDefault)) { // Esto nada más aplica cuando no hay usuario, porque si lo hay, es que estamos en Alta de Usuarios
       // Llenar región, zona y tienda dependiendo del nivel del usuario
       if (props.region !== undefined && (userData === null || userData === undefined || userData === false || UserService.getNivel() >= 4)) { // La región te la puedo mostrar en dos escenarios: ya accediste al BI y tienes nivel 4 o 5, o te estás registrando y no tienes userData
+        setIsRegionHidden(true)
         const comboRegion_temp = await CargarFiltros.cargarRegion()
         setComboRegion(comboRegion_temp)
+        setIsRegionHidden(false)
+        setIsTiendaHidden(true)
         const comboTienda_temp = await CargarFiltros.cargarTienda(undefined, undefined)
         setComboTienda(comboTienda_temp)
-        setIsTiendaDisabled(false)
+        setIsTiendaHidden(false)
       } else if (props.region !== undefined && UserService.getNivel() === 3) {
         // props.setRegion(UserService.getRegion())
         handleRegionChange({value: UserService.getRegion()})
@@ -841,24 +878,34 @@ const Filtro = (props) => {
         }
       }
       if (props.proveedor !== undefined) {
+        setIsProveedorHidden(true)
         const comboProveedor_temp = await CargarFiltros.cargarProveedor()
         setComboProveedor(comboProveedor_temp)
+        setIsProveedorHidden(false)
       }
       if (props.depto !== undefined) {
+        setIsDeptoHidden(true)
         const comboDepto_temp = await CargarFiltros.cargarDepto()
         setComboDepto(comboDepto_temp)
+        setIsDeptoHidden(false)
       }
       if (props.formato !== undefined) {
+        setIsFormatoHidden(true)
         const comboFormato_temp = await CargarFiltros.cargarFormato()
         setComboFormato(comboFormato_temp)
+        setIsFormatoHidden(false)
       }
       if (props.nps !== undefined) {
+        setIsNpsHidden(true)
         const comboNps_temp = await CargarFiltros.cargarNps()
         setComboNps(comboNps_temp)
+        setIsNpsHidden(false)
       }
       if (props.canal !== undefined) {
+        setIsCanalHidden(true)
         const comboCanal_temp = await CargarFiltros.cargarCanal()
         setComboCanal(comboCanal_temp)
+        setIsCanalHidden(false)
       }
       if (props.origen !== undefined) {
         setOrigenValue(comboOrigen[1])
@@ -870,9 +917,11 @@ const Filtro = (props) => {
   useEffect(async () => {
     if (props.usuario && props.usuario.tienda) {
       // console.log(`(region, zona, tienda) = (${props.region}, ${props.zona}, ${props.tienda})`)
-      // Rellenar región del usuario 
+      // Rellenar región del usuario
+      setIsRegionHidden(true)
       const comboRegion_temp = await CargarFiltros.cargarRegion()
       setComboRegion(comboRegion_temp)
+      setIsRegionHidden(false)
       const idx_regionNombre = comboRegion_temp.findIndex(object => {
         return object.value === props.region
       })
@@ -882,8 +931,10 @@ const Filtro = (props) => {
       }
       // Rellenar zona del usuario 
       setIsZonaDisabled(false)
+      setIsZonaHidden(true)
       const comboZona_temp = await CargarFiltros.cargarZona(props.region)
       setComboZona(comboZona_temp)
+      setIsZonaHidden(false)
       const idx_zonaNombre = comboZona_temp.findIndex(object => {
         return object.value === props.zona
       })
@@ -892,9 +943,10 @@ const Filtro = (props) => {
         setZonaValue({label: zonaNombre, value: props.zona})
       }
       // Rellenar Tienda del usuario 
-      setIsTiendaDisabled(false)
+      setIsTiendaHidden(true)
       const comboTienda_temp = await CargarFiltros.cargarTienda(props.region, props.zona)
       setComboTienda(comboTienda_temp)
+      setIsTiendaHidden(false)
       const idx_tiendaNombre = comboTienda_temp.findIndex(object => {
         return object.value === props.tienda
       })
@@ -1101,24 +1153,27 @@ const Filtro = (props) => {
           </Col>}
           {props.periodo !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
             <Label>Período a comparar</Label>
+            {isPeriodoHidden && <LoadingGif />}
+            {!isPeriodoHidden &&
             <Select
               theme={selectThemeColors}
               className='react-select'
               classNamePrefix='select'
               options={comboPeriodo}
-              // isDisabled={isPeriodoDisabled}
               onChange={e => cambiaPeriodo(e)}
               value={periodoValue}
-            />
+            />}
           </Col>}
           {props.formato !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
             <Label>Formato de Tienda</Label>
+            {isFormatoHidden && <LoadingGif mini />}
+            {!isFormatoHidden &&
             <Select
               theme={selectThemeColors}
               className='react-select'
               classNamePrefix='select'
               options={comboFormato}
-              // isDisabled={isFormatoDisabled}
+              isDisabled={isFormatoDisabled}
               isClearable
               onChange={e => {
                 const valor = (e) ? e.value : ''
@@ -1130,7 +1185,7 @@ const Filtro = (props) => {
                 setFormatoValue(e)
               }}
               value={formatoValue}
-            />
+            />}
           </Col>}
           {props.canal2 !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
             <Label>Canal</Label>
@@ -1217,6 +1272,8 @@ const Filtro = (props) => {
           </Col>}
           {props.region !== undefined  && (userData === null || userData === undefined || userData === false || UserService.getNivel() >= 4) && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
             <Label>Región</Label>
+            {isRegionHidden && <LoadingGif />}
+            {!isRegionHidden &&
             <Select
               theme={selectThemeColors}
               className='react-select'
@@ -1227,11 +1284,12 @@ const Filtro = (props) => {
               isClearable
               value={regionValue}
               onChange={handleRegionChange}
-            />
+            />}
           </Col>}
           {props.zona !== undefined  && (userData === null || userData === undefined || userData === false || UserService.getNivel() >= 3)  && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
             <Label>Zona</Label>
-            <Select
+            {isZonaHidden && <LoadingGif mini />}
+            {!isZonaHidden && <Select
               theme={selectThemeColors}
               className='react-select'
               classNamePrefix='select'
@@ -1240,23 +1298,27 @@ const Filtro = (props) => {
               isClearable
               onChange={handleZonaChange}
               value={zonaValue}
-            />
+            />}
           </Col>}
           {props.tienda !== undefined && (userData === null || userData === undefined || userData === false || UserService.getNivel() >= 2) && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
             <Label>Tienda</Label>
+            {isTiendaHidden && <LoadingGif mini />}
+            {!isTiendaHidden && 
             <Select
               theme={selectThemeColors}
               className='react-select'
               classNamePrefix='select'
               options={comboTienda}
-              isDisabled={isTiendaDisabled}
+              isDisabled={isTiendaHidden}
               isClearable
               value={tiendaValue}
               onChange={handleTiendaChange}
-            />
+            />}
           </Col>}
           {props.canal !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
             <Label>Canal</Label>
+            {isCanalHidden && <LoadingGif />}
+            {!isCanalHidden &&
             <Select
               theme={selectThemeColors}
               value={canalValue}
@@ -1283,7 +1345,7 @@ const Filtro = (props) => {
                   }
                 }
               }}
-            />
+            />}
           </Col>}
           {props.grupoDeptos !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
             <Label>Grupo de Deptos</Label>
@@ -1300,6 +1362,8 @@ const Filtro = (props) => {
           </Col>}
           {props.depto !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
             <Label>Departamento</Label>
+            {isDeptoHidden && <LoadingGif />}
+            {!isDeptoHidden &&
             <Select
               theme={selectThemeColors}
               className='react-select'
@@ -1309,10 +1373,12 @@ const Filtro = (props) => {
               id='depto'
               isClearable
               onChange={handleDeptoChange}
-            />
+            />}
           </Col>}
           {props.deptoAgrupado !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
             <Label>Departamento</Label>
+            {isDeptoAgrupadoHidden && <LoadingGif mini />}
+            {!isDeptoAgrupadoHidden &&
             <Select
               theme={selectThemeColors}
               className='react-select'
@@ -1324,10 +1390,12 @@ const Filtro = (props) => {
               id='depto'
               isClearable
               onChange={handleDeptoAgrupadoChange}
-            />
+            />}
           </Col>}
           {props.subDepto !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
             <Label>Sub Departamento</Label>
+            {isSubDeptoHidden && <LoadingGif />}
+            {!isSubDeptoHidden &&
             <Select
               theme={selectThemeColors}
               className='react-select'
@@ -1337,10 +1405,12 @@ const Filtro = (props) => {
               isClearable
               onChange={handleSubDeptoChange}
               value={subDeptoValue}
-            />
+            />}
           </Col>}
           {props.subDeptoAgrupado !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
             <Label>Sub Departamento</Label>
+            {isSubDeptoAgrupadoHidden && <LoadingGif mini />}
+            {!isSubDeptoAgrupadoHidden &&
             <Select
               theme={selectThemeColors}
               className='react-select'
@@ -1350,10 +1420,12 @@ const Filtro = (props) => {
               isClearable
               onChange={handleSubDeptoAgrupadoChange}
               value={subDeptoAgrupadoValue}
-            />
+            />}
           </Col>}
           {props.proveedor !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
             <Label>Proveedor</Label>
+            {isProveedorHidden && <LoadingGif />}
+            {!isProveedorHidden &&
             <Select
               theme={selectThemeColors}
               className='react-select'
@@ -1376,7 +1448,7 @@ const Filtro = (props) => {
                   }
                 }
               }}
-            />
+            />}
             <p>{props.botonEnviar === undefined ? props.proveedor : Proveedor_tmp}</p>
           </Col>}
           {props.categoria !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
@@ -1556,12 +1628,14 @@ const Filtro = (props) => {
           </Col>}
           {props.nps !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
             <Label>Categoría NPS</Label>
+            {isNpsHidden && <LoadingGif mini />}
+            {!isNpsHidden &&
             <Select
               theme={selectThemeColors}
               className='react-select'
               classNamePrefix='select'
               options={comboNps}
-              // isDisabled={isFormatoDisabled}
+              isDisabled={isFormatoDisabled}
               isClearable
               onChange={e => {
                 const valor = (e) ? e.value : ''
@@ -1573,7 +1647,7 @@ const Filtro = (props) => {
                 }
               }}
               value={npsValue}
-            />
+            />}
           </Col>}
           {props.e3 !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
             <Label>E3</Label>
@@ -1605,9 +1679,11 @@ const Filtro = (props) => {
             />
           </Col>}
           {props.botonEnviar !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm} style={{marginTop: '23px'}}>
+          {bloqueadoBotonEnviar && <LoadingGif mini />}
+          {!bloqueadoBotonEnviar &&
           <Button
             color='primary'
-            disabled={bloqueadoBotonEnviar}
+            // disabled={bloqueadoBotonEnviar}
             className='botonEnviar'
             onClick={async (e) => {
               props.setBotonEnviar(props.botonEnviar + 1)
@@ -1632,7 +1708,7 @@ const Filtro = (props) => {
             }}
           >
             <img src={Lupita} />
-          </Button>
+          </Button>}
 
           </Col>}
           {bootstrap.espacio && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>

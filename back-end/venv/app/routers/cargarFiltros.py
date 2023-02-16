@@ -43,19 +43,19 @@ async def cargar_zona(region: int):
 @router.get("/cargarTienda")
 async def cargar_tienda(region: int, zona: int):
     collection = conexion_mongo('report').catTienda
+    print(f"desde cargarFiltros -> cargarTienda, región: {str(region)}; zona: {str(zona)}")
+    pipeline = []
     if region > 0:
-        if zona > 0:
-            pipeline =[{'$match': {'ZONA': {'$eq': zona}}}]
-        else:
-            pipeline =[{'$match': {'REGION': {'$eq': region}}}]
-    else:
-        pipeline =[]
+        pipeline.append({'$match': {'REGION': {'$eq': region}}})
+    if zona > 0:
+        pipeline.append({'$match': {'ZONA': {'$eq': zona}}})
     pipeline.extend([
         {'$match': {'TIENDA_NOMBRE': {'$ne': 'N/A'}}},
         {'$group': {'_id': {'label': '$TIENDA_NOMBRE', 'value': '$TIENDA'}}},
         {'$project': {'_id': 0, 'label':'$_id.label', 'value':'$_id.value'}},
         {'$sort': {'label': 1}}
     ])
+    print(f"pipeline desde cargarFiltros -> cargarTienda: {str(pipeline)}")
     cursor = collection.aggregate(pipeline)
     return await cursor.to_list(length=None)
 
