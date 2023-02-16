@@ -1764,14 +1764,14 @@ class Tablas():
                         'nPedido': '$nPedido',
                         'nConsigna': '$nConsigna',
                         # Vamos a cambiar esto para restar 6 horas a las fechas que vienen en la bd (5 en horario de verano)
-                        # 'timeslot_from': {'$dateToString': {'format': '%d/%m/%Y %H:%M', 'date': '$timeslot_from'}},
-                        # 'timeslot_to': {'$dateToString': {'format': '%d/%m/%Y %H:%M', 'date': '$timeslot_to'}},
-                        'timeslot_from': { 
-                            '$cond': []
-                        },
-                        'timeslot_to': { 
-                            '$cond': []
-                        },
+                        'timeslot_from': {'$dateToString': {'format': '%d/%m/%Y %H:%M', 'date': '$timeslot_from'}},
+                        'timeslot_to': {'$dateToString': {'format': '%d/%m/%Y %H:%M', 'date': '$timeslot_to'}},
+                        # 'timeslot_from': { 
+                        #     '$cond': []
+                        # },
+                        # 'timeslot_to': { 
+                        #     '$cond': []
+                        # },
                         'metodoEntrega': '$metodoEntrega',
                         'estatusConsigna': '$estatusConsigna',
                         'fechaEntrega': {'$dateToString': {'format': '%d/%m/%Y', 'date': '$fechaEntrega'}},
@@ -1790,93 +1790,93 @@ class Tablas():
                     }}
                 ])
                 # Pon las condiciones anidadas para cada año de 2020 a la fecha, para saber si le restas 5 horas a la fecha o 6.
-                condicionFrom = pipeline[-2]['$project']['timeslot_from']['$cond']
-                condicionTo = pipeline[-2]['$project']['timeslot_to']['$cond']
-                for anio in range(2020, date.today().year + 1):
-                    condicionFrom.extend([
-                        {'$eq': [{'$year': '$timeslot_from'}, anio]},
-                        {'$cond': [
-                            {'$and': [
-                                {'$gte': [
-                                    '$timeslot_from',
-                                    verano(anio)[0]
-                                ]},
-                                {'$lte': [
-                                    '$timeslot_from',
-                                    verano(anio)[1]
-                                ]},
-                            ]},
-                            {'$dateToString': {'format': '%d/%m/%Y %H:%M', 'date': {
-                                '$dateSubtract': {
-                                    'startDate': '$timeslot_from',
-                                    'unit': 'hour',
-                                    'amount': 5
-                                }
-                            }}},
-                            {'$dateToString': {'format': '%d/%m/%Y %H:%M', 'date': {
-                                '$dateSubtract': {
-                                    'startDate': '$timeslot_from',
-                                    'unit': 'hour',
-                                    'amount': 6
-                                }
-                            }}}
-                        ]},
-                        {'$cond': []}
-                    ])
-                    condicionFrom = condicionFrom[-1]['$cond']
-                    condicionTo.extend([
-                        {'$eq': [{'$year': '$timeslot_to'}, anio]},
-                        {'$cond': [
-                            {'$and': [
-                                {'$gte': [
-                                    '$timeslot_to',
-                                    verano(anio)[0]
-                                ]},
-                                {'$lte': [
-                                    '$timeslot_to',
-                                    verano(anio)[1]
-                                ]},
-                            ]},
-                            {'$dateToString': {'format': '%d/%m/%Y %H:%M', 'date': {
-                                '$dateSubtract': {
-                                    'startDate': '$timeslot_to',
-                                    'unit': 'hour',
-                                    'amount': 5
-                                }
-                            }}},
-                            {'$dateToString': {'format': '%d/%m/%Y %H:%M', 'date': {
-                                '$dateSubtract': {
-                                    'startDate': '$timeslot_to',
-                                    'unit': 'hour',
-                                    'amount': 6
-                                }
-                            }}}
-                        ]},
-                        {'$cond': []}
-                    ])
-                    condicionTo = condicionTo[-1]['$cond']
-                condicionFrom.extend([
-                    True, 
-                    {'$dateToString': {'format': '%d/%m/%Y %H:%M', 'date': {
-                        '$dateSubtract': {
-                            'startDate': '$timeslot_from',
-                            'unit': 'hour',
-                            'amount': 6
-                        }
-                    }}},
-                    None
-                ])
-                condicionTo.extend([
-                    True, 
-                    {'$dateToString': {'format': '%d/%m/%Y %H:%M', 'date': {
-                        '$dateSubtract': {
-                            'startDate': '$timeslot_to',
-                            'unit': 'hour',
-                            'amount': 6
-                        }
-                    }}},
-                    None
-                ])
+                # condicionFrom = pipeline[-2]['$project']['timeslot_from']['$cond']
+                # condicionTo = pipeline[-2]['$project']['timeslot_to']['$cond']
+                # for anio in range(2020, date.today().year + 1):
+                #     condicionFrom.extend([
+                #         {'$eq': [{'$year': '$timeslot_from'}, anio]},
+                #         {'$cond': [
+                #             {'$and': [
+                #                 {'$gte': [
+                #                     '$timeslot_from',
+                #                     verano(anio)[0]
+                #                 ]},
+                #                 {'$lte': [
+                #                     '$timeslot_from',
+                #                     verano(anio)[1]
+                #                 ]},
+                #             ]},
+                #             {'$dateToString': {'format': '%d/%m/%Y %H:%M', 'date': {
+                #                 '$dateSubtract': {
+                #                     'startDate': '$timeslot_from',
+                #                     'unit': 'hour',
+                #                     'amount': 5
+                #                 }
+                #             }}},
+                #             {'$dateToString': {'format': '%d/%m/%Y %H:%M', 'date': {
+                #                 '$dateSubtract': {
+                #                     'startDate': '$timeslot_from',
+                #                     'unit': 'hour',
+                #                     'amount': 6
+                #                 }
+                #             }}}
+                #         ]},
+                #         {'$cond': []}
+                #     ])
+                #     condicionFrom = condicionFrom[-1]['$cond']
+                #     condicionTo.extend([
+                #         {'$eq': [{'$year': '$timeslot_to'}, anio]},
+                #         {'$cond': [
+                #             {'$and': [
+                #                 {'$gte': [
+                #                     '$timeslot_to',
+                #                     verano(anio)[0]
+                #                 ]},
+                #                 {'$lte': [
+                #                     '$timeslot_to',
+                #                     verano(anio)[1]
+                #                 ]},
+                #             ]},
+                #             {'$dateToString': {'format': '%d/%m/%Y %H:%M', 'date': {
+                #                 '$dateSubtract': {
+                #                     'startDate': '$timeslot_to',
+                #                     'unit': 'hour',
+                #                     'amount': 5
+                #                 }
+                #             }}},
+                #             {'$dateToString': {'format': '%d/%m/%Y %H:%M', 'date': {
+                #                 '$dateSubtract': {
+                #                     'startDate': '$timeslot_to',
+                #                     'unit': 'hour',
+                #                     'amount': 6
+                #                 }
+                #             }}}
+                #         ]},
+                #         {'$cond': []}
+                #     ])
+                #     condicionTo = condicionTo[-1]['$cond']
+                # condicionFrom.extend([
+                #     True, 
+                #     {'$dateToString': {'format': '%d/%m/%Y %H:%M', 'date': {
+                #         '$dateSubtract': {
+                #             'startDate': '$timeslot_from',
+                #             'unit': 'hour',
+                #             'amount': 6
+                #         }
+                #     }}},
+                #     None
+                # ])
+                # condicionTo.extend([
+                #     True, 
+                #     {'$dateToString': {'format': '%d/%m/%Y %H:%M', 'date': {
+                #         '$dateSubtract': {
+                #             'startDate': '$timeslot_to',
+                #             'unit': 'hour',
+                #             'amount': 6
+                #         }
+                #     }}},
+                #     None
+                # ])
 
                 # Creamos variables para manipular los diccionarios:
                 match = pipeline[-3]['$match']['$expr']['$and']
@@ -1927,14 +1927,14 @@ class Tablas():
                 # Ejecutamos el query:
                 cursor = collection.aggregate(pipeline)
                 arreglo = await cursor.to_list(length=None)
-                print(f"Arreglo desde Tablas -> PedidoPerfecto -> {self.titulo}: {str(arreglo)}")
+                # print(f"Arreglo desde Tablas -> PedidoPerfecto -> {self.titulo}: {str(arreglo)}")
                 if len(arreglo) >0:
                     hayResultados = "si"
                     # Creamos los arreglos que alimentarán la tabla:
                     columns = [
                         {'name': 'Fecha', 'selector':'Fecha', 'formato':'texto'},
                         {'name': 'No. Pedido', 'selector':'NumPedido', 'formato':'sinComas'},
-                        {'name': 'No. Consigna', 'selector':'NumConsigna', 'formato':'texto', 'ancho': '120px'},
+                        {'name': 'No. Consigna', 'selector':'NumConsigna', 'formato':'texto', 'ancho': '140px'},
                         {'name': 'Timeslot From', 'selector':'TimeslotFrom', 'formato':'texto', 'ancho': '150px'},
                         {'name': 'Timeslot To', 'selector':'TimeslotTo', 'formato':'texto', 'ancho': '150px'},
                         {'name': 'Método de Entrega', 'selector':'MetodoEntrega', 'formato':'texto', 'ancho': '150px'},
@@ -2324,14 +2324,14 @@ class Tablas():
                         'nPedido': '$nPedido',
                         'nConsigna': '$nConsigna',
                         # Vamos a cambiar esto para restar 6 horas a las fechas que vienen en la bd (5 en horario de verano)
-                        # 'timeslot_from': {'$dateToString': {'format': '%d/%m/%Y %H:%M', 'date': '$timeslot_from'}},
-                        # 'timeslot_to': {'$dateToString': {'format': '%d/%m/%Y %H:%M', 'date': '$timeslot_to'}},
-                        'timeslot_from': { 
-                            '$cond': []
-                        },
-                        'timeslot_to': { 
-                            '$cond': []
-                        },
+                        'timeslot_from': {'$dateToString': {'format': '%d/%m/%Y %H:%M', 'date': '$timeslot_from'}},
+                        'timeslot_to': {'$dateToString': {'format': '%d/%m/%Y %H:%M', 'date': '$timeslot_to'}},
+                        # 'timeslot_from': { 
+                        #     '$cond': []
+                        # },
+                        # 'timeslot_to': { 
+                        #     '$cond': []
+                        # },
                         'metodoEntrega': '$metodoEntrega',
                         'estatusConsigna': '$estatusConsigna',
                         'fechaEntrega': {'$dateToString': {'format': '%d/%m/%Y', 'date': '$fechaEntrega'}},
@@ -2360,93 +2360,93 @@ class Tablas():
                     }}
                 ])
                 # Pon las condiciones anidadas para cada año de 2020 a la fecha, para saber si le restas 5 horas a la fecha o 6.
-                condicionFrom = pipeline[-2]['$project']['timeslot_from']['$cond']
-                condicionTo = pipeline[-2]['$project']['timeslot_to']['$cond']
-                for anio in range(2020, date.today().year + 1):
-                    condicionFrom.extend([
-                        {'$eq': [{'$year': '$timeslot_from'}, anio]},
-                        {'$cond': [
-                            {'$and': [
-                                {'$gte': [
-                                    '$timeslot_from',
-                                    verano(anio)[0]
-                                ]},
-                                {'$lte': [
-                                    '$timeslot_from',
-                                    verano(anio)[1]
-                                ]},
-                            ]},
-                            {'$dateToString': {'format': '%d/%m/%Y %H:%M', 'date': {
-                                '$dateSubtract': {
-                                    'startDate': '$timeslot_from',
-                                    'unit': 'hour',
-                                    'amount': 5
-                                }
-                            }}},
-                            {'$dateToString': {'format': '%d/%m/%Y %H:%M', 'date': {
-                                '$dateSubtract': {
-                                    'startDate': '$timeslot_from',
-                                    'unit': 'hour',
-                                    'amount': 6
-                                }
-                            }}}
-                        ]},
-                        {'$cond': []}
-                    ])
-                    condicionFrom = condicionFrom[-1]['$cond']
-                    condicionTo.extend([
-                        {'$eq': [{'$year': '$timeslot_to'}, anio]},
-                        {'$cond': [
-                            {'$and': [
-                                {'$gte': [
-                                    '$timeslot_to',
-                                    verano(anio)[0]
-                                ]},
-                                {'$lte': [
-                                    '$timeslot_to',
-                                    verano(anio)[1]
-                                ]},
-                            ]},
-                            {'$dateToString': {'format': '%d/%m/%Y %H:%M', 'date': {
-                                '$dateSubtract': {
-                                    'startDate': '$timeslot_to',
-                                    'unit': 'hour',
-                                    'amount': 5
-                                }
-                            }}},
-                            {'$dateToString': {'format': '%d/%m/%Y %H:%M', 'date': {
-                                '$dateSubtract': {
-                                    'startDate': '$timeslot_to',
-                                    'unit': 'hour',
-                                    'amount': 6
-                                }
-                            }}}
-                        ]},
-                        {'$cond': []}
-                    ])
-                    condicionTo = condicionTo[-1]['$cond']
-                condicionFrom.extend([
-                    True, 
-                    {'$dateToString': {'format': '%d/%m/%Y %H:%M', 'date': {
-                        '$dateSubtract': {
-                            'startDate': '$timeslot_from',
-                            'unit': 'hour',
-                            'amount': 6
-                        }
-                    }}},
-                    None
-                ])
-                condicionTo.extend([
-                    True, 
-                    {'$dateToString': {'format': '%d/%m/%Y %H:%M', 'date': {
-                        '$dateSubtract': {
-                            'startDate': '$timeslot_to',
-                            'unit': 'hour',
-                            'amount': 6
-                        }
-                    }}},
-                    None
-                ])
+                # condicionFrom = pipeline[-2]['$project']['timeslot_from']['$cond']
+                # condicionTo = pipeline[-2]['$project']['timeslot_to']['$cond']
+                # for anio in range(2020, date.today().year + 1):
+                #     condicionFrom.extend([
+                #         {'$eq': [{'$year': '$timeslot_from'}, anio]},
+                #         {'$cond': [
+                #             {'$and': [
+                #                 {'$gte': [
+                #                     '$timeslot_from',
+                #                     verano(anio)[0]
+                #                 ]},
+                #                 {'$lte': [
+                #                     '$timeslot_from',
+                #                     verano(anio)[1]
+                #                 ]},
+                #             ]},
+                #             {'$dateToString': {'format': '%d/%m/%Y %H:%M', 'date': {
+                #                 '$dateSubtract': {
+                #                     'startDate': '$timeslot_from',
+                #                     'unit': 'hour',
+                #                     'amount': 5
+                #                 }
+                #             }}},
+                #             {'$dateToString': {'format': '%d/%m/%Y %H:%M', 'date': {
+                #                 '$dateSubtract': {
+                #                     'startDate': '$timeslot_from',
+                #                     'unit': 'hour',
+                #                     'amount': 6
+                #                 }
+                #             }}}
+                #         ]},
+                #         {'$cond': []}
+                #     ])
+                #     condicionFrom = condicionFrom[-1]['$cond']
+                #     condicionTo.extend([
+                #         {'$eq': [{'$year': '$timeslot_to'}, anio]},
+                #         {'$cond': [
+                #             {'$and': [
+                #                 {'$gte': [
+                #                     '$timeslot_to',
+                #                     verano(anio)[0]
+                #                 ]},
+                #                 {'$lte': [
+                #                     '$timeslot_to',
+                #                     verano(anio)[1]
+                #                 ]},
+                #             ]},
+                #             {'$dateToString': {'format': '%d/%m/%Y %H:%M', 'date': {
+                #                 '$dateSubtract': {
+                #                     'startDate': '$timeslot_to',
+                #                     'unit': 'hour',
+                #                     'amount': 5
+                #                 }
+                #             }}},
+                #             {'$dateToString': {'format': '%d/%m/%Y %H:%M', 'date': {
+                #                 '$dateSubtract': {
+                #                     'startDate': '$timeslot_to',
+                #                     'unit': 'hour',
+                #                     'amount': 6
+                #                 }
+                #             }}}
+                #         ]},
+                #         {'$cond': []}
+                #     ])
+                #     condicionTo = condicionTo[-1]['$cond']
+                # condicionFrom.extend([
+                #     True, 
+                #     {'$dateToString': {'format': '%d/%m/%Y %H:%M', 'date': {
+                #         '$dateSubtract': {
+                #             'startDate': '$timeslot_from',
+                #             'unit': 'hour',
+                #             'amount': 6
+                #         }
+                #     }}},
+                #     None
+                # ])
+                # condicionTo.extend([
+                #     True, 
+                #     {'$dateToString': {'format': '%d/%m/%Y %H:%M', 'date': {
+                #         '$dateSubtract': {
+                #             'startDate': '$timeslot_to',
+                #             'unit': 'hour',
+                #             'amount': 6
+                #         }
+                #     }}},
+                #     None
+                # ])
 
                 # Creamos variables para manipular los diccionarios:
                 match = pipeline[-3]['$match']['$expr']['$and']
@@ -5194,7 +5194,7 @@ class Tablas():
                 'evaluacion': '$evaluacion'
             }})
             pipeline.append({'$sort':{'nPedido':1}})
-            # print(f'Pipeline desde Tablas -> NivelesDeServicio -> Detalle de pedidos $tienda: {str(pipeline)}')
+            print(f'Pipeline desde Tablas -> NivelesDeServicio -> Detalle de pedidos $tienda: {str(pipeline)}')
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=10000)
             if len(arreglo) >0:

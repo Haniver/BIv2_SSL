@@ -14,6 +14,11 @@ import Lupita from '@src/assets/images/lupita.png'
 import LoadingGif from './LoadingGif'
 
 const Filtro = (props) => {
+  useEffect(() => {
+    console.log(`Región: ${props.region}`)
+    console.log(`Zona: ${props.zona}`)
+    console.log(`Tienda: ${props.tienda}`)
+  }, [props.region, props.zona, props.tienda])
   // console.log(`Tienda en Filtro=${props.tienda}`)
   const userData = JSON.parse(localStorage.getItem('userData'))
   // if (userData === null || userData === undefined || userData === false) {
