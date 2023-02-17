@@ -1178,7 +1178,7 @@ const Filtro = (props) => {
               className='react-select'
               classNamePrefix='select'
               options={comboFormato}
-              isDisabled={isFormatoDisabled}
+              // isDisabled={isFormatoDisabled}
               isClearable
               onChange={e => {
                 const valor = (e) ? e.value : ''
@@ -1640,7 +1640,7 @@ const Filtro = (props) => {
               className='react-select'
               classNamePrefix='select'
               options={comboNps}
-              isDisabled={isFormatoDisabled}
+              // isDisabled={isFormatoDisabled}
               isClearable
               onChange={e => {
                 const valor = (e) ? e.value : ''
