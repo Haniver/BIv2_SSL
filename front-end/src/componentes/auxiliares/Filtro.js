@@ -14,11 +14,6 @@ import Lupita from '@src/assets/images/lupita.png'
 import LoadingGif from './LoadingGif'
 
 const Filtro = (props) => {
-  useEffect(() => {
-    console.log(`Región: ${props.region}`)
-    console.log(`Zona: ${props.zona}`)
-    console.log(`Tienda: ${props.tienda}`)
-  }, [props.region, props.zona, props.tienda])
   // console.log(`Tienda en Filtro=${props.tienda}`)
   const userData = JSON.parse(localStorage.getItem('userData'))
   // if (userData === null || userData === undefined || userData === false) {
@@ -383,6 +378,7 @@ const Filtro = (props) => {
         setRegion_tmp(e.value)
       }
       setIsZonaHidden(true)
+      setBloqueadoBotonEnviar(true)
       const comboZona_temp = await CargarFiltros.cargarZona(e.value) // Se antoja meterle profileState.region en vez de e.value, el problema es que la actualización de estado en React es asíncrona
       setComboZona(comboZona_temp)
       setIsZonaHidden(false)
@@ -391,6 +387,7 @@ const Filtro = (props) => {
       const comboTienda_temp = await CargarFiltros.cargarTienda(e.value, undefined)
       setComboTienda(comboTienda_temp)
       setIsTiendaHidden(false)
+      setBloqueadoBotonEnviar(false)
     } else {
       setTiendaValue({label: '', value: ''})
       if (props.botonEnviar === undefined) {
@@ -414,9 +411,11 @@ const Filtro = (props) => {
         setRegion_tmp('')
       }
       setIsTiendaHidden(true)
+      setBloqueadoBotonEnviar(true)
       const comboTienda_temp = await CargarFiltros.cargarTienda(undefined, undefined)
       setComboTienda(comboTienda_temp)
       setIsTiendaHidden(false)
+      setBloqueadoBotonEnviar(false)
     }
     setIsTiendaHidden(false)
   }
@@ -432,10 +431,12 @@ const Filtro = (props) => {
         setZona_tmp(e.value)
       }
       setIsTiendaHidden(true)
+      setBloqueadoBotonEnviar(true)
       const comboTienda_temp = await CargarFiltros.cargarTienda(props.region, e.value)
       setComboTienda(comboTienda_temp)
       setIsTiendaHidden(false)
       setZonaValue({label: e.label, value: e.value})
+      setBloqueadoBotonEnviar(false)
     } else {
       if (props.botonEnviar === undefined) {
         // console.log("cambiando zona desde 3")
@@ -445,9 +446,11 @@ const Filtro = (props) => {
       }
       setZonaValue({label: '', value: ''})
       setIsTiendaHidden(true)
+      setBloqueadoBotonEnviar(true)
       const comboTienda_temp = await CargarFiltros.cargarTienda(props.region, undefined)
       setComboTienda(comboTienda_temp)
       setIsTiendaHidden(false)
+      setBloqueadoBotonEnviar(false)
     }
     setTiendaValue({label: '', value: ''})
     setIsTiendaHidden(false)
@@ -461,6 +464,7 @@ const Filtro = (props) => {
 
   const handleTiendaChange = async (e) => {
     if (e) {
+      setBloqueadoBotonEnviar(true)
       const regionYZona = await CargarFiltros.getRegionYZona(e.value)
       if (regionValue.value === undefined || regionValue.value === '') {
         await handleRegionChange(regionYZona.data.region)
@@ -482,6 +486,7 @@ const Filtro = (props) => {
         // props.setLabelTienda(e.label)
         setLabelTienda_tmp(e.label)
       }
+      setBloqueadoBotonEnviar(false)
     } else {
       setTiendaValue({label: '', value: ''})
       if (props.botonEnviar === undefined) {
@@ -536,10 +541,12 @@ const Filtro = (props) => {
     if (e) {
       props.setGrupoDeptos(e.value)
       setIsDeptoAgrupadoHidden(true)
+      setBloqueadoBotonEnviar(true)
       const comboDeptoAgrupado_temp = await CargarFiltros.cargarDeptoAgrupado(e.value)
       setComboDeptoAgrupado(comboDeptoAgrupado_temp)
       setIsDeptoAgrupadoHidden(true)
       setIsDeptoAgrupadoDisabled(false)
+      setBloqueadoBotonEnviar(false)
     } else {
       setComboDeptoAgrupado([{value:'', label:''}])
       props.setGrupoDeptos('')
@@ -558,10 +565,12 @@ const Filtro = (props) => {
       setDeptoAgrupadoValue({label: e.label, value: e.value})
       setIsSubDeptoAgrupadoDisabled(true)
       setIsSubDeptoAgrupadoHidden(true)
+      setBloqueadoBotonEnviar(true)
       const comboSubDeptoAgrupado_temp = await CargarFiltros.cargarSubDeptoAgrupado(e.value)
       setComboSubDeptoAgrupado(comboSubDeptoAgrupado_temp)
       setIsSubDeptoAgrupadoDisabled(false)
       setIsSubDeptoAgrupadoHidden(false)
+      setBloqueadoBotonEnviar(false)
     } else {
       setDeptoAgrupadoValue({label: '', value: ''})
       setComboSubDeptoAgrupado([{value:'', label:''}])
@@ -591,10 +600,12 @@ const Filtro = (props) => {
         setDepto_tmp(e.value)
       }
       setIsSubDeptoHidden(true)
+      setBloqueadoBotonEnviar(true)
       const comboSubDepto_temp = await CargarFiltros.cargarSubDepto(e.value)
       setComboSubDepto(comboSubDepto_temp)
       setIsSubDeptoHidden(false)
       setIsSubDeptoDisabled(false)
+      setBloqueadoBotonEnviar(false)
     } else {
       setComboSubDepto([{value:'', label:''}])
       if (props.botonEnviar === undefined) {
@@ -807,9 +818,11 @@ const Filtro = (props) => {
         // console.log(`Va a cambiar comboPeriodo por lo correspondiente a ${Agrupador_tmp} con fechas:`)
         // console.log(Fechas_tmp)
         setIsPeriodoHidden(true)
+        setBloqueadoBotonEnviar(true)
         const comboPeriodo_temp = await CargarFiltros.cargarPeriodo(Agrupador_tmp, Fechas_tmp)
         setComboPeriodo(comboPeriodo_temp)
         setIsPeriodoHidden(false)
+        setBloqueadoBotonEnviar(false)
       } else {
         let fechas_tmp = {}
         const currentDate = new Date()
@@ -820,9 +833,11 @@ const Filtro = (props) => {
           fechas_tmp = {fecha_ini: new Date('2000-01-01'), fecha_fin: new Date(currentDate.setMonth(currentDate.getMonth() - 1))} 
         }
         setIsPeriodoHidden(true)
+        setBloqueadoBotonEnviar(true)
         const comboPeriodo_temp = await CargarFiltros.cargarPeriodo(Agrupador_tmp, fechas_tmp)
         setComboPeriodo(comboPeriodo_temp)
         setIsPeriodoHidden(false)
+        setBloqueadoBotonEnviar(false)
       }
     }    
   }, [Agrupador_tmp, fecha_ini_tmp, fecha_fin_tmp])
@@ -848,6 +863,7 @@ const Filtro = (props) => {
       // Llenar región, zona y tienda dependiendo del nivel del usuario
       if (props.region !== undefined && (userData === null || userData === undefined || userData === false || UserService.getNivel() >= 4)) { // La región te la puedo mostrar en dos escenarios: ya accediste al BI y tienes nivel 4 o 5, o te estás registrando y no tienes userData
         setIsRegionHidden(true)
+        setBloqueadoBotonEnviar(true)
         const comboRegion_temp = await CargarFiltros.cargarRegion()
         setComboRegion(comboRegion_temp)
         setIsRegionHidden(false)
@@ -855,6 +871,7 @@ const Filtro = (props) => {
         const comboTienda_temp = await CargarFiltros.cargarTienda(undefined, undefined)
         setComboTienda(comboTienda_temp)
         setIsTiendaHidden(false)
+        setBloqueadoBotonEnviar(false)
       } else if (props.region !== undefined && UserService.getNivel() === 3) {
         // props.setRegion(UserService.getRegion())
         handleRegionChange({value: UserService.getRegion()})
@@ -884,33 +901,43 @@ const Filtro = (props) => {
       }
       if (props.proveedor !== undefined) {
         setIsProveedorHidden(true)
+        setBloqueadoBotonEnviar(true)
         const comboProveedor_temp = await CargarFiltros.cargarProveedor()
         setComboProveedor(comboProveedor_temp)
         setIsProveedorHidden(false)
+        setBloqueadoBotonEnviar(false)
       }
       if (props.depto !== undefined) {
         setIsDeptoHidden(true)
+        setBloqueadoBotonEnviar(true)
         const comboDepto_temp = await CargarFiltros.cargarDepto()
         setComboDepto(comboDepto_temp)
         setIsDeptoHidden(false)
+        setBloqueadoBotonEnviar(false)
       }
       if (props.formato !== undefined) {
         setIsFormatoHidden(true)
+        setBloqueadoBotonEnviar(true)
         const comboFormato_temp = await CargarFiltros.cargarFormato()
         setComboFormato(comboFormato_temp)
         setIsFormatoHidden(false)
+        setBloqueadoBotonEnviar(false)
       }
       if (props.nps !== undefined) {
         setIsNpsHidden(true)
+        setBloqueadoBotonEnviar(true)
         const comboNps_temp = await CargarFiltros.cargarNps()
         setComboNps(comboNps_temp)
         setIsNpsHidden(false)
+        setBloqueadoBotonEnviar(false)
       }
       if (props.canal !== undefined) {
         setIsCanalHidden(true)
+        setBloqueadoBotonEnviar(true)
         const comboCanal_temp = await CargarFiltros.cargarCanal()
         setComboCanal(comboCanal_temp)
         setIsCanalHidden(false)
+        setBloqueadoBotonEnviar(false)
       }
       if (props.origen !== undefined) {
         setOrigenValue(comboOrigen[1])
@@ -924,9 +951,11 @@ const Filtro = (props) => {
       // console.log(`(region, zona, tienda) = (${props.region}, ${props.zona}, ${props.tienda})`)
       // Rellenar región del usuario
       setIsRegionHidden(true)
+      setBloqueadoBotonEnviar(true)
       const comboRegion_temp = await CargarFiltros.cargarRegion()
       setComboRegion(comboRegion_temp)
       setIsRegionHidden(false)
+      setBloqueadoBotonEnviar(false)
       const idx_regionNombre = comboRegion_temp.findIndex(object => {
         return object.value === props.region
       })
@@ -937,9 +966,11 @@ const Filtro = (props) => {
       // Rellenar zona del usuario 
       setIsZonaDisabled(false)
       setIsZonaHidden(true)
+      setBloqueadoBotonEnviar(true)
       const comboZona_temp = await CargarFiltros.cargarZona(props.region)
       setComboZona(comboZona_temp)
       setIsZonaHidden(false)
+      setBloqueadoBotonEnviar(false)
       const idx_zonaNombre = comboZona_temp.findIndex(object => {
         return object.value === props.zona
       })
@@ -949,9 +980,11 @@ const Filtro = (props) => {
       }
       // Rellenar Tienda del usuario 
       setIsTiendaHidden(true)
+      setBloqueadoBotonEnviar(true)
       const comboTienda_temp = await CargarFiltros.cargarTienda(props.region, props.zona)
       setComboTienda(comboTienda_temp)
       setIsTiendaHidden(false)
+      setBloqueadoBotonEnviar(false)
       const idx_tiendaNombre = comboTienda_temp.findIndex(object => {
         return object.value === props.tienda
       })
