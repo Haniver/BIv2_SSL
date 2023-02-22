@@ -1,3 +1,5 @@
+// opcionesPaginacion es un arreglo que tiene las opciones que van a salir cuando quieras cambiar cuántas filas se muestran por página. Si le pones [5, 10, 15], se va a poder elegir entre esas tres y van a salir 5 por default
+
 import { React, useState, useMemo, useEffect, useContext, useReducer } from 'react'
 import authHeader from '../../services/auth.header'
 import axios from 'axios'
@@ -485,8 +487,6 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
             )    
         }
     }, [filterText, resetPaginationToggle])
-
-    // const opcionesPaginacion = (opcionesPaginacion === undefined) ? [5,15] : opcionesPaginacion
 
     //Opciones de paginación
     const paginationComponentOptions = {
