@@ -61,7 +61,7 @@ class Tablas():
             {'$project': {'fecha_interna': '$_id.fecha_interna', 'fecha_creacion': '$_id.fecha_mostrar', 'pedidos': '$pedidos', 'invitado': '$usuarioInvitado', 'registrado': '$usuarioInscrito', 'total_clientes': '$totalUsuario', 'pedidos_x_cliente': {'$divide': ['$pedidos', '$totalUsuario']}, 'monto_total_venta': '$vtaSinImp', 'ticket_promedio': {'$divide': ['$vtaSinImp', '$pedidos']}}},
             {'$sort': {'fecha_interna': 1}}])
             cursor = collection.aggregate(pipeline)
-            arreglo = await cursor.to_list(length=1000)
+            arreglo = await cursor.to_list(length=None)
             if len(arreglo) <= 0:
                 hayResultados = "no"
                 
@@ -104,7 +104,7 @@ class Tablas():
             ])
             # print(f"Pipeline desde Tablas -> Venta Top 200 Proveedores: {str(pipeline)}")
             cursor = collection.aggregate(pipeline)
-            arreglo = await cursor.to_list(length=1000)
+            arreglo = await cursor.to_list(length=None)
             if len(arreglo) <= 0:
                 hayResultados = "no"
                 
@@ -141,7 +141,7 @@ class Tablas():
                 { '$limit': 1000 }
             ])
             cursor = collection.aggregate(pipeline)
-            arreglo = await cursor.to_list(length=1000)
+            arreglo = await cursor.to_list(length=None)
             if len(arreglo) <= 0:
                 hayResultados = "no"
                 
@@ -184,7 +184,7 @@ class Tablas():
                 {'$sort': {'fecha_interna': 1}}
             ])
             cursor = collection.aggregate(pipeline)
-            arreglo = await cursor.to_list(length=1000)
+            arreglo = await cursor.to_list(length=None)
             if len(arreglo) <= 0:
                 hayResultados = "no"
             else:
@@ -236,7 +236,7 @@ class Tablas():
             pipeline.append({'$group':{'_id':'$sucursal.'+siguiente_nivel, 'COMPLETO': {'$sum': '$COMPLETO'}, 'INC_SIN_STOCK': {'$sum': '$INC_SIN_STOCK'}, 'INC_SUSTITUTOS': {'$sum': '$INC_SUSTITUTOS'}, 'INCOMPLETO': {'$sum': '$INCOMPLETO'}, 'num_pedidos':{'$sum': '$n_pedido'}}})
             pipeline.append({'$project':{'_id':0, 'lugar':'$_id', 'COMPLETO': {'$divide':['$COMPLETO', '$num_pedidos']}, 'INC_SIN_STOCK': {'$divide':['$INC_SIN_STOCK', '$num_pedidos']}, 'INC_SUSTITUTOS': {'$divide':['$INC_SUSTITUTOS', '$num_pedidos']}, 'INCOMPLETO': {'$divide':['$INCOMPLETO', '$num_pedidos']}}})
             cursor = collection.aggregate(pipeline)
-            arreglo = await cursor.to_list(length=1000)
+            arreglo = await cursor.to_list(length=None)
             if len(arreglo) >0:
                 hayResultados = "si"
                 for dato in arreglo:
@@ -279,7 +279,7 @@ class Tablas():
             pipeline.append({'$project':{'_id':0, 'Lugar':'$_id', 'COMPLETO': '$COMPLETO', 'INC_SIN_STOCK': '$INC_SIN_STOCK', 'INC_SUSTITUTOS': '$INC_SUSTITUTOS', 'INCOMPLETO': '$INCOMPLETO', 'COMPLETO_porc': {'$divide':['$COMPLETO', '$num_pedidos']}, 'INC_SIN_STOCK_porc': {'$divide':['$INC_SIN_STOCK', '$num_pedidos']}, 'INC_SUSTITUTOS_porc': {'$divide':['$INC_SUSTITUTOS', '$num_pedidos']}, 'INCOMPLETO_porc': {'$divide':['$INCOMPLETO', '$num_pedidos']}}})
             pipeline.append({'$sort':{'COMPLETO':-1}})
             cursor = collection.aggregate(pipeline)
-            arreglo = await cursor.to_list(length=5000)
+            arreglo = await cursor.to_list(length=None)
             if len(arreglo) >0:
                 hayResultados = "si"
                 for dato in arreglo:
@@ -330,7 +330,7 @@ class Tablas():
         #     pipeline.append({'$project':{'_id':0, 'lugar':'$_id', 'COMPLETO': {'$divide':['$COMPLETO', '$num_pedidos']}, 'INC_SIN_STOCK': {'$divide':['$INC_SIN_STOCK', '$num_pedidos']}, 'INC_SUSTITUTOS': {'$divide':['$INC_SUSTITUTOS', '$num_pedidos']}, 'INCOMPLETO': {'$divide':['$INCOMPLETO', '$num_pedidos']}}})
         #     pipeline.append({'$sort':{'INCOMPLETO':-1}})
         #     cursor = collection.aggregate(pipeline)
-        #     arreglo = await cursor.to_list(length=20)
+        #     arreglo = await cursor.to_list(length=None)
         #     if len(arreglo) >0:
         #         hayResultados = "si"
         #         for dato in arreglo:
@@ -379,7 +379,7 @@ class Tablas():
                 }}
             ]
             cursor = collection.aggregate(pipeline)
-            arreglo = await cursor.to_list(length=1000)
+            arreglo = await cursor.to_list(length=None)
             if len(arreglo) >0:
                 hayResultados = "si"
                 for dato in arreglo:
@@ -460,7 +460,7 @@ class Tablas():
             pipeline.append({'$sort': {'pedidos': -1}})
             # print(f"Pipeline desde Tablas -> Tiendas con Pedidos Atrasados Mayores a 1 Día: {str(pipeline)}")
             cursor = collection.aggregate(pipeline)
-            arreglo = await cursor.to_list(length=1000)
+            arreglo = await cursor.to_list(length=None)
             data = []
             if len(arreglo) >0:
                 hayResultados = "si"
@@ -510,7 +510,7 @@ class Tablas():
             }])
             # print(f"Pipeline desde Tablas -> PedidosPendientes -> {self.titulo}: {pipeline}")
             cursor = collection.aggregate(pipeline)
-            arreglo = await cursor.to_list(length=1000)
+            arreglo = await cursor.to_list(length=None)
             data = []
             if len(arreglo) >0:
                 hayResultados = "si"
@@ -637,7 +637,7 @@ class Tablas():
             ])
             # print(f"Pipeline desde Tablas -> PedidosPendientes -> {self.titulo}: {pipeline}")
             cursor = collection.aggregate(pipeline)
-            arreglo = await cursor.to_list(length=1000)
+            arreglo = await cursor.to_list(length=None)
             # print(f"Arreglo desde Tablas -> PedidosPendientes -> {self.titulo}: {arreglo}")
             data = []
             if len(arreglo) >0:
@@ -737,7 +737,7 @@ class Tablas():
             ])
             # print(f"Pipeline desde Tablas -> PedidosPendientes -> {self.titulo}: {pipeline}")
             cursor = collection.aggregate(pipeline)
-            arreglo = await cursor.to_list(length=1000)
+            arreglo = await cursor.to_list(length=None)
             data = []
             if len(arreglo) >0:
                 hayResultados = "si"
@@ -1058,7 +1058,7 @@ class Tablas():
         ])
         # print(pipeline_periodos)
         cursor = collection.aggregate(pipeline_periodos)
-        arreglo_tmp = await cursor.to_list(length=1000)
+        arreglo_tmp = await cursor.to_list(length=None)
         if len(arreglo_tmp) <= 0: # Si no hay resultados, regresar pipeline a front end
             return {'hayResultados':'no', 'pipeline': pipeline_periodos, 'columns':[], 'data':[]}
         arreglo_periodos = []
@@ -1078,7 +1078,7 @@ class Tablas():
                 {'$group':{'_id': '$respuesta'}}
             ])
             cursor = collection.aggregate(pipeline_justificaciones)
-            arreglo_tmp = await cursor.to_list(length=1000)
+            arreglo_tmp = await cursor.to_list(length=None)
             if len(arreglo_tmp) <= 0: # Si no hay resultados, regresar pipeline a front end
                 return {'hayResultados':'no', 'pipeline': pipeline_justificaciones, 'columns':[], 'data':[]}
             arreglo_justificaciones = []
@@ -1100,7 +1100,7 @@ class Tablas():
             )
             
             cursor = collection.aggregate(pipeline)
-            arreglo_resultados = await cursor.to_list(length=1000)
+            arreglo_resultados = await cursor.to_list(length=None)
             if len(arreglo_resultados) <= 0:
                 hayResultados = "no"
             
@@ -1179,7 +1179,7 @@ class Tablas():
                 {'$sort':{'_id': 1}}
             ])
             cursor = collection.aggregate(pipeline_lugares)
-            arreglo_tmp = await cursor.to_list(length=1000)
+            arreglo_tmp = await cursor.to_list(length=None)
             if len(arreglo_tmp) <= 0: # Si no hay resultados, regresar pipeline a front end
                 return {'hayResultados':'no', 'pipeline': pipeline_lugares, 'columns':[], 'data':[]}
             arreglo_lugares = []
@@ -1208,7 +1208,7 @@ class Tablas():
             # print(pipeline)
 
             cursor = collection.aggregate(pipeline)
-            arreglo_resultados = await cursor.to_list(length=10000)
+            arreglo_resultados = await ccursor.to_list(length=None)
             # print(str(arreglo_resultados))
             if len(arreglo_resultados) <= 0:
                 hayResultados = "no"
@@ -1280,7 +1280,7 @@ class Tablas():
                 {'$sort':{'_id': 1}}
             ])
             cursor = collection.aggregate(pipeline_lugares)
-            arreglo_tmp = await cursor.to_list(length=10000)
+            arreglo_tmp = await ccursor.to_list(length=None)
             if len(arreglo_tmp) <= 0: # Si no hay resultados, regresar pipeline a front end
                 return {'hayResultados':'no', 'pipeline': pipeline_lugares, 'columns':[], 'data':[]}
             arreglo_lugares = []
@@ -1309,7 +1309,7 @@ class Tablas():
             # print(pipeline)
 
             cursor = collection.aggregate(pipeline)
-            arreglo_resultados = await cursor.to_list(length=10000)
+            arreglo_resultados = await ccursor.to_list(length=None)
             # print(str(arreglo_resultados))
             if len(arreglo_resultados) <= 0:
                 hayResultados = "no"
@@ -1368,7 +1368,7 @@ class Tablas():
                 {'$group':{'_id': '$DescripDepto'}}
             ])
             cursor = collection.aggregate(pipeline_departamentos)
-            arreglo_tmp = await cursor.to_list(length=1000)
+            arreglo_tmp = await cursor.to_list(length=None)
             if len(arreglo_tmp) <= 0: # Si no hay resultados, regresar pipeline a front end
                 return {'hayResultados':'no', 'pipeline': pipeline_departamentos, 'columns':[], 'data':[]}
             arreglo_departamentos = []
@@ -1390,7 +1390,7 @@ class Tablas():
             )
             
             cursor = collection.aggregate(pipeline)
-            arreglo_resultados = await cursor.to_list(length=1000)
+            arreglo_resultados = await cursor.to_list(length=None)
             if len(arreglo_resultados) <= 0:
                 hayResultados = "no"
             else:
@@ -1465,7 +1465,7 @@ class Tablas():
             #     }}
             # ])
             # cursor = collection.aggregate(pipeline)
-            # arreglo = await cursor.to_list(length=1000)
+            # arreglo = await cursor.to_list(length=None)
             # if len(arreglo) <= 0:
             #     hayResultados = "no"
             #     res = pipeline
@@ -1657,7 +1657,7 @@ class Tablas():
                 # print(f"Pipeline desde Tablas -> PedidoPerfecto -> {self.titulo}: {str(pipeline)}")
                 # Ejecutamos el query:
                 cursor = collection.aggregate(pipeline)
-                arreglo = await cursor.to_list(length=5000)
+                arreglo = await cursor.to_list(length=None)
                 # print(str(arreglo))
                 if len(arreglo) >0:
                     hayResultados = "si"
@@ -2233,7 +2233,7 @@ class Tablas():
                 # print(str(pipeline))
                 # Ejecutamos el query:
                 cursor = collection.aggregate(pipeline)
-                arreglo = await cursor.to_list(length=5000)
+                arreglo = await cursor.to_list(length=None)
                 # print(str(arreglo))
                 if len(arreglo) >0:
                     hayResultados = "si"
@@ -2806,7 +2806,7 @@ class Tablas():
             # Ejecutamos el query:
             collection = conexion_mongo('report').report_pedidoTimeslot
             cursor = collection.aggregate(pipeline)
-            arreglo = await cursor.to_list(length=1000)
+            arreglo = await cursor.to_list(length=None)
             # print(str(arreglo))
             if len(arreglo) >0:
                 hayResultados = "si"
@@ -2966,7 +2966,7 @@ class Tablas():
             # print(str(pipeline))
             # Ejecutamos el query:
             cursor = collection.aggregate(pipeline)
-            arreglo = await cursor.to_list(length=1000)
+            arreglo = await cursor.to_list(length=None)
             # print(str(arreglo))
             if len(arreglo) >0:
                 hayResultados = "si"
@@ -3072,7 +3072,7 @@ class Tablas():
         # Ejecutamos el query:
         collection = conexion_mongo('report').report_pedidoDetalleNPS
         cursor = collection.aggregate(pipeline)
-        arreglo = await cursor.to_list(length=1000)
+        arreglo = await cursor.to_list(length=None)
         # print(str(arreglo))
         if len(arreglo) >0:
             hayResultados = "si"
@@ -3239,7 +3239,7 @@ class Tablas():
         collection = conexion_mongo('report').report_pedidoDevolucion
         # print(f"pipeline desde PedidosDevolución: {str(pipeline)}")
         cursor = collection.aggregate(pipeline)
-        arreglo = await cursor.to_list(length=1000)
+        arreglo = await cursor.to_list(length=None)
         # print(str(arreglo))
         if len(arreglo) >0:
             hayResultados = "si"
@@ -3377,7 +3377,7 @@ class Tablas():
         # Ejecutamos el query:
         collection = conexion_mongo('report').report_pedidoSKU
         cursor = collection.aggregate(pipeline)
-        arreglo = await cursor.to_list(length=1000)
+        arreglo = await cursor.to_list(length=None)
         # print(str(arreglo))
         if len(arreglo) >0:
             hayResultados = "si"
@@ -3513,7 +3513,7 @@ class Tablas():
         # Ejecutamos el query:
         collection = conexion_mongo('report').report_skuConershopChedraui
         cursor = collection.aggregate(pipeline)
-        arreglo = await cursor.to_list(length=1000)
+        arreglo = await cursor.to_list(length=None)
         # print(str(arreglo))
         if len(arreglo) >0:
             # print('Sí hay resultados: '+str(arreglo))
@@ -3632,7 +3632,7 @@ class Tablas():
             # Ejecutamos el query:
             collection = conexion_mongo('report').report_skuConershopChedrauiDetalle
             cursor = collection.aggregate(pipeline)
-            arreglo = await cursor.to_list(length=1000)
+            arreglo = await cursor.to_list(length=None)
             # print(str(arreglo))
             if len(arreglo) >0:
                 # print('Sí hay resultados: '+str(arreglo))
@@ -3746,7 +3746,7 @@ class Tablas():
             # Ejecutamos el query:
             collection = conexion_mongo('report').report_skuConershopChedrauiDetalle
             cursor = collection.aggregate(pipeline)
-            arreglo = await cursor.to_list(length=10)
+            arreglo = await cursor.to_list(length=None)
             # print(str(arreglo))
             if len(arreglo) >0:
                 # print('Sí hay resultados: '+str(arreglo))
@@ -4404,7 +4404,7 @@ class Tablas():
         # Ejecutamos el query de labels:
         collection = conexion_mongo('report').report_comparativaVentaCanal
         cursor = collection.aggregate(pipeline_labels)
-        arreglo_labels = await cursor.to_list(length=5)
+        arreglo_labels = await cursor.to_list(length=None)
         for row in arreglo_labels:
             if row['_id']['descripPeriodo'] == 'MesActual':
                 mesActual = row['_id']['periodo']
@@ -4480,7 +4480,7 @@ class Tablas():
         # Ejecutamos el query principal:
         # print('Pipeline desde tabla ComparativoVentaXCanal: '+str(pipeline))
         cursor = collection.aggregate(pipeline)
-        arreglo = await cursor.to_list(length=1000)
+        arreglo = await cursor.to_list(length=None)
         # print(str(arreglo))
         if len(arreglo) >0:
             # print('Sí hay resultados: '+str(arreglo))
@@ -4575,7 +4575,7 @@ class Tablas():
             ])
             # print('Pipeline desde Ctes por segmento en Tablas: '+str(pipeline))
             cursor = collection.aggregate(pipeline)
-            arreglo = await cursor.to_list(length=1000)
+            arreglo = await cursor.to_list(length=None)
             # print('Arreglo desde Ctes por segmento en Tablas: '+str(arreglo))
             if len(arreglo[0]['segmentados']) >0:
                 # print('Sí hay resultados: '+str(arreglo))
@@ -5090,7 +5090,7 @@ class Tablas():
             pipeline.append({'$group':{'_id':'$xLabel', 'Entregado_Fuera_tiempo':{'$sum':'$Entregado_Fuera_tiempo'}, 'Entregado_tiempo':{'$sum':'$Entregado_tiempo'}, 'No_entregado_Fuera_tiempo':{'$sum':'$No_entregado_Fuera_tiempo'}, 'No_entregado_tiempo':{'$sum':'$No_entregado_tiempo'}, 'Despachado_Fuera_tiempo':{'$sum':'$Despachado_Fuera_tiempo'}, 'Despachado_tiempo':{'$sum':'$Despachado_tiempo'}}})
             pipeline.append({'$sort':{'_id':1}})
             cursor = collection.aggregate(pipeline)
-            arreglo = await cursor.to_list(length=1000)
+            arreglo = await cursor.to_list(length=None)
             if len(arreglo) >0:
                 hayResultados = "si"
                 for row in arreglo:
@@ -5143,7 +5143,7 @@ class Tablas():
             pipeline.append({'$group':{'_id':'$xLabel', 'Entregado_Fuera_tiempo':{'$sum':'$Entregado_Fuera_tiempo'}, 'Entregado_tiempo':{'$sum':'$Entregado_tiempo'}, 'No_entregado_Fuera_tiempo':{'$sum':'$No_entregado_Fuera_tiempo'}, 'No_entregado_tiempo':{'$sum':'$No_entregado_tiempo'}, 'Despachado_Fuera_tiempo':{'$sum':'$Despachado_Fuera_tiempo'}, 'Despachado_tiempo':{'$sum':'$Despachado_tiempo'}}})
             pipeline.append({'$sort':{'_id':1}})
             cursor = collection.aggregate(pipeline)
-            arreglo = await cursor.to_list(length=1000)
+            arreglo = await cursor.to_list(length=None)
             if len(arreglo) >0:
                 hayResultados = "si"
                 for row in arreglo:
@@ -5196,7 +5196,7 @@ class Tablas():
             pipeline.append({'$sort':{'nPedido':1}})
             print(f'Pipeline desde Tablas -> NivelesDeServicio -> Detalle de pedidos $tienda: {str(pipeline)}')
             cursor = collection.aggregate(pipeline)
-            arreglo = await cursor.to_list(length=10000)
+            arreglo = await cursor.to_list(length=None)
             if len(arreglo) >0:
                 hayResultados = "si"
                 for row in arreglo:
