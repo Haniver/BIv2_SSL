@@ -13,7 +13,7 @@ import Label from 'reactstrap/lib/Label'
 
 // Búsqueda
 const FilterComponent = ({ filterText, onFilter, onClear }) => (
-    <>
+    <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
         <Input
             id="search"
             type="text"
@@ -26,7 +26,7 @@ const FilterComponent = ({ filterText, onFilter, onClear }) => (
         <Button color='dark' onClick={onClear}>
             Borrar
         </Button>
-    </>
+    </div>
 )
 
 const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quitarPaginacion, fechas, region, zona, tienda, proveedor, tipoEntrega, depto, subDepto, mes, canal, agrupador, periodo, reload, setProducto, setUsuario, setEstatus, tipoEntrega2, tipoEntrega3, detalle, estatus, formato, sku, e3, canal2, opcionesPaginacion = [5, 10, 15], setSibling, botonEnviar, mesRFM, anioRFM, fromSibling, origen, anio, metodoEnvio, provLogist, subtitulo}) => {
@@ -476,7 +476,10 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
             }
         }
 
-        if (quitarBusqueda === undefined) {
+        if (!quitarBusqueda) {
+            // return (
+            //     <p>Aquí va la búsqueda</p>
+            // )
             return (
                 <FilterComponent onFilter={e => setFilterText(e.target.value)} onClear={handleClear} filterText={filterText} />
             )    
@@ -556,21 +559,20 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
                 {!hayError && estadoLoader.contador === 0 && <>
                 <CardTitle className='centrado'>{titulo}</CardTitle>
                 {subtitulo && <CardSubtitle className='centrado'>{subtitulo}</CardSubtitle>}
+                {subHeaderComponentMemo}
                 <DataTable
                     title=''
                     columns={columns}
                     data={filteredItems}
-                    // data={data}
-                    // actions={(quitarExportar) ? false : actionsMemo}
-                    // Paginación
+                    // actions={(quitarExportar) ? false : actionsMemo} *
                     paginationResetDefaultPage={resetPaginationToggle} // optionally, a hook to reset pagination to page 1
                     subHeader={false}
-                    subHeaderComponent={subHeaderComponentMemo}
+                    // subHeaderComponent={subHeaderComponentMemo}
                     onColumnOrderChange={cols => console.log(cols)}
                     paginationComponentOptions={paginationComponentOptions}
                     pagination={!quitarPaginacion} paginationRowsPerPageOptions={opcionesPaginacion}
                     paginationPerPage={opcionesPaginacion[0]}
-                    customStyles={customStyles}
+                    // customStyles={customStyles}
                     highlightOnHover
                     // Algunas filas vienen con una propiedad "esTotal = true" desde el back end. Si lo tienen, usarlo para darle formato de Total a esa fila:
                     conditionalRowStyles={conditionalRowStyles}
