@@ -17,9 +17,9 @@ const Perfil = () => {
   const [skin, setSkin] = useSkin()
   const [cambiandoTienda, setCambiandoTienda] = useState(false)
   const [tiendaActualNombre, setTiendaActualNombre] = useState(false)
-  const [region, setRegion] = useState('')
-  const [zona, setZona] = useState('')
-  const [tienda, setTienda] = useState('')
+  const [region, setRegion] = useState(userService.getRegionPorNivel())
+  const [zona, setZona] = useState(userService.getZonaPorNivel())
+  const [tienda, setTienda] = useState(userService.getTiendaPorNivel())
   const [cambiandoPassword, setCambiandoPassword] = useState(false)
   const userData = localStorage.getItem('userData')
   const tiendaActual = JSON.parse(userData).tienda

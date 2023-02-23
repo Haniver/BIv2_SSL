@@ -113,17 +113,53 @@ class UserService {
     const userData = JSON.parse(localStorage.getItem('userData'))
     return userData["nivel"]
   }
-  getTienda() {
-    const userData = JSON.parse(localStorage.getItem('userData'))
-    return userData["tienda"]
-  }
   getRegion() {
     const userData = JSON.parse(localStorage.getItem('userData'))
-    return userData["region"]
+    if (userData["region"] !== undefined && userData["region"]) {
+      return userData["region"]
+    } else {
+      return ''
+    }
   }
   getZona() {
     const userData = JSON.parse(localStorage.getItem('userData'))
-    return userData["zona"]
+    if (userData["zona"] !== undefined && userData["zona"]) {
+      return userData["zona"]
+    } else {
+      return ''
+    }
+  }
+  getTienda() {
+    const userData = JSON.parse(localStorage.getItem('userData'))
+    if (userData["tienda"] !== undefined && userData["tienda"]) {
+      return userData["tienda"]
+    } else {
+      return ''
+    }
+  }
+  getRegionPorNivel() {
+    const userData = JSON.parse(localStorage.getItem('userData'))
+    if (userData["region"] !== undefined && userData["region"] && Number(this.getNivel()) <= 3) {
+      return userData["region"]
+    } else {
+      return ''
+    }
+  }
+  getZonaPorNivel() {
+    const userData = JSON.parse(localStorage.getItem('userData'))
+    if (userData["zona"] !== undefined && userData["zona"] && Number(this.getNivel()) <= 2) {
+      return userData["zona"]
+    } else {
+      return ''
+    }
+  }
+  getTiendaPorNivel() {
+    const userData = JSON.parse(localStorage.getItem('userData'))
+    if (userData["tienda"] !== undefined && userData["tienda"] && Number(this.getNivel()) === 1) {
+      return userData["tienda"]
+    } else {
+      return ''
+    }
   }
   getLugarNombre() {
     const userData = JSON.parse(localStorage.getItem('userData'))

@@ -8,6 +8,7 @@ import Tabla from '../componentes/tablas/Tabla'
 import TarjetaEnFila from '../componentes/auxiliares/TarjetaEnFila'
 import IndicadoresEnBarras from '../componentes/auxiliares/IndicadoresEnBarras'
 import Leyenda from '../componentes/auxiliares/Leyenda'
+import userService from '../services/user.service'
 // import userService from '../services/user.service'
 
 import {
@@ -23,9 +24,9 @@ import {
 
 const VentaSinImpuesto = () => {
 
-  const [region, setRegion] = useState('')
-  const [zona, setZona] = useState('')
-  const [tienda, setTienda] = useState('')
+  const [region, setRegion] = useState(userService.getRegionPorNivel())
+  const [zona, setZona] = useState(userService.getZonaPorNivel())
+  const [tienda, setTienda] = useState(userService.getTiendaPorNivel())
   const [canal, setCanal] = useState(1)
   const [depto, setDepto] = useState('')
   const [subDepto, setSubDepto] = useState('')

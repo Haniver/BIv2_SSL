@@ -3,6 +3,7 @@ import { Row, Col } from 'reactstrap'
 import fechas_srv from '../services/fechas_srv'
 import Tabla from '../componentes/tablas/Tabla'
 import Filtro from '../componentes/auxiliares/Filtro'
+import userService from '../services/user.service'
 // import userService from '../services/user.service'
 
 const PedidosSKU = () => {
@@ -10,9 +11,9 @@ const PedidosSKU = () => {
         fecha_ini: fechas_srv.actualVencida(),
         fecha_fin: fechas_srv.actualVencida()
     })
-    const [region, setRegion] = useState('')
-    const [zona, setZona] = useState('')
-    const [tienda, setTienda] = useState('')
+    const [region, setRegion] = useState(userService.getRegionPorNivel())
+    const [zona, setZona] = useState(userService.getZonaPorNivel())
+    const [tienda, setTienda] = useState(userService.getTiendaPorNivel())
     const [sku, setSku] = useState('')
     const [botonEnviar, setBotonEnviar] = useState(0)
 

@@ -4,13 +4,14 @@ import Filtro from '../componentes/auxiliares/Filtro'
 import EjesMultiples from '../componentes/graficos/EjesMultiples'
 import TablaCostos from '../componentes/tablas/TablaCostos'
 import ColumnasBasicas from '../componentes/graficos/ColumnasBasicas'
+import userService from '../services/user.service'
 // import userService from '../services/user.service'
 
 const CostoPorPedido = () => {
 
-  const [region, setRegion] = useState('')
-  const [zona, setZona] = useState('')
-  const [tienda, setTienda] = useState('')
+  const [region, setRegion] = useState(userService.getRegionPorNivel())
+  const [zona, setZona] = useState(userService.getZonaPorNivel())
+  const [tienda, setTienda] = useState(userService.getTiendaPorNivel())
   const [metodoEnvio, setMetodoEnvio] = useState('')
   const [anio, setAnio] = useState(0)
   const [mes, setMes] = useState(0)

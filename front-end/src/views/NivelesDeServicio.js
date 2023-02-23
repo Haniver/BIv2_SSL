@@ -6,13 +6,14 @@ import ColumnasApiladas from '../componentes/graficos/ColumnasApiladas'
 import Pie from '../componentes/graficos/Pie'
 import Tabla from '../componentes/tablas/Tabla'
 import cargarFiltros from '../services/cargarFiltros'
+import userService from '../services/user.service'
 // import userService from '../services/user.service'
 
 const NivelesDeServicio = () => {
   const [fechas, setFechas] = useState({fecha_ini: fechas_srv.primeroDelMesVencido(), fecha_fin: fechas_srv.actualVencida()})
-  const [region, setRegion] = useState('')
-  const [zona, setZona] = useState('')
-  const [tienda, setTienda] = useState('')
+  const [region, setRegion] = useState(userService.getRegionPorNivel())
+  const [zona, setZona] = useState(userService.getZonaPorNivel())
+  const [tienda, setTienda] = useState(userService.getTiendaPorNivel())
   const [categoria, setCategoria] = useState('')
   const [tipoEntrega, setTipoEntrega] = useState('')
   const [tiendaNombre, setTiendaNombre] = useState('')

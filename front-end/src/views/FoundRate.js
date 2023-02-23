@@ -11,6 +11,7 @@ import EjesMultiples from '../componentes/graficos/EjesMultiples'
 import tarjetasCombinadas from '../services/tarjetasCombinadas'
 import Tarjeta from '../componentes/auxiliares/Tarjeta'
 import Pie from '../componentes/graficos/Pie'
+import userService from '../services/user.service'
 
 import {
   LogIn,
@@ -22,9 +23,9 @@ import {
 
 const FoundRate = () => {
   const [fechas, setFechas] = useState({fecha_ini: fechas_srv.primeroDelMesVencido(), fecha_fin: fechas_srv.actualVencida()})
-  const [region, setRegion] = useState('')
-  const [zona, setZona] = useState('')
-  const [tienda, setTienda] = useState('')
+  const [region, setRegion] = useState(userService.getRegionPorNivel())
+  const [zona, setZona] = useState(userService.getZonaPorNivel())
+  const [tienda, setTienda] = useState(userService.getTiendaPorNivel())
   const [tarjetasOriginalYFinal, setTarjetasOriginalYFinal] = useState({res: {'Monto Original': '', 'Monto Final': '', '% Variación': ''}})
   const [tarjetasFoundYFulfillment, setTarjetasFoundYFulfillment] = useState({res: {'Found Rate': '', 'Fulfillment Rate': ''}})
   const [botonEnviar, setBotonEnviar] = useState(0)

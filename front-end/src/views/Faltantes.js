@@ -6,13 +6,14 @@ import fechas_srv from '../services/fechas_srv'
 import EjesMultiples from '../componentes/graficos/EjesMultiples'
 import Tabla from '../componentes/tablas/Tabla'
 import Pie from '../componentes/graficos/Pie'
+import userService from '../services/user.service'
 
 
 const Faltantes = () => {
     
-    const [region, setRegion] = useState('')
-    const [zona, setZona] = useState('')
-    const [tienda, setTienda] = useState('')
+    const [region, setRegion] = useState(userService.getRegionPorNivel())
+    const [zona, setZona] = useState(userService.getZonaPorNivel())
+    const [tienda, setTienda] = useState(userService.getTiendaPorNivel())
     const [fechas, setFechas] = useState({fecha_ini: fechas_srv.primeroDelMesVencido(), fecha_fin: fechas_srv.actualVencida()})
     const [agrupador, setAgrupador] = useState('semana')
     const [botonEnviar, setBotonEnviar] = useState(0)

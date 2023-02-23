@@ -7,12 +7,13 @@ import Pie from '../componentes/graficos/Pie'
 import Titulo from '../componentes/auxiliares/Titulo'
 import ColumnasBasicas from '../componentes/graficos/ColumnasBasicas'
 import EjesMultiples from '../componentes/graficos/EjesMultiples'
+import userService from '../services/user.service'
 
 const PedidosPendientes = () => {
   const [tipoEntrega, setTipoEntrega] = useState('')
-  const [region, setRegion] = useState('')
-  const [zona, setZona] = useState('')
-  const [tienda, setTienda] = useState('')
+  const [region, setRegion] = useState(userService.getRegionPorNivel())
+  const [zona, setZona] = useState(userService.getZonaPorNivel())
+  const [tienda, setTienda] = useState(userService.getTiendaPorNivel())
   const [origen, setOrigen] = useState('Vtex')
   const [botonEnviar, setBotonEnviar] = useState(0)
 

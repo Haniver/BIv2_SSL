@@ -16,9 +16,9 @@ const Home = () => {
   const tienda_tmp = JSON.parse(userData).tienda
   // console.log(`tienda_tmp = ${tienda_tmp}`)
   const [tiendaNombre, setTiendaNombre] = useState('')
-  const [region, setRegion] = useState('')
-  const [zona, setZona] = useState('')
-  const [tienda, setTienda] = useState('')
+  const [region, setRegion] = useState(userService.getRegionPorNivel())
+  const [zona, setZona] = useState(userService.getZonaPorNivel())
+  const [tienda, setTienda] = useState(userService.getTiendaPorNivel())
   const email = userService.getEmail()
   useEffect(async () => {
     if (tienda_tmp !== null) {

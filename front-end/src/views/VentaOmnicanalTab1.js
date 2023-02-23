@@ -6,6 +6,7 @@ import fechas_srv from '../services/fechas_srv'
 import Pie from '../componentes/graficos/Pie'
 import ColumnasDrilldown from '../componentes/graficos/ColumnasDrilldown'
 import Tabla from '../componentes/tablas/Tabla'
+import userService from '../services/user.service'
 import {
   ShoppingCart,
   FileText,
@@ -16,9 +17,9 @@ import {
 const VentaOmnicanalTab1 = () => {
 
   const [fechas, setFechas] = useState({fecha_ini: fechas_srv.primeroDelMesVencido(), fecha_fin: fechas_srv.actualVencida()})
-  const [region, setRegion] = useState('')
-  const [zona, setZona] = useState('')
-  const [tienda, setTienda] = useState('')
+  const [region, setRegion] = useState(userService.getRegionPorNivel())
+  const [zona, setZona] = useState(userService.getZonaPorNivel())
+  const [tienda, setTienda] = useState(userService.getTiendaPorNivel())
   const [botonEnviar, setBotonEnviar] = useState(0)
 
   const seccion = 'VentaOmnicanal'

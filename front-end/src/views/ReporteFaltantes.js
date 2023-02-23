@@ -4,15 +4,16 @@ import fechas_srv from '../services/fechas_srv'
 import Tabla from '../componentes/tablas/Tabla'
 import Filtro from '../componentes/auxiliares/Filtro'
 import UpdateFaltantes from '../componentes/auxiliares/UpdateFaltantes'
+import userService from '../services/user.service'
 // import userService from '../services/user.service'
 
 const ReporteFaltantes = () => {
     const [fechas, setFechas] = useState({fecha_ini: fechas_srv.primeroDelMesVencido(), fecha_fin: ''})
     const [depto, setDepto] = useState('')
     const [subDepto, setSubDepto] = useState('')
-    const [region, setRegion] = useState('')
-    const [zona, setZona] = useState('')
-    const [tienda, setTienda] = useState('')
+    const [region, setRegion] = useState(userService.getRegionPorNivel())
+    const [zona, setZona] = useState(userService.getZonaPorNivel())
+    const [tienda, setTienda] = useState(userService.getTiendaPorNivel())
     const [producto, setProducto] = useState({nombre: '', sku: '', fecha: '', tienda: ''})
     const [reloadTabla, setReloadTabla] = useState(0)
     const [botonEnviar, setBotonEnviar] = useState(0)

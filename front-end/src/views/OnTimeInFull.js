@@ -8,6 +8,7 @@ import EjesMultiplesConEscala from '../componentes/graficos/EjesMultiplesConEsca
 import Tabla from '../componentes/tablas/Tabla'
 import ColumnasApiladas from '../componentes/graficos/ColumnasApiladas'
 import BarrasApiladas from '../componentes/graficos/BarrasApiladas'
+import userService from '../services/user.service'
 // import userService from '../services/user.service'
 
 const OnTimeInFull = () => {
@@ -15,9 +16,9 @@ const OnTimeInFull = () => {
     const [fechas, setFechas] = useState({fecha_ini: fechas_srv.primeroDelMesVencido(), fecha_fin: fechas_srv.actualVencida()})
     const [agrupador, setAgrupador] = useState('semana')
     const [periodo, setPeriodo] = useState({})
-    const [region, setRegion] = useState('')
-    const [zona, setZona] = useState('')
-    const [tienda, setTienda] = useState('')
+    const [region, setRegion] = useState(userService.getRegionPorNivel())
+    const [zona, setZona] = useState(userService.getZonaPorNivel())
+    const [tienda, setTienda] = useState(userService.getTiendaPorNivel())
     const [sibling, setSibling] = useState(false)
     const [labelTienda, setLabelTienda] = useState(false)
     const [quitarBusqueda, setQuitarBusqueda] = useState(false)

@@ -193,9 +193,9 @@ const UpdateUsuario = ({usuario, setUsuario, reloadTabla, setReloadTabla}) => {
     }
     
     // Tienda
-    const [region, setRegion] = useState('')
-    const [zona, setZona] = useState('')
-    const [tienda, setTienda] = useState('')
+    const [region, setRegion] = useState(userService.getRegionPorNivel())
+    const [zona, setZona] = useState(userService.getZonaPorNivel())
+    const [tienda, setTienda] = useState(userService.getTiendaPorNivel())
     const [tiendaVisible, setTiendaVisible] = useState(false)
     // Cargar la tienda, que se obtiene de forma asíncrona a partir de los props
     useEffect(async () => {

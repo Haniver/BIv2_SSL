@@ -6,15 +6,16 @@ import EjesMultiples from '../componentes/graficos/EjesMultiples'
 import Tabla from '../componentes/tablas/Tabla'
 import ColumnasNps from '../componentes/graficos/ColumnasNps'
 import Spiderweb from '../componentes/graficos/Spiderweb'
+import userService from '../services/user.service'
 import { set } from 'js-cookie'
 
 
 const Nps = () => {
     
     const [fechas, setFechas] = useState({fecha_ini: fechas_srv.primeroDelMesVencido(), fecha_fin: fechas_srv.actualVencida()})
-    const [region, setRegion] = useState('')
-    const [zona, setZona] = useState('')
-    const [tienda, setTienda] = useState('')
+    const [region, setRegion] = useState(userService.getRegionPorNivel())
+    const [zona, setZona] = useState(userService.getZonaPorNivel())
+    const [tienda, setTienda] = useState(userService.getTiendaPorNivel())
     const [agrupador, setAgrupador] = useState('semana')
     const [periodo, setPeriodo] = useState({})
     const [periodoLabel, setPeriodoLabel] = useState('')

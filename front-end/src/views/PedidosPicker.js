@@ -3,12 +3,13 @@ import { Row, Col } from 'reactstrap'
 import fechas_srv from '../services/fechas_srv'
 import Tabla from '../componentes/tablas/Tabla'
 import Filtro from '../componentes/auxiliares/Filtro'
+import userService from '../services/user.service'
 
 const PedidosPicker = () => {
     const [fechas, setFechas] = useState({fecha_ini: fechas_srv.primeroDelMesVencido(), fecha_fin: fechas_srv.actualVencida()})
-    const [region, setRegion] = useState('')
-    const [zona, setZona] = useState('')
-    const [tienda, setTienda] = useState('')
+    const [region, setRegion] = useState(userService.getRegionPorNivel())
+    const [zona, setZona] = useState(userService.getZonaPorNivel())
+    const [tienda, setTienda] = useState(userService.getTiendaPorNivel())
     const [botonEnviar, setBotonEnviar] = useState(0)
     const [agente, setAgente] =  useState('')
 

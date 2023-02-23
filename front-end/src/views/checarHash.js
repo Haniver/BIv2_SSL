@@ -138,9 +138,9 @@ const ChecarHash = () => {
   }
   
   // Tienda
-  const [region, setRegion] = useState('')
-  const [zona, setZona] = useState('')
-  const [tienda, setTienda] = useState('')
+  const [region, setRegion] = useState(userService.getRegionPorNivel())
+  const [zona, setZona] = useState(userService.getZonaPorNivel())
+  const [tienda, setTienda] = useState(userService.getTiendaPorNivel())
   const [msgTienda, setMsgTienda] = useState({texto: '', visible: false, color: 'info'})
   const [validadoTienda, setValidadoTienda] = useState(false)
   useEffect(() => {

@@ -4,11 +4,12 @@ import fechas_srv from '../services/fechas_srv'
 import Tabla from '../componentes/tablas/Tabla'
 import Filtro from '../componentes/auxiliares/Filtro'
 import UpdateFaltantes from '../componentes/auxiliares/UpdateFaltantes'
+import userService from '../services/user.service'
 
 const ComparativoVentaXCanal = () => {
-  const [region, setRegion] = useState('')
-  const [zona, setZona] = useState('')
-  const [tienda, setTienda] = useState('')
+  const [region, setRegion] = useState(userService.getRegionPorNivel())
+  const [zona, setZona] = useState(userService.getZonaPorNivel())
+  const [tienda, setTienda] = useState(userService.getTiendaPorNivel())
   const [botonEnviar, setBotonEnviar] = useState(0)
 
   const seccion = 'ComparativoVentaXCanal'
