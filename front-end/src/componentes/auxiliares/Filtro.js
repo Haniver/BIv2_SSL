@@ -872,32 +872,10 @@ const Filtro = (props) => {
         setComboTienda(comboTienda_temp)
         setIsTiendaHidden(false)
         setBloqueadoBotonEnviar(false)
-      } else if (props.region !== undefined && UserService.getNivel() === 3) {
-        // props.setRegion(UserService.getRegion())
-        handleRegionChange({value: UserService.getRegion()})
-      } else if (props.zona !== undefined && UserService.getNivel() === 2) {
-        // console.log("cambiando zona desde 4")
-        if (props.botonEnviar === undefined) {
-          props.setRegion(UserService.getRegion())
-        } else {
-          setRegion_tmp(UserService.getRegion())
-        }
-        // props.setZona(UserService.getZona())
-        handleZonaChange({value: UserService.getZona()})
-      } else if (props.tienda !== undefined && UserService.getNivel() === 1) {
-        if (props.botonEnviar === undefined)  {
-          props.setRegion(UserService.getRegion())
-          props.setZona(UserService.getZona())
-          props.setTienda(UserService.getTienda())
-        } else {
-          setRegion_tmp(UserService.getRegion())
-          setZona_tmp(UserService.getZona())
-          setTienda_tmp(UserService.getTienda())
-        }
-        if (props.setLabelTienda !== undefined) {
-          // props.setLabelTienda(UserService.getLugarNombre())
-          setLabelTienda_tmp(UserService.getLugarNombre())
-        }
+      }
+      if (props.setLabelTienda !== undefined && props.tienda !== undefined && UserService.getNivel() === 1) {
+        // props.setLabelTienda(UserService.getLugarNombre())
+        setLabelTienda_tmp(UserService.getLugarNombre())
       }
       if (props.proveedor !== undefined) {
         setIsProveedorHidden(true)
