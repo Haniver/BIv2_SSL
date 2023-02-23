@@ -425,17 +425,17 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
         return result
     }
     function downloadCSV(array) {
+        console.log(JSON.stringify(array))
         const link = document.createElement('a')
-        let csv = convertArrayOfObjectsToCSV(array)
+        const csv = convertArrayOfObjectsToCSV(array)
         if (csv === null) return
 
         const filename = `${tituloEnviar}.csv`
 
-        if (!csv.match(/^data:text\/csv/i)) {
-            csv = `data:text/csv;charset=utf-8,${csv}`
-        }
+        // Create a Blob with the CSV data and a UTF-8 BOM sequence
+        const blob = new Blob(['\ufeff', csv], { type: 'text/csv;charset=utf-8' })
 
-        link.setAttribute('href', encodeURI(csv))
+        link.setAttribute('href', URL.createObjectURL(blob))
         link.setAttribute('download', filename)
         link.click()
     }

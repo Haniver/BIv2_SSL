@@ -3068,7 +3068,7 @@ class Tablas():
             # print(f"'$' + camino desde tablas -> NPSDetalle: {'$' + camino}")
             pipeline[-1]['$project'][camino] = '$' + camino
             # print(f"pipeline[-1]['$project'][camino] desde tablas -> NPSDetalle: {str(pipeline[-1]['$project'][camino])}")
-        # print(f"pipeline desde tablas -> NPSDetalle: {str(pipeline)}")
+        print(f"pipeline desde tablas -> NPSDetalle: {str(pipeline)}")
         # Ejecutamos el query:
         collection = conexion_mongo('report').report_pedidoDetalleNPS
         cursor = collection.aggregate(pipeline)
