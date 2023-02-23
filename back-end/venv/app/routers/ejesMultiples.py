@@ -421,6 +421,135 @@ class EjesMultiples():
                 hayResultados = "no"
                 categories = []
                 series = []
+
+        if self.titulo == 'Venta anual de todas las zonas: $anioActual vs. $anioAnterior y Objetivo':
+            # print('self.filtros.canal = '+self.filtros.canal)
+            mod_titulo_serie = ''
+            serie1 = []
+            serie2 = []
+            serie3 = []
+            serie4 = []
+            serie5 = []
+
+            filtro_lugar = ''
+            campo_siguiente_lugar = 'zonaNombre'
+
+            pipeline = f"""select ct.{campo_siguiente_lugar} categoria,
+            sum(case when anio={anioElegido-1} then isnull (ventaSinImpuestos, 0) else 0 end) AAnterior,
+            sum(case when anio={anioElegido} then isnull (ventaSinImpuestos, 0) else 0 end) AActual,
+            sum(case when anio={anioElegido} then objetivo else 0 end) objetivo
+            from DWH.artus.ventaDiaria vd
+            left join DWH.dbo.dim_tiempo dt on vd.fecha=dt.id_fecha
+            left join DWH.artus.catTienda ct on vd.idTienda =ct.tienda
+            left join DWH.artus.catCanal cc on vd.idCanal =cc.idCanal
+            left join DWH.artus.cat_departamento cd on vd.subDepto = cd.idSubDepto
+            where dt.anio in ({anioElegido},{anioElegido-1})
+            and cc.tipo in ({canal}) {filtro_lugar} """
+            if self.filtros.depto != '' and self.filtros.depto != "False" and self.filtros.depto != None:
+                if self.filtros.subDepto != '' and self.filtros.subDepto != "False" and self.filtros.subDepto != None:
+                    pipeline += f""" and cd.idSubDepto = {self.filtros.subDepto} """
+                else:
+                    pipeline += f""" and cd.idDepto = {self.filtros.depto} """
+            pipeline += f" group by ct.{campo_siguiente_lugar} "
+            # print(f"Query desde EjesMultiples -> VentaSinImpuesto -> {self.titulo}: {pipeline}")
+            cnxn = conexion_sql('DWH')
+            cursor = cnxn.cursor().execute(pipeline)
+            arreglo = crear_diccionario(cursor)
+
+            if len(arreglo) > 0:
+                hayResultados = "si"
+                for i in range(len(arreglo)):
+                    categories.append(arreglo[i]['categoria'])
+                    serie1.append(round((arreglo[i]['AAnterior']), 2))
+                    serie2.append(round((arreglo[i]['AActual']), 2))
+                    if arreglo[i]['AAnterior'] != 0:
+                    # if i != 0:
+                        serie4.append(round(((arreglo[i]['AActual'] / arreglo[i]['AAnterior'])-1), 4))
+                    else:
+                        serie4.append(0)
+                    if self.filtros.canal == '1' or self.filtros.canal == '35' or self.filtros.canal == '36':
+                        serie3.append(round((arreglo[i]['objetivo']), 2))
+                    if arreglo[i]['objetivo'] != 0:
+                        serie5.append(round(((arreglo[i]['AActual'] / arreglo[i]['objetivo'])-1), 4))
+                    else:
+                        serie5.append(0)
+                series.extend([
+                    {'name': 'Venta '+mod_titulo_serie+str(anioElegido - 1), 'data':serie1, 'type': 'column', 'formato_tooltip':'moneda', 'color':'dark'},
+                    {'name': 'Venta '+mod_titulo_serie+str(anioElegido), 'data':serie2, 'type': 'column', 'formato_tooltip':'moneda', 'color':'secondary'}
+                ])
+                series.append({'name': 'Objetivo '+mod_titulo_serie+str(anioElegido), 'data':serie3, 'type': 'column', 'formato_tooltip':'moneda', 'color':'light'})
+                series.append({'name': '% Var Actual', 'data':serie4, 'type': 'spline', 'formato_tooltip':'porcentaje', 'color':'dark'})
+                series.append({'name': '% Var Objetivo', 'data':serie5, 'type': 'spline', 'formato_tooltip':'porcentaje', 'color':'danger'})
+            else:
+                hayResultados = "no"
+                categories = []
+                series = []
+
+        if self.titulo == 'Venta mensual de todas las zonas: $anioActual vs. $anioAnterior y Objetivo':
+            # print('self.filtros.canal = '+self.filtros.canal)
+            mod_titulo_serie = f"{mesTexto(mesElegido)} "
+            serie1 = []
+            serie2 = []
+            serie3 = []
+            serie4 = []
+            serie5 = []
+
+            filtro_lugar = ''
+            campo_siguiente_lugar = 'zonaNombre'
+
+            pipeline = f"""select ct.{campo_siguiente_lugar} categoria,
+                sum(case when anio={anioElegido-1} then isnull (ventaSinImpuestos, 0) else 0 end) AAnterior,
+                sum(case when anio={anioElegido} then isnull (ventaSinImpuestos, 0) else 0 end) AActual,
+                sum(case when anio={anioElegido} then objetivo else 0 end) objetivo
+                from DWH.artus.ventaDiaria vd
+                left join DWH.dbo.dim_tiempo dt on vd.fecha=dt.id_fecha
+                left join DWH.artus.catTienda ct on vd.idTienda =ct.tienda
+                left join DWH.artus.catCanal cc on vd.idCanal =cc.idCanal
+                left join DWH.artus.cat_departamento cd on vd.subDepto = cd.idSubDepto
+                where dt.anio in ({anioElegido},{anioElegido-1})
+                and dt.abrev_mes='{mesTexto(mesElegido)}'
+                and cc.tipo in ({canal}) {filtro_lugar} """
+            if self.filtros.depto != '' and self.filtros.depto != "False" and self.filtros.depto != None:
+                if self.filtros.subDepto != '' and self.filtros.subDepto != "False" and self.filtros.subDepto != None:
+                    pipeline += f""" and cd.idSubDepto = {self.filtros.subDepto} """
+                else:
+                    pipeline += f""" and cd.idDepto = {self.filtros.depto} """
+            pipeline += f" group by ct.{campo_siguiente_lugar} "
+            # print(f"Query desde EjesMultiples -> Venta Sin impuesto -> Venta  Mensual Por Lugar: {pipeline}")
+
+            cnxn = conexion_sql('DWH')
+            cursor = cnxn.cursor().execute(pipeline)
+            arreglo = crear_diccionario(cursor)
+
+            if len(arreglo) > 0:
+                hayResultados = "si"
+                for i in range(len(arreglo)):
+                    categories.append(arreglo[i]['categoria'])
+                    serie1.append(round((arreglo[i]['AAnterior']), 2))
+                    serie2.append(round((arreglo[i]['AActual']), 2))
+                    if arreglo[i]['AAnterior'] != 0:
+                    # if i != 0:
+                        serie4.append(round(((arreglo[i]['AActual'] / arreglo[i]['AAnterior'])-1), 4))
+                    else:
+                        serie4.append(0)
+                    if self.filtros.canal == '1' or self.filtros.canal == '35' or self.filtros.canal == '36':
+                        serie3.append(round((arreglo[i]['objetivo']), 2))
+                    if arreglo[i]['objetivo'] != 0:
+                        serie5.append(round(((arreglo[i]['AActual'] / arreglo[i]['objetivo'])-1), 4))
+                    else:
+                        serie5.append(0)
+                series.extend([
+                    {'name': 'Venta '+mod_titulo_serie+str(anioElegido - 1), 'data':serie1, 'type': 'column', 'formato_tooltip':'moneda', 'color':'dark'},
+                    {'name': 'Venta '+mod_titulo_serie+str(anioElegido), 'data':serie2, 'type': 'column', 'formato_tooltip':'moneda', 'color':'secondary'}
+                ])
+                series.append({'name': 'Objetivo '+mod_titulo_serie+str(anioElegido), 'data':serie3, 'type': 'column', 'formato_tooltip':'moneda', 'color':'light'})
+                series.append({'name': '% Var Actual', 'data':serie4, 'type': 'spline', 'formato_tooltip':'porcentaje', 'color':'dark'})
+                series.append({'name': '% Var Objetivo', 'data':serie5, 'type': 'spline', 'formato_tooltip':'porcentaje', 'color':'danger'})
+            else:
+                hayResultados = "no"
+                categories = []
+                series = []
+
         return  {'hayResultados':hayResultados,'categories':categories, 'series':series, 'pipeline': pipeline, 'lenArreglo':len(arreglo)}
 
     async def PedidoPerfecto(self):

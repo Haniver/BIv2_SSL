@@ -425,7 +425,6 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
         return result
     }
     function downloadCSV(array) {
-        console.log(JSON.stringify(array))
         const link = document.createElement('a')
         const csv = convertArrayOfObjectsToCSV(array)
         if (csv === null) return

@@ -91,6 +91,16 @@ const VentaSinImpuesto = () => {
           <EjesMultiples titulo={`Venta mensual por lugar: ${anio} vs. ${anio - 1} y Objetivo`} tituloAPI='Venta mensual por lugar: $anioActual vs. $anioAnterior y Objetivo' formato='moneda' yLabel='Pesos' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} mes={mes} seccion={seccion} />
         </Col>
       </Row>}
+      {(region === false || region === '') && <Row className='match-height'>
+        <Col sm='12'>
+          <EjesMultiples titulo={`Venta anual de todas las zonas: ${anio} vs. ${anio - 1} y Objetivo`} tituloAPI='Venta anual de todas las zonas: $anioActual vs. $anioAnterior y Objetivo' formato='moneda' yLabel='Pesos' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} mes={mes} seccion={seccion} />
+        </Col>
+      </Row>}
+      {(region === false || region === '') && <Row className='match-height'>
+        <Col sm='12'>
+          <EjesMultiples titulo={`Venta mensual de todas las zonas: ${anio} vs. ${anio - 1} y Objetivo`} tituloAPI='Venta mensual de todas las zonas: $anioActual vs. $anioAnterior y Objetivo' formato='moneda' yLabel='Pesos' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} mes={mes} seccion={seccion} />
+        </Col>
+      </Row>}
       <Row className='match-height'>
         <Col sm='12'>
           <Tabla quitarBusqueda={true} titulo='Venta sin impuesto por Departamento o Sub Departamento' subtitulo='Acumulado del mes' formato='moneda' yLabel='Pesos' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} mes={mes} seccion={seccion} opcionesPaginacion={[10, 15, 20]} />
