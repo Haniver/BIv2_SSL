@@ -165,7 +165,7 @@ const Tabla = ({titulo, tituloAPI, seccion, quitarBusqueda, quitarExportar, quit
                             // console.log(a.${columna.selector}.substring(6,10)+a.${columna.selector}.substring(3,5)+a.${columna.selector}.substring(0,2))
                             aField = parseInt(a.${columna.selector}.substring(6,10)) * 10000000 + parseInt(a.${columna.selector}.substring(3,5)) * 1000 + parseInt(a.${columna.selector}.substring(0,2))
                             bField = parseInt(b.${columna.selector}.substring(6,10)) * 10000000 + parseInt(b.${columna.selector}.substring(3,5)) * 1000 + parseInt(b.${columna.selector}.substring(0,2))
-                        // En el caso de que sea texto
+                        // En el caso de que sea texto o número
                         } else {
                             const aField_tmp =  parseFloat(a.${columna.selector}.replaceAll('$', '').replaceAll(',', '').replaceAll('%', '').replaceAll(' ', ''))
                             const bField_tmp =  parseFloat(b.${columna.selector}.replaceAll('$', '').replaceAll(',', '').replaceAll('%', '').replaceAll(' ', ''))

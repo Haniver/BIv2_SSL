@@ -823,11 +823,12 @@ class Tablas():
                     pipeline += f""" and ct.region = {self.filtros.region} """
             pipeline += f" group by cd.{campo_depto} "
 
-            print(f'Tablas -> VentaSinImpuesto -> {self.titulo}: {pipeline}')
+            # print(f'Tablas -> VentaSinImpuesto -> {self.titulo}: {pipeline}')
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)
 
+            data_tmp = []
             if len(arreglo) > 0:
                 hayResultados = "si"
                 for i in range(len(arreglo)):
@@ -843,8 +844,9 @@ class Tablas():
                     #     alcanceDia = '--'
                     #     objetivoDia = '--'
                     vsaa = (arreglo[i]['AActual'] / arreglo[i]['AAnterior']) - 1 if arreglo[i]['AAnterior'] != 0 else '--'
-                    data.append({
-                        'depto': arreglo[i][titulo_nivel_producto],
+                    depto = arreglo[i][titulo_nivel_producto] if arreglo[i][titulo_nivel_producto] is not None else 'Otros'
+                    data_tmp.append({
+                        'depto': depto,
                         'objetivoMensual': objetivoMensual,
                         'venta': arreglo[i]['AActual'],
                         'alcance': alcance,
@@ -853,6 +855,10 @@ class Tablas():
                         'objetivoDia': objetivoDia,
                         'alcanceDia': alcanceDia,
                     })
+                # data_tmp = [{'depto': 'Ventas', 'name': 'John'}, {'depto': 'Marketing', 'name': 'Alice'}, {'depto': 'Otros', 'name': 'Bob'}, {'depto': 'Finanzas', 'name': 'Carlos'}, {'depto': 'Otros', 'name': 'Dave'}]
+
+                data = sorted([i for i in data_tmp if i['depto'] != 'Otros'], key=lambda x: x['depto'])
+                data.extend(sorted([i for i in data_tmp if i['depto'] == 'Otros'], key=lambda x: x['depto']))
                 columns = [
                     {'name': titulo_nivel_producto, 'selector':'depto', 'formato':'texto', 'ancho': '240px'},
                     {'name': 'Objetivo '+mesTexto(mesElegido), 'selector':'objetivoMensual', 'formato':'moneda', 'ancho': '220px'},
@@ -977,7 +983,7 @@ class Tablas():
                     pipeline += f""" and cd.idDepto = {self.filtros.depto} """
             pipeline += """ group by ct.regionNombre, ct.zonaNombre, ct.tiendaNombre, vd.idTienda 
             order by ct.regionNombre, ct.zonaNombre, ct.tiendaNombre, vd.idTienda """
-            print(f"Query desde Venta anual por tienda: $anioActual vs. $anioAnterior y Objetivo: {pipeline}")
+            # print(f"Query desde Venta anual por tienda: $anioActual vs. $anioAnterior y Objetivo: {pipeline}")
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)
