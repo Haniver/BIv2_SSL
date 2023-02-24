@@ -788,7 +788,7 @@ class Tablas():
         anioElegido = datetime.strptime(self.filtros.fechas['fecha_fin'], '%Y-%m-%dT%H:%M:%S.%fZ').year
         mesElegido = datetime.strptime(self.filtros.fechas['fecha_fin'], '%Y-%m-%dT%H:%M:%S.%fZ').month
         diaElegido = datetime.strptime(self.filtros.fechas['fecha_fin'], '%Y-%m-%dT%H:%M:%S.%fZ').day
-        fechaElegida = self.filtros.fechas['fecha_fin'][:10]
+        fechaElegida = self.filtros.fechas['fecha_fin'][:10] # "2023-02-24"
 
         hoy = datetime.now()
 
@@ -805,8 +805,8 @@ class Tablas():
             pipeline = f"""select cd.{campo_depto} '{titulo_nivel_producto}',
                 sum(case when anio={anioElegido-1} and dt.fecha < convert(date,DATEADD(yy,-1,(GETDATE()))) then isnull (ventaSinImpuestos, 0) else 0 end) AAnterior,
                 sum(case when anio={anioElegido} then isnull (ventaSinImpuestos, 0) else 0 end) AActual,
-                sum(case when anio={anioElegido} then objetivo else 0 end) objetivo,
-                sum(case when anio=2022 and dt.fecha <= '{fechaElegida}' then objetivo else 0 end) objetivoDia
+                sum(case when anio={anioElegido} then objetivo else 0 end) objetivoMensual,
+                sum(case when anio={anioElegido} and dt.fecha <= '{fechaElegida}' then objetivo else 0 end) objetivoDia
                 from DWH.artus.ventaDiaria vd
                 left join DWH.dbo.dim_tiempo dt on vd.fecha=dt.id_fecha
                 left join DWH.artus.cat_departamento cd on vd.subDepto=cd.idSubDepto
@@ -832,10 +832,10 @@ class Tablas():
                 hayResultados = "si"
                 for i in range(len(arreglo)):
                     # if self.filtros.canal == '1':
-                    objetivo = arreglo[i]['objetivo']
+                    objetivoMensual = arreglo[i]['objetivoMensual']
                     objetivoDia = arreglo[i]['objetivoDia']
                     # print(f'objetivoDia = {str(objetivoDia)}')
-                    alcance = (arreglo[i]['AActual']/objetivo) - 1 if objetivo else '--'
+                    alcance = (arreglo[i]['AActual']/objetivoMensual) - 1 if objetivoMensual else '--'
                     alcanceDia = (arreglo[i]['AActual']/objetivoDia) - 1 if objetivoDia else '--'
                     # else:
                     #     alcance = '--'
@@ -845,7 +845,7 @@ class Tablas():
                     vsaa = (arreglo[i]['AActual'] / arreglo[i]['AAnterior']) - 1 if arreglo[i]['AAnterior'] != 0 else '--'
                     data.append({
                         'depto': arreglo[i][titulo_nivel_producto],
-                        'objetivo': objetivo,
+                        'objetivoMensual': objetivoMensual,
                         'venta': arreglo[i]['AActual'],
                         'alcance': alcance,
                         'venta_anterior': arreglo[i]['AAnterior'],
@@ -854,14 +854,14 @@ class Tablas():
                         'alcanceDia': alcanceDia,
                     })
                 columns = [
-                    {'name': titulo_nivel_producto, 'selector':'depto', 'formato':'texto', 'ancho': '220px'},
-                    {'name': 'Objetivo '+mesTexto(mesElegido), 'selector':'objetivo', 'formato':'moneda'},
-                    {'name': 'Venta '+mesTexto(mesElegido)+' '+str(anioElegido), 'selector':'venta', 'formato':'moneda'},
-                    {'name': 'Alcance al Objetivo '+mesTexto(mesElegido), 'selector':'alcance', 'formato':'porcentaje'},
-                    {'name': 'Venta '+str(diaElegido)+' '+mesTexto(mesElegido)+' '+str(anioElegido - 1), 'selector':'venta_anterior', 'formato':'moneda'},
+                    {'name': titulo_nivel_producto, 'selector':'depto', 'formato':'texto', 'ancho': '240px'},
+                    {'name': 'Objetivo '+mesTexto(mesElegido), 'selector':'objetivoMensual', 'formato':'moneda', 'ancho': '220px'},
+                    {'name': 'Venta '+mesTexto(mesElegido)+' '+str(anioElegido), 'selector':'venta', 'formato':'moneda', 'ancho': '210px'},
+                    {'name': 'Alcance al Objetivo '+mesTexto(mesElegido), 'selector':'alcance', 'formato':'porcentaje', 'ancho': '200px'},
+                    {'name': 'Objetivo al '+str(diaElegido)+' de '+mesTexto(mesElegido)+' '+str(anioElegido), 'selector':'objetivoDia', 'formato':'moneda', 'ancho': '220px'},
+                    {'name': 'Alcance al Objetivo '+str(diaElegido)+' de '+mesTexto(mesElegido)+' '+str(anioElegido), 'selector':'alcanceDia', 'formato':'porcentaje', 'ancho': '250px'},
+                    {'name': 'Venta al '+str(diaElegido)+' '+mesTexto(mesElegido)+' '+str(anioElegido - 1), 'selector':'venta_anterior', 'formato':'moneda', 'ancho': '210px'},
                     {'name': 'Vs. '+str(anioElegido-1), 'selector':'vsaa', 'formato':'porcentaje'},
-                    {'name': 'Objetivo al '+str(diaElegido)+' de '+mesTexto(mesElegido)+' '+str(anioElegido), 'selector':'objetivoDia', 'formato':'moneda'},
-                    {'name': 'Alcance al Objetivo '+str(diaElegido)+' de '+mesTexto(mesElegido), 'selector':'alcanceDia', 'formato':'porcentaje'},
                 ]
             else:
                 hayResultados = 'no'
@@ -900,7 +900,7 @@ class Tablas():
                 else:
                     pipeline += f""" and cd.idDepto = {self.filtros.depto} """
             pipeline += " group by dt.abrev_mes,dt.num_mes order by dt.num_mes "
-            # print(f"Query desde Venta anual por mes: $anioActual vs. $anioAnterior y Objetivo: {pipeline}")
+            print(f"Query desde Venta anual por mes: $anioActual vs. $anioAnterior y Objetivo: {pipeline}")
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)
@@ -1015,8 +1015,8 @@ class Tablas():
                     {'name': 'Venta '+mod_titulo_serie+str(anioElegido - 1), 'selector':'VentaAnioAnterior', 'formato': 'moneda', 'ancho': '130px'},
                     {'name': 'Venta '+mod_titulo_serie+str(anioElegido), 'selector':'VentaAnioActual', 'formato': 'moneda', 'ancho': '130px'},
                     {'name': 'Var Actual', 'selector':'VarActual', 'formato': 'porcentaje'},
-                    {'name': 'Objetivo', 'selector':'Objetivo', 'formato': 'moneda'},
-                    {'name': 'Var Objetivo', 'selector':'varObjetivo', 'formato': 'porcentaje'}
+                    {'name': 'Objetivo', 'selector':'Objetivo', 'formato': 'moneda', 'ancho': '150px'},
+                    {'name': 'Var Objetivo', 'selector':'varObjetivo', 'formato': 'porcentaje', 'ancho': '150px'}
                 ]
             else:
                 hayResultados = "no"
