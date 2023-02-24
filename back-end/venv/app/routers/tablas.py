@@ -823,7 +823,7 @@ class Tablas():
                     pipeline += f""" and ct.region = {self.filtros.region} """
             pipeline += f" group by cd.{campo_depto} "
 
-            # print(f'Query desde VentaSinImpuesto en tablas: {pipeline}')
+            print(f'Tablas -> VentaSinImpuesto -> {self.titulo}: {pipeline}')
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)
@@ -977,7 +977,7 @@ class Tablas():
                     pipeline += f""" and cd.idDepto = {self.filtros.depto} """
             pipeline += """ group by ct.regionNombre, ct.zonaNombre, ct.tiendaNombre, vd.idTienda 
             order by ct.regionNombre, ct.zonaNombre, ct.tiendaNombre, vd.idTienda """
-            # print(f"Query desde Venta anual por tienda: $anioActual vs. $anioAnterior y Objetivo: {pipeline}")
+            print(f"Query desde Venta anual por tienda: $anioActual vs. $anioAnterior y Objetivo: {pipeline}")
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)
@@ -3025,9 +3025,23 @@ class Tablas():
         pipeline = [
             {'$unwind': '$sucursal'},
             {'$match': {
-                'FechaEnvio': {
-                    '$gte': self.fecha_ini, 
-                    '$lt': self.fecha_fin
+                '$expr': {
+                    '$and': [
+                        {'$gte': [
+                            {'$dateFromString': {
+                                'dateString': '$fechaCreacion',
+                                'format': '%Y-%m-%d'
+                            }},
+                            self.fecha_ini
+                        ]},
+                        {'$lt': [
+                            {'$dateFromString': {
+                                'dateString': '$fechaCreacion',
+                                'format': '%Y-%m-%d'
+                            }},
+                            self.fecha_fin
+                        ]}
+                    ]
                 }
             }}
         ]
@@ -3050,6 +3064,7 @@ class Tablas():
                 'timeslot_to': '$timeslot_to',
                 'MetodoEntrega': '$MetodoEntrega',
                 'EstatusPedido': '$EstatusPedido',
+                'FechaCreacion': '$fechaCreacion',
                 'FechaEntrega': '$FechaEntrega',
                 'FechaDespacho': '$FechaDespacho',
                 'EvaluacionEntrega': '$EvaluacionEntrega',
@@ -3068,7 +3083,7 @@ class Tablas():
             # print(f"'$' + camino desde tablas -> NPSDetalle: {'$' + camino}")
             pipeline[-1]['$project'][camino] = '$' + camino
             # print(f"pipeline[-1]['$project'][camino] desde tablas -> NPSDetalle: {str(pipeline[-1]['$project'][camino])}")
-        print(f"pipeline desde tablas -> NPSDetalle: {str(pipeline)}")
+        # print(f"pipeline desde tablas -> NPSDetalle: {str(pipeline)}")
         # Ejecutamos el query:
         collection = conexion_mongo('report').report_pedidoDetalleNPS
         cursor = collection.aggregate(pipeline)
@@ -3090,6 +3105,7 @@ class Tablas():
                 {'name': 'Timeslot To', 'selector':'timeslot_to', 'formato':'texto', 'ancho': '170px'},
                 {'name': 'Método Entrega', 'selector':'MetodoEntrega', 'formato':'texto', 'ancho': '200px'},
                 {'name': 'Estatus Pedido', 'selector':'EstatusPedido', 'formato':'texto', 'ancho': '200px'},
+                {'name': 'Fecha Creación', 'selector':'FechaCreacion', 'formato':'texto', 'ancho': '200px'},
                 {'name': 'Fecha Entrega', 'selector':'FechaEntrega', 'formato':'texto', 'ancho': '200px'},
                 {'name': 'Fecha Despacho', 'selector':'FechaDespacho', 'formato':'texto', 'ancho': '200px'},
                 {'name': 'Evaluación Entrega', 'selector':'EvaluacionEntrega', 'formato':'texto', 'ancho': '200px'},
@@ -3121,6 +3137,7 @@ class Tablas():
                 MetodoEntrega = row['MetodoEntrega'] if 'MetodoEntrega' in row else '--'
                 EstatusPedido = row['EstatusPedido'] if 'EstatusPedido' in row else '--'
                 FechaEntrega = row['FechaEntrega'] if 'FechaEntrega' in row else '--'
+                FechaCreacion = row['FechaCreacion'] if 'FechaCreacion' in row else '--'
                 FechaDespacho = row['FechaDespacho'] if 'FechaDespacho' in row else '--'
                 EvaluacionEntrega = row['EvaluacionEntrega'] if 'EvaluacionEntrega' in row else '--'
                 Queja = row['Queja'] if 'Queja' in row else '--'
@@ -3145,6 +3162,7 @@ class Tablas():
                     'timeslot_to': timeslot_to,
                     'MetodoEntrega': MetodoEntrega,
                     'EstatusPedido': EstatusPedido,
+                    'FechaCreacion': FechaCreacion,
                     'FechaEntrega': FechaEntrega,
                     'FechaDespacho': FechaDespacho,
                     'EvaluacionEntrega': EvaluacionEntrega,
