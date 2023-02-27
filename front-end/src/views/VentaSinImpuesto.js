@@ -56,7 +56,7 @@ const VentaSinImpuesto = () => {
           <Filtro anio={anio} mes={mes} fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} setAnio={setAnio} setMes={setMes} setFechas={setFechas} setRegion={setRegion} setZona={setZona} setTienda={setTienda} setCanal={setCanal} setDepto={setDepto} setSubDepto={setSubDepto} botonEnviar={botonEnviar} setBotonEnviar={setBotonEnviar} />
         </Col>
       </Row>
-      {/* <Row className='match-height'>
+      <Row className='match-height'>
         <Col sm='12'>
           <Leyenda seccion={seccion} titulo='Última actualización:' />
         </Col>
@@ -64,6 +64,7 @@ const VentaSinImpuesto = () => {
       <Row className='match-height'>
         <Col sm='12'>
           <IndicadoresEnBarras seccion={seccion} formato='moneda' titulo='Indicadores de Venta' cols={{ xl: '4', sm: '6' }} fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto}/>
+          {/* <TarjetaEnFila seccion={seccion} formato='moneda' titulo='Indicadores de Venta' cols={{ xl: '4', sm: '6' }} fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto}/> */}
         </Col>
       </Row>
       <Row className='match-height'>
@@ -100,7 +101,7 @@ const VentaSinImpuesto = () => {
         <Col sm='12'>
           <EjesMultiples titulo={`Venta mensual de todas las zonas: ${anio} vs. ${anio - 1} y Objetivo`} tituloAPI='Venta mensual de todas las zonas: $anioActual vs. $anioAnterior y Objetivo' formato='moneda' yLabel='Pesos' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} mes={mes} seccion={seccion} />
         </Col>
-      </Row>} */}
+      </Row>}
       <Row className='match-height'>
         <Col sm='12'>
           <Tabla quitarBusqueda={true} titulo='Venta sin impuesto por Departamento o Sub Departamento' subtitulo='Acumulado del mes' formato='moneda' yLabel='Pesos' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} mes={mes} seccion={seccion} opcionesPaginacion={[10, 15, 20]} />

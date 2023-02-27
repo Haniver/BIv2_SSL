@@ -906,7 +906,7 @@ class Tablas():
                 else:
                     pipeline += f""" and cd.idDepto = {self.filtros.depto} """
             pipeline += " group by dt.abrev_mes,dt.num_mes order by dt.num_mes "
-            print(f"Query desde Venta anual por mes: $anioActual vs. $anioAnterior y Objetivo: {pipeline}")
+            # print(f"Query desde Venta anual por mes: $anioActual vs. $anioAnterior y Objetivo: {pipeline}")
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)
