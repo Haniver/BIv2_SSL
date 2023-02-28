@@ -83,70 +83,104 @@ const Filtro = (props) => {
         espacio: true,
         xl: 6,
         lg: 6,
-        sm: 12
+        sm: 6,
+        xs: 12
       }
     } else if (numElementos === 2) {
       bootstrap = {
         espacio: false,
         xl: 6,
         lg: 6,
-        sm: 6
+        sm: 6,
+        xs: 12
       }
     } else if (numElementos === 3) {
       bootstrap = {
         espacio: false,
         xl: 4,
         lg: 4,
-        sm: 12
+        sm: 6,
+        xs: 12
       }
     } else if (numElementos === 4) {
       bootstrap = {
         espacio: false,
         xl: 3,
         lg: 3,
-        sm: 6
+        sm: 6,
+        xs: 12
       }
     } else if (numElementos === 5) {
       bootstrap = {
         espacio: true,
         xl: 2,
         lg: 2,
-        sm: 12
+        sm: 3,
+        xs: 12
       }
     } else if (numElementos === 6) {
       bootstrap = {
         espacio: false,
         xl: 2,
         lg: 2,
-        sm: 6
+        sm: 3,
+        xs: 12
       }
     } else if (numElementos === 7) {
       bootstrap = {
         espacio: true,
         xl: 2,
         lg: 2,
-        sm: 12
+        sm: 3,
+        xs: 12
       }
     } else if (numElementos === 8) {
       bootstrap = {
         espacio: false,
         xl: 2,
         lg: 2,
-        sm: 6
+        sm: 3,
+        xs: 12
       } 
     } else if (numElementos === 9) {
       bootstrap = {
         espacio: false,
         xl: 2,
         lg: 2,
-        sm: 12
+        sm: 3,
+        xs: 12
       } 
     } else if (numElementos === 10) {
       bootstrap = {
         espacio: true,
         xl: 2,
         lg: 2,
-        sm: 6
+        sm: 3,
+        xs: 12
+      } 
+    } else if (numElementos === 11) {
+      bootstrap = {
+        espacio: true,
+        xl: 2,
+        lg: 2,
+        sm: 3,
+        xs: 12
+      } 
+    } else if (numElementos === 12) {
+      bootstrap = {
+        espacio: true,
+        xl: 2,
+        lg: 2,
+        sm: 3,
+        xs: 12
+      } 
+    } else if (numElementos === 13) {
+      bootstrap = {
+        espacio: true,
+        xl: 2,
+        lg: 2,
+        sm: 3,
+        xs: 12
       } 
     }
   
@@ -1008,7 +1042,7 @@ const Filtro = (props) => {
 
       {/* <CardBody> */}
         <Row>
-          {props.sku !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
+          {props.sku !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm} xs={bootstrap.xs}>
             <Label>🏷 SKU</Label>
             <Input 
               type='text' 
@@ -1023,14 +1057,14 @@ const Filtro = (props) => {
             </Alert>
           </Col>}
           { 
-            props.fechas !== undefined && props.fechas.fecha_ini !== '' && props.anio === undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
+            props.fechas !== undefined && props.fechas.fecha_ini !== '' && props.anio === undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm} xs={bootstrap.xs}>
             <FormGroup>
               <Label for='fecha_ini'>Fecha Inicial</Label>
               <Flatpickr className="form-control" value={props.fechas.fecha_ini} onChange={(e) => cambiaFecha_ini(e[0])}  id="fecha_ini" options={{ dateFormat: "Y-m-d" }} />
             </FormGroup>
           </Col>}
           { /* Si existe props.anio y props.mes, fecha_fin se usa pero no se muestra */
-            props.fechas !== undefined && props.fechas.fecha_fin !== '' && props.mes === undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
+            props.fechas !== undefined && props.fechas.fecha_fin !== '' && props.mes === undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm} xs={bootstrap.xs}>
             <FormGroup>
               <Label for='fecha_fin'>Fecha Final</Label>
               <Flatpickr className="form-control" value={props.fechas.fecha_fin} onChange={(e) => cambiaFecha_fin(e[0])}  id="fecha_fin" options={{ dateFormat: "Y-m-d" }} />
@@ -1039,7 +1073,7 @@ const Filtro = (props) => {
               {mensajeFechas}
             </Alert>
           </Col>}
-          {props.detalle !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
+          {props.detalle !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm} xs={bootstrap.xs}>
             <Label>Detalle</Label>
             <Select
               theme={selectThemeColors}
@@ -1059,7 +1093,7 @@ const Filtro = (props) => {
               }}
             />
           </Col>}
-          {props.tipoEntrega2 !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
+          {props.tipoEntrega2 !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm} xs={bootstrap.xs}>
             <Label>Tipo de Entrega</Label>
             <Select
               theme={selectThemeColors}
@@ -1079,7 +1113,7 @@ const Filtro = (props) => {
               }}
             />
           </Col>}
-          {props.tipoEntrega3 !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
+          {props.tipoEntrega3 !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm} xs={bootstrap.xs}>
             <Label>Tipo de Entrega</Label>
             <Select
               theme={selectThemeColors}
@@ -1104,7 +1138,7 @@ const Filtro = (props) => {
               }}
             />
           </Col>}
-          {props.estatus !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
+          {props.estatus !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm} xs={bootstrap.xs}>
             <Label>Estatus</Label>
             <Select
               theme={selectThemeColors}
@@ -1129,7 +1163,7 @@ const Filtro = (props) => {
               }}
             />
           </Col>}
-          {props.metodoEnvio !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
+          {props.metodoEnvio !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm} xs={bootstrap.xs}>
             <Label>Método de Envio</Label>
             <Select
               theme={selectThemeColors}
@@ -1154,7 +1188,7 @@ const Filtro = (props) => {
               }}
             />
           </Col>}
-          {props.agrupador !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
+          {props.agrupador !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm} xs={bootstrap.xs}>
             <Label>Agrupador</Label>
             <Select
               theme={selectThemeColors}
@@ -1167,7 +1201,7 @@ const Filtro = (props) => {
               onChange={e => cambiaAgrupador(e)}
             />
           </Col>}
-          {props.periodo !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
+          {props.periodo !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm} xs={bootstrap.xs}>
             <Label>Período a comparar</Label>
             {isPeriodoHidden && <LoadingGif />}
             {!isPeriodoHidden &&
@@ -1180,7 +1214,7 @@ const Filtro = (props) => {
               value={periodoValue}
             />}
           </Col>}
-          {props.formato !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
+          {props.formato !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm} xs={bootstrap.xs}>
             <Label>Formato de Tienda</Label>
             {isFormatoHidden && <LoadingGif mini />}
             {!isFormatoHidden &&
@@ -1203,7 +1237,7 @@ const Filtro = (props) => {
               value={formatoValue}
             />}
           </Col>}
-          {props.canal2 !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
+          {props.canal2 !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm} xs={bootstrap.xs}>
             <Label>Canal</Label>
             <Select
               theme={selectThemeColors}
@@ -1232,7 +1266,7 @@ const Filtro = (props) => {
               }}
             />
           </Col>}
-          {props.origen !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
+          {props.origen !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm} xs={bootstrap.xs}>
             <Label>Origen</Label>
             <Select
               theme={selectThemeColors}
@@ -1261,7 +1295,7 @@ const Filtro = (props) => {
               }}
             />
           </Col>}
-          {props.provLogist !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
+          {props.provLogist !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm} xs={bootstrap.xs}>
             <Label>Proveedor de Logística</Label>
             <Select
               theme={selectThemeColors}
@@ -1286,7 +1320,7 @@ const Filtro = (props) => {
               }}
             />
           </Col>}
-          {props.region !== undefined  && (userData === null || userData === undefined || userData === false || UserService.getNivel() >= 4) && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
+          {props.region !== undefined  && (userData === null || userData === undefined || userData === false || UserService.getNivel() >= 4) && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm} xs={bootstrap.xs}>
             <Label>Región</Label>
             {isRegionHidden && <LoadingGif />}
             {!isRegionHidden &&
@@ -1302,7 +1336,7 @@ const Filtro = (props) => {
               onChange={handleRegionChange}
             />}
           </Col>}
-          {props.zona !== undefined  && (userData === null || userData === undefined || userData === false || UserService.getNivel() >= 3)  && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
+          {props.zona !== undefined  && (userData === null || userData === undefined || userData === false || UserService.getNivel() >= 3)  && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm} xs={bootstrap.xs}>
             <Label>Zona</Label>
             {isZonaHidden && <LoadingGif mini />}
             {!isZonaHidden && <Select
@@ -1316,7 +1350,7 @@ const Filtro = (props) => {
               value={zonaValue}
             />}
           </Col>}
-          {props.tienda !== undefined && (userData === null || userData === undefined || userData === false || UserService.getNivel() >= 2) && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
+          {props.tienda !== undefined && (userData === null || userData === undefined || userData === false || UserService.getNivel() >= 2) && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm} xs={bootstrap.xs}>
             <Label>Tienda</Label>
             {isTiendaHidden && <LoadingGif mini />}
             {!isTiendaHidden && 
@@ -1331,7 +1365,7 @@ const Filtro = (props) => {
               onChange={handleTiendaChange}
             />}
           </Col>}
-          {props.canal !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
+          {props.canal !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm} xs={bootstrap.xs}>
             <Label>Canal</Label>
             {isCanalHidden && <LoadingGif />}
             {!isCanalHidden &&
@@ -1363,7 +1397,7 @@ const Filtro = (props) => {
               }}
             />}
           </Col>}
-          {props.grupoDeptos !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
+          {props.grupoDeptos !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm} xs={bootstrap.xs}>
             <Label>Grupo de Deptos</Label>
             <Select
               theme={selectThemeColors}
@@ -1376,7 +1410,7 @@ const Filtro = (props) => {
               onChange={e => cambiaGrupoDeptos(e)}
             />
           </Col>}
-          {props.depto !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
+          {props.depto !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm} xs={bootstrap.xs}>
             <Label>Departamento</Label>
             {isDeptoHidden && <LoadingGif />}
             {!isDeptoHidden &&
@@ -1391,7 +1425,7 @@ const Filtro = (props) => {
               onChange={handleDeptoChange}
             />}
           </Col>}
-          {props.deptoAgrupado !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
+          {props.deptoAgrupado !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm} xs={bootstrap.xs}>
             <Label>Departamento</Label>
             {isDeptoAgrupadoHidden && <LoadingGif mini />}
             {!isDeptoAgrupadoHidden &&
@@ -1408,7 +1442,7 @@ const Filtro = (props) => {
               onChange={handleDeptoAgrupadoChange}
             />}
           </Col>}
-          {props.subDepto !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
+          {props.subDepto !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm} xs={bootstrap.xs}>
             <Label>Sub Departamento</Label>
             {isSubDeptoHidden && <LoadingGif />}
             {!isSubDeptoHidden &&
@@ -1423,7 +1457,7 @@ const Filtro = (props) => {
               value={subDeptoValue}
             />}
           </Col>}
-          {props.subDeptoAgrupado !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
+          {props.subDeptoAgrupado !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm} xs={bootstrap.xs}>
             <Label>Sub Departamento</Label>
             {isSubDeptoAgrupadoHidden && <LoadingGif mini />}
             {!isSubDeptoAgrupadoHidden &&
@@ -1438,7 +1472,7 @@ const Filtro = (props) => {
               value={subDeptoAgrupadoValue}
             />}
           </Col>}
-          {props.proveedor !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
+          {props.proveedor !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm} xs={bootstrap.xs}>
             <Label>Proveedor</Label>
             {isProveedorHidden && <LoadingGif />}
             {!isProveedorHidden &&
@@ -1467,7 +1501,7 @@ const Filtro = (props) => {
             />}
             <p>{props.botonEnviar === undefined ? props.proveedor : Proveedor_tmp}</p>
           </Col>}
-          {props.categoria !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
+          {props.categoria !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm} xs={bootstrap.xs}>
             <Label>Categoría</Label>
             <Select
               theme={selectThemeColors}
@@ -1492,7 +1526,7 @@ const Filtro = (props) => {
               }}
             />
           </Col>}
-          {props.tipoEntrega !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
+          {props.tipoEntrega !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm} xs={bootstrap.xs}>
             <Label>Tipo de Entrega</Label>
             <Select
               theme={selectThemeColors}
@@ -1517,7 +1551,7 @@ const Filtro = (props) => {
               }}
             />
           </Col>}
-          {props.anio !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
+          {props.anio !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm} xs={bootstrap.xs}>
             <Label>Año</Label>
             <Select
               theme={selectThemeColors}
@@ -1538,7 +1572,7 @@ const Filtro = (props) => {
               }}
             />
           </Col>}
-          {props.anioOpcional !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
+          {props.anioOpcional !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm} xs={bootstrap.xs}>
             <Label>Año</Label>
             <Select
               theme={selectThemeColors}
@@ -1560,7 +1594,7 @@ const Filtro = (props) => {
               }}
             />
           </Col>}
-          {props.mes !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
+          {props.mes !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm} xs={bootstrap.xs}>
             <Label>Mes</Label>
             <Select
               theme={selectThemeColors}
@@ -1581,7 +1615,7 @@ const Filtro = (props) => {
               }}
             />
           </Col>}
-          {props.mesOpcional !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
+          {props.mesOpcional !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm} xs={bootstrap.xs}>
             <Label>Mes</Label>
             <Select
               theme={selectThemeColors}
@@ -1603,7 +1637,7 @@ const Filtro = (props) => {
               }}
             />
           </Col>}
-          {props.anioRFM !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
+          {props.anioRFM !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm} xs={bootstrap.xs}>
             <Label>Año</Label>
             <Select
               theme={selectThemeColors}
@@ -1623,7 +1657,7 @@ const Filtro = (props) => {
               }}
             />
           </Col>}
-          {props.mesRFM !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
+          {props.mesRFM !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm} xs={bootstrap.xs}>
             <Label>Último mes del trimestre</Label>
             <Select
               theme={selectThemeColors}
@@ -1642,7 +1676,7 @@ const Filtro = (props) => {
               }}
             />
           </Col>}
-          {props.nps !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
+          {props.nps !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm} xs={bootstrap.xs}>
             <Label>Categoría NPS</Label>
             {isNpsHidden && <LoadingGif mini />}
             {!isNpsHidden &&
@@ -1665,7 +1699,7 @@ const Filtro = (props) => {
               value={npsValue}
             />}
           </Col>}
-          {props.e3 !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
+          {props.e3 !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm} xs={bootstrap.xs}>
             <Label>E3</Label>
             <Select
               theme={selectThemeColors}
@@ -1694,7 +1728,7 @@ const Filtro = (props) => {
               }}
             />
           </Col>}
-          {props.botonEnviar !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm} style={{marginTop: '23px'}}>
+          {props.botonEnviar !== undefined && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm} xs={bootstrap.xs} style={{marginTop: '23px'}}>
           {bloqueadoBotonEnviar && <LoadingGif mini />}
           {!bloqueadoBotonEnviar &&
           <Button
@@ -1727,7 +1761,7 @@ const Filtro = (props) => {
           </Button>}
 
           </Col>}
-          {bootstrap.espacio && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm}>
+          {bootstrap.espacio && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm} xs={bootstrap.xs}>
           </Col>}
         </Row>
         {/* <Row className='match-height'>
