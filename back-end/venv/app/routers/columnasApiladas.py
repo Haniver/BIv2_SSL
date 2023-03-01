@@ -431,15 +431,16 @@ class ColumnasApiladas():
             return {'hayResultados':'no','categorias':[], 'series':[], 'pipeline': []}
         clauseCatTienda = False
         if len(self.filtros.provLogist) == 1:
-            clauseCatTienda = {'$match': {'sucursal.Delivery': self.filtros.provLogist[0]}}
+            # print(f"provLogist[0] desde ejesMultiples -> PedidoPerfecto: {self.filtros.provLogist[0]}")
+            clauseCatProveedor = {'$match': {'sucursal.Delivery': self.filtros.provLogist[0]}}
         elif len(self.filtros.provLogist) > 1:
-            clauseCatTienda = {'$match': {
+            clauseCatProveedor = {'$match': {
                 '$expr': {
                     '$or': []
                 }
             }}
             for prov in self.filtros.provLogist:
-                clauseCatTienda['$match']['$expr']['$or'].append(
+                clauseCatProveedor['$match']['$expr']['$or'].append(
                     {'$eq': [
                         '$sucursal.Delivery',
                         prov
@@ -448,10 +449,15 @@ class ColumnasApiladas():
 
         if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
             filtro_lugar = True
-            if self.filtros.zona != '' and self.filtros.zona != "False"  and self.filtros.zona != None:
-                nivel = 'zona'
-                lugar = int(self.filtros.zona)
-                siguiente_lugar = 'tiendaNombre'
+            if self.filtros.zona != '' and self.filtros.zona != "False" and self.filtros.zona != None:
+                if self.filtros.tienda != '' and self.filtros.tienda != "False" and self.filtros.tienda != None:
+                    nivel = 'idtienda'
+                    lugar = int(self.filtros.tienda)
+                    siguiente_lugar = 'tiendaNombre'
+                else:
+                    nivel = 'zona'
+                    lugar = int(self.filtros.zona)
+                    siguiente_lugar = 'tiendaNombre'
             else:
                 nivel = 'region'
                 lugar = int(self.filtros.region)
