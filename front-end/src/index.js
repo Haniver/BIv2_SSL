@@ -39,6 +39,9 @@ import * as serviceWorker from './serviceWorker'
 import axios from "axios"
 import AuthService from "@src/services/auth.service"
 
+// Google Analytics
+import ReactGA from 'react-ga'
+
 axios.interceptors.request.use(function (config) {
     // Do something before request is sent
     // console.log("El interceptor de Axios dice que vas a mandar: ")
@@ -63,6 +66,9 @@ axios.interceptors.request.use(function (config) {
 
 // ** Lazy load app
 const LazyApp = lazy(() => import('./App'))
+
+// Inicializar Google Analytics
+ReactGA.initialize('G-QFSBHP9D9F')
 
 ReactDOM.render(
   <Provider store={store}>
