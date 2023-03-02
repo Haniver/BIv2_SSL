@@ -186,19 +186,25 @@ class EjesMultiples():
             serie5 = []
 
             filtrosAdicionales = ''
+            filtrosAdicionales2 = ''
             if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
                 if self.filtros.zona != '' and self.filtros.zona != "False" and self.filtros.zona != None:
                     if self.filtros.tienda != '' and self.filtros.tienda != "False" and self.filtros.tienda != None:
                         filtrosAdicionales += f""" and ct.tienda = {self.filtros.tienda} """
+                        filtrosAdicionales2 += f""" and ct2.tienda = {self.filtros.tienda} """
                     else:
                         filtrosAdicionales += f""" and ct.zona = {self.filtros.zona} """
+                        filtrosAdicionales2 += f""" and ct2.zona = {self.filtros.zona} """
                 else:
                     filtrosAdicionales += f""" and ct.region = {self.filtros.region} """
+                    filtrosAdicionales2 += f""" and ct2.region = {self.filtros.region} """
             if self.filtros.depto != '' and self.filtros.depto != "False" and self.filtros.depto != None:
                 if self.filtros.subDepto != '' and self.filtros.subDepto != "False" and self.filtros.subDepto != None:
                     filtrosAdicionales += f""" and cd.idSubDepto = {self.filtros.subDepto} """
+                    filtrosAdicionales2 += f""" and cd2.idSubDepto = {self.filtros.subDepto} """
                 else:
                     filtrosAdicionales += f""" and cd.idDepto = {self.filtros.depto} """
+                    filtrosAdicionales2 += f""" and cd2.idDepto = {self.filtros.depto} """
 
             pipeline = f"""
                 SELECT  dt.fecha
@@ -220,7 +226,7 @@ class EjesMultiples():
                     LEFT JOIN DWH.artus.cat_departamento cd2
                     ON vd2.subDepto = cd2.idSubDepto
                     WHERE dt2.anio IN ({anioElegido})
-                    {filtrosAdicionales}
+                    {filtrosAdicionales2}
                     AND dt2.abrev_mes = '{mesTexto(mesElegido)}'
                     AND cc2.tipo IN ({canal})
                     GROUP BY  dt2.id_fecha
