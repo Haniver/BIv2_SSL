@@ -4188,8 +4188,7 @@ class Tablas():
             left join DWH.artus.catTienda ct on nmp.idtienda =ct.tienda
             LEFT JOIN DWH.dbo.hecho_order ho ON ho.order_number =nmp.pedido
             left join DWH.dbo.dim_tiempo dt on convert(date,ho.creation_date)=dt.fecha
-            where nd.comentario is not null
-            and {agrupador_where} {lugar_where} {clauseCatProveedor}
+            where {agrupador_where} {lugar_where} {clauseCatProveedor}
             order by fecha_encuesta desc,calificacion"""
 
             print(f"query desde tablas NPS {self.titulo}: "+pipeline)
