@@ -17,6 +17,15 @@ const FoundRateCornershop = () => {
 
     const seccion = 'FoundRateCornershop'
 
+    const [lgPrimerGrafico, setLgPrimerGrafico] = useState(6)
+    useEffect(() => {
+      if (tienda === '' || tienda === false || tienda === undefined) {
+        setLgPrimerGrafico(6)
+      } else {
+        setLgPrimerGrafico(12)
+      }
+    }, [tienda])
+
   return (
     <>
       {/* {userService.getNivel() <= 3 && <Row className='match-height'>
@@ -30,7 +39,7 @@ const FoundRateCornershop = () => {
         </Col>
       </Row>
       <Row className='match-height'>
-        <Col sm='12' lg='6'>
+        <Col sm='12' lg={lgPrimerGrafico}>
           <EjesMultiples titulo='Found Rate Cornershop Vs. Chedraui' fechas={fechas} region={region} zona={zona} tienda={tienda} seccion={seccion} />
         </Col>
         {(tienda === '' || tienda === false || tienda === undefined) && <Col sm='12' lg='6'>
