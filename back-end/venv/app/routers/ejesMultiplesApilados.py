@@ -41,7 +41,7 @@ class EjesMultiplesApilados():
         diferencia = []
         arrFromSibling = []
         hayCanal = False if self.filtros.canal == False or self.filtros.canal == 'False' or self.filtros.canal == '' else True
-        if self.titulo == 'Pedidos Levantados Hoy (con impuesto - todos los canales)':
+        if self.titulo == 'Pedidos Levantados Hoy - Todos los canales':
             categories.append(0)
             pedidosEntregados = [0]
             pedidosHoyATiempo = [0]
@@ -106,7 +106,7 @@ class EjesMultiplesApilados():
                 ]
                 # Cambiamos el formato de hora de las categorías para que se vea más chido:
                 categories = [f"0{str(horaInt)}:00" if horaInt < 10 else f"{str(horaInt)}:00" for horaInt in categories]
-        if self.titulo == 'Pedidos Pagados Hoy (sin impuesto)':
+        if self.titulo == 'Pedidos Pagados Hoy':
             hoy = int(datetime.today().strftime('%Y%m%d'))
             if self.filtros.canal == False or self.filtros.canal == 'False' or self.filtros.canal == '':
                 filtroCanal = 'and idCanal not in (0)'

@@ -74,12 +74,12 @@ const Temporada = () => {
       </Row>}
       {hora >= 8 && <Row className='match-height'>
         <Col sm='12'>
-            <EjesMultiplesApilados seccion={seccion} titulo='Pedidos Levantados Hoy (con impuesto - todos los canales)' fechas={fechas} />
+            <EjesMultiplesApilados seccion={seccion} titulo='Pedidos Levantados Hoy - Todos los canales' fechas={fechas} />
         </Col>
       </Row>}
       {hora >= 8 && <Row className='match-height'>
         <Col sm='12'>
-            <EjesMultiplesApilados seccion={seccion} titulo='Pedidos Pagados Hoy (sin impuesto)' canal={canal} fechas={fechas} />
+            <EjesMultiplesApilados seccion={seccion} titulo='Pedidos Pagados Hoy' canal={canal} fechas={fechas} />
         </Col>
       </Row>}
       {hora >= 8 && <Row className='match-height'>
