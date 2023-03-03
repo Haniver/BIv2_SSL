@@ -2858,8 +2858,9 @@ class EjesMultiples():
             if len(arreglo) >0:
                 hayResultados = "si"
                 categories = ['']
-                serie1.append(round((arreglo[0]['foundRate']), 4))
-                serie2.append(round((arreglo[1]['foundRate']), 4))
+                foundrateCornershop = arreglo[1]['foundRate'] if len(arreglo) > 1 else 0
+                serie1.append(round(arreglo[0]['foundRate'], 4))
+                serie2.append(round(foundrateCornershop, 4))
                 series.extend([
                     {
                         'name': 'Chedraui', 

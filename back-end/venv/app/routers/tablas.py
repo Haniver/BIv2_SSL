@@ -3655,11 +3655,12 @@ class Tablas():
             ])
             # Ejecutamos el query:
             collection = conexion_mongo('report').report_skuConershopChedrauiDetalle
+            print(f'Pipeline desde Tablas -> {self.titulo}: {str(pipeline)}')
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=None)
             # print(str(arreglo))
             if len(arreglo) >0:
-                # print('Sí hay resultados: '+str(arreglo))
+                print(f'Arreglo desde Tablas -> {self.titulo}: {str(arreglo)}')
                 hayResultados = "si"
                 # Creamos los arreglos que alimentarán la tabla:
                 columns = [
@@ -3681,11 +3682,12 @@ class Tablas():
                         elif row['canal'] == 'Cornershop':
                             frCornershop.append(foundRate)
                 for i in range(len(deptos)):
+                    frCornershopNum = frCornershop[i] if len(frCornershop) - 1 > i else 0
                     data.append({
                         'deptoNombre': deptos[i],
                         'frChedraui': frChedraui[i],
-                        'frCornershop': frCornershop[i],
-                        'dif': frChedraui[i] - frCornershop[i],
+                        'frCornershop': frCornershopNum,
+                        'dif': frChedraui[i] - frCornershopNum,
                     })
                 # print("Columns desde tablas: "+str(columns))
                 # print("Data desde tablas: "+str(data))
