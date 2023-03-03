@@ -3770,7 +3770,7 @@ class Tablas():
             # Ejecutamos el query:
             collection = conexion_mongo('report').report_skuConershopChedrauiDetalle
             cursor = collection.aggregate(pipeline)
-            arreglo = await cursor.to_list(length=None)
+            arreglo = await cursor.to_list(length=10)
             # print(str(arreglo))
             if len(arreglo) >0:
                 # print('Sí hay resultados: '+str(arreglo))
