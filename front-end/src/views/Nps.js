@@ -94,12 +94,12 @@ const Nps = () => {
       </Row>
       <Row className='match-height'>        
         <Col sm='12'>
-          {(periodo.mes !== undefined || periodo.semana !== undefined) && <Tabla tituloAPI='Detalle NPS Por Tienda' titulo={`Detalle NPS Por Tienda 🌒 ${periodoLabel}`} fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} provLogist={provLogist} />}
+          {(periodo.mes !== undefined || periodo.semana !== undefined) && <Tabla tituloAPI='Resumen NPS por tienda' titulo={`Resumen NPS por tienda ${periodoLabel}`} fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} provLogist={provLogist} />}
         </Col>
       </Row>
       <Row className='match-height'>
         <Col sm='12'>
-          {(periodo.mes !== undefined || periodo.semana !== undefined) && <Tabla tituloAPI='Comentarios y Calificación Encuesta NPS'  titulo={`Comentarios y Calificación Encuesta NPS 🌒 ${periodoLabel}`} fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} provLogist={provLogist} />}
+          {(periodo.mes !== undefined || periodo.semana !== undefined) && <Tabla tituloAPI='Detalle Encuesta NPS'  titulo={`Detalle Encuesta NPS ${periodoLabel}`} fechas={fechas} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} provLogist={provLogist} />}
         </Col>
       </Row>
     </>

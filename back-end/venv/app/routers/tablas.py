@@ -3655,12 +3655,12 @@ class Tablas():
             ])
             # Ejecutamos el query:
             collection = conexion_mongo('report').report_skuConershopChedrauiDetalle
-            print(f'Pipeline desde Tablas -> {self.titulo}: {str(pipeline)}')
+            # print(f'Pipeline desde Tablas -> {self.titulo}: {str(pipeline)}')
             cursor = collection.aggregate(pipeline)
             arreglo = await cursor.to_list(length=None)
             # print(str(arreglo))
             if len(arreglo) >0:
-                print(f'Arreglo desde Tablas -> {self.titulo}: {str(arreglo)}')
+                # print(f'Arreglo desde Tablas -> {self.titulo}: {str(arreglo)}')
                 hayResultados = "si"
                 # Creamos los arreglos que alimentarán la tabla:
                 columns = [
@@ -4066,7 +4066,7 @@ class Tablas():
             else:
                 hayResultados = 'no'
 
-        if self.titulo == 'Detalle NPS Por Tienda':
+        if self.titulo == 'Resumen NPS por tienda':
             if self.filtros.agrupador == 'dia':
                 mes = int(self.filtros.periodo['mes'])
                 mes = str(mes) if mes >= 10 else '0'+str(mes)
@@ -4135,7 +4135,7 @@ class Tablas():
             else:
                 hayResultados = 'no'
 
-        if self.titulo == 'Comentarios y Calificación Encuesta NPS':
+        if self.titulo == 'Detalle Encuesta NPS':
             if self.filtros.agrupador == 'dia':
                 mes = int(self.filtros.periodo['mes'])
                 mes = str(mes) if mes >= 10 else '0'+str(mes)
@@ -4192,7 +4192,7 @@ class Tablas():
             and {agrupador_where} {lugar_where} {clauseCatProveedor}
             order by fecha_encuesta desc,calificacion"""
 
-            # print(f"query desde tablas NPS {self.titulo}: "+pipeline)
+            print(f"query desde tablas NPS {self.titulo}: "+pipeline)
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)
