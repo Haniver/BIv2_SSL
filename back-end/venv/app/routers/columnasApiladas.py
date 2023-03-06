@@ -429,7 +429,7 @@ class ColumnasApiladas():
 
         if self.filtros.periodo == {}:
             return {'hayResultados':'no','categorias':[], 'series':[], 'pipeline': []}
-        clauseCatTienda = False
+        clauseCatProveedor = False
         if len(self.filtros.provLogist) == 1:
             # print(f"provLogist[0] desde ejesMultiples -> PedidoPerfecto: {self.filtros.provLogist[0]}")
             clauseCatProveedor = {'$match': {'sucursal.Delivery': self.filtros.provLogist[0]}}
@@ -513,8 +513,8 @@ class ColumnasApiladas():
                 pipeline.extend([
                     {'$match': {'sucursal.'+ nivel: lugar}}
                 ])
-            if clauseCatTienda:
-                pipeline.append(clauseCatTienda)
+            if clauseCatProveedor:
+                pipeline.append(clauseCatProveedor)
 
             pipeline.extend([
                 {'$group': {
@@ -632,8 +632,8 @@ class ColumnasApiladas():
                 pipeline.extend([
                     {'$match': {'sucursal.'+ nivel: lugar}}
                 ])
-            if clauseCatTienda:
-                pipeline.append(clauseCatTienda)
+            if clauseCatProveedor:
+                pipeline.append(clauseCatProveedor)
 
             pipeline.extend([
                 {'$match': {
@@ -737,8 +737,8 @@ class ColumnasApiladas():
                 pipeline.extend([
                     {'$match': {'sucursal.'+ nivel: lugar}}
                 ])
-            if clauseCatTienda:
-                pipeline.append(clauseCatTienda)
+            if clauseCatProveedor:
+                pipeline.append(clauseCatProveedor)
 
             pipeline.extend([
                 {'$unwind': '$entrega'},
