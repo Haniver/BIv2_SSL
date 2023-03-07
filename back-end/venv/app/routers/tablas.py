@@ -792,7 +792,81 @@ class Tablas():
 
         hoy = datetime.now()
 
-        if self.titulo == 'Venta sin impuesto por Departamento o Sub Departamento':
+        if self.titulo == 'Venta del mes por Departamento o Sub Departamento':
+
+            if self.filtros.depto != '' and self.filtros.depto != "False" and self.filtros.depto != None:
+                query_filtro_depto = f" and cd.idDepto = {self.filtros.depto} "
+                campo_depto = 'subDeptoDescrip'
+                titulo_nivel_producto = 'Sub Departamento'
+            else:
+                query_filtro_depto = ''
+                campo_depto = 'deptoDescrip'
+                titulo_nivel_producto = 'Departamento'
+            pipeline=f"""SELECT  vd.fecha Fecha
+            ,SUM(case WHEN cd.deptoDescrip = 'Electro-muebles' THEN isnull(ventaSinImpuestos,0) else 0 end) 'Electro_Muebles'
+            ,SUM(case WHEN cd.deptoDescrip = 'Perecederos No Transformacion' THEN isnull(ventaSinImpuestos,0) else 0 end) 'Perecederos_No_Transformacion'
+            ,SUM(case WHEN cd.deptoDescrip = 'PGC Comestible' THEN isnull(ventaSinImpuestos,0) else 0 end) 'PGC_Comestible'
+            ,SUM(case WHEN cd.deptoDescrip = 'PGC No Comestible' THEN isnull(ventaSinImpuestos,0) else 0 end) 'PGC_No_Comestible'
+            ,SUM(case WHEN cd.deptoDescrip = 'Ropa, Zapatería y Te' THEN isnull(ventaSinImpuestos,0) else 0 end) 'Ropa_Zapateria_y_Te'
+            ,SUM(case WHEN cd.deptoDescrip = 'Transformacion y Alimentos' THEN isnull(ventaSinImpuestos,0) else 0 end) 'Transformacion_Y_Alimentos'
+            ,SUM(case WHEN cd.deptoDescrip = 'Variedades' THEN isnull(ventaSinImpuestos,0) else 0 end) 'Variedades'
+            FROM DWH.artus.ventaDiaria vd
+            LEFT JOIN DWH.dbo.dim_tiempo dt
+            ON vd.fecha = dt.id_fecha
+            LEFT JOIN DWH.artus.cat_departamento cd
+            ON vd.subDepto = cd.idSubDepto
+            LEFT JOIN DWH.artus.catTienda ct
+            ON vd.idTienda = ct.tienda
+            LEFT JOIN DWH.artus.catCanal cc
+            ON vd.idCanal = cc.idCanal
+            WHERE dt.anio IN ({anioElegido})
+            AND dt.num_mes in ({mesElegido})
+            AND cc.tipo IN (1) """
+            if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
+                if self.filtros.zona != '' and self.filtros.zona != "False" and self.filtros.zona != None:
+                    if self.filtros.tienda != '' and self.filtros.tienda != "False" and self.filtros.tienda != None:
+                        pipeline += f""" and ct.tienda = {self.filtros.tienda} """
+                    else:
+                        pipeline += f""" and ct.zona = {self.filtros.zona} """
+                else:
+                    pipeline += f""" and ct.region = {self.filtros.region} """
+            pipeline += f" group by vd.fecha "
+
+            print(f'Tablas -> VentaSinImpuesto -> {self.titulo}: {pipeline}')
+            cnxn = conexion_sql('DWH')
+            cursor = cnxn.cursor().execute(pipeline)
+            arreglo = crear_diccionario(cursor)
+
+            data = []
+            if len(arreglo) > 0:
+                hayResultados = "si"
+                for i in range(len(arreglo)):
+                    date_obj = datetime.strptime(str(arreglo[i]['Fecha']), "%Y%m%d")
+                    data.append({
+                        'Fecha': date_obj.strftime("%d/%m/%Y"),
+                        'Electro_Muebles': arreglo[i]['Electro_Muebles'],
+                        'Perecederos_No_Transformacion': arreglo[i]['Perecederos_No_Transformacion'],
+                        'PGC_Comestible': arreglo[i]['PGC_Comestible'],
+                        'PGC_No_Comestible': arreglo[i]['PGC_No_Comestible'],
+                        'Ropa_Zapateria_y_Te': arreglo[i]['Ropa_Zapateria_y_Te'],
+                        'Transformacion_Y_Alimentos': arreglo[i]['Transformacion_Y_Alimentos'],
+                        'Variedades': arreglo[i]['Variedades']
+                    })
+
+                columns = [
+                    {'name': 'Fecha', 'selector':'Fecha', 'formato':'texto'},
+                    {'name': 'Electro Muebles', 'selector':'Electro_Muebles', 'formato':'moneda'},
+                    {'name': 'Perecederos No Transformación', 'selector':'Perecederos_No_Transformacion', 'formato':'moneda'},
+                    {'name': 'PGC Comestible', 'selector':'PGC_Comestible', 'formato':'moneda'},
+                    {'name': 'PGC No Comestible', 'selector':'PGC_No_Comestible', 'formato':'moneda'},
+                    {'name': 'Ropa Zapatería y Té', 'selector':'Ropa_Zapateria_y_Te', 'formato':'moneda'},
+                    {'name': 'Transformación Y Alimentos', 'selector':'Transformacion_Y_Alimentos', 'formato':'moneda'},
+                    {'name': 'Variedades', 'selector':'Variedades', 'formato':'moneda'}
+                ]
+            else:
+                hayResultados = 'no'
+
+        if self.titulo == 'Venta diaria por Departamento o Sub Departamento':
 
             if self.filtros.depto != '' and self.filtros.depto != "False" and self.filtros.depto != None:
                 query_filtro_depto = f" and cd.idDepto = {self.filtros.depto} "

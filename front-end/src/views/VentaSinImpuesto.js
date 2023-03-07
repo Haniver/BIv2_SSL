@@ -104,7 +104,12 @@ const VentaSinImpuesto = () => {
       </Row>}
       <Row className='match-height'>
         <Col sm='12'>
-          <Tabla quitarBusqueda={true} titulo='Venta sin impuesto por Departamento o Sub Departamento' subtitulo='Acumulado del mes' formato='moneda' yLabel='Pesos' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} mes={mes} seccion={seccion} opcionesPaginacion={[10, 15, 20]} />
+          <Tabla quitarBusqueda={true} titulo='Venta del mes por Departamento o Sub Departamento' subtitulo='Acumulado del mes' formato='moneda' yLabel='Pesos' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} mes={mes} seccion={seccion} opcionesPaginacion={[10, 15, 20]} />
+        </Col>
+      </Row>
+      <Row className='match-height'>
+        <Col sm='12'>
+          <Tabla quitarBusqueda={true} titulo='Venta diaria por Departamento o Sub Departamento' subtitulo='Acumulado del mes' formato='moneda' yLabel='Pesos' fechas={fechas} region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} mes={mes} seccion={seccion} opcionesPaginacion={[10, 15, 20]} />
         </Col>
       </Row>
       {(tienda === false || tienda === '') && <Row className='match-height'>

@@ -250,7 +250,7 @@ class EjesMultiples():
                         ,convert(date,CONVERT (varchar,dt.fechaComparacion))
                 ORDER BY dt.fecha
             """
-            print(f"Query desde EjesMultiples -> VentaSinImpuesto -> {self.titulo}: {pipeline}")
+            # print(f"Query desde EjesMultiples -> VentaSinImpuesto -> {self.titulo}: {pipeline}")
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)
