@@ -29,6 +29,14 @@ const PedidoPerfecto = () => {
 
     const seccion = 'PedidoPerfecto'
 
+    const [esMitad, setEsMitad] = useState(12)
+    useEffect(() => {
+      if (!tienda || tienda === '') {
+        setEsMitad(6)
+      } else {
+        setEsMitad(12)
+      }
+    }, [tienda])
 
     useEffect(() => {
       // console.log(`Ahora tienda es la ${tienda}`)
@@ -102,12 +110,14 @@ const PedidoPerfecto = () => {
         </Col>
       </Row>}
       {periodo && <Row className='match-height'>
-        <Col sm='12' lg='6'>
+        <Col sm='12' lg={esMitad}>
           <EjesMultiples titulo='Evaluación por KPI' fechas={fechas} provLogist={provLogist} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} />
         </Col>
+        {/* Aquí ponle que nada más si no es nivel tienda-* */}
+        {(tienda === '' || !tienda) &&
         <Col sm='12' lg='6'>
           <EjesMultiples titulo='Evaluación Pedido Perfecto por Lugar' fechas={fechas} provLogist={provLogist} region={region} zona={zona} tienda={tienda} agrupador={agrupador} periodo={periodo} seccion={seccion} />
-        </Col>
+        </Col>}
       </Row>}
       {periodo && <Row className='match-height'>
         <Col sm='12' lg='6'>
