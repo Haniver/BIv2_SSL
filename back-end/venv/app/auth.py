@@ -103,7 +103,7 @@ def buscar_usuario_en_bd(usuario, ip = '?'):
         rol = 'Por favor contacte al administrador de sistema para que le asigne un rol'
 
     # Obtener Vistas a las que tiene acceso el usuario
-    cursor.execute(f"""select distinct v.id_vista, v.categoria, v.idReact, v.title, v.icon 
+    cursor.execute(f"""select distinct v.id_vista, v.categoria, v.idReact, v.title, v.icon, v.ordenamiento
     from DJANGO.php.usuarios us 
     left join DJANGO.php.usuariosAreas ua on ua.id_usuario = us.id
     left join DJANGO.php.permisosVistas pv on pv.area = ua.area
@@ -111,7 +111,9 @@ def buscar_usuario_en_bd(usuario, ip = '?'):
     where us.id = {id}
     and v.activado = 1
     and v.idReact is not NULL 
-    and v.idReact != ''""")
+    and v.idReact != ''
+    order by v.ordenamiento
+    """)
     resultados = conectar_sql.crear_diccionario(cursor)
     vistas = []
     for row in resultados:
