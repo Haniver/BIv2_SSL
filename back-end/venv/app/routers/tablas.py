@@ -4781,6 +4781,12 @@ class Tablas():
             if self.filtros.zona != '' and self.filtros.zona != "False" and self.filtros.zona != None:
                 self.nivel_lugar = 'tienda'
                 self.filtro_lugar = f" and ct.zona = '{self.filtros.zona}' "
+                if self.filtros.tienda != '' and self.filtros.tienda != "False" and self.filtros.tienda != None:
+                    self.nivel_lugar = 'tienda'
+                    self.filtro_lugar = f" and ct.tienda = '{self.filtros.tienda}' "
+                else:
+                    self.nivel_lugar = 'tienda'
+                    self.filtro_lugar = f" and ct.zona = '{self.filtros.zona}' "
             else:
                 self.nivel_lugar = 'zona'
                 self.filtro_lugar = f" and ct.region = '{self.filtros.region}' "
