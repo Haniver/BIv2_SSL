@@ -1298,7 +1298,7 @@ class Tablas():
             # print(pipeline)
 
             cursor = collection.aggregate(pipeline)
-            arreglo_resultados = await ccursor.to_list(length=None)
+            arreglo_resultados = await cursor.to_list(length=None)
             # print(str(arreglo_resultados))
             if len(arreglo_resultados) <= 0:
                 hayResultados = "no"
@@ -1370,7 +1370,7 @@ class Tablas():
                 {'$sort':{'_id': 1}}
             ])
             cursor = collection.aggregate(pipeline_lugares)
-            arreglo_tmp = await ccursor.to_list(length=None)
+            arreglo_tmp = await cursor.to_list(length=None)
             if len(arreglo_tmp) <= 0: # Si no hay resultados, regresar pipeline a front end
                 return {'hayResultados':'no', 'pipeline': pipeline_lugares, 'columns':[], 'data':[]}
             arreglo_lugares = []
@@ -1399,7 +1399,7 @@ class Tablas():
             # print(pipeline)
 
             cursor = collection.aggregate(pipeline)
-            arreglo_resultados = await ccursor.to_list(length=None)
+            arreglo_resultados = await cursor.to_list(length=None)
             # print(str(arreglo_resultados))
             if len(arreglo_resultados) <= 0:
                 hayResultados = "no"
