@@ -14,7 +14,7 @@ from app.auth import get_current_active_user
 from app.servicios.conectar_mongo import conexion_mongo
 from app.servicios.conectar_sql import conexion_sql, crear_diccionario
 from app.servicios.Filtro import Filtro
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, time
 from calendar import monthrange
 from app.servicios.permisos import tienePermiso
 from app.servicios.logs import loguearConsulta, loguearError
@@ -31,25 +31,6 @@ router = APIRouter(
 class IndicadoresEnBarras():
     def __init__(self, filtros: Filtro, titulo: str):
         self.filtros = filtros
-        # self.titulo = titulo
-        if self.filtros.fechas != None:
-            self.fecha_ini_a12 = datetime.combine(datetime.strptime(self.filtros.fechas['fecha_ini'], '%Y-%m-%dT%H:%M:%S.%fZ'), datetime.min.time()) if self.filtros.fechas['fecha_ini'] != None and self.filtros.fechas['fecha_ini'] != '' else None
-            self.fecha_fin_a12 = datetime.combine(datetime.strptime(self.filtros.fechas['fecha_fin'], '%Y-%m-%dT%H:%M:%S.%fZ'), datetime.min.time()) + timedelta(days=1) - timedelta(seconds=1) if self.filtros.fechas['fecha_fin'] != None and self.filtros.fechas['fecha_fin'] != '' else None
-            self.anioElegido = datetime.strptime(filtros.fechas['fecha_fin'], '%Y-%m-%dT%H:%M:%S.%fZ').year
-            self.mesElegido = datetime.strptime(filtros.fechas['fecha_fin'], '%Y-%m-%dT%H:%M:%S.%fZ').month
-            self.diaElegido = datetime.strptime(filtros.fechas['fecha_fin'], '%Y-%m-%dT%H:%M:%S.%fZ').day
-            self.mesTexto = mesTexto(self.mesElegido)
-            self.diaVencido = ultimoDiaVencidoDelMesReal(self.anioElegido, self.mesElegido)
-
-            self.anioElegido_inicio = datetime(self.anioElegido, 1, 1).strftime('%Y%m%d')
-            self.anioElegido_fin = datetime(self.anioElegido, self.mesElegido, self.diaElegido).strftime('%Y%m%d')
-            self.anioAnterior_inicio = datetime(self.anioElegido - 1, 1, 1).strftime('%Y%m%d')
-            self.anioAnterior_fin = datetime(self.anioElegido - 1, self.mesElegido, self.diaElegido).strftime('%Y%m%d')
-            self.mesElegido_inicio = datetime(self.anioElegido, self.mesElegido, 1).strftime('%Y%m%d')
-            self.mesElegido_fin = datetime(self.anioElegido, self.mesElegido, self.diaElegido).strftime('%Y%m%d')
-            self.mesAnterior_inicio = datetime(self.anioElegido - 1, self.mesElegido, 1).strftime('%Y%m%d')
-            self.mesAnterior_fin = datetime(self.anioElegido - 1, self.mesElegido, self.diaElegido).strftime('%Y%m%d')
-
         if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
             self.filtro_lugar = True
             if self.filtros.zona != '' and self.filtros.zona != "False" and self.filtros.zona != None:
@@ -73,158 +54,50 @@ class IndicadoresEnBarras():
             arreglo = crear_diccionario(cursor)
             self.canal = ",".join([str(elemento['tipo']) for elemento in arreglo])
     
-    async def Temporada(self):
-        res = []
-        hoyStr = datetime.today().strftime('%Y-%m-%d')
-        hoyInt = int(hoyStr[0:4]) * 10000 + int(hoyStr[5:7]) * 100 + int(hoyStr[8:10])
-        hayResultados = 'no'
-        query = ''
-        hayCanal = False if self.filtros.canal == False or self.filtros.canal == 'False' or self.filtros.canal == None or self.filtros.canal == '' else True
-        # print(f"Canal desde TarjetasEnFila -> Temporada: {str(self.filtros.canal)}")
-        query = f"""select hora, sum(ventaConImp) venta
-            from DWH.report.pedido_hora ph
-            where fechaCreacion = '{hoyStr}'
-            and hora in (
-                select max(hora)
-                from DWH.report.pedido_hora 
-                where fechaCreacion = '{hoyStr}'
-            )
-            group by hora
-        """
-        # print(f"Query desde TarjetasEnFila -> Temporada: {query}")
-        cnxn = conexion_sql('DWH')
-        cursor = cnxn.cursor().execute(query)
-        arreglo = crear_diccionario(cursor)
-        # print(f"arreglo desde ejesMultiplesApilados: {str(arreglo)}")
-        valor = arreglo[0]['venta'] if arreglo[0]['venta'] is not None else 0
-        res.append({
-            'valor': valor,
-            'titulo': f"Venta Última Hora (0{arreglo[0]['hora']}:00)" if int(arreglo[0]['hora']) < 10 else f"Venta Última Hora ({arreglo[0]['hora']}:00)",
-            'icon': 'DollarSign',
-            'formato': 'moneda'
-        })
-
-        query = f"""select hora, sum(pedidos) pedidos
-            from DWH.report.pedido_hora ph
-            where fechaCreacion = '{hoyStr}'
-            and hora in (
-                select max(hora)
-                from DWH.report.pedido_hora 
-                where fechaCreacion = '{hoyStr}'
-            )
-            group by hora
-            """
-        cnxn = conexion_sql('DWH')
-        cursor = cnxn.cursor().execute(query)
-        arreglo = crear_diccionario(cursor)
-        # print(f"arreglo desde ejesMultiplesApilados: {str(arreglo)}")
-        valor2 = arreglo[0]['pedidos'] if arreglo[0]['pedidos'] is not None else 0
-        res.append({
-            'valor': valor2,
-            'titulo': f"Pedidos Última Hora (0{arreglo[0]['hora']}:00)" if int(arreglo[0]['hora']) < 10 else f"Pedidos Última Hora ({arreglo[0]['hora']}:00)",
-            'icon': 'Package',
-            'formato': 'entero'
-        })
-
-        query = f"""select sum(ventaSinImpuestos) venta
-            from DWH.artus.ventaDiariaHora vdh 
-            where fecha = {hoyInt}
-            and idCanal {'not in (0' if not hayCanal else 'in ('+str(self.filtros.canal)})
-            """
-        # print(f"query desde tarjetas.py -> Temporada -> Venta Hoy: {str(query)}")
-        cnxn = conexion_sql('DWH')
-        cursor = cnxn.cursor().execute(query)
-        arreglo = crear_diccionario(cursor)
-        # print(f"arreglo desde ejesMultiplesApilados: {str(arreglo)}")
-        valor3 = arreglo[0]['venta'] if arreglo[0]['venta'] is not None else 0
-        res.append({
-            'valor': valor3,
-            'titulo': 'Venta Hoy',
-            'icon': 'DollarSign',
-            'formato': 'moneda'
-        })
-
-        query = f"""select sum(ventaSinImpuestos)/(
-                select sum(ventaSinImpuestos)
-                from DWH.artus.ventaDiariaHora vdh 
-                where fecha = {hoyInt}
-                and idCanal in (0)
-            ) porc_part
-            from DWH.artus.ventaDiariaHora vdh 
-            where fecha = {hoyInt}
-            and idCanal {'not in (0' if not hayCanal else 'in ('+str(self.filtros.canal)})
-            """
-        # print(f"query desde tarjetas.py -> Temporada -> % Participación Venta Hoy: {str(query)}")
-        cnxn = conexion_sql('DWH')
-        cursor = cnxn.cursor().execute(query)
-        arreglo = crear_diccionario(cursor)
-        # print(f"arreglo desde ejesMultiplesApilados: {str(arreglo)}")
-        valor4 = arreglo[0]['porc_part'] if arreglo[0]['porc_part'] is not None else 0
-        res.append({
-            'valor': valor4,
-            'titulo': '% Participación Venta Hoy',
-            'icon': 'Percent',
-            'formato': 'porcentaje'
-        })
-
-        query = f"""select sum(nTicket) pedidos, sum(ventaSinImpuestos) venta
-        from DWH.artus.ventaDiariaHora vdh
-        where fecha = {hoyInt}
-        and idCanal {'not in (0' if not hayCanal else 'in ('+str(self.filtros.canal)})
-        """
-        # print(f"query desde tarjetas.py -> Temporada -> % Participación Venta Hoy: {str(query)}")
-        cnxn = conexion_sql('DWH')
-        cursor = cnxn.cursor().execute(query)
-        arreglo = crear_diccionario(cursor)
-        print(f"arreglo desde tarjetasEnFila: {str(arreglo)}")
-        if arreglo[0]['pedidos'] != 0 and arreglo[0]['pedidos'] is not None and arreglo[0]['venta'] is not None:
-            valor = float(arreglo[0]['venta']/arreglo[0]['pedidos'])
-        else:
-            valor = 0
-        res.append({
-            'titulo': 'Ticket Promedio (sin imp)',
-            'valor': valor,
-            'icon': 'FileText',
-            'formato': 'moneda'
-        })
-
-        query = f"""select SUM(item) / SUM(nTicket) artPromedio from DWH.artus.ventaDiariaHora vdh
-        where fecha = {hoyInt}
-        and idCanal {'not in (0' if not hayCanal else 'in ('+str(self.filtros.canal)})
-        """
-        # print(f"query desde tarjetas.py -> Temporada -> Artículos Promedio: {str(query)}")
-        cnxn = conexion_sql('DWH')
-        cursor = cnxn.cursor().execute(query)
-        arreglo = crear_diccionario(cursor)
-        # print(f"arreglo desde ejesMultiplesApilados: {str(arreglo)}")
-        if arreglo[0]['artPromedio'] is not None:
-            valor2 = float(arreglo[0]['artPromedio'])
-        else:
-            valor2 = 0
-        res.append({
-            'titulo': 'Artículos Promedio',
-            'valor': valor2,
-            'icon': 'Box',
-            'formato': 'entero'
-        })
-
-        return {'res': res, 'pipeline': query}
-
     async def VentaSinImpuesto(self):
+        anioElegido = self.filtros.anio
+        mesElegido = self.filtros.mes + 1
+        # print(f"Mes elegido: {mesElegido}")
+        ayer = date.today() - timedelta(days=1)
+        if mesElegido == ayer.month and anioElegido == ayer.year:
+            diaElegido = diaElegido = ayer.day
+        else:
+            last_day = date(anioElegido, mesElegido, 1).replace(
+            month=mesElegido % 12 + 1, day=1) - timedelta(days=1)
+            diaElegido = last_day.day
+        mesEnTexto = mesTexto(mesElegido)
+
+        anioElegido_inicio = datetime(anioElegido, 1, 1).strftime('%Y%m%d')
+        # Get the last day of the given month
+        last_day = date(int(anioElegido), int(mesElegido), 1).replace(month=mesElegido % 12 + 1, day=1) - timedelta(days=1)
+
+        # Get the last second of the last minute of the last hour of the last day
+        mesElegido_fin = datetime.combine(
+            last_day, time.max).replace(
+            hour=23, minute=59, second=59)
+
+        self.ayer = datetime(anioElegido, mesElegido, diaElegido).strftime('%Y%m%d')
+        anioElegido_fin = datetime(anioElegido, 12, 31).strftime('%Y%m%d')
+        self.anioAnterior_inicio = datetime(anioElegido - 1, 1, 1).strftime('%Y%m%d')
+        self.anioAnterior_fin = datetime(anioElegido - 1, mesElegido, diaElegido).strftime('%Y%m%d')
+        mesElegido_inicio = datetime(anioElegido, mesElegido, 1).strftime('%Y%m%d')
+        mesElegido_fin = datetime(anioElegido, mesElegido, diaElegido).strftime('%Y%m%d')
+        self.mesAnterior_inicio = datetime(anioElegido - 1, mesElegido, 1).strftime('%Y%m%d')
+        self.mesAnterior_fin = datetime(anioElegido - 1, mesElegido, diaElegido).strftime('%Y%m%d')
         res = []
         res_tmp = {}
         for variante in ['Mes', 'Anio', 'MesAlDia']:
             if variante == 'Mes':
-                query_filtro_fechas = f""" and dt.anio in ({self.anioElegido},{self.anioElegido - 1})
-                and dt.abrev_mes='{self.mesTexto}' """
+                query_filtro_fechas = f""" and dt.anio in ({anioElegido},{anioElegido - 1})
+                and dt.abrev_mes='{mesEnTexto}' """
             elif variante == 'Anio':
-                query_filtro_fechas = f""" and (dt.id_fecha BETWEEN {self.anioElegido_inicio} and {self.anioElegido_fin} or dt.id_fecha BETWEEN {self.anioAnterior_inicio} and {self.anioAnterior_fin}) """
+                query_filtro_fechas = f""" and (dt.id_fecha BETWEEN {anioElegido_inicio} and {self.ayer} or dt.id_fecha BETWEEN {self.anioAnterior_inicio} and {self.anioAnterior_fin}) """
             elif variante == 'MesAlDia':
-                query_filtro_fechas = f"""and dt.anio in ({self.anioElegido}, {self.anioElegido - 1}) and dt.num_mes = {self.mesElegido}"""
+                query_filtro_fechas = f"""and dt.anio in ({anioElegido}, {anioElegido - 1}) and dt.num_mes = {mesElegido}"""
             if variante == 'MesAlDia':
                 query = f"""select dt.anio, sum(ventaSinImpuestos) venta, sum(objetivo) objetivo,
-                sum(case when anio={self.anioElegido} and dt.fecha <= '{self.anioElegido}-{self.mesElegido}-{self.diaElegido}' then objetivo else 0 end) objetivoDia,
-                sum(case when DAY(dt.fecha) <= {self.diaElegido} then isnull (ventaSinImpuestos, 0) else 0 end) ventaDia
+                sum(case when anio={anioElegido} and dt.fecha <= '{anioElegido}-{mesElegido}-{diaElegido}' then objetivo else 0 end) objetivoDia,
+                sum(case when DAY(dt.fecha) <= {diaElegido} then isnull (ventaSinImpuestos, 0) else 0 end) ventaDia
                 from DWH.artus.ventaDiaria vd
                 left join DWH.dbo.dim_tiempo dt on vd.fecha =dt.id_fecha
                 left join DWH.artus.catTienda ct on vd.idTienda =ct.tienda
@@ -255,7 +128,7 @@ class IndicadoresEnBarras():
                     query += f""" and cd.idDepto = {self.filtros.depto} """
             query += " group by dt.anio order by dt.anio "
 
-            # print(f"-- Query para {variante} en TarjetasEnFila:\n{query}")
+            # print(f"-- Query para {variante} en IndicadoresEnBarra:\n{query}")
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(query)
             arreglo = crear_diccionario(cursor)
@@ -275,9 +148,9 @@ class IndicadoresEnBarras():
                 venta_pasado = 0
                 venta_actual = 0
                 objetivo = 0
-            dias_en_mes = monthrange(self.anioElegido, self.mesElegido)[1]
-            # print(f"****** dias_en_mes: {dias_en_mes}. venta_actual: {venta_actual}. self.diaElegido: {self.diaElegido}******")
-            proyeccion_actual = dias_en_mes*venta_actual/self.diaElegido
+            dias_en_mes = monthrange(anioElegido, mesElegido)[1]
+            # print(f"****** dias_en_mes: {dias_en_mes}. venta_actual: {venta_actual}. diaElegido: {diaElegido}******")
+            proyeccion_actual = dias_en_mes*venta_actual/diaElegido
             avance_actual = venta_actual/objetivo if objetivo != 0 else '--'
             alcance_actual = proyeccion_actual/objetivo - 1 if objetivo != 0 else '--'
             if variante == 'Anio':
@@ -313,25 +186,25 @@ class IndicadoresEnBarras():
         # print(f'Respuesta desde TarjetasCombinadas que realmente son tarjetasEnFila: {res_tmp}')
         res = [
             {
-                'titulo': f"<b>Anual</b>: {str(self.anioElegido)} al {str(self.diaElegido)} de {self.mesTexto}",
+                'titulo': f"<b>Anual</b>: {str(anioElegido)} al {str(diaElegido)} de {mesEnTexto}",
                 'formatoBarras': 'moneda',
                 'barras': [
                     {
-                        # 'titulo': f'Venta {self.anioElegido}',
+                        # 'titulo': f'Venta {anioElegido}',
                         # (1)
                         'titulo': "Canal Propio",
                         'valor': res_tmp['Venta $anio'],
                         'color': 'secondary'
                     },
                     {
-                        # 'titulo': f'Objetivo {self.anioElegido} al {self.diaVencido} de {self.mesTexto}',
+                        # 'titulo': f'Objetivo {anioElegido} al {diaVencido} de {mesEnTexto}',
                         # (2)
                         'titulo': "Objetivo (a la fecha)",
                         'valor': res_tmp['Objetivo $anioActual al $dia de $mes'],
                         'color': 'light'
                     },
                     {
-                        # 'titulo': f'Venta {self.anioElegido - 1} al {self.diaVencido} de {self.mesTexto}',
+                        # 'titulo': f'Venta {anioElegido - 1} al {diaVencido} de {mesEnTexto}',
                         # (3)
                         'titulo': "Año Anterior (a la fecha)",
                         'valor': res_tmp['Venta $anioPasado al $dia de $mes'],
@@ -341,40 +214,40 @@ class IndicadoresEnBarras():
                 'laterales': [
                     {
                         # Parece que esto es Variación vs. Objetivo Anual (el que va solo)
-                        # 'titulo': f'Variación Objetivo {self.anioElegido}',
+                        # 'titulo': f'Variación Objetivo {anioElegido}',
                         # (4)
                         'titulo': "Variación vs. Objetivo Anual",
                         'valor': res_tmp['Variación Objetivo $anioActual'],
                         'formato': 'porcentaje'
                     },
                     {
-                        # 'titulo': f'Variación {self.anioElegido} vs. {self.anioElegido - 1}',
+                        # 'titulo': f'Variación {anioElegido} vs. {anioElegido - 1}',
                         # (9)
-                        'titulo': f'Variación vs. {self.anioElegido - 1}',
+                        'titulo': f'Variación vs. {anioElegido - 1}',
                         'valor': res_tmp['Variación $anioActual vs. $anioAnterior'],
                         'formato': 'porcentaje'
                     },
                 ]
             }, {
-                'titulo': f"<b>Mensual</b>: {self.mesTexto} {str(self.anioElegido)}",
+                'titulo': f"<b>Mensual</b>: {mesEnTexto} {str(anioElegido)}",
                 'formatoBarras': 'moneda',
                 'barras': [
                     {
-                        # 'titulo': f'Venta {self.mesTexto} {self.anioElegido}',
+                        # 'titulo': f'Venta {mesEnTexto} {anioElegido}',
                         # (5)
                         'titulo': "Canal Propio",
                         'valor': res_tmp['Venta $mes $anio'],
                         'color': 'secondary'
                     },
                     {
-                        # 'titulo': f'Objetivo {self.mesTexto} {self.anioElegido}',
+                        # 'titulo': f'Objetivo {mesEnTexto} {anioElegido}',
                         # (6)
                         'titulo': f'Objetivo mensual',
                         'valor': res_tmp['Objetivo $mes $anio'],
                         'color': 'light'
                     },
                     {
-                        # 'titulo': f'Venta 1 al {self.diaVencido} {self.mesTexto} {self.anioElegido - 1}',
+                        # 'titulo': f'Venta 1 al {diaVencido} {mesEnTexto} {anioElegido - 1}',
                         # (7)
                         'titulo': f'Año Anterior (a la fecha)',
                         'valor': res_tmp['Venta 1 al $dia $mes $anioAnterior'],
@@ -383,16 +256,16 @@ class IndicadoresEnBarras():
                 ],
                 'laterales': [
                     {
-                        # 'titulo': f'Objetivo Vs. Venta al {self.diaVencido} {self.mesTexto} {self.anioElegido}',
+                        # 'titulo': f'Objetivo Vs. Venta al {diaVencido} {mesEnTexto} {anioElegido}',
                         # (8)
                         'titulo': f'Variación vs. Objetivo Mensual',
                         'valor': res_tmp['Objetivo Vs. Venta al $dia $mes $anio'],
                         'formato': 'porcentaje'
                     },
                     {
-                        # 'titulo': f'Venta {self.anioElegido - 1} Vs. {self.anioElegido} al {self.diaVencido} {self.mesTexto}',
+                        # 'titulo': f'Venta {anioElegido - 1} Vs. {anioElegido} al {diaVencido} {mesEnTexto}',
                         # (10)
-                        'titulo': f'Variación vs. {str(self.anioElegido - 1)}',
+                        'titulo': f'Variación vs. {str(anioElegido - 1)}',
                         'valor': res_tmp['Venta $anioAnterior Vs. $anioActual al $dia $mes'],
                         'formato': 'porcentaje'
                     }

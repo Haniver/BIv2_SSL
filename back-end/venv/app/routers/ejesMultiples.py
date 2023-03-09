@@ -86,11 +86,35 @@ class EjesMultiples():
         return  {'hayResultados':hayResultados,'categories':categories, 'series':series, 'pipeline': pipeline, 'lenArreglo':len(arreglo)}
 
     async def VentaSinImpuesto(self):
-        fecha_fin = datetime.strptime(self.filtros.fechas['fecha_fin'], '%Y-%m-%dT%H:%M:%S.%fZ')
-        # print(f"Fecha como datetime: {str(fecha_fin)}")
-        anioElegido = fecha_fin.year
-        mesElegido = fecha_fin.month
-        # print(f"Mes: {str(mesElegido)}")
+        anioElegido = self.filtros.anio
+        mesElegido = self.filtros.mes + 1
+        # print(f"Mes elegido: {mesElegido}")
+        ayer = date.today() - timedelta(days=1)
+        if mesElegido == ayer.month and anioElegido == ayer.year:
+            diaElegido = diaElegido = ayer.day
+        else:
+            last_day = date(anioElegido, mesElegido, 1).replace(
+            month=mesElegido % 12 + 1, day=1) - timedelta(days=1)
+            diaElegido = last_day.day
+        mesEnTexto = mesTexto(mesElegido)
+
+        anioElegido_inicio = datetime(anioElegido, 1, 1).strftime('%Y%m%d')
+        # Get the last day of the given month
+        last_day = date(int(anioElegido), int(mesElegido), 1).replace(month=mesElegido % 12 + 1, day=1) - timedelta(days=1)
+
+        # Get the last second of the last minute of the last hour of the last day
+        mesElegido_fin = datetime.combine(
+            last_day, time.max).replace(
+            hour=23, minute=59, second=59)
+
+        self.ayer = datetime(anioElegido, mesElegido, diaElegido).strftime('%Y%m%d')
+        anioElegido_fin = datetime(anioElegido, 12, 31).strftime('%Y%m%d')
+        self.anioAnterior_inicio = datetime(anioElegido - 1, 1, 1).strftime('%Y%m%d')
+        self.anioAnterior_fin = datetime(anioElegido - 1, mesElegido, diaElegido).strftime('%Y%m%d')
+        mesElegido_inicio = datetime(anioElegido, mesElegido, 1).strftime('%Y%m%d')
+        mesElegido_fin = datetime(anioElegido, mesElegido, diaElegido).strftime('%Y%m%d')
+        self.mesAnterior_inicio = datetime(anioElegido - 1, mesElegido, 1).strftime('%Y%m%d')
+        self.mesAnterior_fin = datetime(anioElegido - 1, mesElegido, diaElegido).strftime('%Y%m%d')
         categories = []
         series = []
         pipeline = []

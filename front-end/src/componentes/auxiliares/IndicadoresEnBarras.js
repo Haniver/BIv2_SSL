@@ -18,7 +18,7 @@ import Avatar from '@components/avatar'
 // ** Reactstrap Imports
 import { Card, CardHeader, CardTitle, CardBody, CardText, Row, Col } from 'reactstrap'
 
-const IndicadoresEnBarras = ({ cols, icono, titulo, tituloAPI, seccion, className, formato, fechas, region, zona, tienda, proveedor, depto, subDepto, canal, anioRFM, mesRFM, resAPI, colorPositivo }) => {
+const IndicadoresEnBarras = ({ cols, icono, titulo, tituloAPI, seccion, className, formato, fechas, region, zona, tienda, proveedor, depto, subDepto, canal, anioRFM, mesRFM, resAPI, colorPositivo, anio, mes }) => {
   const [estadoLoader, dispatchLoader] = useReducer((estadoLoader, accion) => {
     switch (accion.tipo) {
       case 'llamarAPI':
@@ -86,7 +86,9 @@ const IndicadoresEnBarras = ({ cols, icono, titulo, tituloAPI, seccion, classNam
           proveedor,
           canal,
           anioRFM,
-          mesRFM
+          mesRFM,
+          anio,
+          mes
         }
       })
       resultado_tmp = res.data.res
@@ -200,7 +202,7 @@ const IndicadoresEnBarras = ({ cols, icono, titulo, tituloAPI, seccion, classNam
   }
   useEffect(() => {
     fetchData()
-  }, [fechas, region, zona, tienda, canal, depto, subDepto, mesRFM, anioRFM])
+  }, [fechas, region, zona, tienda, canal, depto, subDepto, mesRFM, anioRFM, anio, mes])
 
   return (
     <Card>

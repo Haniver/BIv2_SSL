@@ -785,10 +785,20 @@ class Tablas():
             cursor = cnxn.cursor().execute("select distinct tipo from DWH.artus.catCanal where descripTipo not in ('Tienda Fisica')")
             arreglo = crear_diccionario(cursor)
             canal = ",".join([str(elemento['tipo']) for elemento in arreglo])
-        anioElegido = datetime.strptime(self.filtros.fechas['fecha_fin'], '%Y-%m-%dT%H:%M:%S.%fZ').year
-        mesElegido = datetime.strptime(self.filtros.fechas['fecha_fin'], '%Y-%m-%dT%H:%M:%S.%fZ').month
-        diaElegido = datetime.strptime(self.filtros.fechas['fecha_fin'], '%Y-%m-%dT%H:%M:%S.%fZ').day
-        fechaElegida = self.filtros.fechas['fecha_fin'][:10] # "2023-02-24"
+        anioElegido = self.filtros.anio
+        mesElegido = self.filtros.mes + 1
+        # print(f"Mes elegido: {mesElegido}")
+        ayer = date.today() - timedelta(days=1)
+        if mesElegido == ayer.month and anioElegido == ayer.year:
+            diaElegido = diaElegido = ayer.day
+        else:
+            last_day = date(anioElegido, mesElegido, 1).replace(
+            month=mesElegido % 12 + 1, day=1) - timedelta(days=1)
+            diaElegido = last_day.day
+        # Get the last day of the given month
+        last_day = date(int(anioElegido), int(mesElegido), 1).replace(month=mesElegido % 12 + 1, day=1) - timedelta(days=1)
+
+        ayer = datetime(anioElegido, mesElegido, diaElegido).strftime('%Y-%m-%d')
 
         hoy = datetime.now()
 
@@ -832,7 +842,7 @@ class Tablas():
                     pipeline += f""" and ct.region = {self.filtros.region} """
             pipeline += f" group by vd.fecha "
 
-            print(f'Tablas -> VentaSinImpuesto -> {self.titulo}: {pipeline}')
+            # print(f'Tablas -> VentaSinImpuesto -> {self.titulo}: {pipeline}')
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)
@@ -880,7 +890,7 @@ class Tablas():
                 sum(case when anio={anioElegido-1} and dt.fecha < convert(date,DATEADD(yy,-1,(GETDATE()))) then isnull (ventaSinImpuestos, 0) else 0 end) AAnterior,
                 sum(case when anio={anioElegido} then isnull (ventaSinImpuestos, 0) else 0 end) AActual,
                 sum(case when anio={anioElegido} then objetivo else 0 end) objetivoMensual,
-                sum(case when anio={anioElegido} and dt.fecha <= '{fechaElegida}' then objetivo else 0 end) objetivoDia
+                sum(case when anio={anioElegido} and dt.fecha <= '{ayer}' then objetivo else 0 end) objetivoDia
                 from DWH.artus.ventaDiaria vd
                 left join DWH.dbo.dim_tiempo dt on vd.fecha=dt.id_fecha
                 left join DWH.artus.cat_departamento cd on vd.subDepto=cd.idSubDepto
