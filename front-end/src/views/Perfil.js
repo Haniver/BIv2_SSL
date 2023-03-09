@@ -10,7 +10,7 @@ import Logo from '@src/assets/images/logo/logo.svg'
 import AuthService from "@src/services/auth.service"
 import cargarFiltros from "../services/cargarFiltros"
 import Filtro from "../componentes/auxiliares/Filtro"
-import UserService from '@src/services/user.service'
+import userService from "../services/user.service"
 import { isStrongPassword } from "validator"
 
 const Perfil = () => {

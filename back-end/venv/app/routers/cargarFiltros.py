@@ -42,6 +42,7 @@ async def cargar_zona(region: int):
 
 @router.get("/cargarTienda")
 async def cargar_tienda(region: int, zona: int):
+    print(f"Región: {str(region)}, Zona: {str(zona)}")
     collection = conexion_mongo('report').catTienda
     # print(f"desde cargarFiltros -> cargarTienda, región: {str(region)}; zona: {str(zona)}")
     pipeline = []

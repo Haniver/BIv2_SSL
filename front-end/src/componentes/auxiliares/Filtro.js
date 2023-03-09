@@ -8,10 +8,10 @@ import fechas_srv from '../../services/fechas_srv'
 import '@styles/react/libs/flatpickr/flatpickr.scss'
 import { isNumeric } from "validator"
 import { nthElement } from '../../services/funcionesAdicionales'
-import UserService from '../../services/user.service'
 import { Users } from 'react-feather'
 import Lupita from '@src/assets/images/lupita.png'
 import LoadingGif from './LoadingGif'
+import userService from '../../services/user.service'
 
 const Filtro = (props) => {
   // console.log(`Tienda en Filtro=${props.tienda}`)
@@ -413,7 +413,7 @@ const Filtro = (props) => {
       }
       setIsZonaHidden(true)
       setBloqueadoBotonEnviar(true)
-      const comboZona_temp = await CargarFiltros.cargarZona(e.value) // Se antoja meterle profileState.region en vez de e.value, el problema es que la actualización de estado en React es asíncrona
+      const comboZona_temp = await CargarFiltros.cargarZona(e.value)
       setComboZona(comboZona_temp)
       setIsZonaHidden(false)
       setIsZonaDisabled(false)
@@ -892,24 +892,40 @@ const Filtro = (props) => {
 
   // Rellenado inicial de combos variables
 
+  // Rellenado inicial de combos de lugar
   useEffect(async () => {
-    if (props.usuario === undefined && (props.tiendaDefault === undefined || !props.tiendaDefault)) { // Esto nada más aplica cuando no hay usuario, porque si lo hay, es que estamos en Alta de Usuarios
-      // Llenar región, zona y tienda dependiendo del nivel del usuario
-      if (props.region !== undefined && (userData === null || userData === undefined || userData === false || UserService.getNivel() >= 4)) { // La región te la puedo mostrar en dos escenarios: ya accediste al BI y tienes nivel 4 o 5, o te estás registrando y no tienes userData
+    if (props.usuario === undefined) { // O sea, hay userData y no estamos en Alta de Usuarios
+      // Llenar región
+      setBloqueadoBotonEnviar(true)
+      if (!props.region && userService.getNivel() >= 4) { // La región te la puedo mostrar en dos escenarios: ya accediste al BI y tienes nivel 4 o 5, o te estás registrando y no tienes userData
         setIsRegionHidden(true)
-        setBloqueadoBotonEnviar(true)
         const comboRegion_temp = await CargarFiltros.cargarRegion()
         setComboRegion(comboRegion_temp)
         setIsRegionHidden(false)
-        setIsTiendaHidden(true)
+        setIsZonaDisabled(true)
         const comboTienda_temp = await CargarFiltros.cargarTienda(undefined, undefined)
         setComboTienda(comboTienda_temp)
         setIsTiendaHidden(false)
-        setBloqueadoBotonEnviar(false)
       }
-      if (props.setLabelTienda !== undefined && props.tienda !== undefined && UserService.getNivel() === 1) {
-        // props.setLabelTienda(UserService.getLugarNombre())
-        setLabelTienda_tmp(UserService.getLugarNombre())
+
+      if (userService.getNivel() === 3) {
+        setIsZonaHidden(true)
+        const comboZona_temp = await CargarFiltros.cargarZona(userService.getRegion())
+        setComboZona(comboZona_temp)
+        setIsZonaHidden(false)
+      }
+
+      if (userService.getNivel() === 2) {
+        setIsTiendaHidden(true)
+        const comboTienda_temp = await CargarFiltros.cargarTienda(userService.getRegion(), userService.getZona())
+        setComboTienda(comboTienda_temp)
+        setIsTiendaHidden(false)
+
+      }
+      setBloqueadoBotonEnviar(false)
+      if (props.setLabelTienda !== undefined && props.tienda !== undefined && userService.getNivel() === 1) {
+        // props.setLabelTienda(userService.getLugarNombre())
+        setLabelTienda_tmp(userService.getLugarNombre())
       }
       if (props.proveedor !== undefined) {
         setIsProveedorHidden(true)
@@ -1320,7 +1336,7 @@ const Filtro = (props) => {
               }}
             />
           </Col>}
-          {props.region !== undefined  && (userData === null || userData === undefined || userData === false || UserService.getNivel() >= 4) && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm} xs={bootstrap.xs}>
+          {props.region !== undefined  && (userData === null || userData === undefined || userData === false || userService.getNivel() >= 4) && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm} xs={bootstrap.xs}>
             <Label>Región</Label>
             {isRegionHidden && <LoadingGif />}
             {!isRegionHidden &&
@@ -1336,7 +1352,7 @@ const Filtro = (props) => {
               onChange={handleRegionChange}
             />}
           </Col>}
-          {props.zona !== undefined  && (userData === null || userData === undefined || userData === false || UserService.getNivel() >= 3)  && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm} xs={bootstrap.xs}>
+          {props.zona !== undefined  && (userData === null || userData === undefined || userData === false || userService.getNivel() >= 3)  && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm} xs={bootstrap.xs}>
             <Label>Zona</Label>
             {isZonaHidden && <LoadingGif mini />}
             {!isZonaHidden && <Select
@@ -1350,7 +1366,7 @@ const Filtro = (props) => {
               value={zonaValue}
             />}
           </Col>}
-          {props.tienda !== undefined && (userData === null || userData === undefined || userData === false || UserService.getNivel() >= 2) && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm} xs={bootstrap.xs}>
+          {props.tienda !== undefined && (userData === null || userData === undefined || userData === false || userService.getNivel() >= 2) && <Col className='mb-1' xl={bootstrap.xl} lg={bootstrap.lg} sm={bootstrap.sm} xs={bootstrap.xs}>
             <Label>Tienda</Label>
             {isTiendaHidden && <LoadingGif mini />}
             {!isTiendaHidden && 
