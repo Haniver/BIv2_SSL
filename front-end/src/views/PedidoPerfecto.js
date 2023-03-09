@@ -19,7 +19,7 @@ const PedidoPerfecto = () => {
     const [zona, setZona] = useState(userService.getZonaPorNivel())
     const [tienda, setTienda] = useState(userService.getTiendaPorNivel())
     const [sibling, setSibling] = useState(false)
-    const [labelTienda, setLabelTienda] = useState(false)
+    const [labelTienda, setLabelTienda] = useState(userService.getLugarNombre())
     const [quitarBusqueda, setQuitarBusqueda] = useState(false)
     const [quitarPaginacion, setQuitarPaginacion] = useState(false)
     const [provLogist, setProvLogist] = useState([])
