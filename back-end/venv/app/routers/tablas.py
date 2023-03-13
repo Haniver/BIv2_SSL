@@ -802,7 +802,7 @@ class Tablas():
 
         hoy = datetime.now()
 
-        if self.titulo == 'Venta del mes por Departamento o Sub Departamento':
+        if self.titulo == 'Venta diaria por departamento':
 
             if self.filtros.depto != '' and self.filtros.depto != "False" and self.filtros.depto != None:
                 query_filtro_depto = f" and cd.idDepto = {self.filtros.depto} "
@@ -876,7 +876,7 @@ class Tablas():
             else:
                 hayResultados = 'no'
 
-        if self.titulo == 'Venta diaria por Departamento o Sub Departamento':
+        if self.titulo == 'Venta acumulada mensual por departamento':
 
             if self.filtros.depto != '' and self.filtros.depto != "False" and self.filtros.depto != None:
                 query_filtro_depto = f" and cd.idDepto = {self.filtros.depto} "

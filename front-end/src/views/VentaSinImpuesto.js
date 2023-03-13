@@ -103,12 +103,12 @@ const VentaSinImpuesto = () => {
       </Row>}
       <Row className='match-height'>
         <Col sm='12'>
-          <Tabla quitarBusqueda={true} titulo='Venta del mes por Departamento o Sub Departamento' subtitulo='Acumulado del mes' formato='moneda' yLabel='Pesos' region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} mes={mes} seccion={seccion} opcionesPaginacion={[10, 15, 20]} anio={anio} />
+          <Tabla quitarBusqueda={true} titulo='Venta diaria por departamento' subtitulo='Del Mes Seleccionado' formato='moneda' yLabel='Pesos' region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} mes={mes} seccion={seccion} opcionesPaginacion={[10, 15, 20]} anio={anio} />
         </Col>
       </Row>
       <Row className='match-height'>
         <Col sm='12'>
-          <Tabla quitarBusqueda={true} titulo='Venta diaria por Departamento o Sub Departamento' subtitulo='Acumulado del mes' formato='moneda' yLabel='Pesos' region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} mes={mes} seccion={seccion} opcionesPaginacion={[10, 15, 20]} anio={anio}  />
+          <Tabla quitarBusqueda={true} titulo='Venta acumulada mensual por departamento' formato='moneda' yLabel='Pesos' region={region} zona={zona} tienda={tienda} canal={canal} depto={depto} subDepto={subDepto} mes={mes} seccion={seccion} opcionesPaginacion={[10, 15, 20]} anio={anio}  />
         </Col>
       </Row>
       {(tienda === false || tienda === '') && <Row className='match-height'>
