@@ -13,7 +13,8 @@ require('highcharts/modules/data')(Highcharts)
 require('highcharts/modules/exporting')(Highcharts)
 require('highcharts/modules/export-data')(Highcharts)
 
-const Pie = ({ titulo, seccion, formato, fechas, region, zona, tienda, tipoEntrega, origen, coloresPedidosPendientes, categoria, extenderDerecha, extenderIzquierda, ocultarTotal }) => {
+const Pie = ({ titulo, tituloAPI, seccion, formato, fechas, region, zona, tienda, tipoEntrega, origen, coloresPedidosPendientes, categoria, extenderDerecha, extenderIzquierda, ocultarTotal, totalDesdePadre, setTotalDesdePadre }) => {
+    const tituloEnviar = (tituloAPI !== undefined) ? tituloAPI : titulo
     const [hayError, setHayError] = useState(false)
     const [datos, setDatos] = useState([{name: 'Sin Resultados', y: 0}])
     const [total, setTotal] = useState('')
@@ -64,7 +65,7 @@ const Pie = ({ titulo, seccion, formato, fechas, region, zona, tienda, tipoEntre
         dispatchLoader({tipo: 'llamarAPI'})
         const res = await axios({
           method: 'post',
-          url: `${CustomUrls.ApiUrl()}pie/${seccion}?titulo=${titulo}`,
+          url: `${CustomUrls.ApiUrl()}pie/${seccion}?titulo=${tituloEnviar}`,
           headers: authHeader(),
           data: {
             fechas,            
@@ -91,6 +92,13 @@ const Pie = ({ titulo, seccion, formato, fechas, region, zona, tienda, tipoEntre
             })
             total_tmp = total_tmp.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
             setDatos(datos_tmp)
+            if (setTotalDesdePadre !== undefined) {
+                // console.log(`total en Pie se va a poner en ${total_tmp} (dentro del if)`)
+                // console.log('setTotalDesdePadre:')
+                // console.log(setTotalDesdePadre)
+                setTotalDesdePadre(total_tmp)
+            }
+            // console.log(`total en Pie se va a poner en ${total_tmp} (fuera del if)`)
             setTotal(total_tmp)
         } else {
           setDatos({name: 'Sin Resultados', y: 0})
@@ -212,7 +220,7 @@ const Pie = ({ titulo, seccion, formato, fechas, region, zona, tienda, tipoEntre
     return (
         <Card className={claseCSS}>
             <CardBody>
-                {hayError && <p classname='texto-rojo'>{`Error en la carga del componente "${titulo}" el ${fechas_srv.fechaYHoraActual()}`}</p>}
+                {hayError && <p classname='texto-rojo'>{`Error en la carga del componente "${tituloEnviar}" el ${fechas_srv.fechaYHoraActual()}`}</p>}
                 {!hayError && estadoLoader.contador === 0 && <>
                 <CardTitle className='centrado'>{titulo}</CardTitle>
                 <HighchartsReact

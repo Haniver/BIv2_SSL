@@ -166,6 +166,7 @@ class Pie():
         return {'hayResultados':hayResultados, 'res': res, 'pipeline':pipeline}
 
     async def PedidosPendientes(self):
+        print(f"el titulo desde Pie -> PedidosPendientes es {self.titulo}")
         pipeline = []
 
         if self.filtros.region != '' and self.filtros.region != "False" and self.filtros.region != None:
@@ -237,7 +238,7 @@ class Pie():
                 #     {'name': 'Anteriores', 'y': objeto['ANTERIORES']}
                 # ]
 
-        if self.titulo == 'Pedidos Por Tipo de Entrega':
+        if self.titulo == 'Total de Pedidos: $total':
             pipeline.append({
                 '$match': {
                     '$or': [

@@ -16,6 +16,7 @@ const PedidosPendientes = () => {
   const [tienda, setTienda] = useState(userService.getTiendaPorNivel())
   const [origen, setOrigen] = useState('Vtex')
   const [botonEnviar, setBotonEnviar] = useState(0)
+  const [totalDesdePadre, setTotalDesdePadre] = useState('')
 
   const seccion = 'PedidosPendientes'
 
@@ -43,7 +44,7 @@ const PedidosPendientes = () => {
       </Row>
       <Row className='match-height'>
         {!tipoEntrega && <Col xl='6' sm='12'>
-          <Pie titulo='Pedidos Por Tipo de Entrega' seccion={seccion} formato='entero' yLabel='Pedidos' tipoEntrega={tipoEntrega} region={region} zona={zona} tienda={tienda} origen={origen} />
+          <Pie titulo={`Total de Pedidos: ${totalDesdePadre}`} tituloAPI='Total de Pedidos: $total' seccion={seccion} formato='entero' yLabel='Pedidos' tipoEntrega={tipoEntrega} region={region} zona={zona} tienda={tienda} origen={origen} totalDesdePadre={totalDesdePadre} setTotalDesdePadre={setTotalDesdePadre} ocultarTotal />
         </Col>}
         <Col xl={tipoEntrega ? '12' : '6'} sm='12'>
           <ColumnasApiladas titulo='Pedidos Por Región' seccion={seccion} formato='entero' yLabel='Pedidos' tipoEntrega={tipoEntrega} region={region} zona={zona} tienda={tienda} origen={origen} />
