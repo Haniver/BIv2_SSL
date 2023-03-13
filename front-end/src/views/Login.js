@@ -66,7 +66,10 @@ const Login = () => {
                     <small>Olvidé mi contraseña</small>
                   </Link>
                 </div>
-                <InputPasswordToggle className='input-group-merge' id='login-password' onChange={e => setPassword(e.target.value)} />
+                <InputPasswordToggle className='input-group-merge' id='login-password' onChange={(e) => {
+                  const trimmedValue = e.target.value.trim()
+                  setPassword(trimmedValue)
+                }} />
               </FormGroup>
               {/* <FormGroup>
                 <CustomInput type='checkbox' className='custom-control-Primary' id='remember-me' label='Remember Me' />
