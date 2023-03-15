@@ -4246,7 +4246,7 @@ class Tablas():
             pipeline = f"""select top 500 nd.calificacion,nmp.canal,concat(nmp.idtienda,'-',nmp.descrip_tienda) tienda,nmp.zona,nmp.region,nmp.pedido,
             b.timeslot_from,b.timeslot_to,MetodoEntrega,EstatusPedido, b.FechaEntrega,
             b.FechaDespacho,nmp.evaluacion as EvaluacionEntrega,b.Queja,nmp.estatus,
-            b.NPS,b.Tipo,b.NoImputableTienda, nd.comentario,nmp.fecha as FechaEnvio,nd.fecha_encuesta as FechaEncuesta
+            b.NPS,b.Tipo,b.NoImputableTienda, nd.comentario,nmp.fecha as FechaEnvio,convert(date, ho.creation_date) as FechaCreacion
             from DWH.limesurvey.nps_detalle nd
             inner join dwh.limesurvey.nps_mail_pedido nmp on nd.id_encuesta=nmp.id_encuesta and nd.nEncuesta=nmp.nEncuesta
             left join ( select ho.order_number,store_num,
@@ -4273,9 +4273,9 @@ class Tablas():
             LEFT JOIN DWH.dbo.hecho_order ho ON ho.order_number =nmp.pedido
             left join DWH.dbo.dim_tiempo dt on convert(date,ho.creation_date)=dt.fecha
             where {agrupador_where} {lugar_where} {clauseCatProveedor}
-            order by fecha_encuesta desc,calificacion"""
+            order by ho.creation_date desc,calificacion"""
 
-            # print(f"query desde tablas NPS {self.titulo}: "+pipeline)
+            print(f"query desde tablas NPS {self.titulo}: "+pipeline)
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)
@@ -4303,7 +4303,7 @@ class Tablas():
                     {'name': 'Tipo', 'selector':'Tipo', 'formato':'texto'},
                     {'name': 'No imputable a tienda', 'selector':'NoImputableTienda', 'formato':'texto'},
                     {'name': 'Fecha Envío', 'selector':'FechaEnvio', 'formato':'texto', 'ancho': '180px'},
-                    {'name': 'Fecha Encuesta', 'selector':'FechaEncuesta', 'formato':'texto', 'ancho': '200px'}
+                    {'name': 'Fecha Creación', 'selector':'FechaCreacion', 'formato':'texto', 'ancho': '200px'}
                 ]
                 for row in arreglo:
                     data.append({
@@ -4326,8 +4326,8 @@ class Tablas():
                         'NPS': row['NPS'],
                         'Tipo': row['Tipo'],
                         'NoImputableTienda': row['NoImputableTienda'],
-                        'FechaEnvio': row['FechaEnvio'],
-                        'FechaEncuesta': row['FechaEncuesta'],
+                        'FechaEnvio': row['FechaEnvio'].strftime('%d/%m/%Y'),
+                        'FechaCreacion': row['FechaCreacion'].strftime('%d/%m/%Y')
                     })
             else:
                 hayResultados = 'no'
