@@ -103,8 +103,16 @@ const IndicadoresEnBarras = ({ cols, icono, titulo, tituloAPI, seccion, classNam
         })  
         const opcionesFila = {
           chart: {
-              type: 'bar',
-              height: 150
+            navigation: {
+              buttonOptions: {
+                enabled: false
+              }
+            },
+            type: 'bar',
+            height: 150
+          },
+          exporting: {
+            enabled: false
           },
           title: {
               text: fila.titulo,
