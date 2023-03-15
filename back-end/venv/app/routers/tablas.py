@@ -527,7 +527,7 @@ class Tablas():
             columns = [
                     {'name': 'Tienda', 'selector':'Tienda', 'formato':'texto', 'ancho': '420px'},
                     {'name': 'NumOrden', 'selector':'NumOrden', 'formato':'entero'},
-                    {'name': 'Consigna', 'selector':'Consigna', 'formato':'texto', 'ancho': '120px'},
+                    {'name': 'Consigna', 'selector':'Consigna', 'formato':'texto', 'ancho': '150px'},
                     {'name': 'Prioridad', 'selector':'Prioridad', 'formato':'texto', 'ancho': '150px'},
                     {'name': 'Fecha', 'selector':'FechaEntrega', 'formato':'texto', 'ancho': '110px'}
                 ]
