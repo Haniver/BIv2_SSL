@@ -301,8 +301,8 @@ class EjesMultiples():
                     {'name': 'Venta '+mod_titulo_serie+str(anioElegido), 'data':serie2, 'type': 'column', 'formato_tooltip':'moneda', 'color':'secondary'}
                 ])
                 series.append({'name': 'Objetivo '+mod_titulo_serie+str(anioElegido), 'data':serie3, 'type': 'column', 'formato_tooltip':'moneda', 'color':'light'})
-                series.append({'name': '% Var Actual', 'data':serie4, 'type': 'spline', 'formato_tooltip':'porcentaje', 'color':'dark'})
-                series.append({'name': '% Var Objetivo', 'data':serie5, 'type': 'spline', 'formato_tooltip':'porcentaje', 'color':'danger'})
+                # series.append({'name': '% Var Actual', 'data':serie4, 'type': 'spline', 'formato_tooltip':'porcentaje', 'color':'dark'})
+                # series.append({'name': '% Var Objetivo', 'data':serie5, 'type': 'spline', 'formato_tooltip':'porcentaje', 'color':'danger'})
             else:
                 hayResultados = "no"
                 categories = []
@@ -372,8 +372,8 @@ class EjesMultiples():
                     {'name': 'Venta '+mod_titulo_serie+str(anioElegido), 'data':serie2, 'type': 'column', 'formato_tooltip':'moneda', 'color':'secondary'}
                 ])
                 series.append({'name': 'Objetivo '+mod_titulo_serie+str(anioElegido), 'data':serie3, 'type': 'column', 'formato_tooltip':'moneda', 'color':'light'})
-                series.append({'name': '% Var Actual', 'data':serie4, 'type': 'spline', 'formato_tooltip':'porcentaje', 'color':'dark'})
-                series.append({'name': '% Var Objetivo', 'data':serie5, 'type': 'spline', 'formato_tooltip':'porcentaje', 'color':'danger'})
+                # series.append({'name': '% Var Actual', 'data':serie4, 'type': 'spline', 'formato_tooltip':'porcentaje', 'color':'dark'})
+                # series.append({'name': '% Var Objetivo', 'data':serie5, 'type': 'spline', 'formato_tooltip':'porcentaje', 'color':'danger'})
             else:
                 hayResultados = "no"
                 categories = []
@@ -445,8 +445,8 @@ class EjesMultiples():
                     {'name': 'Venta '+mod_titulo_serie+str(anioElegido), 'data':serie2, 'type': 'column', 'formato_tooltip':'moneda', 'color':'secondary'}
                 ])
                 series.append({'name': 'Objetivo '+mod_titulo_serie+str(anioElegido), 'data':serie3, 'type': 'column', 'formato_tooltip':'moneda', 'color':'light'})
-                series.append({'name': '% Var Actual', 'data':serie4, 'type': 'spline', 'formato_tooltip':'porcentaje', 'color':'dark'})
-                series.append({'name': '% Var Objetivo', 'data':serie5, 'type': 'spline', 'formato_tooltip':'porcentaje', 'color':'danger'})
+                # series.append({'name': '% Var Actual', 'data':serie4, 'type': 'spline', 'formato_tooltip':'porcentaje', 'color':'dark'})
+                # series.append({'name': '% Var Objetivo', 'data':serie5, 'type': 'spline', 'formato_tooltip':'porcentaje', 'color':'danger'})
             else:
                 hayResultados = "no"
                 categories = []
@@ -508,8 +508,8 @@ class EjesMultiples():
                     {'name': 'Venta '+mod_titulo_serie+str(anioElegido), 'data':serie2, 'type': 'column', 'formato_tooltip':'moneda', 'color':'secondary'}
                 ])
                 series.append({'name': 'Objetivo '+mod_titulo_serie+str(anioElegido), 'data':serie3, 'type': 'column', 'formato_tooltip':'moneda', 'color':'light'})
-                series.append({'name': '% Var Actual', 'data':serie4, 'type': 'spline', 'formato_tooltip':'porcentaje', 'color':'dark'})
-                series.append({'name': '% Var Objetivo', 'data':serie5, 'type': 'spline', 'formato_tooltip':'porcentaje', 'color':'danger'})
+                # series.append({'name': '% Var Actual', 'data':serie4, 'type': 'spline', 'formato_tooltip':'porcentaje', 'color':'dark'})
+                # series.append({'name': '% Var Objetivo', 'data':serie5, 'type': 'spline', 'formato_tooltip':'porcentaje', 'color':'danger'})
             else:
                 hayResultados = "no"
                 categories = []
@@ -573,8 +573,8 @@ class EjesMultiples():
                     {'name': 'Venta '+mod_titulo_serie+str(anioElegido), 'data':serie2, 'type': 'column', 'formato_tooltip':'moneda', 'color':'secondary'}
                 ])
                 series.append({'name': 'Objetivo '+mod_titulo_serie+str(anioElegido), 'data':serie3, 'type': 'column', 'formato_tooltip':'moneda', 'color':'light'})
-                series.append({'name': '% Var Actual', 'data':serie4, 'type': 'spline', 'formato_tooltip':'porcentaje', 'color':'dark'})
-                series.append({'name': '% Var Objetivo', 'data':serie5, 'type': 'spline', 'formato_tooltip':'porcentaje', 'color':'danger'})
+                # series.append({'name': '% Var Actual', 'data':serie4, 'type': 'spline', 'formato_tooltip':'porcentaje', 'color':'dark'})
+                # series.append({'name': '% Var Objetivo', 'data':serie5, 'type': 'spline', 'formato_tooltip':'porcentaje', 'color':'danger'})
             else:
                 hayResultados = "no"
                 categories = []
