@@ -3952,7 +3952,7 @@ class Tablas():
             pipeline += clauseCatProveedor
             pipeline += f" group by nd.calificacion, {rango} {', (dt.anio * 100 + dt.num_mes)' if esMes else ''} order by {rango if not esMes else '(dt.anio * 100 + dt.num_mes) '}"
 
-            # print('Query Evaluación NPS por Día desde Tabla: '+str(pipeline))
+            print('Query Evaluación NPS por Día desde Tabla: '+str(pipeline))
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)
@@ -4183,14 +4183,16 @@ class Tablas():
             from DWH.limesurvey.nps_mail_pedido nmp
             inner join DWH.limesurvey.nps_detalle nd on nmp.id_encuesta =nd.id_encuesta and nd.nEncuesta=nmp.nEncuesta
             left join DWH.artus.catTienda ct on nmp.idTienda =ct.tienda
-            left join DWH.dbo.dim_tiempo dt on nmp.fecha=dt.fecha
-            LEFT JOIN DWH.dbo.hecho_order ho ON ho.order_number =nmp.pedido
+            LEFT JOIN DWH.dbo.hecho_order ho
+            ON ho.order_number = nmp.pedido
+            LEFT JOIN DWH.dbo.dim_tiempo dt
+            ON CONVERT(date, ho.creation_date) = dt.fecha
             where {agrupador_where} {lugar_where} {clauseCatProveedor}
             group by CONCAT(nmp.idtienda,' - ',nmp.descrip_tienda),nmp.region,nmp.zona
             order by case when (sum(case when nd.calificacion in (9,10) then 1 else 0 end)-sum(case when nd.calificacion<=6 then 1 else 0 end))=0 then 0 else
             (sum(case when nd.calificacion in (9,10) then 1 else 0 end)-sum(case when nd.calificacion<=6 then 1 else 0 end))*100/cast(count(1) as float) end"""
 
-            # print(f"query desde tablas NPS {self.titulo}: "+pipeline)
+            print(f"query desde tablas NPS {self.titulo}: "+pipeline)
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)
@@ -4275,7 +4277,7 @@ class Tablas():
             where {agrupador_where} {lugar_where} {clauseCatProveedor}
             order by ho.creation_date desc,calificacion"""
 
-            print(f"query desde tablas NPS {self.titulo}: "+pipeline)
+            # print(f"query desde tablas NPS {self.titulo}: "+pipeline)
             cnxn = conexion_sql('DWH')
             cursor = cnxn.cursor().execute(pipeline)
             arreglo = crear_diccionario(cursor)
