@@ -96,8 +96,8 @@ async def todasLasTiendas():
     respuesta = []
     collection = conexion_mongo('report').catTienda
     pipeline = [
-        {'$match': {'TIENDA_NOMBRE': {'$ne': 'N/A'}}},
-        {'$group': {'_id': {'label': '$TIENDA_NOMBRE', 'value': '$TIENDA'}}},
+        {'$match': {'Tiendas_nombre': {'$ne': 'N/A'}}},
+        {'$group': {'_id': {'label': '$Tiendas_nombre', 'value': '$TIENDA'}}},
         {'$project': {'_id': 0, 'label':'$_id.label', 'value':'$_id.value'}},
         {'$sort': {'label': 1}}
     ]

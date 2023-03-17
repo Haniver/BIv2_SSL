@@ -51,8 +51,8 @@ async def cargar_tienda(region: int, zona: int):
     if zona > 0:
         pipeline.append({'$match': {'ZONA': {'$eq': zona}}})
     pipeline.extend([
-        {'$match': {'TIENDA_NOMBRE': {'$ne': 'N/A'}}},
-        {'$group': {'_id': {'label': '$TIENDA_NOMBRE', 'value': '$TIENDA'}}},
+        {'$match': {'Tiendas_nombre': {'$ne': 'N/A'}}},
+        {'$group': {'_id': {'label': '$Tiendas_nombre', 'value': '$TIENDA'}}},
         {'$project': {'_id': 0, 'label':'$_id.label', 'value':'$_id.value'}},
         {'$sort': {'label': 1}}
     ])
@@ -204,6 +204,7 @@ async def nombre_tienda(tienda: int, user: dict = Depends(get_current_active_use
             'TIENDA': tienda
         }}
     ]
+    print(f"Query desde cargarFiltros -> nombreTienda: {str(pipeline)}")
     cursor = collection.aggregate(pipeline)
     arreglo = await cursor.to_list(length=None)
     # print(str(arreglo))
@@ -218,7 +219,7 @@ async def numero_tienda(nombreTienda: str, user: dict = Depends(get_current_acti
             'Tiendas_nombre': nombreTienda
         }}
     ]
-    # print(f"pipeline desde CargarFiltros -> numeroTienda: {pipeline}")
+    print(f"pipeline desde CargarFiltros -> numeroTienda: {pipeline}")
     cursor = collection.aggregate(pipeline)
     arreglo = await cursor.to_list(length=None)
     # print(str(arreglo))
